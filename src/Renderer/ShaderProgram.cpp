@@ -1,5 +1,4 @@
 #include "ShaderProgram.h"
-#include <glad/glad.h>
 #include <iostream>
 
 namespace Renderer 

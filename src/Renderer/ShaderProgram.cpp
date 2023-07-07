@@ -63,6 +63,10 @@ namespace Renderer
 	void ShaderProgram::use() const {
 		glUseProgram(m_ID);
 	}
+	void ShaderProgram::setInt(const std::string& name, const GLint& value) const 
+	{
+		glUniform1i(glGetUniformLocation(m_ID, name.c_str()), value);
+	}
 	bool ShaderProgram::isCompiled() const {
 		return m_isCompiled;
 	}
@@ -84,4 +88,5 @@ namespace Renderer
 		shaderProgram.m_ID = 0;
 		shaderProgram.m_isCompiled = false;
 	}
+
 }

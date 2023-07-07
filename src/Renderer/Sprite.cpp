@@ -39,20 +39,20 @@ namespace Renderer
 				1.0f, 1.0f,
 				1.0f, 0.0f,
 				0.0f, 0.0f
-		};
+		}; 
 
 		glGenVertexArrays(1, &m_VAO);
 		glBindVertexArray(m_VAO);
 
 		glGenBuffers(1, &m_vertexCoords);
 		glBindBuffer(GL_ARRAY_BUFFER, m_vertexCoords);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertexCoords), vertexCoords, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertexCoords), &vertexCoords, GL_STATIC_DRAW);
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
 
 		glGenBuffers(1, &m_textureCoords);
 		glBindBuffer(GL_ARRAY_BUFFER, m_textureCoords);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(textureCoords), textureCoords, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(textureCoords), &textureCoords, GL_STATIC_DRAW);
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
 

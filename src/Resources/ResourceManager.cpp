@@ -94,7 +94,7 @@ std::shared_ptr<Renderer::Texture2D> ResourceManager::getTexture(const std::stri
 	return nullptr;
 }
 std::shared_ptr<Renderer::Sprite>  ResourceManager::loadSprite(const std::string spriteName, const std::string& textureName,
-	const std::string& shaderName, const unsigned int spriteWidth, const unsigned int spriteHeight)
+	const std::string& shaderName, const unsigned int spriteWidth, const unsigned int spriteHeight, const float rotation)
 {
 	auto pTexture = getTexture(textureName);
 	if (!pTexture)
@@ -112,7 +112,7 @@ std::shared_ptr<Renderer::Sprite>  ResourceManager::loadSprite(const std::string
 
 	std::shared_ptr<Renderer::Sprite>& newSprite = m_sprites.emplace(spriteName,
 		std::make_shared<Renderer::Sprite>(pTexture, pShaderProgram,
-			glm::vec2(spriteWidth, spriteHeight), glm::vec2(0.0f, 0.0f), 0.0f)).first->second;
+			glm::vec2(0.0f, 0.0f), glm::vec2(spriteWidth, spriteHeight), rotation)).first->second;
 	return newSprite;
 }
 std::shared_ptr<Renderer::Sprite> ResourceManager::getSprite(const std::string& spriteName)

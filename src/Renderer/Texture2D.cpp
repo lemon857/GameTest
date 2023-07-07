@@ -62,4 +62,12 @@ namespace Renderer
 	{
 		glBindTexture(GL_TEXTURE_2D, m_ID);
 	}
+	void Texture2D::addSubTexture(std::string& name, const glm::vec2& leftBottomUV, const glm::vec2& rightTopUV)
+	{
+	
+	}
+	const Texture2D::SubTexture2D& getSubTexture(std::string& name)
+	{
+
+	}
 }

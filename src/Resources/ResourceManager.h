@@ -28,7 +28,7 @@ namespace Renderer
 		std::shared_ptr<Renderer::Texture2D> getTexture(const std::string& textureName);
 
 		std::shared_ptr<Renderer::Sprite>  loadSprite(const std::string spriteName, const std::string& textureName, 
-			const std::string& shaderName, const unsigned int spriteWidth, const unsigned int spriteHeight);
+			const std::string& shaderName, const unsigned int spriteWidth, const unsigned int spriteHeight, const float rotation);
 		std::shared_ptr<Renderer::Sprite> getSprite(const std::string& spriteName);
 
 	private:

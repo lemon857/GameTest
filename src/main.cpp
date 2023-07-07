@@ -1,12 +1,11 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <glm/vec2.hpp>
+
 #include "Renderer/ShaderProgram.h"
 #include "Renderer/Texture2D.h"
 #include "Resources/ResourceManager.h"
-
-int g_windowSizeX = 640;
-int g_windowSizeY = 480;
 
 GLfloat points[] = {
     -0.5f, 0.5f, 0.0f,
@@ -26,10 +25,12 @@ GLfloat texCoord[] = {
     0.0f, 0.0f
 };
 
+glm::vec2 g_WindowSize(640, 480);
+
 void glfwWindowSizeCallback(GLFWwindow* pWindow, int width, int height) 
 {
-    g_windowSizeX = width;
-    g_windowSizeY = height;
+    g_WindowSize.x = width;
+    g_WindowSize.y = height;
     glViewport(0, 0, width, height);
 }
 
@@ -53,7 +54,7 @@ int main(int argc, char** argv)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* pWindow = glfwCreateWindow(g_windowSizeX, g_windowSizeY, "Test Game", nullptr, nullptr);
+    GLFWwindow* pWindow = glfwCreateWindow(g_WindowSize.x, g_WindowSize.y, "Test Game", nullptr, nullptr);
 
     if (!pWindow)
     {

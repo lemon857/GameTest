@@ -2,6 +2,11 @@
 
 #include <array>
 #include<glm/vec2.hpp>
+#include <memory>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
+class Tank;
 
 class Game 
 {
@@ -24,4 +29,6 @@ private:
 	EGameState m_eCurrentGameState;
 
 	glm::ivec2 m_WindowSize;
+
+	std::unique_ptr<Tank> m_pTank;
 };

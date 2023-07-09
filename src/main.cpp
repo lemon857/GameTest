@@ -1,5 +1,4 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+
 #include <glm/vec2.hpp>
 
 #include <iostream>
@@ -7,6 +6,7 @@
 
 #include "Resources/ResourceManager.h"
 #include "Game/Game.h"
+
 
 glm::ivec2 g_WindowSize(640, 480);
 

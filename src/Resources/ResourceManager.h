@@ -46,9 +46,9 @@ namespace Renderer
 			const unsigned int spriteHeight, 
 			const float rotation,
 			const std::string& subTextureName = "default");
-		std::shared_ptr<Renderer::Sprite> getSprite(const std::string& spriteName);
+		static std::shared_ptr<Renderer::Sprite> getSprite(const std::string& spriteName);
 
-		std::shared_ptr<Renderer::AnimatedSprite>  loadAnimatedSprite(
+		static std::shared_ptr<Renderer::AnimatedSprite>  loadAnimatedSprite(
 			const std::string& spriteName, 
 			const std::string& textureName,
 			const std::string& shaderName, 
@@ -56,9 +56,9 @@ namespace Renderer
 			const unsigned int spriteHeight, 
 			const float rotation,
 			const std::string& subTextureName = "default");
-		std::shared_ptr<Renderer::AnimatedSprite> getAnimatedSprite(const std::string& spriteName);
+		static std::shared_ptr<Renderer::AnimatedSprite> getAnimatedSprite(const std::string& spriteName);
 
-		std::shared_ptr<Renderer::Texture2D> loadTextureAtlas(
+		static std::shared_ptr<Renderer::Texture2D> loadTextureAtlas(
 			const std::string textureName,
 			const std::vector<std::string> subTextures,
 			const std::string texturePath,

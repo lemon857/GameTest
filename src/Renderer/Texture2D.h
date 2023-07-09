@@ -39,7 +39,7 @@ namespace Renderer
 		unsigned int width() { return m_width; };
 		unsigned int height() { return m_height; };
 		void addSubTexture(std::string name, const glm::vec2& leftBottomUV, const glm::vec2& rightTopUV);
-		const SubTexture2D& getSubTexture(std::string& name);
+		const SubTexture2D& getSubTexture(std::string name);
 	private:
 		GLuint m_ID;
 		GLenum m_mode;

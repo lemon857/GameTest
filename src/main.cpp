@@ -1,13 +1,16 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <iostream>
 #include <glm/vec2.hpp>
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <iostream>
+#include <chrono>
+
 #include "Renderer/ShaderProgram.h"
 #include "Renderer/Texture2D.h"
 #include "Renderer/Sprite.h"
+#include "Renderer/AnimatedSprite.h"
 #include "Resources/ResourceManager.h"
 
 GLfloat points[] = {
@@ -102,12 +105,49 @@ int main(int argc, char** argv)
 
         auto pTex = resourceManager.loadTexture("DefaultTexture", "res/textures/map_16x16.png");
 
-        std::vector<std::string> subStringNames{ "eagle", "deadEagle", "star0", "star1", "star2", "star3", "spawn0", "spawn1" };
+        std::vector<std::string> subStringNames{ "eagle", "deadEagle", "respawn0", "respawn1", "respawn2", "respawn3", "respawn4", "respawn5" };
+        std::vector<std::string> subStringNamesTanks{ 
+            "YellowUp11", 
+            "YellowUp12", 
+            "YellowLeft11",
+            "YellowLeft12", 
+            "YellowDown11", 
+            "YellowDown12", 
+            "YellowRight11", 
+            "YellowRight12" 
+        };
+        std::vector <std::pair<std::string, uint64_t>> spawnState;
 
-        auto pTexAtlsa = resourceManager.loadTextureAtlas("DefaultTextureAtlas", subStringNames,  "res/textures/map_16x16.png", 16, 16);
+        std::vector <std::pair<std::string, uint64_t>> tankState;
 
-        auto pSprite = resourceManager.loadSprite("DefaultSprite", "DefaultTextureAtlas", "SpriteShader", 100, 100, 0, "eagle");
-        pSprite->setPosition(glm::vec2(240.0f, 0.0f));
+
+        tankState.emplace_back(std::make_pair<std::string, uint64_t>("YellowUp11", 70000000));
+        tankState.emplace_back(std::make_pair<std::string, uint64_t>("YellowUp12", 70000000));
+
+        spawnState.emplace_back(std::make_pair<std::string, uint64_t>("respawn0", 50000000));
+        spawnState.emplace_back(std::make_pair<std::string, uint64_t>("respawn1", 50000000));
+        spawnState.emplace_back(std::make_pair<std::string, uint64_t>("respawn2", 50000000));
+        spawnState.emplace_back(std::make_pair<std::string, uint64_t>("respawn3", 50000000));
+        spawnState.emplace_back(std::make_pair<std::string, uint64_t>("respawn4", 80000000));
+        spawnState.emplace_back(std::make_pair<std::string, uint64_t>("respawn5", 100000000));
+        spawnState.emplace_back(std::make_pair<std::string, uint64_t>("respawn4", 100000000));
+        spawnState.emplace_back(std::make_pair<std::string, uint64_t>("respawn5", 100000000));
+        spawnState.emplace_back(std::make_pair<std::string, uint64_t>("eagle", 300000000));
+
+        auto pTexAtlas = resourceManager.loadTextureAtlas("DefaultTextureAtlas", subStringNames,  "res/textures/map_16x16.png", 16, 16);
+        auto pTexAtlasTank = resourceManager.loadTextureAtlas("TanksTextureAtlas", subStringNamesTanks, "res/textures/tanks.png", 16, 16);
+
+        auto pAnimatedSprite = resourceManager.loadAnimatedSprite("AnimatedSprite", "DefaultTextureAtlas", "SpriteShader", 100, 100, 0, "deadEagle");
+        pAnimatedSprite->setPosition(glm::vec2(240, 350));
+
+        auto pTankSprite = resourceManager.loadAnimatedSprite("TankSprite", "TanksTextureAtlas", "SpriteShader", 100, 100, 0, "YellowUp11");
+        pTankSprite->setPosition(glm::vec2(240, 120));
+
+        pAnimatedSprite->insertState("waterState", std::move(spawnState));
+        pAnimatedSprite->setState("waterState");
+
+        pTankSprite->insertState("up1", std::move(tankState));
+        pTankSprite->setState("up1");
 
         GLuint points_vbo = 0;
         glGenBuffers(1, &points_vbo);
@@ -157,8 +197,16 @@ int main(int argc, char** argv)
         pSpriteShaderProgram->setInt("tex", 0);
         pSpriteShaderProgram->setMatrix4("projectionMat", projectionMatrix);
 
+        auto lastTime = std::chrono::high_resolution_clock::now();
+
         while (!glfwWindowShouldClose(pWindow))
         {
+            auto currentTime = std::chrono::high_resolution_clock::now();
+            uint64_t duration = std::chrono::duration_cast<std::chrono::nanoseconds>(currentTime - lastTime).count();
+            lastTime = currentTime;
+            pAnimatedSprite->update(duration);
+            pTankSprite->update(duration);
+
             glClear(GL_COLOR_BUFFER_BIT);
 
             pDefaultShaderProgram->use();
@@ -171,7 +219,8 @@ int main(int argc, char** argv)
             pDefaultShaderProgram->setMatrix4("modelMat", modelMatrix_2);
             glDrawArrays(GL_TRIANGLES, 0, 3);
 
-            pSprite->render();
+            pAnimatedSprite->render();
+            pTankSprite->render();
 
             glfwSwapBuffers(pWindow);
             

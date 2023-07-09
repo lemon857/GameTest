@@ -1,38 +1,33 @@
 #pragma once
 
-#include <glad/glad.h>
-#include <memory>
-#include <string>
-#include <glm/vec2.hpp>
+#include "Sprite.h"
+
+#include <map>
+#include <vector>
 
 namespace Renderer 
 {
-	class Texture2D;
-	class ShaderProgram;
-
-	class Sprite 
+	class AnimatedSprite : public Sprite
 	{
 	public:
-		Sprite(const std::shared_ptr<Texture2D> pTexture, std::string initialSubTexture,const std::shared_ptr<ShaderProgram> pShaderProgram,
+		AnimatedSprite(std::shared_ptr<Texture2D> pTexture, std::string initialSubTexture, std::shared_ptr<ShaderProgram> pShaderProgram,
 			const glm::vec2& position = glm::vec2(0.0f), const glm::vec2& size = glm::vec2(1.0f), const float rotation = 0.0f);
 
-		~Sprite();
 
-		Sprite(const Sprite&) = delete;
-		Sprite& operator=(const Sprite&) = delete;
+		void insertState(std::string state, std::vector<std::pair<std::string, uint64_t>> subTexturesDuration);
 
-		void render() const; 
-		void setPosition(glm::vec2& position);
-		void setSize(glm::vec2& size);
-		void setRotation(const float rotation);
+		void render() const override;
+
+		void setState(const std::string newState);
+		void update(const uint64_t delta);
+
 	private:
-		std::shared_ptr<Texture2D> m_pTexture;
-		std::shared_ptr<ShaderProgram> m_pShaderProgram;
-		glm::vec2 m_position;
-		glm::vec2 m_size;
-		float m_rotation;
-		GLuint m_VAO;
-		GLuint m_vertexCoords;
-		GLuint m_textureCoords;
+		std::map<std::string, std::vector<std::pair<std::string, uint64_t>>> m_statesMap;
+
+		uint64_t m_currentFrame = 0;
+		uint64_t m_currentAnimationTime = 0;
+
+		std::map<std::string, std::vector<std::pair<std::string, uint64_t>>>::const_iterator m_pCurrentAnimationDuration;
+		mutable bool m_ditry = false;
 	};
 }

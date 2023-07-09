@@ -8,7 +8,7 @@
 
 namespace Renderer
 {
-	Sprite::Sprite(const std::shared_ptr<Texture2D> pTexture, std::string initialSubTexture, const std::shared_ptr<ShaderProgram> pShaderProgram,
+	Sprite::Sprite(std::shared_ptr<Texture2D> pTexture, std::string initialSubTexture, std::shared_ptr<ShaderProgram> pShaderProgram,
 		const glm::vec2& position, const glm::vec2& size, const float rotation)
 		: m_position(position), m_rotation(rotation), m_size(size), m_pTexture(pTexture), m_pShaderProgram(pShaderProgram)
 	{
@@ -28,7 +28,7 @@ namespace Renderer
 			0.0f, 0.0f
 		};
 
-		auto subTexture = pTexture->getSubTexture(initialSubTexture);
+		auto subTexture = m_pTexture->getSubTexture(initialSubTexture);
 
 		const GLfloat textureCoords[] = {				
 				//U --- V

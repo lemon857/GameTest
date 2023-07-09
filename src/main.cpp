@@ -82,7 +82,7 @@ int main(int argc, char** argv)
     std::cout << "Renderer: " << glGetString(GL_RENDERER) << "\n";
     std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << "\n";
 	
-	glClearColor(0, 1, 1, 1);   
+	glClearColor(0, 0, 0, 1);   
 
     {
         ResourceManager resourceManager(argv[0]);
@@ -102,8 +102,12 @@ int main(int argc, char** argv)
 
         auto pTex = resourceManager.loadTexture("DefaultTexture", "res/textures/map_16x16.png");
 
-        auto pSprite = resourceManager.loadSprite("DefaultSprite", "DefaultTexture", "SpriteShader", 100, 100, 45);        
-        pSprite->setPosition(glm::vec2(200.0f, 100.0f));
+        std::vector<std::string> subStringNames{ "eagle", "deadEagle", "star0", "star1", "star2", "star3", "spawn0", "spawn1" };
+
+        auto pTexAtlsa = resourceManager.loadTextureAtlas("DefaultTextureAtlas", subStringNames,  "res/textures/map_16x16.png", 16, 16);
+
+        auto pSprite = resourceManager.loadSprite("DefaultSprite", "DefaultTextureAtlas", "SpriteShader", 100, 100, 0, "eagle");
+        pSprite->setPosition(glm::vec2(240.0f, 0.0f));
 
         GLuint points_vbo = 0;
         glGenBuffers(1, &points_vbo);

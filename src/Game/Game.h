@@ -1,11 +1,12 @@
 #pragma once
 
 #include <array>
+#include<glm/vec2.hpp>
 
 class Game 
 {
 public:
-	Game();
+	Game(const glm::ivec2& windowSize);
 	~Game();
 
 	void render();
@@ -21,4 +22,6 @@ private:
 	};
 
 	EGameState m_eCurrentGameState;
+
+	glm::ivec2 m_WindowSize;
 };

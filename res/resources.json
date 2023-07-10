@@ -1,0 +1,47 @@
+{
+  "shaders": [
+    {
+      "name": "spriteShader",
+      "filePath_v": "res/shaders/sprite.frag",
+      "filePath_f": "res/shaders/sprite.vert"
+    }
+  ],
+  "textureAtlases": [
+    {
+      "name": "DefaultTextureAtlas",
+      "filePath": "res/textures/map_16x16.png",
+      "width": 128,
+      "height": 64,
+      "subTexture_w": 16,
+      "subTexture_h": 16,
+      "subTextures": [
+        "eagle",
+        "deadEagle",
+        "respawn0",
+        "respawn1",
+        "respawn2",
+        "respawn3",
+        "respawn4",
+        "respawn5"
+      ]
+    },
+    {
+      "name": "TanksTextureAtlas",
+      "filePath": "res/textures/tanks.png",
+      "width":256,
+      "height": 256,
+      "subTexture_w": 16,
+      "subTexture_h": 16,
+      "subTextures": [
+        "YellowUp11",
+        "YellowUp12",
+        "YellowLeft11",
+        "YellowLeft12",
+        "YellowBottom11",
+        "YellowBottom12",
+        "YellowRight11",
+        "YellowRight12"
+      ]
+    }
+  ]
+}

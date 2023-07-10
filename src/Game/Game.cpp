@@ -75,7 +75,7 @@ bool Game::init()
         return false;
     }
 
-    auto pSpriteShaderProgram = ResourceManager::loadShaders("SpriteShader", "res/shaders/sprite.vert", "res/shaders/sprite.frag");
+    auto pSpriteShaderProgram = ResourceManager::loadShaders("spriteShader", "res/shaders/sprite.vert", "res/shaders/sprite.frag");
     if (!pSpriteShaderProgram)
     {
         std::cerr << "Can't create shader program!\n";
@@ -110,10 +110,10 @@ bool Game::init()
     auto pTexAtlas = ResourceManager::loadTextureAtlas("DefaultTextureAtlas", subStringNames, "res/textures/map_16x16.png", 16, 16);
     auto pTexAtlasTank = ResourceManager::loadTextureAtlas("TanksTextureAtlas", subStringNamesTanks, "res/textures/tanks.png", 16, 16);
 
-    auto pAnimatedSprite = ResourceManager::loadAnimatedSprite("AnimatedSprite", "DefaultTextureAtlas", "SpriteShader", 100, 100, 0, "deadEagle");
+    auto pAnimatedSprite = ResourceManager::loadAnimatedSprite("AnimatedSprite", "DefaultTextureAtlas", "spriteShader", 100, 100, 0, "deadEagle");
     pAnimatedSprite->setPosition(glm::vec2(240, 350));
 
-    auto pTankSprite = ResourceManager::loadAnimatedSprite("TankSprite", "TanksTextureAtlas", "SpriteShader", 100, 100, 0, "YellowUp11");
+    auto pTankSprite = ResourceManager::loadAnimatedSprite("TankSprite", "TanksTextureAtlas", "spriteShader", 100, 100, 0, "YellowUp11");
 
     pAnimatedSprite->insertState("spawnState", std::move(spawnState));
     pAnimatedSprite->setState("spawnState");

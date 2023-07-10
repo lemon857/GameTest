@@ -77,6 +77,8 @@ int main(int argc, char** argv)
 
     while (!glfwWindowShouldClose(pWindow))
     {
+        glfwPollEvents();
+
         auto currentTime = std::chrono::high_resolution_clock::now();
         uint64_t duration = std::chrono::duration_cast<std::chrono::nanoseconds>(currentTime - lastTime).count();
         lastTime = currentTime;
@@ -88,8 +90,6 @@ int main(int argc, char** argv)
         g_Game.render();
 
         glfwSwapBuffers(pWindow);
-
-        glfwPollEvents();
     }
     ResourceManager::unloadAllResources();
     glfwTerminate();

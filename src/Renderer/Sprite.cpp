@@ -44,29 +44,29 @@ namespace Renderer
 		glGenVertexArrays(1, &m_VAO);
 		glBindVertexArray(m_VAO);
 		
-		//m_vertexCoordsBuffer.init(vertexCoords, 2 * 4 * sizeof(GLfloat));
+		m_vertexCoordsBuffer.init(&vertexCoords, 2 * 4 * sizeof(GLfloat));
 
-		glGenBuffers(1, &m_vertexCoords);
-		glBindBuffer(GL_ARRAY_BUFFER, m_vertexCoords);
-		glBufferData(GL_ARRAY_BUFFER, 2 * 4 * sizeof(GLfloat), &vertexCoords, GL_STATIC_DRAW);
+		//glGenBuffers(1, &m_vertexCoords);
+		//glBindBuffer(GL_ARRAY_BUFFER, m_vertexCoords);
+		//glBufferData(GL_ARRAY_BUFFER, 2 * 4 * sizeof(GLfloat), &vertexCoords, GL_STATIC_DRAW);
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
 
 
-		//m_textureCoordsBuffer.init(textureCoords, 2 * 4 * sizeof(GLfloat));
+		m_textureCoordsBuffer.init(&textureCoords, 2 * 4 * sizeof(GLfloat));
 
-		glGenBuffers(1, &m_textureCoords);
-		glBindBuffer(GL_ARRAY_BUFFER, m_textureCoords);
-		glBufferData(GL_ARRAY_BUFFER, 2 * 4 * sizeof(GLfloat), &textureCoords, GL_STATIC_DRAW);
+		//glGenBuffers(1, &m_textureCoords);
+		//glBindBuffer(GL_ARRAY_BUFFER, m_textureCoords);
+		//glBufferData(GL_ARRAY_BUFFER, 2 * 4 * sizeof(GLfloat), &textureCoords, GL_STATIC_DRAW);
 
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
 
-		//m_indexBuffer.init(&indexes, 6 * sizeof(GLuint));
+		m_indexBuffer.init(&indexes, 6 * sizeof(GLuint));
 
-		glGenBuffers(1, &m_EBO);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(GLuint), &indexes, GL_STATIC_DRAW);
+		//glGenBuffers(1, &m_EBO);
+		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
+		//glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(GLuint), &indexes, GL_STATIC_DRAW);
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);

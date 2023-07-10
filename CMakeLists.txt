@@ -23,6 +23,8 @@ src/Renderer/VertexBuffer.h
 src/Renderer/VertexBuffer.cpp
 src/Renderer/IndexBuffer.h
 src/Renderer/IndexBuffer.cpp
+src/Renderer/Renderer.h
+src/Renderer/Renderer.cpp
 
 src/Game/Game.cpp
 src/Game/Game.h

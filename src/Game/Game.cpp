@@ -68,14 +68,14 @@ void Game::setKey(const int key, const int action)
 }
 bool Game::init()
 {
-    auto pDefaultShaderProgram = ResourceManager::loadShaders("DefaultShader", "res/shaders/vertex.txt", "res/shaders/fragment.txt");
+    auto pDefaultShaderProgram = ResourceManager::loadShaders("DefaultShader", "res/shaders/vertex.vert", "res/shaders/fragment.frag");
     if (!pDefaultShaderProgram)
     {
         std::cerr << "Can't create shader program!\n";
         return false;
     }
 
-    auto pSpriteShaderProgram = ResourceManager::loadShaders("SpriteShader", "res/shaders/vSprite.txt", "res/shaders/fSprite.txt");
+    auto pSpriteShaderProgram = ResourceManager::loadShaders("SpriteShader", "res/shaders/sprite.vert", "res/shaders/sprite.frag");
     if (!pSpriteShaderProgram)
     {
         std::cerr << "Can't create shader program!\n";

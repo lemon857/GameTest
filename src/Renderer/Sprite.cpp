@@ -3,6 +3,7 @@
 #include "ShaderProgram.h"
 #include "Texture2D.h"
 #include "VertexBufferLayout.h"
+#include "Renderer.h"
 
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -52,7 +53,7 @@ namespace RenderEngine
 		textureCoordsLayout.addElementLayoutFloat(2, false);
 		m_vertexArray.addBuffer(m_textureCoordsBuffer, textureCoordsLayout);
 
-		m_indexBuffer.init(&indexes, 6 * sizeof(GLuint));
+		m_indexBuffer.init(&indexes, 6);
 
 		m_vertexArray.unbind();
 		m_indexBuffer.unbind();
@@ -68,15 +69,12 @@ namespace RenderEngine
 		model = glm::rotate(model, glm::radians(m_rotation),  glm::vec3(0.0f, 0.0f, 1.0f));
 		model = glm::translate(model, glm::vec3(-0.5f * m_size.x, -0.5f * m_size.y, 0.0f));
 		model = glm::scale(model, glm::vec3(m_size, 1.0f));
-
-		m_vertexArray.bind();
+		
 		m_pShaderProgram->setMatrix4("modelMat", model);
 
-		glActiveTexture(GL_TEXTURE0);
-		m_pTexture->bind();
+		Renderer::bindTexture(*m_pTexture);
 
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		m_vertexArray.unbind();
+		Renderer::draw(m_vertexArray, m_indexBuffer, *m_pShaderProgram);
 	}
 	void Sprite::setPosition(glm::vec2& position)
 	{

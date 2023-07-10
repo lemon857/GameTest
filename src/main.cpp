@@ -5,6 +5,7 @@
 #include <chrono>
 
 #include "Resources/ResourceManager.h"
+#include "Renderer/Renderer.h"
 #include "Game/Game.h"
 
 
@@ -16,7 +17,7 @@ void glfwWindowSizeCallback(GLFWwindow* pWindow, int width, int height)
 {
     g_WindowSize.x = width;
     g_WindowSize.y = height;
-    glViewport(0, 0, width, height);
+    RenderEngine::Renderer::setViewport(width, height);
 }
 
 void glfwKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mode) 
@@ -60,8 +61,8 @@ int main(int argc, char** argv)
 		return -1;
 	}
 	
-    std::cout << "Renderer: " << glGetString(GL_RENDERER) << "\n";
-    std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << "\n";
+    std::cout << "Renderer: " << RenderEngine::Renderer::getRendererStr() << "\n";
+    std::cout << "OpenGL Version: " << RenderEngine::Renderer::getVersionStr() << "\n";
 
     ResourceManager::setExecutablePath(argv[0]);
 	
@@ -71,8 +72,8 @@ int main(int argc, char** argv)
         return -1;
     }
 
-	glClearColor(0, 0, 0, 1);   
-   
+    RenderEngine::Renderer::setClearColor(0, 0, 0, 1);
+
     auto lastTime = std::chrono::high_resolution_clock::now();
 
     while (!glfwWindowShouldClose(pWindow))
@@ -85,7 +86,7 @@ int main(int argc, char** argv)
 
         g_Game.update(duration);
 
-        glClear(GL_COLOR_BUFFER_BIT);
+        RenderEngine::Renderer::clearColor();
 
         g_Game.render();
 

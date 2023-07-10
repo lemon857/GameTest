@@ -5,7 +5,7 @@
 #include <map>
 #include <glm/vec2.hpp>
 
-namespace Renderer 
+namespace RenderEngine 
 {
 	class Texture2D
 	{

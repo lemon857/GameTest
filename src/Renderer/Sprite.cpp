@@ -2,11 +2,12 @@
 
 #include "ShaderProgram.h"
 #include "Texture2D.h"
+#include "VertexBufferLayout.h"
 
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-namespace Renderer
+namespace RenderEngine
 {
 	Sprite::Sprite(std::shared_ptr<Texture2D> pTexture, std::string initialSubTexture, std::shared_ptr<ShaderProgram> pShaderProgram,
 		const glm::vec2& position, const glm::vec2& size, const float rotation)
@@ -40,42 +41,21 @@ namespace Renderer
 
 		};
 		const GLuint indexes[] = { 0, 1, 2, 2, 3, 0 };
-
-		glGenVertexArrays(1, &m_VAO);
-		glBindVertexArray(m_VAO);
-		
+			
 		m_vertexCoordsBuffer.init(&vertexCoords, 2 * 4 * sizeof(GLfloat));
-
-		//glGenBuffers(1, &m_vertexCoords);
-		//glBindBuffer(GL_ARRAY_BUFFER, m_vertexCoords);
-		//glBufferData(GL_ARRAY_BUFFER, 2 * 4 * sizeof(GLfloat), &vertexCoords, GL_STATIC_DRAW);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
-
+		VertexBufferLayout vertexCoordsLayout;
+		vertexCoordsLayout.addElementLayoutFloat(2, false);
+		m_vertexArray.addBuffer(m_vertexCoordsBuffer, vertexCoordsLayout);
 
 		m_textureCoordsBuffer.init(&textureCoords, 2 * 4 * sizeof(GLfloat));
-
-		//glGenBuffers(1, &m_textureCoords);
-		//glBindBuffer(GL_ARRAY_BUFFER, m_textureCoords);
-		//glBufferData(GL_ARRAY_BUFFER, 2 * 4 * sizeof(GLfloat), &textureCoords, GL_STATIC_DRAW);
-
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+		VertexBufferLayout textureCoordsLayout;
+		textureCoordsLayout.addElementLayoutFloat(2, false);
+		m_vertexArray.addBuffer(m_textureCoordsBuffer, textureCoordsLayout);
 
 		m_indexBuffer.init(&indexes, 6 * sizeof(GLuint));
 
-		//glGenBuffers(1, &m_EBO);
-		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
-		//glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(GLuint), &indexes, GL_STATIC_DRAW);
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindVertexArray(0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	}
-
-	Sprite::~Sprite()
-	{
-		glDeleteVertexArrays(1, &m_VAO);
+		m_vertexArray.unbind();
+		m_indexBuffer.unbind();
 	}
 	void Sprite::render() const
 	{
@@ -89,14 +69,14 @@ namespace Renderer
 		model = glm::translate(model, glm::vec3(-0.5f * m_size.x, -0.5f * m_size.y, 0.0f));
 		model = glm::scale(model, glm::vec3(m_size, 1.0f));
 
-		glBindVertexArray(m_VAO);
+		m_vertexArray.bind();
 		m_pShaderProgram->setMatrix4("modelMat", model);
 
 		glActiveTexture(GL_TEXTURE0);
 		m_pTexture->bind();
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0);
+		m_vertexArray.unbind();
 	}
 	void Sprite::setPosition(glm::vec2& position)
 	{

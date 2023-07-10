@@ -1,6 +1,6 @@
 #include "Texture2D.h"
 
-namespace Renderer 
+namespace RenderEngine 
 {
 	Texture2D::Texture2D(const GLuint width, const GLuint height, unsigned char* data, const unsigned int channels,
 		const GLenum filter, const GLenum wrapMode)

@@ -7,8 +7,9 @@
 
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
+#include "VertexArray.h"
 
-namespace Renderer 
+namespace RenderEngine 
 {
 	class Texture2D;
 	class ShaderProgram;
@@ -23,8 +24,6 @@ namespace Renderer
 			const glm::vec2& size = glm::vec2(1.0f),
 			const float rotation = 0.0f);
 
-		~Sprite();
-
 		Sprite(const Sprite&) = delete;
 		Sprite& operator=(const Sprite&) = delete;
 
@@ -38,14 +37,10 @@ namespace Renderer
 		glm::vec2 m_position;
 		glm::vec2 m_size;
 		float m_rotation;
-		GLuint m_VAO;
 
+		VertexArray m_vertexArray;
 		VertexBuffer m_vertexCoordsBuffer;
 		VertexBuffer m_textureCoordsBuffer;
 		IndexBuffer m_indexBuffer; 
-
-		GLuint m_vertexCoords;
-		GLuint m_textureCoords;
-		GLuint m_EBO;
 	};
 }

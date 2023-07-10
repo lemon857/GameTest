@@ -4,7 +4,7 @@
 #include <glad/glad.h>
 #include <glm/mat4x4.hpp>
 
-namespace Renderer
+namespace RenderEngine
 {
 	class ShaderProgram {
 	public:

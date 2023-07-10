@@ -25,6 +25,10 @@ src/Renderer/IndexBuffer.h
 src/Renderer/IndexBuffer.cpp
 src/Renderer/Renderer.h
 src/Renderer/Renderer.cpp
+src/Renderer/VertexArray.h
+src/Renderer/VertexArray.cpp
+src/Renderer/VertexBufferLayout.h
+src/Renderer/VertexBufferLayout.cpp
 
 src/Game/Game.cpp
 src/Game/Game.h

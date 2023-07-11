@@ -7,10 +7,6 @@
 #include <sstream>
 #include <fstream>
 #include <iostream>
-
-#include <rapidjson/document.h>
-#include <rapidjson/error/en.h>
-
 #define STB_IMAGE_IMPLEMENTATION
 #define STBI_ONLY_PNG
 #include "stb_image.h"
@@ -33,94 +29,6 @@ void ResourceManager::setExecutablePath(const std::string& executablePath)
 {
 	size_t found = executablePath.find_last_of("/\\");
 	m_path = executablePath.substr(0, found);
-}
-bool ResourceManager::loadJSONresources(const std::string& JSONpath)
-{
-	const std::string JSONstr = getFileString(JSONpath);
-	if (JSONstr.empty())
-	{
-		std::cerr << "No JSON file: " << JSONpath << "\n";
-		return false;
-	}
-	rapidjson::Document doc;
-	rapidjson::ParseResult result = doc.Parse(JSONstr.c_str());
-	if (!result)
-	{
-		std::cerr << "JSON parse error: " << rapidjson::GetParseError_En(result.Code()) << "(" << result.Offset() << ")\n";
-		std::cerr << "In JSON file: " << JSONpath << "\n";
-		return false;
-	}
-	auto shadersIt = doc.FindMember("shaders");
-	if (shadersIt != doc.MemberEnd())
-	{
-		for (const auto& currentShader : shadersIt->value.GetArray())
-		{
-			const std::string name = currentShader["name"].GetString();
-			const std::string vertShader = currentShader["filePath_v"].GetString(); 
-			const std::string fragShader = currentShader["filePath_f"].GetString();
-			loadShaders(name, vertShader, fragShader);
-		}
-	}
-	auto atlasesIt = doc.FindMember("textureAtlases");
-	if (atlasesIt != doc.MemberEnd())
-	{
-		for (const auto& currentAtlas : atlasesIt->value.GetArray())
-		{
-			const std::string name = currentAtlas["name"].GetString();
-			const std::string path = currentAtlas["filePath"].GetString();
-			const unsigned int width = currentAtlas["width"].GetUint();
-			const unsigned int height = currentAtlas["height"].GetUint();
-			const unsigned int subTextureWidth = currentAtlas["subTexture_w"].GetUint();
-			const unsigned int subTextureHeight = currentAtlas["subTexture_h"].GetUint();
-
-			const auto subTexturesArray = currentAtlas["subTextures"].GetArray();
-			std::vector<std::string> subTextures;
-			subTextures.reserve(subTexturesArray.Size());
-
-			for (const auto& currentSubTexture : subTexturesArray)
-			{
-				subTextures.emplace_back(currentSubTexture.GetString());
-			}
-
-			loadTextureAtlas(name, subTextures, path, width, height, subTextureWidth, subTextureHeight);
-		}
-	}
-	auto animSpritesIt = doc.FindMember("AnimatedSprites");
-	if (animSpritesIt != doc.MemberEnd())
-	{
-		for (const auto& currentAnimSprite : animSpritesIt->value.GetArray())
-		{
-			const std::string name = currentAnimSprite["name"].GetString();
-			const std::string shader = currentAnimSprite["shader"].GetString();
-			const std::string atlas = currentAnimSprite["textureAtlas"].GetString();
-			const std::string initSubTexture = currentAnimSprite["initialSubTexture"].GetString();
-
-			const unsigned int width = currentAnimSprite["initialWidth"].GetUint();
-			const unsigned int height = currentAnimSprite["initialHeight"].GetUint();
-			const unsigned int rotation = currentAnimSprite["initialRotation"].GetUint();
-
-			auto sprite = loadAnimatedSprite(name, atlas, shader, width, height, rotation, initSubTexture);
-			if (!sprite) continue;
-
-			const auto states = currentAnimSprite["states"].GetArray();
-
-			for (const auto& currentState : states)
-			{
-				const std::string stateName = currentState["stateName"].GetString();
-				std::vector <std::pair<std::string, uint64_t>> frames;
-				const auto framesArray = currentState["frames"].GetArray();
-				frames.reserve(framesArray.Size());
-				for (const auto& currentFrame : framesArray)
-				{
-					const std::string subTexture = currentFrame["subTexture"].GetString();
-					const uint64_t duration = currentFrame["duration"].GetUint64();
-					frames.emplace_back(std::pair<std::string, uint64_t>(subTexture, duration));
-				}
-				sprite->insertState(stateName, std::move(frames));
-			}
-		}
-	}
-	return true;
 }
 
 std::string ResourceManager::getFileString(const std::string& relativeFilePath)
@@ -231,30 +139,26 @@ std::shared_ptr<RenderEngine::Sprite> ResourceManager::getSprite(const std::stri
 	std::cerr << "Can't find sprite: " << spriteName << "\n";
 	return nullptr;
 }
-std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTextureAtlas(
-	std::string textureName, 
-	const std::vector<std::string> subTextures, 
-	std::string texturePath,
-	const unsigned int width, 
-	const unsigned int height,
-	const unsigned int subTextureWidth,
-	const unsigned int subTextureHeight)
+std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTextureAtlas(const std::string textureName, const std::vector<std::string> subTextures, const std::string texturePath,
+	const unsigned int width, const unsigned int height) 
 {
 	auto pTexture = loadTexture(std::move(textureName), std::move(texturePath));
 	if (pTexture) 
 	{
+		const unsigned int textureWidth = pTexture->width();
+		const unsigned int textureHeight = pTexture->height();
 		unsigned int currentTextureOffsetX = 0;
-		unsigned int currentTextureOffsetY = height;
-		for (auto& currentSubTextureName : subTextures)
+		unsigned int currentTextureOffsetY = textureHeight;
+		for (const auto& currentSubTextureName : subTextures)
 		{
-			glm::vec2 leftBottomUV(static_cast<float>(currentTextureOffsetX) / width, static_cast<float>(currentTextureOffsetY - subTextureHeight) / height);
-			glm::vec2 rightTop(static_cast<float>(currentTextureOffsetX + subTextureWidth) / width, static_cast<float>(currentTextureOffsetY) / height);
+			glm::vec2 leftBottomUV(static_cast<float>(currentTextureOffsetX) / textureWidth, static_cast<float>(currentTextureOffsetY - height) / textureHeight);
+			glm::vec2 rightTop(static_cast<float>(currentTextureOffsetX + width) / textureWidth, static_cast<float>(currentTextureOffsetY) / textureHeight);
 			pTexture->addSubTexture(std::move(currentSubTextureName), leftBottomUV, rightTop);
-			currentTextureOffsetX += subTextureWidth;
-			if (currentTextureOffsetX >= width)
+			currentTextureOffsetX += width;
+			if (currentTextureOffsetX >= textureWidth) 
 			{
 				currentTextureOffsetX = 0;
-				currentTextureOffsetY -= subTextureHeight;
+				currentTextureOffsetY -= height;
 			}
 		}
 	}

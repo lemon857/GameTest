@@ -59,14 +59,11 @@ namespace RenderEngine
 		static std::shared_ptr<RenderEngine::AnimatedSprite> getAnimatedSprite(const std::string& spriteName);
 
 		static std::shared_ptr<RenderEngine::Texture2D> loadTextureAtlas(
-			std::string textureName,
+			const std::string textureName,
 			const std::vector<std::string> subTextures,
-			std::string texturePath,
+			const std::string texturePath,
 			const unsigned int width,
-			const unsigned int height,
-			const unsigned int subTextureWidth,
-			const unsigned int subTextureHeight);
-		static bool loadJSONresources(const std::string& JSONpath);
+			const unsigned int height);
 	private:
 		static std::string getFileString(const std::string& relativeFilePath);
 

@@ -2,8 +2,8 @@
   "shaders": [
     {
       "name": "spriteShader",
-      "filePath_v": "res/shaders/sprite.frag",
-      "filePath_f": "res/shaders/sprite.vert"
+      "filePath_v": "res/shaders/sprite.vert",
+      "filePath_f": "res/shaders/sprite.frag"
     }
   ],
   "textureAtlases": [
@@ -28,7 +28,7 @@
     {
       "name": "TanksTextureAtlas",
       "filePath": "res/textures/tanks.png",
-      "width":256,
+      "width": 256,
       "height": 256,
       "subTexture_w": 16,
       "subTexture_h": 16,
@@ -43,5 +43,123 @@
         "YellowRight12"
       ]
     }
+  ],
+  "AnimatedSprites": [
+    {
+      "name": "TankSprite",
+      "shader": "spriteShader",
+      "textureAtlas": "TanksTextureAtlas",
+      "initialWidth": 100,
+      "initialHeight": 100,
+      "initialRotation": 0,
+      "initialSubTexture": "YellowUp11",
+      "states": [
+        {
+          "stateName": "TopState",
+          "frames": [
+            {
+              "subTexture": "YellowUp11",
+              "duration": 70000000
+            },
+            {
+              "subTexture": "YellowUp12",
+              "duration": 70000000
+            }
+          ]
+        },
+        {
+          "stateName": "LeftState",
+          "frames": [
+            {
+              "subTexture": "YellowLeft11",
+              "duration": 70000000
+            },
+            {
+              "subTexture": "YellowLeft12",
+              "duration": 70000000
+            }
+          ]
+        },
+        {
+          "stateName": "BottomState",
+          "frames": [
+            {
+              "subTexture": "YellowBottom11",
+              "duration": 70000000
+            },
+            {
+              "subTexture": "YellowBottom12",
+              "duration": 70000000
+            }
+          ]
+        },
+        {
+          "stateName": "RightState",
+          "frames": [
+            {
+              "subTexture": "YellowRight11",
+              "duration": 70000000
+            },
+            {
+              "subTexture": "YellowRight12",
+              "duration": 70000000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "AnimatedSprite",
+      "shader": "spriteShader",
+      "textureAtlas": "DefaultTextureAtlas",
+      "initialWidth": 100,
+      "initialHeight": 100,
+      "initialRotation": 0,
+      "initialSubTexture": "deadEagle",
+      "states": [
+        {
+          "stateName": "spawnState",
+          "frames": [
+            {
+              "subTexture": "respawn0",
+              "duration": 50000000
+            },
+            {
+              "subTexture": "respawn1",
+              "duration": 50000000
+            },
+            {
+              "subTexture": "respawn2",
+              "duration": 50000000
+            },
+            {
+              "subTexture": "respawn3",
+              "duration": 50000000
+            },
+            {
+              "subTexture": "respawn4",
+              "duration": 80000000
+            },
+            {
+              "subTexture": "respawn5",
+              "duration": 100000000
+            },
+            {
+              "subTexture": "respawn4",
+              "duration": 100000000
+            },
+            {
+              "subTexture": "respawn5",
+              "duration": 100000000
+            },
+            {
+              "subTexture": "eagle",
+              "duration": 400000000
+            }
+          ]
+        }
+      ]
+    }
+
   ]
 }

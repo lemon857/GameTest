@@ -23,7 +23,7 @@ namespace RenderEngine
 		auto it = m_statesMap.find(newState);
 		if (it == m_statesMap.end()) 
 		{
-			std::cout << "Can't find anomation state: " << newState << "\n";
+			std::cout << "Can't find animation state: " << newState << "\n";
 			return;
 		}
 		if (it != m_pCurrentAnimationDuration) 
@@ -55,7 +55,12 @@ namespace RenderEngine
 
 	void AnimatedSprite::render() const
 	{
-		auto subTexture = m_pTexture->getSubTexture(m_pCurrentAnimationDuration->second[m_currentFrame].first);
+		auto state = m_pCurrentAnimationDuration->second;
+		if (state.empty())
+		{
+			std::cerr << "Current state is empty\n";
+		}
+		auto subTexture = m_pTexture->getSubTexture(state[m_currentFrame].first);
 
 		if (m_ditry)
 		{

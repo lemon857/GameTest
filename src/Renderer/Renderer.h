@@ -15,6 +15,7 @@ namespace RenderEngine
 		static void draw(const VertexArray& vertexArray, const IndexBuffer& indexBuffer, const ShaderProgram& shader);
 		static void bindTexture(const Texture2D& texture);
 		static void setClearColor(const float r, const float g, const float b, const float a = 1.0f);
+		static void setDepthTest(const bool enable);
 		static void clearColor();
 		static void setViewport(unsigned int width, unsigned int height, unsigned int offsetLeft = 0, unsigned int offsetBottom = 0);
 

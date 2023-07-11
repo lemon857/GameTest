@@ -99,7 +99,9 @@ bool ResourceManager::loadJSONresources(const std::string & JSONpath)
 			const unsigned int height = currentAnimSprite["initialHeight"].GetUint();
 			const unsigned int rotation = currentAnimSprite["initialRotation"].GetUint();
 
-			auto sprite = loadAnimatedSprite(name, atlas, shader, width, height, rotation, initSubTexture);
+			const float layer = currentAnimSprite["layer"].GetFloat();
+
+			auto sprite = loadAnimatedSprite(name, atlas, shader, width, height, rotation, layer, initSubTexture);
 			if (!sprite) continue;
 
 			const auto states = currentAnimSprite["states"].GetArray();
@@ -201,7 +203,8 @@ std::shared_ptr<RenderEngine::Texture2D> ResourceManager::getTexture(const std::
 	return nullptr;
 }
 std::shared_ptr<RenderEngine::Sprite>  ResourceManager::loadSprite(const std::string& spriteName, const std::string& textureName,
-	const std::string& shaderName, const unsigned int spriteWidth, const unsigned int spriteHeight, const float rotation, const std::string& subTextureName)
+	const std::string& shaderName, const unsigned int spriteWidth, const unsigned int spriteHeight, const float rotation,
+	const float layer, const std::string& subTextureName)
 {
 	auto pTexture = getTexture(textureName);
 	if (!pTexture)
@@ -217,7 +220,7 @@ std::shared_ptr<RenderEngine::Sprite>  ResourceManager::loadSprite(const std::st
 		return nullptr;
 	}
 	std::shared_ptr<RenderEngine::Sprite>& newSprite = m_sprites.emplace(spriteName, std::make_shared<RenderEngine::Sprite>(pTexture, subTextureName, 
-		pShaderProgram, glm::vec2(0.0f, 0.0f), glm::vec2(spriteWidth, spriteHeight), rotation)).first->second;
+		pShaderProgram, glm::vec2(0.0f, 0.0f), glm::vec2(spriteWidth, spriteHeight), rotation, layer)).first->second;
 	return newSprite;
 }
 std::shared_ptr<RenderEngine::Sprite> ResourceManager::getSprite(const std::string& spriteName)
@@ -267,6 +270,7 @@ std::shared_ptr<RenderEngine::AnimatedSprite>  ResourceManager::loadAnimatedSpri
 	const unsigned int spriteWidth,
 	const unsigned int spriteHeight,
 	const float rotation,
+	const float layer,
 	const std::string& subTextureName)
 {
 	auto pTexture = getTexture(textureName);
@@ -283,7 +287,7 @@ std::shared_ptr<RenderEngine::AnimatedSprite>  ResourceManager::loadAnimatedSpri
 		return nullptr;
 	}
 	std::shared_ptr<RenderEngine::AnimatedSprite>& newSprite = m_animateSprites.emplace(spriteName, std::make_shared<RenderEngine::AnimatedSprite>(pTexture, subTextureName,
-		pShaderProgram, glm::vec2(0.0f, 0.0f), glm::vec2(spriteWidth, spriteHeight), rotation)).first->second;
+		pShaderProgram, glm::vec2(0.0f, 0.0f), glm::vec2(spriteWidth, spriteHeight), rotation, layer)).first->second;
 	return newSprite;
 }
 std::shared_ptr<RenderEngine::AnimatedSprite> ResourceManager::getAnimatedSprite(const std::string& spriteName)

@@ -13,6 +13,7 @@ namespace RenderEngine
 		bool isCompiled() const;
 		void use() const;
 		void setInt(const std::string& name, const GLint& value) const;
+		void setFloat(const std::string& name, const GLfloat& value) const;
 		void setMatrix4(const std::string& name, const glm::mat4& matrix) const;
 
 		ShaderProgram() = delete;

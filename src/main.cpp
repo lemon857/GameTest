@@ -73,6 +73,7 @@ int main(int argc, char** argv)
     }
 
     RenderEngine::Renderer::setClearColor(0, 0, 0, 1);
+    RenderEngine::Renderer::setDepthTest(true);
 
     auto lastTime = std::chrono::high_resolution_clock::now();
 

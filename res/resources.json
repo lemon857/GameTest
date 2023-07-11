@@ -52,6 +52,7 @@
       "initialWidth": 100,
       "initialHeight": 100,
       "initialRotation": 0,
+      "layer": 0,
       "initialSubTexture": "YellowUp11",
       "states": [
         {
@@ -114,7 +115,8 @@
       "textureAtlas": "DefaultTextureAtlas",
       "initialWidth": 100,
       "initialHeight": 100,
-      "initialRotation": 0,
+      "initialRotation": 45,
+      "layer": 1,
       "initialSubTexture": "deadEagle",
       "states": [
         {

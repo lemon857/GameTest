@@ -11,7 +11,7 @@ namespace RenderEngine
 	{
 	public:
 		AnimatedSprite(std::shared_ptr<Texture2D> pTexture, std::string initialSubTexture, std::shared_ptr<ShaderProgram> pShaderProgram,
-			const glm::vec2& position = glm::vec2(0.0f), const glm::vec2& size = glm::vec2(1.0f), const float rotation = 0.0f);
+			const glm::vec2& position = glm::vec2(0.0f), const glm::vec2& size = glm::vec2(1.0f), const float rotation = 0.0f, const float layer = 0.0f);
 
 
 		void insertState(std::string state, std::vector<std::pair<std::string, uint64_t>> subTexturesDuration);

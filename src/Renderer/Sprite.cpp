@@ -11,8 +11,8 @@
 namespace RenderEngine
 {
 	Sprite::Sprite(std::shared_ptr<Texture2D> pTexture, std::string initialSubTexture, std::shared_ptr<ShaderProgram> pShaderProgram,
-		const glm::vec2& position, const glm::vec2& size, const float rotation)
-		: m_position(position), m_rotation(rotation), m_size(size), m_pTexture(pTexture), m_pShaderProgram(pShaderProgram)
+		const glm::vec2& position, const glm::vec2& size, const float rotation, const float layer)
+		: m_position(position), m_rotation(rotation), m_size(size), m_pTexture(pTexture), m_pShaderProgram(pShaderProgram), m_layer(layer)
 	{
 	
 		const GLfloat vertexCoords[] = {
@@ -71,6 +71,7 @@ namespace RenderEngine
 		model = glm::scale(model, glm::vec3(m_size, 1.0f));
 		
 		m_pShaderProgram->setMatrix4("modelMat", model);
+		m_pShaderProgram->setFloat("layer", m_layer);
 
 		Renderer::bindTexture(*m_pTexture);
 

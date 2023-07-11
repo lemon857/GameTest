@@ -88,7 +88,7 @@ bool Game::init()
 
     pTankSprite->setState("TopState");
 
-    m_pTank = std::make_unique<Tank>(pTankSprite, 0.0000001f, glm::vec2(100.f, 100.f));
+    m_pTank = std::make_unique<Tank>(pTankSprite, 0.0000005f, glm::vec2(100.f, 100.f));
 
 	return true;
 }

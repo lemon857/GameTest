@@ -47,6 +47,7 @@ namespace RenderEngine
 			const unsigned int spriteWidth,
 			const unsigned int spriteHeight, 
 			const float rotation,
+			const float layer,
 			const std::string& subTextureName = "default");
 		static std::shared_ptr<RenderEngine::Sprite> getSprite(const std::string& spriteName);
 
@@ -57,6 +58,7 @@ namespace RenderEngine
 			const unsigned int spriteWidth,
 			const unsigned int spriteHeight, 
 			const float rotation,
+			const float layer,
 			const std::string& subTextureName = "default");
 		static std::shared_ptr<RenderEngine::AnimatedSprite> getAnimatedSprite(const std::string& spriteName);
 

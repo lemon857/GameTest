@@ -21,7 +21,8 @@ namespace RenderEngine
 			std::shared_ptr<ShaderProgram> pShaderProgram,
 			const glm::vec2& position = glm::vec2(0.0f),
 			const glm::vec2& size = glm::vec2(1.0f),
-			const float rotation = 0.0f);
+			const float rotation = 0.0f,
+			const float layer = 0.0f);
 
 		Sprite(const Sprite&) = delete;
 		Sprite& operator=(const Sprite&) = delete;
@@ -36,6 +37,7 @@ namespace RenderEngine
 		glm::vec2 m_position;
 		glm::vec2 m_size;
 		float m_rotation;
+		float m_layer;
 
 		VertexArray m_vertexArray;
 		VertexBuffer m_vertexCoordsBuffer;

@@ -31,4 +31,5 @@ private:
 	glm::ivec2 m_WindowSize;
 
 	std::shared_ptr<Tank> m_pTank;
+	std::shared_ptr<Tank> m_pTank2;
 };

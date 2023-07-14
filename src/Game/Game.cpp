@@ -10,6 +10,7 @@
 #include "../Renderer/Texture2D.h"
 #include "../Resources/ResourceManager.h"
 #include "../Physics/PhysicsEngine.h"
+#include "../Physics/Collider.h"
 
 Game::Game(const glm::ivec2& windowSize)
     : m_eCurrentGameState(EGameState::Active)
@@ -26,6 +27,7 @@ void Game::render()
 {
     //ResourceManager::getSprite("wall")->render();
     m_pTank->render();
+    m_pTank2->render();
 }
 void Game::update(const double delta)
 {
@@ -82,9 +84,20 @@ bool Game::init()
     pSpriteShaderProgram->setInt("tex", 0);
     pSpriteShaderProgram->setMatrix4("projectionMat", projectionMatrix);
 
-    m_pTank = std::make_shared<Tank>(pTankSprite, 0.5, 1, glm::vec2(100.f, 100.f), glm::vec2(100.f, 100.f));
+    m_pTank = std::make_shared<Tank>(pTankSprite, 0.5, 0.05, glm::vec2(100.f, 200.f), glm::vec2(100.f, 100.f));
+    m_pTank2 = std::make_shared<Tank>(pTankSprite, 0.5, 1, glm::vec2(100.f, 0.f), glm::vec2(100.f, 100.f));
 
-    PhysicsEngine::addDynamicObj(m_pTank);
+    m_pTank->setKinematicState(false);
+    m_pTank2->setKinematicState(true);
+
+    Physics::PhysicsEngine::addDynamicObj(m_pTank, 1);
+    Physics::PhysicsEngine::addDynamicObj(m_pTank2, 2);
+
+    std::shared_ptr<Physics::Collider>col1 = std::make_shared<Physics::Collider>(m_pTank);
+    std::shared_ptr<Physics::Collider>col2 = std::make_shared<Physics::Collider>(m_pTank2);
+
+    Physics::PhysicsEngine::addCollider(col1, 1);
+    Physics::PhysicsEngine::addCollider(col2, 2);
 
 	return true;
 }

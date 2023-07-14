@@ -36,6 +36,8 @@ src/Game/IGameObjec.h
 
 src/Physics/PhysicsEngine.h
 src/Physics/PhysicsEngine.cpp
+src/Physics/Collider.h
+src/Physics/Collider.cpp
 
 src/System/Timer.h
 src/System/Timer.cpp

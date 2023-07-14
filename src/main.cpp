@@ -77,7 +77,7 @@ int main(int argc, char** argv)
     RenderEngine::Renderer::setClearColor(0, 0, 0, 1);
     RenderEngine::Renderer::setDepthTest(true);
 
-    PhysicsEngine::init();
+    Physics::PhysicsEngine::init();
 
     auto lastTime = std::chrono::high_resolution_clock::now();
 
@@ -91,7 +91,7 @@ int main(int argc, char** argv)
 
         g_Game.update(duration);
 
-        PhysicsEngine::update(duration);
+        Physics::PhysicsEngine::update(duration);
 
         RenderEngine::Renderer::clearColor();
 

@@ -2,26 +2,42 @@
 
 #include <unordered_set>
 #include <memory>
+#include <map>
+#include<glm/vec2.hpp>
 
 class IGameObject;
 
-class PhysicsEngine 
+namespace Physics
 {
-public:
-	~PhysicsEngine() = delete;
-	PhysicsEngine() = delete;
+	class Collider;	
 
-	PhysicsEngine(const PhysicsEngine&) = delete;
-	PhysicsEngine(const PhysicsEngine&&) = delete;
-	PhysicsEngine& operator=(const PhysicsEngine&) = delete;
-	PhysicsEngine& operator=(const PhysicsEngine&&) = delete;
+	class PhysicsEngine
+	{
+	public:
+		~PhysicsEngine() = delete;
+		PhysicsEngine() = delete;
 
-	static void init();
-	static void addDynamicObj(std::shared_ptr<IGameObject> obj);
-	static void terminate();
-	static void update(const double delta);
+		PhysicsEngine(const PhysicsEngine&) = delete;
+		PhysicsEngine(const PhysicsEngine&&) = delete;
+		PhysicsEngine& operator=(const PhysicsEngine&) = delete;
+		PhysicsEngine& operator=(const PhysicsEngine&&) = delete;
 
-private:
-	static std::unordered_set<std::shared_ptr<IGameObject>> m_dynamicObj;
-	static double m_g;
-};
+		static void init();
+		static void addDynamicObj(std::shared_ptr<IGameObject> obj, int id);
+		static void addCollider(std::shared_ptr<Collider> collider, int id);
+		static void terminate();
+		static void update(const double delta);
+
+	private:
+		static bool hasCollidersIntersection(const std::shared_ptr<Collider> collider1, const std::shared_ptr<Collider> collider2);
+
+		typedef std::map<const int, std::shared_ptr<IGameObject>> objMap;
+		static objMap m_dynamicObj;
+
+		typedef std::map<const int, std::shared_ptr<Collider>> ColliderMap;
+		static ColliderMap m_colliders;
+
+		static double m_g;
+		static int m_currentID;
+	};
+}

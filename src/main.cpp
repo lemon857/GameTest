@@ -8,6 +8,8 @@
 #include "Renderer/Renderer.h"
 #include "Game/Game.h"
 
+#include "Physics/PhysicsEngine.h"
+
 
 glm::ivec2 g_WindowSize(640, 480);
 
@@ -75,6 +77,8 @@ int main(int argc, char** argv)
     RenderEngine::Renderer::setClearColor(0, 0, 0, 1);
     RenderEngine::Renderer::setDepthTest(true);
 
+    PhysicsEngine::init();
+
     auto lastTime = std::chrono::high_resolution_clock::now();
 
     while (!glfwWindowShouldClose(pWindow))
@@ -82,10 +86,12 @@ int main(int argc, char** argv)
         glfwPollEvents();
 
         auto currentTime = std::chrono::high_resolution_clock::now();
-        uint64_t duration = std::chrono::duration_cast<std::chrono::nanoseconds>(currentTime - lastTime).count();
+        double duration = std::chrono::duration<double, std::milli>(currentTime - lastTime).count();
         lastTime = currentTime;
 
         g_Game.update(duration);
+
+        PhysicsEngine::update(duration);
 
         RenderEngine::Renderer::clearColor();
 

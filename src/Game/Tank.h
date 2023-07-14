@@ -2,13 +2,14 @@
 
 #include <memory>
 #include <glm/vec2.hpp>
+#include "IGameObjec.h"
 
 namespace RenderEngine
 {
-	class AnimatedSprite;
+	class Sprite;
 }
 
-class Tank
+class Tank : public IGameObject
 {
 public:
 	enum class EOrentation
@@ -19,18 +20,14 @@ public:
 		Right
 	};
 
-	Tank(std::shared_ptr<RenderEngine::AnimatedSprite> pSprite, const float velocity, glm::vec2& position);
+	Tank(std::shared_ptr<RenderEngine::Sprite> pSprite, double velocity, double weight, glm::vec2& position, glm::vec2& size);
 
 	void render() const;
 	void setOrentation(const EOrentation orentation);
 	void move(const bool move);
-	void update(const uint64_t delta);
+	void update(const double delta) override;
 
 private:
 	EOrentation m_eOrentation;
-	std::shared_ptr<RenderEngine::AnimatedSprite> m_pSprite;
-	bool m_move;
-	float m_velocity;
-	glm::vec2 m_position;
-	glm::vec2 m_moveOffset;
+	std::shared_ptr<RenderEngine::Sprite> m_pSprite;
 };

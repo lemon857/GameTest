@@ -10,9 +10,8 @@
 
 namespace RenderEngine
 {
-	Sprite::Sprite(std::shared_ptr<Texture2D> pTexture, std::string initialSubTexture, std::shared_ptr<ShaderProgram> pShaderProgram,
-		const glm::vec2& position, const glm::vec2& size, const float rotation, const float layer)
-		: m_position(position), m_rotation(rotation), m_size(size), m_pTexture(pTexture), m_pShaderProgram(pShaderProgram), m_layer(layer)
+	Sprite::Sprite(std::shared_ptr<Texture2D> pTexture, std::string initialSubTexture, std::shared_ptr<ShaderProgram> pShaderProgram)
+		: m_pTextureAtlas(pTexture), m_pShaderProgram(pShaderProgram)
 	{
 	
 		const GLfloat vertexCoords[] = {
@@ -31,7 +30,7 @@ namespace RenderEngine
 			1.0f, 0.0f,
 		};
 
-		auto subTexture = m_pTexture->getSubTexture(initialSubTexture);
+		auto subTexture = m_pTextureAtlas->getSubTexture(initialSubTexture);
 
 		const GLfloat textureCoords[] = {				
 				//U --- V
@@ -58,35 +57,23 @@ namespace RenderEngine
 		m_vertexArray.unbind();
 		m_indexBuffer.unbind();
 	}
-	void Sprite::render() const
+	void Sprite::render(const glm::vec2 position, const glm::vec2 size, const double rotation, const int layer) const
 	{
 		m_pShaderProgram->use();
 
 		glm::mat4 model(1.0f);
 
-		model = glm::translate(model, glm::vec3(m_position, 0.0f)); 
-		model = glm::translate(model, glm::vec3(0.5f * m_size.x, 0.5f * m_size.y, 0.0f));
-		model = glm::rotate(model, glm::radians(m_rotation),  glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::translate(model, glm::vec3(-0.5f * m_size.x, -0.5f * m_size.y, 0.0f));
-		model = glm::scale(model, glm::vec3(m_size, 1.0f));
+		model = glm::translate(model, glm::vec3(position, 0.0f));
+		model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f));
+		model = glm::rotate(model, static_cast<float>(glm::radians(rotation)),  glm::vec3(0.0f, 0.0f, 1.0f));
+		model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f));
+		model = glm::scale(model, glm::vec3(size, 1.0f));
 		
 		m_pShaderProgram->setMatrix4("modelMat", model);
-		m_pShaderProgram->setFloat("layer", m_layer);
+		m_pShaderProgram->setFloat("layer", layer);
 
-		Renderer::bindTexture(*m_pTexture);
+		Renderer::bindTexture(*m_pTextureAtlas);
 
 		Renderer::draw(m_vertexArray, m_indexBuffer, *m_pShaderProgram);
-	}
-	void Sprite::setPosition(glm::vec2& position)
-	{
-		m_position = position;
-	}
-	void Sprite::setSize(glm::vec2& size)
-	{ 
-		m_size = size;
-	}
-	void Sprite::setRotation(const float rotation)
-	{
-		m_rotation = rotation;
 	}
 }

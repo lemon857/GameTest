@@ -15,7 +15,7 @@ public:
 	~Game();
 
 	void render();
-	void update(const uint64_t delta);
+	void update(const double delta);
 	void setKey(const int key, const int action);
 	bool init();
 private:
@@ -30,5 +30,5 @@ private:
 
 	glm::ivec2 m_WindowSize;
 
-	std::unique_ptr<Tank> m_pTank;
+	std::shared_ptr<Tank> m_pTank;
 };

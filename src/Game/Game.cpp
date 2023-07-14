@@ -8,9 +8,8 @@
 
 #include "../Renderer/ShaderProgram.h"
 #include "../Renderer/Texture2D.h"
-#include "../Renderer/Sprite.h"
-#include "../Renderer/AnimatedSprite.h"
 #include "../Resources/ResourceManager.h"
+#include "../Physics/PhysicsEngine.h"
 
 Game::Game(const glm::ivec2& windowSize)
     : m_eCurrentGameState(EGameState::Active)
@@ -25,12 +24,11 @@ Game::~Game()
 
 void Game::render()
 {
-    ResourceManager::getAnimatedSprite("AnimatedSprite")->render();
+    //ResourceManager::getSprite("wall")->render();
     m_pTank->render();
 }
-void Game::update(const uint64_t delta)
+void Game::update(const double delta)
 {
-    ResourceManager::getAnimatedSprite("AnimatedSprite")->update(delta);
     if (m_pTank)
     {
         if (m_keys[GLFW_KEY_W])
@@ -57,7 +55,6 @@ void Game::update(const uint64_t delta)
         {
             m_pTank->move(false);
         }
-        m_pTank->update(delta);
     }
 }
 void Game::setKey(const int key, const int action)
@@ -75,10 +72,9 @@ bool Game::init()
         return false;
     }
 
-    auto pAnimatedSprite = ResourceManager::getAnimatedSprite("AnimatedSprite");
-    pAnimatedSprite->setPosition(glm::vec2(240, 350));
-    pAnimatedSprite->setState("spawnState");
-    auto pTankSprite = ResourceManager::getAnimatedSprite("TankSprite");
+    auto pTankSprite = ResourceManager::getSprite("TankSprite");
+
+    auto pWallSprite = ResourceManager::loadSprite("wall", "WallAtlas", "spriteShader", "BrickWall");
 
     glm::mat4 projectionMatrix = glm::ortho(0.0f, (float)m_WindowSize.x, 0.0f, (float)m_WindowSize.y, -100.0f, 100.0f);
 
@@ -86,9 +82,9 @@ bool Game::init()
     pSpriteShaderProgram->setInt("tex", 0);
     pSpriteShaderProgram->setMatrix4("projectionMat", projectionMatrix);
 
-    pTankSprite->setState("TopState");
+    m_pTank = std::make_shared<Tank>(pTankSprite, 0.5, 1, glm::vec2(100.f, 100.f), glm::vec2(100.f, 100.f));
 
-    m_pTank = std::make_unique<Tank>(pTankSprite, 0.0000005f, glm::vec2(100.f, 100.f));
+    PhysicsEngine::addDynamicObj(m_pTank);
 
 	return true;
 }

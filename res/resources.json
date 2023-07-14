@@ -21,8 +21,8 @@
         "respawn1",
         "respawn2",
         "respawn3",
-        "respawn4",
-        "respawn5"
+        "shield1",
+        "shield2"
       ]
     },
     {
@@ -42,126 +42,50 @@
         "YellowRight11",
         "YellowRight12"
       ]
+    },
+    {
+      "name": "WallAtlas",
+      "filePath": "res/textures/map_8x8.png",
+      "width": 48,
+      "height": 40,
+      "subTexture_w": 8,
+      "subTexture_h": 8,
+      "subTextures": [
+        "BrickWall",
+        "BrickWall_TopLeft",
+        "BrickWall_TopRight",
+        "BrickWall_Top",
+        "BrickWall_BottomLeft",
+        "BrickWall_Left",
+        "BrickWall_DioRL",
+        "BrickWall_EBottomRight",
+        "BrickWall_BottomRight",
+        "BrickWall_DioLR",
+        "BrickWall_Right",
+        "BrickWall_EBottomLeft",
+        "BrickWall_Bottom",
+        "BrickWall_ETopRight",
+        "BrickWall_ETopLeft",
+        "Water1",
+        "Water2",
+        "Water3",
+        "beton",
+        "tree",
+        "ice",
+        "bedrok",
+        "bulletUp",
+        "bulletDown",
+        "bulletLeft",
+        "bulletRight"
+      ]
     }
   ],
-  "AnimatedSprites": [
+  "sprites": [
     {
       "name": "TankSprite",
       "shader": "spriteShader",
       "textureAtlas": "TanksTextureAtlas",
-      "initialWidth": 100,
-      "initialHeight": 100,
-      "initialRotation": 0,
-      "layer": 0,
-      "initialSubTexture": "YellowUp11",
-      "states": [
-        {
-          "stateName": "TopState",
-          "frames": [
-            {
-              "subTexture": "YellowUp11",
-              "duration": 70000000
-            },
-            {
-              "subTexture": "YellowUp12",
-              "duration": 70000000
-            }
-          ]
-        },
-        {
-          "stateName": "LeftState",
-          "frames": [
-            {
-              "subTexture": "YellowLeft11",
-              "duration": 70000000
-            },
-            {
-              "subTexture": "YellowLeft12",
-              "duration": 70000000
-            }
-          ]
-        },
-        {
-          "stateName": "BottomState",
-          "frames": [
-            {
-              "subTexture": "YellowBottom11",
-              "duration": 70000000
-            },
-            {
-              "subTexture": "YellowBottom12",
-              "duration": 70000000
-            }
-          ]
-        },
-        {
-          "stateName": "RightState",
-          "frames": [
-            {
-              "subTexture": "YellowRight11",
-              "duration": 70000000
-            },
-            {
-              "subTexture": "YellowRight12",
-              "duration": 70000000
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "AnimatedSprite",
-      "shader": "spriteShader",
-      "textureAtlas": "DefaultTextureAtlas",
-      "initialWidth": 100,
-      "initialHeight": 100,
-      "initialRotation": 45,
-      "layer": 1,
-      "initialSubTexture": "deadEagle",
-      "states": [
-        {
-          "stateName": "spawnState",
-          "frames": [
-            {
-              "subTexture": "respawn0",
-              "duration": 50000000
-            },
-            {
-              "subTexture": "respawn1",
-              "duration": 50000000
-            },
-            {
-              "subTexture": "respawn2",
-              "duration": 50000000
-            },
-            {
-              "subTexture": "respawn3",
-              "duration": 50000000
-            },
-            {
-              "subTexture": "respawn4",
-              "duration": 80000000
-            },
-            {
-              "subTexture": "respawn5",
-              "duration": 100000000
-            },
-            {
-              "subTexture": "respawn4",
-              "duration": 100000000
-            },
-            {
-              "subTexture": "respawn5",
-              "duration": 100000000
-            },
-            {
-              "subTexture": "eagle",
-              "duration": 400000000
-            }
-          ]
-        }
-      ]
+      "initialSubTexture": "YellowUp11"
     }
-
   ]
 }

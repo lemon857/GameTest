@@ -29,17 +29,18 @@ namespace RenderEngine
 			1.0f, 1.0f,
 			1.0f, 0.0f,
 		};
+		
+		auto aSubTexture = m_pTextureAtlas->getSubTexture(initialSubTexture);
 
-		auto subTexture = m_pTextureAtlas->getSubTexture(initialSubTexture);
-
-		const GLfloat textureCoords[] = {				
-				//U --- V
-				subTexture.leftBottomUV.x, subTexture.leftBottomUV.y,
-				subTexture.leftBottomUV.x, subTexture.rightTopUV.y,
-				subTexture.rightTopUV.x, subTexture.rightTopUV.y,
-				subTexture.rightTopUV.x, subTexture.leftBottomUV.y,
+		const GLfloat textureCoords[] = {
+			//U --- V
+			aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
+			aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
+			aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
+			aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
 
 		};
+
 		const GLuint indexes[] = { 0, 1, 2, 2, 3, 0 };
 			
 		m_vertexCoordsBuffer.init(&vertexCoords, 2 * 4 * sizeof(GLfloat));
@@ -75,5 +76,20 @@ namespace RenderEngine
 		Renderer::bindTexture(*m_pTextureAtlas);
 
 		Renderer::draw(m_vertexArray, m_indexBuffer, *m_pShaderProgram);
+	}
+	void Sprite::setSubTexture(std::string subTexture)
+	{
+		auto aSubTexture = m_pTextureAtlas->getSubTexture(subTexture);
+
+		const GLfloat textureCoords[] = {
+			//U --- V
+			aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
+			aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
+			aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
+			aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
+
+		};
+
+		m_textureCoordsBuffer.update(&textureCoords, 2 * 4 * sizeof(GLfloat));
 	}
 }

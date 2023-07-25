@@ -37,8 +37,8 @@
         "YellowUp12",
         "YellowLeft11",
         "YellowLeft12",
-        "YellowBottom11",
-        "YellowBottom12",
+        "YellowDown11",
+        "YellowDown12",
         "YellowRight11",
         "YellowRight12"
       ]
@@ -86,6 +86,66 @@
       "shader": "spriteShader",
       "textureAtlas": "TanksTextureAtlas",
       "initialSubTexture": "YellowUp11"
+    }
+  ],
+  "animators": [
+    {
+      "name": "moveAnimator",
+      "spriteName": "TankSprite",
+      "Animations": [
+        {
+          "name": "TopMove",
+          "callbackAction": 0,
+          "typeAnimation": 0,
+          "subTextureNames": [
+            "YellowUp11",
+            "YellowUp12"
+          ],
+          "durations": [
+            100,
+            100
+          ]
+        },
+        {
+          "name": "BottomMove",
+          "callbackAction": 0,
+          "typeAnimation": 0,
+          "subTextureNames": [
+            "YellowDown11",
+            "YellowDown12"
+          ],
+          "durations": [
+            100,
+            100
+          ]
+        },
+        {
+          "name": "LeftMove",
+          "callbackAction": 0,
+          "typeAnimation": 0,
+          "subTextureNames": [
+            "YellowLeft11",
+            "YellowLeft12"
+          ],
+          "durations": [
+            100,
+            100
+          ]
+        },
+        {
+          "name": "RightMove",
+          "callbackAction": 0,
+          "typeAnimation": 0,
+          "subTextureNames": [
+            "YellowRight11",
+            "YellowRight12"
+          ],
+          "durations": [
+            100,
+            100
+          ]
+        }
+      ]
     }
   ]
 }

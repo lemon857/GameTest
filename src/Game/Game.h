@@ -6,6 +6,11 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+namespace RenderEngine
+{
+	class Animator;
+}
+
 class Tank;
 
 class Game 
@@ -31,4 +36,5 @@ private:
 	glm::ivec2 m_WindowSize;
 
 	std::shared_ptr<Tank> m_pTank;
+	std::shared_ptr<RenderEngine::Animator> m_pAnimator;
 };

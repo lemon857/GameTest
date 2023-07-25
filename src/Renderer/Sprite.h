@@ -23,6 +23,8 @@ namespace RenderEngine
 		Sprite(const Sprite&) = delete;
 		Sprite& operator=(const Sprite&) = delete;
 
+		void setSubTexture(std::string subTexture);
+
 		void render(const glm::vec2 position, const glm::vec2 size, const double rotation, const int layer) const;
 	private:
 		std::shared_ptr<Texture2D> m_pTextureAtlas;

@@ -16,7 +16,7 @@ public:
 	{
 		Top,
 		Bottom,
-		Left,
+		Left,    
 		Right
 	};
 
@@ -30,4 +30,4 @@ public:
 private:
 	EOrentation m_eOrentation;
 	std::shared_ptr<RenderEngine::Sprite> m_pSprite;
-};
+}; 

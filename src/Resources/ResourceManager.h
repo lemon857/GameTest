@@ -10,6 +10,7 @@ namespace RenderEngine
 	class ShaderProgram;
 	class Texture2D;
 	class Sprite;
+	class Animator;
 }
 
 	class ResourceManager {
@@ -46,20 +47,14 @@ namespace RenderEngine
 			const std::string& subTextureName = "default");
 		static std::shared_ptr<RenderEngine::Sprite> getSprite(const std::string& spriteName);
 
-		/*static std::shared_ptr<RenderEngine::AnimatedSprite>  loadAnimatedSprite(
-			const std::string& spriteName, 
-			const std::string& textureName,
-			const std::string& shaderName, 
-			const unsigned int spriteWidth,
-			const unsigned int spriteHeight, 
-			const float rotation,
-			const float layer,
-			const std::string& subTextureName = "default");*/
-		//static std::shared_ptr<RenderEngine::AnimatedSprite> getAnimatedSprite(const std::string& spriteName);
+		static std::shared_ptr<RenderEngine::Animator>  loadAnimator(
+			const std::string& animatorName,
+			const std::string& spriteName);
+		static std::shared_ptr<RenderEngine::Animator> getAnimator(const std::string& animatorName);
 
 		static std::shared_ptr<RenderEngine::Texture2D> loadTextureAtlas(
 			std::string textureName,
-			const std::vector<std::string> subTextures,
+			std::vector<std::string> subTextures,
 			std::string texturePath,
 			const unsigned int width,
 			const unsigned int height,
@@ -77,8 +72,8 @@ namespace RenderEngine
 		typedef std::map<const std::string, std::shared_ptr<RenderEngine::Sprite>> SpritesMap;
 		static SpritesMap m_sprites;
 
-		//typedef std::map<const std::string, std::shared_ptr<RenderEngine::AnimatedSprite>> AnimatedSpritesMap;
-		//static AnimatedSpritesMap m_animateSprites;
+		typedef std::map<const std::string, std::shared_ptr<RenderEngine::Animator>> AnimatorsMap;
+		static AnimatorsMap m_animators;
 
 		static std::string m_path;
 	};

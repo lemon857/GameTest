@@ -9,6 +9,7 @@
 #include "../Renderer/ShaderProgram.h"
 #include "../Renderer/Texture2D.h"
 #include "../Renderer/Sprite.h"
+#include "../Renderer/Animator.h"
 #include "../Resources/ResourceManager.h"
 #include "../Physics/PhysicsEngine.h"
 #include "../Physics/Collider.h"
@@ -34,27 +35,32 @@ void Game::render()
 }
 void Game::update(const double delta)
 {
+    m_pAnimator->update(delta);
     if (m_pTank)
     {
         if (m_keys[GLFW_KEY_W])
         {
             m_pTank->setOrentation(Tank::EOrentation::Top);
             m_pTank->move(true);
+            m_pAnimator->startAnimation("TopMove");
         }
         else if ((m_keys[GLFW_KEY_A]))
         {
             m_pTank->setOrentation(Tank::EOrentation::Left);
             m_pTank->move(true);
+            m_pAnimator->startAnimation("LeftMove");
         }
         else if ((m_keys[GLFW_KEY_S]))
         {
             m_pTank->setOrentation(Tank::EOrentation::Bottom);
             m_pTank->move(true);
+            m_pAnimator->startAnimation("BottomMove");
         }
         else if ((m_keys[GLFW_KEY_D]))
         {
             m_pTank->setOrentation(Tank::EOrentation::Right);
             m_pTank->move(true);
+            m_pAnimator->startAnimation("RightMove");
         }
         else
         {
@@ -78,14 +84,15 @@ bool Game::init()
     }
 
     auto pTankSprite = ResourceManager::getSprite("TankSprite");
-
     ResourceManager::loadSprite("wall", "WallAtlas", "spriteShader", "BrickWall");
 
     glm::mat4 projectionMatrix = glm::ortho(0.0f, (float)m_WindowSize.x, 0.0f, (float)m_WindowSize.y, -100.0f, 100.0f);
-    
+
     pSpriteShaderProgram->use();
     pSpriteShaderProgram->setInt("tex", 0);
     pSpriteShaderProgram->setMatrix4("projectionMat", projectionMatrix);
+
+    m_pAnimator = ResourceManager::getAnimator("moveAnimator");
 
     m_pTank = std::make_shared<Tank>(pTankSprite, 0.5, 0.05, glm::vec2(100.f, 200.f), glm::vec2(125.f, 125.f));
     //m_pTank2 = std::make_shared<Tank>(pTankSprite, 0.5, 1, glm::vec2(100.f, 0.f), glm::vec2(100.f, 100.f));
@@ -95,7 +102,7 @@ bool Game::init()
 
     Physics::PhysicsEngine::addDynamicObj(m_pTank, 1);
     //Physics::PhysicsEngine::addDynamicObj(m_pTank2, 2);
-
+    
     //std::shared_ptr<Physics::Collider>col1 = std::make_shared<Physics::Collider>(m_pTank);
     //std::shared_ptr<Physics::Collider>col2 = std::make_shared<Physics::Collider>(m_pTank2);
 

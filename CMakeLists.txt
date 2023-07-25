@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 
-set(PROJECT_NAME GameTest)
+set(PROJECT_NAME EngineTest)
 
 project(${PROJECT_NAME})
 
-add_executable(${PROJECT_NAME} 
+add_executable(${PROJECT_NAME}
 src/main.cpp
 
 src/Resources/ResourceManager.cpp
@@ -41,6 +41,9 @@ src/Physics/Collider.cpp
 
 src/System/Timer.h
 src/System/Timer.cpp
+
+src/Engine/Engine.h
+src/Engine/Engine.cpp
 )
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
@@ -60,6 +63,7 @@ include_directories(external/glm)
 include_directories(external/rapidjson/include)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
+#Для игры копирование ресурсов из источника в билд
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 					COMMAND ${CMAKE_COMMAND} -E copy_directory
 					${CMAKE_SOURCE_DIR}/res $<TARGET_FILE_DIR:${PROJECT_NAME}>/res)

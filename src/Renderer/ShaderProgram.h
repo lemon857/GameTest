@@ -8,9 +8,12 @@ namespace RenderEngine
 {
 	class ShaderProgram {
 	public:
+		// Создание шейдерной программы из двух, вертексной и фрагментной
 		ShaderProgram(const std::string& vertexShader, const std::string& fragmentShader);
 		~ShaderProgram();
+		// Проверка на скомпилированность шейдера 
 		bool isCompiled() const;
+		// Использование шейдера
 		void use() const;
 		void setInt(const std::string& name, const GLint& value) const;
 		void setFloat(const std::string& name, const GLfloat& value) const;

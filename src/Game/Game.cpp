@@ -57,6 +57,7 @@ void Game::update(const double delta)
         {
             m_pTank->move(false);
         }
+        m_pTank->update(delta);
     }
 }
 void Game::setKey(const int key, const int action)
@@ -90,14 +91,14 @@ bool Game::init()
     m_pTank->setKinematicState(false);
     m_pTank2->setKinematicState(true);
 
-    Physics::PhysicsEngine::addDynamicObj(m_pTank, 1);
-    Physics::PhysicsEngine::addDynamicObj(m_pTank2, 2);
+    //Physics::PhysicsEngine::addDynamicObj(m_pTank, 1);
+    //Physics::PhysicsEngine::addDynamicObj(m_pTank2, 2);
 
-    std::shared_ptr<Physics::Collider>col1 = std::make_shared<Physics::Collider>(m_pTank);
-    std::shared_ptr<Physics::Collider>col2 = std::make_shared<Physics::Collider>(m_pTank2);
+    //std::shared_ptr<Physics::Collider>col1 = std::make_shared<Physics::Collider>(m_pTank);
+    //std::shared_ptr<Physics::Collider>col2 = std::make_shared<Physics::Collider>(m_pTank2);
 
-    Physics::PhysicsEngine::addCollider(col1, 1);
-    Physics::PhysicsEngine::addCollider(col2, 2);
+    //Physics::PhysicsEngine::addCollider(col1, 1);
+    //Physics::PhysicsEngine::addCollider(col2, 2);
 
 	return true;
 }

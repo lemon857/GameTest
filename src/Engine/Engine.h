@@ -11,6 +11,11 @@ public:
 	// false при неудачной инициалиации
 	// true при удачной инициализации
 	static bool initGraphics();
+	// Инициализация OpenGL
+	// Вернёт: 
+	// false при неудачной инициалиации
+	// true при удачной инициализации
+	static bool initOpenGL();
 	// Установка калбэков для отслеживания изменения размеров окна
 	static void setWindowSizeCallBack(GLFWwindow* window, GLFWwindowsizefun callback);
 	// Установка каллбэков для отслеживания нажатия клавиш

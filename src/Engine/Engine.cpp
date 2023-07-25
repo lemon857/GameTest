@@ -1,10 +1,13 @@
 #include "Engine.h"
 #include "../Resources/ResourceManager.h"
 
+#include <iostream>
+
 bool Engine::initGraphics()
 {
     if (!glfwInit())
     {
+        std::cout << "GLFW init failed\n";
         return false;
     }
 
@@ -12,8 +15,13 @@ bool Engine::initGraphics()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+    return true;
+}
+bool Engine::initOpenGL()
+{
     if (!gladLoadGL())
     {
+        std::cout << "Glad load failed\n";
         return false;
     }
 
@@ -38,5 +46,5 @@ void Engine::terminate()
 }
 void Engine::poolEvents()
 {
-
+    glfwPollEvents();
 }

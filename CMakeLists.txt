@@ -27,6 +27,8 @@ src/Renderer/VertexArray.h
 src/Renderer/VertexArray.cpp
 src/Renderer/VertexBufferLayout.h
 src/Renderer/VertexBufferLayout.cpp
+src/Renderer/Animator.h
+src/Renderer/Animator.cpp
 
 src/Game/Game.cpp
 src/Game/Game.h

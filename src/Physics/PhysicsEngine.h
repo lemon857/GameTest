@@ -22,7 +22,8 @@ namespace Physics
 		PhysicsEngine& operator=(const PhysicsEngine&) = delete;
 		PhysicsEngine& operator=(const PhysicsEngine&&) = delete;
 
-		static void init();
+		// Инициализация физического движка
+		static void init(bool useGravity = false);
 		static void addDynamicObj(std::shared_ptr<IGameObject> obj, int id);
 		static void addCollider(std::shared_ptr<Collider> collider, int id);
 		static void terminate();
@@ -39,5 +40,7 @@ namespace Physics
 
 		static double m_g;
 		static int m_currentID;
+
+		static bool m_useGravity;
 	};
 }

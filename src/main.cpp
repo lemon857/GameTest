@@ -37,11 +37,13 @@ int main(int argc, char** argv)
     // Инициализация графических библиотек в движке
     if (!Engine::initGraphics())
     {
-        std::cout << "Init engine failed\n";
+        std::cout << "Init graphics failed\n";
         return -1;
     }
+
     // Создание окна для отображения в нём всякого прикольного
-    GLFWwindow* pWindow = glfwCreateWindow(g_WindowSize.x, g_WindowSize.y, "Test Game", nullptr, nullptr);
+    GLFWwindow* pWindow = glfwCreateWindow(g_WindowSize.x, g_WindowSize.y,
+        "Test Game", nullptr, nullptr);
 
     if (!pWindow)
     {
@@ -49,11 +51,20 @@ int main(int argc, char** argv)
         glfwTerminate();
         return -1;
     }
+
     // Установка калбэков для отслеживания изменения размеров окна и нажатия клавиш
     Engine::setWindowSizeCallBack(pWindow, glfwWindowSizeCallback);
     Engine::setKeyCallback(pWindow, glfwKeyCallback);
+
     // Выбор текущего окна
     Engine::makeContextCurrent(pWindow);
+    // Иницициализация OprnGL
+    if (!Engine::initOpenGL())
+    {
+        std::cout << "Init OpenGL failed\n";
+        return -1;
+    }
+
     // Вывод версии OpenGL и рендерера в консоль
     std::cout << "Renderer: " << RenderEngine::Renderer::getRendererStr() << "\n";
     std::cout << "OpenGL Version: " << RenderEngine::Renderer::getVersionStr() << "\n";
@@ -75,7 +86,7 @@ int main(int argc, char** argv)
 
     while (!glfwWindowShouldClose(pWindow))
     {
-        glfwPollEvents();
+        Engine::poolEvents();
 
         auto currentTime = std::chrono::high_resolution_clock::now();
         double duration = std::chrono::duration<double, std::milli>(currentTime - lastTime).count();

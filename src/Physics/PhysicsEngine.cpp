@@ -7,11 +7,13 @@ namespace Physics
 {
 	int PhysicsEngine::m_currentID = 0;
 	double PhysicsEngine::m_g;
+	bool PhysicsEngine::m_useGravity;
 	PhysicsEngine::objMap PhysicsEngine::m_dynamicObj;
 	PhysicsEngine::ColliderMap PhysicsEngine::m_colliders;
 
-	void PhysicsEngine::init()
+	void PhysicsEngine::init(bool useGravity)
 	{
+		m_useGravity = useGravity;
 		m_g = 9.8;
 	}
 	void PhysicsEngine::terminate()
@@ -31,10 +33,10 @@ namespace Physics
 				pos.x += static_cast<float>(delta * vel * offset.x);
 				pos.y += static_cast<float>(delta * vel * offset.y);
 			}
-			if (!currentObj.second->getKinematicState() && !currentObj.second->getGroundState()) pos.y -= static_cast<float>(delta * weight * m_g);
-			ColliderMap::const_iterator it1 = m_colliders.find(1);
-			ColliderMap::const_iterator it2 = m_colliders.find(2);
-			currentObj.second->setgetGroundState(hasCollidersIntersection(it1->second, it2->second));
+			//if (!currentObj.second->getKinematicState() && !currentObj.second->getGroundState()) pos.y -= static_cast<float>(delta * weight * m_g);
+			//ColliderMap::const_iterator it1 = m_colliders.find(1);
+			//ColliderMap::const_iterator it2 = m_colliders.find(2);
+			//currentObj.second->getGroundState(hasCollidersIntersection(it1->second, it2->second));
 		}
 	}
 	void PhysicsEngine::addDynamicObj(std::shared_ptr<IGameObject> obj, int id)

@@ -16,7 +16,7 @@ public:
 	bool isMove() const { return m_move; };
 
 	void setKinematicState(bool isKinematic) { m_isKinematic = isKinematic; };
-	void setgetGroundState(bool isGrounded) { m_isGrounded = isGrounded; };
+	void getGroundState(bool isGrounded) { m_isGrounded = isGrounded; };
 
 	double getVelocity() { return m_velocity; };
 	double getWeight() { return m_weight; };

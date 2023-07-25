@@ -51,9 +51,5 @@ void Tank::move(const bool move)
 }
 void Tank::update(const double delta) 
 {
-	if (m_move)
-	{
-		m_position.x += static_cast<float>(delta * m_velocity * m_moveOffset.x);
-		m_position.y += static_cast<float>(delta * m_velocity * m_moveOffset.y);
-	}
+
 }

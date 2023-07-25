@@ -8,6 +8,7 @@
 
 #include "../Renderer/ShaderProgram.h"
 #include "../Renderer/Texture2D.h"
+#include "../Renderer/Sprite.h"
 #include "../Resources/ResourceManager.h"
 #include "../Physics/PhysicsEngine.h"
 #include "../Physics/Collider.h"
@@ -25,9 +26,11 @@ Game::~Game()
 
 void Game::render()
 {
-    //ResourceManager::getSprite("wall")->render();
+    ResourceManager::getSprite("wall")->render(glm::vec2(100.f, 200.f), glm::vec2(50.f, 50.f), 0, 0);
+    ResourceManager::getSprite("wall")->render(glm::vec2(150.f, 200.f), glm::vec2(50.f, 50.f), 0, 0);
+    ResourceManager::getSprite("wall")->render(glm::vec2(150.f, 250.f), glm::vec2(50.f, 50.f), 0, 0);
+    ResourceManager::getSprite("wall")->render(glm::vec2(100.f, 250.f), glm::vec2(50.f, 50.f), 0, 0);
     m_pTank->render();
-    m_pTank2->render();
 }
 void Game::update(const double delta)
 {
@@ -57,7 +60,6 @@ void Game::update(const double delta)
         {
             m_pTank->move(false);
         }
-        m_pTank->update(delta);
     }
 }
 void Game::setKey(const int key, const int action)
@@ -77,21 +79,21 @@ bool Game::init()
 
     auto pTankSprite = ResourceManager::getSprite("TankSprite");
 
-    auto pWallSprite = ResourceManager::loadSprite("wall", "WallAtlas", "spriteShader", "BrickWall");
+    ResourceManager::loadSprite("wall", "WallAtlas", "spriteShader", "BrickWall");
 
     glm::mat4 projectionMatrix = glm::ortho(0.0f, (float)m_WindowSize.x, 0.0f, (float)m_WindowSize.y, -100.0f, 100.0f);
-
+    
     pSpriteShaderProgram->use();
     pSpriteShaderProgram->setInt("tex", 0);
     pSpriteShaderProgram->setMatrix4("projectionMat", projectionMatrix);
 
-    m_pTank = std::make_shared<Tank>(pTankSprite, 0.5, 0.05, glm::vec2(100.f, 200.f), glm::vec2(100.f, 100.f));
-    m_pTank2 = std::make_shared<Tank>(pTankSprite, 0.5, 1, glm::vec2(100.f, 0.f), glm::vec2(100.f, 100.f));
+    m_pTank = std::make_shared<Tank>(pTankSprite, 0.5, 0.05, glm::vec2(100.f, 200.f), glm::vec2(125.f, 125.f));
+    //m_pTank2 = std::make_shared<Tank>(pTankSprite, 0.5, 1, glm::vec2(100.f, 0.f), glm::vec2(100.f, 100.f));
 
     m_pTank->setKinematicState(false);
-    m_pTank2->setKinematicState(true);
+    //m_pTank2->setKinematicState(true);
 
-    //Physics::PhysicsEngine::addDynamicObj(m_pTank, 1);
+    Physics::PhysicsEngine::addDynamicObj(m_pTank, 1);
     //Physics::PhysicsEngine::addDynamicObj(m_pTank2, 2);
 
     //std::shared_ptr<Physics::Collider>col1 = std::make_shared<Physics::Collider>(m_pTank);

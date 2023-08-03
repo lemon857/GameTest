@@ -7,13 +7,13 @@ class IGameObject;
 class IComponent
 {
 public:
-	IComponent(std::shared_ptr<IGameObject>& targetObj)
-		: m_targetObj(std::move(targetObj))
+	IComponent(IGameObject& targetObj)
+		: m_targetObj(targetObj)
 	{};
 
 	virtual void update(double delta) {};
 
 
 protected:
-	std::shared_ptr<IGameObject> m_targetObj;
+	IGameObject& m_targetObj;
 };

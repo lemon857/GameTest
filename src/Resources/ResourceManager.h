@@ -47,10 +47,10 @@ namespace RenderEngine
 			const std::string& subTextureName = "default");
 		static std::shared_ptr<RenderEngine::Sprite> getSprite(const std::string& spriteName);
 
-		static std::shared_ptr<RenderEngine::Animator>  loadAnimator(
+		/*static std::shared_ptr<RenderEngine::Animator>  loadAnimator(
 			const std::string& animatorName,
-			const std::string& spriteName);
-		static std::shared_ptr<RenderEngine::Animator> getAnimator(const std::string& animatorName);
+			const std::string& spriteName);*/
+		//static std::shared_ptr<RenderEngine::Animator> getAnimator(const std::string& animatorName);
 
 		static std::shared_ptr<RenderEngine::Texture2D> loadTextureAtlas(
 			std::string textureName,
@@ -72,8 +72,8 @@ namespace RenderEngine
 		typedef std::map<const std::string, std::shared_ptr<RenderEngine::Sprite>> SpritesMap;
 		static SpritesMap m_sprites;
 
-		typedef std::map<const std::string, std::shared_ptr<RenderEngine::Animator>> AnimatorsMap;
-		static AnimatorsMap m_animators;
+		//typedef std::map<const std::string, std::shared_ptr<RenderEngine::Animator>> AnimatorsMap;
+		//static AnimatorsMap m_animators;
 
 		static std::string m_path;
 	};

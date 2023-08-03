@@ -2,16 +2,17 @@
 
 #include "Animation.h"
 #include "../Resources/ResourceManager.h"
+#include "../Game/IGameObjec.h"
 #include "Sprite.h"
 
 namespace RenderEngine
 {
-	/*Animator::Animator()
+	Animator::Animator(IGameObject& targetObj)
 		: m_currentTime(0)
 		, m_run(false)
-		, m_currentAnimation()
+		, IComponent(targetObj)
 	{
-	}*/
+	}
 
 	void Animator::startAnimation(std::string name)
 	{
@@ -27,21 +28,21 @@ namespace RenderEngine
 		}
 		else
 		{*/
-			//m_currentAnimation = name;
-			m_run = true;
+		m_currentAnimation = name;
+		m_run = true;
 		//}
 	}
 	void Animator::addAnimation(const std::string name, std::shared_ptr<Animation> animation)
 	{
-		//m_animations.emplace(name, animation);
+		m_animations.emplace(name, animation);
 	}
 	void Animator::update(double delta)
 	{
 		if (!m_run) return;
-		//std::shared_ptr<Animation> anim = getAnimation(m_currentAnimation);
-		//if (m_currentTime >= anim->durations[anim->currentFrame])
-		{/*
-			auto pSprite = m_targetObj->getpSprite();
+		std::shared_ptr<Animation> anim = getAnimation(m_currentAnimation);
+		if (m_currentTime >= anim->durations[anim->currentFrame])
+		{
+			auto pSprite = m_targetObj.getpSprite();
 			pSprite->setSubTexture(anim->subTextureNames[anim->currentFrame]);
 			m_currentTime = 0;
 			if (anim->currentFrame == anim->durations.size() - 1 && anim->eTypeAnimation == Single)
@@ -53,12 +54,12 @@ namespace RenderEngine
 			else
 			{
 				anim->currentFrame++;
-			}*/
+			}
 		}
 		m_currentTime += delta;
 	}
-	/*std::shared_ptr<Animation> Animator::getAnimation(std::string name)
+	std::shared_ptr<Animation> Animator::getAnimation(std::string name)
 	{
 		return m_animations.find(name)->second;
-	}*/
-} 
+	}
+}

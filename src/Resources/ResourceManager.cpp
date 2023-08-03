@@ -19,7 +19,7 @@
 ResourceManager::ShaderProgramsMap ResourceManager::m_ShaderPrograms;
 ResourceManager::TexturesMap ResourceManager::m_textures;
 ResourceManager::SpritesMap ResourceManager::m_sprites;
-ResourceManager::AnimatorsMap ResourceManager::m_animators;
+//ResourceManager::AnimatorsMap ResourceManager::m_animators;
 std::string ResourceManager::m_path;
 
 
@@ -272,20 +272,20 @@ std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTextureAtlas(
 	return pTexture;
 }
 
-std::shared_ptr<RenderEngine::Animator>  ResourceManager::loadAnimator(
-	const std::string& animatorName,
-	const std::string& spriteName)
-{
-	std::shared_ptr<RenderEngine::Animator>& newAnimator = m_animators.emplace(animatorName, std::make_shared<RenderEngine::Animator>(spriteName)).first->second;
-	return newAnimator;
-}
-std::shared_ptr<RenderEngine::Animator> ResourceManager::getAnimator(const std::string& animatorName)
-{
-	AnimatorsMap::const_iterator it = m_animators.find(animatorName);
-	if (it != m_animators.end())
-	{
-		return it->second;
-	}
-	std::cerr << "Can't find animator: " << animatorName << "\n";
-	return nullptr;
-}
+//std::shared_ptr<RenderEngine::Animator>  ResourceManager::loadAnimator(
+//	const std::string& animatorName,
+//	const std::string& spriteName)
+//{
+//	std::shared_ptr<RenderEngine::Animator>& newAnimator = m_animators.emplace(animatorName, std::make_shared<RenderEngine::Animator>(spriteName)).first->second;
+//	return newAnimator;
+//}
+//std::shared_ptr<RenderEngine::Animator> ResourceManager::getAnimator(const std::string& animatorName)
+//{
+//	AnimatorsMap::const_iterator it = m_animators.find(animatorName);
+//	if (it != m_animators.end())
+//	{
+//		return it->second;
+//	}
+//	std::cerr << "Can't find animator: " << animatorName << "\n";
+//	return nullptr;
+//}

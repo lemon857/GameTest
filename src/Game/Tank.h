@@ -3,6 +3,7 @@
 #include <memory>
 #include <glm/vec2.hpp>
 #include "IGameObjec.h"
+#include "IComponent.h"
 
 namespace RenderEngine
 {

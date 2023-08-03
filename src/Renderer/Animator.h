@@ -4,7 +4,7 @@
 #include <string>
 #include <map>
 
-#include "../Game/IComponent.h"
+#include "../Engine/IComponent.h"
 
 namespace RenderEngine
 {
@@ -17,8 +17,9 @@ namespace RenderEngine
 		Animator(IGameObject& targetObj);
 
 		void startAnimation(std::string name);
+		void stopAnimations();
 		void addAnimation(const std::string name, std::shared_ptr<Animation> animation);
-		void update(double delta) override;
+		void update(const double delta) override;
 	private:
 		std::shared_ptr<Animation> getAnimation(std::string name);
 

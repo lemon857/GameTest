@@ -2,7 +2,7 @@
 
 #include "Animation.h"
 #include "../Resources/ResourceManager.h"
-#include "../Game/IGameObjec.h"
+#include "../Engine/IGameObjec.h"
 #include "Sprite.h"
 
 namespace RenderEngine
@@ -31,6 +31,13 @@ namespace RenderEngine
 		m_currentAnimation = name;
 		m_run = true;
 		//}
+		std::shared_ptr<Animation> anim = getAnimation(m_currentAnimation);
+		auto pSprite = m_targetObj.getpSprite();
+		pSprite->setSubTexture(anim->subTextureNames[anim->currentFrame]);
+	}
+	void Animator::stopAnimations()
+	{
+		m_run = false;
 	}
 	void Animator::addAnimation(const std::string name, std::shared_ptr<Animation> animation)
 	{
@@ -49,6 +56,11 @@ namespace RenderEngine
 			{
 				anim->currentFrame = 0;
 				m_run = false;
+				return;
+			} 
+			else if (anim->currentFrame == anim->durations.size() - 1 && anim->eTypeAnimation == Cyclical)
+			{
+				anim->currentFrame = 0;
 				return;
 			}
 			else

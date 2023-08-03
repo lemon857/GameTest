@@ -2,7 +2,7 @@
 
 #include <memory>
 #include<glm/vec2.hpp>
-#include "../Game/IGameObjec.h"
+#include "../Engine/IGameObjec.h"
 
 namespace Physics 
 {

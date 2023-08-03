@@ -1,6 +1,6 @@
 #include "PhysicsEngine.h"
 
-#include "../Game/IGameObjec.h"
+#include "../Engine/IGameObjec.h"
 #include "Collider.h"
 
 namespace Physics
@@ -25,21 +25,7 @@ namespace Physics
 	{
 		for (auto currentObj : m_dynamicObj)
 		{
-			glm::vec2& pos = currentObj.second->getPosition();
-			glm::vec2 offset = currentObj.second->getOffset();
-			double vel = currentObj.second->getVelocity();
-			double weight = currentObj.second->getWeight();
-			if (currentObj.second->isMove())
-			{
-				pos.x += static_cast<float>(delta * vel * offset.x);
-				pos.y += static_cast<float>(delta * vel * offset.y);
-			}
-			if (m_impulses.find(currentObj.first)->second.x > 0 || m_impulses.find(currentObj.first)->second.y > 0)
-			{
-				glm::vec2 imp = m_impulses.find(currentObj.first)->second;
-				pos.x += static_cast<float>(delta * vel * imp.x);
-				pos.y += static_cast<float>(delta * vel * imp.y);
-			}
+			
 			//if (!currentObj.second->getKinematicState() && !currentObj.second->getGroundState()) pos.y -= static_cast<float>(delta * weight * m_g);
 			//ColliderMap::const_iterator it1 = m_colliders.find(1);
 			//ColliderMap::const_iterator it2 = m_colliders.find(2);

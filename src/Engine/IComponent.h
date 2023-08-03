@@ -11,7 +11,7 @@ public:
 		: m_targetObj(targetObj)
 	{};
 
-	virtual void update(double delta) {};
+	virtual void update(const double delta) {};
 
 
 protected:

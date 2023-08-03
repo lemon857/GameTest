@@ -2,14 +2,16 @@
 
 #include <memory>
 #include <glm/vec2.hpp>
-#include "IGameObjec.h"
-#include "IComponent.h"
+#include "../Engine/IGameObjec.h"
+#include "../Engine/IComponent.h"
 
 namespace RenderEngine
 {
 	class Sprite;
 	class Animator;
 }
+
+class CharacterController;
 
 class Tank : public IGameObject
 {
@@ -30,6 +32,8 @@ public:
 	void update(const double delta) override;
 
 private:
+	void startAnimation();
 	EOrentation m_eOrentation;
 	std::shared_ptr<RenderEngine::Animator> m_pAnimator;
+	std::shared_ptr<CharacterController> m_pCharacterController;
 }; 

@@ -43,6 +43,7 @@ void Engine::setKeyCallback(GLFWwindow* window, GLFWkeyfun callback)
 void Engine::makeContextCurrent(GLFWwindow* window)
 {
     glfwMakeContextCurrent(window);
+    m_window = window;
 }
 void Engine::terminate()
 {

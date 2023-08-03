@@ -37,18 +37,21 @@ src/Game/Game.cpp
 src/Game/Game.h
 src/Game/Tank.cpp
 src/Game/Tank.h
-src/Game/IGameObjec.h
 
 src/Physics/PhysicsEngine.h
 src/Physics/PhysicsEngine.cpp
 src/Physics/Collider.h
 src/Physics/Collider.cpp
+src/Physics/CharacterController.h
+src/Physics/CharacterController.cpp
 
 src/System/Timer.h
 src/System/Timer.cpp
 
 src/Engine/Engine.h
 src/Engine/Engine.cpp
+src/Engine/IGameObjec.h
+src/Engine/IComponent.h
 )
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)

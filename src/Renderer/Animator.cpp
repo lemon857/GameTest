@@ -6,12 +6,12 @@
 
 namespace RenderEngine
 {
-	Animator::Animator(std::string spriteName)
-		: m_spriteName(spriteName)
-		, m_currentTime(0)
+	/*Animator::Animator()
+		: m_currentTime(0)
 		, m_run(false)
+		, m_currentAnimation()
 	{
-	}
+	}*/
 
 	void Animator::startAnimation(std::string name)
 	{
@@ -27,22 +27,21 @@ namespace RenderEngine
 		}
 		else
 		{*/
-			m_currentAnimation = name;
+			//m_currentAnimation = name;
 			m_run = true;
 		//}
 	}
 	void Animator::addAnimation(const std::string name, std::shared_ptr<Animation> animation)
 	{
-		m_animations.emplace(name, animation);
+		//m_animations.emplace(name, animation);
 	}
 	void Animator::update(double delta)
 	{
 		if (!m_run) return;
-		m_currentTime += delta;
-		std::shared_ptr<Animation> anim = getAnimation(m_currentAnimation);
-		if (m_currentTime >= anim->durations[anim->currentFrame])
-		{
-			auto pSprite = ResourceManager::getSprite(m_spriteName);
+		//std::shared_ptr<Animation> anim = getAnimation(m_currentAnimation);
+		//if (m_currentTime >= anim->durations[anim->currentFrame])
+		{/*
+			auto pSprite = m_targetObj->getpSprite();
 			pSprite->setSubTexture(anim->subTextureNames[anim->currentFrame]);
 			m_currentTime = 0;
 			if (anim->currentFrame == anim->durations.size() - 1 && anim->eTypeAnimation == Single)
@@ -54,11 +53,12 @@ namespace RenderEngine
 			else
 			{
 				anim->currentFrame++;
-			}
+			}*/
 		}
+		m_currentTime += delta;
 	}
-	std::shared_ptr<Animation> Animator::getAnimation(std::string name)
+	/*std::shared_ptr<Animation> Animator::getAnimation(std::string name)
 	{
 		return m_animations.find(name)->second;
-	}
+	}*/
 } 

@@ -2,6 +2,11 @@
 #include "../Resources/ResourceManager.h"
 
 #include <iostream>
+#include <chrono>
+
+std::function<void(int, char**)> Engine::m_start;
+std::function<void(double)> Engine::m_update;
+GLFWwindow* Engine::m_window;
 
 bool Engine::initGraphics()
 {
@@ -47,4 +52,36 @@ void Engine::terminate()
 void Engine::poolEvents()
 {
     glfwPollEvents();
+}
+int Engine::defaultStart(int argc, char** argv)
+{
+    return 0;
+}
+void Engine::setStartFunc(std::function<void(int, char**)> start)
+{
+    m_start = start;
+}
+void Engine::setUpdateFunc(std::function<void(double)> update)
+{
+    m_update = update;
+}
+void Engine::startEngine(int argc, char** argv)
+{
+    m_start(argc, argv);
+    // —охранение времени дл€ вычислени€ времени кадра
+    auto lastTime = std::chrono::high_resolution_clock::now();
+
+    while (!glfwWindowShouldClose(m_window))
+    {
+        poolEvents();
+
+        auto currentTime = std::chrono::high_resolution_clock::now();
+        double duration = std::chrono::duration<double, std::milli>(currentTime - lastTime).count();
+        lastTime = currentTime;
+
+        m_update(duration);
+
+        glfwSwapBuffers(m_window);
+    }
+    Engine::terminate();
 }

@@ -10,6 +10,7 @@ namespace Physics
 	bool PhysicsEngine::m_useGravity;
 	PhysicsEngine::objMap PhysicsEngine::m_dynamicObj;
 	PhysicsEngine::ColliderMap PhysicsEngine::m_colliders;
+	PhysicsEngine::ImpulseMap PhysicsEngine::m_impulses;
 
 	void PhysicsEngine::init(bool useGravity)
 	{
@@ -33,6 +34,12 @@ namespace Physics
 				pos.x += static_cast<float>(delta * vel * offset.x);
 				pos.y += static_cast<float>(delta * vel * offset.y);
 			}
+			if (m_impulses.find(currentObj.first)->second.x > 0 || m_impulses.find(currentObj.first)->second.y > 0)
+			{
+				glm::vec2 imp = m_impulses.find(currentObj.first)->second;
+				pos.x += static_cast<float>(delta * vel * imp.x);
+				pos.y += static_cast<float>(delta * vel * imp.y);
+			}
 			//if (!currentObj.second->getKinematicState() && !currentObj.second->getGroundState()) pos.y -= static_cast<float>(delta * weight * m_g);
 			//ColliderMap::const_iterator it1 = m_colliders.find(1);
 			//ColliderMap::const_iterator it2 = m_colliders.find(2);
@@ -46,6 +53,10 @@ namespace Physics
 	void PhysicsEngine::addCollider(std::shared_ptr<Collider> collider, int id)
 	{
 		m_colliders.emplace(id, std::move(collider));
+	}
+	void PhysicsEngine::addImpulse(glm::vec2 impulse, int id)
+	{
+		m_impulses.emplace(id, impulse);
 	}
 	bool PhysicsEngine::hasCollidersIntersection(const std::shared_ptr<Collider> collider1,	const std::shared_ptr<Collider> collider2)
 	{

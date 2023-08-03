@@ -2,7 +2,9 @@
 
 #include <memory>
 #include <string>
-#include <map>
+//#include <map>
+
+#include "../Game/IComponent.h"
 
 namespace RenderEngine
 {
@@ -12,23 +14,24 @@ namespace RenderEngine
 	class Animator
 	{
 	public:
-		Animator(std::string spriteName);
+		Animator()
+			: m_currentTime(0)
+			, m_run(false)
+		{};
 			
 		void startAnimation(std::string name);
 		void addAnimation(const std::string name, std::shared_ptr<Animation> animation);
 		void update(double delta);
 	private:
-		std::shared_ptr<Animation> getAnimation(std::string name);
+		//std::shared_ptr<Animation> getAnimation(std::string name);
 
-		std::string m_spriteName;
-
-		std::string m_currentAnimation;
+		//std::string m_currentAnimation;
 
 		double m_currentTime;
 
 		bool m_run;
 
-		typedef std::map<const std::string, std::shared_ptr<Animation>> AnimationMap;
-		AnimationMap m_animations;
+		//typedef std::map<const std::string, std::shared_ptr<Animation>> AnimationMap;
+		//AnimationMap m_animations;
 	};
 }

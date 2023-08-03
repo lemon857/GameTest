@@ -32,13 +32,13 @@ void glfwKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int
     g_Game.setKey(key, action);
 }
 
-int main(int argc, char** argv)
+void Start(int argc, char** argv)
 {
     // Инициализация графических библиотек в движке
     if (!Engine::initGraphics())
     {
         std::cout << "Init graphics failed\n";
-        return -1;
+        return;
     }
 
     // Создание окна для отображения в нём всякого прикольного
@@ -49,7 +49,7 @@ int main(int argc, char** argv)
     {
         std::cout << "Generate window failed\n";
         glfwTerminate();
-        return -1;
+        return;
     }
 
     // Установка калбэков для отслеживания изменения размеров окна и нажатия клавиш
@@ -62,7 +62,7 @@ int main(int argc, char** argv)
     if (!Engine::initOpenGL())
     {
         std::cout << "Init OpenGL failed\n";
-        return -1;
+        return;
     }
 
     // Вывод версии OpenGL и рендерера в консоль
@@ -70,38 +70,34 @@ int main(int argc, char** argv)
     std::cout << "OpenGL Version: " << RenderEngine::Renderer::getVersionStr() << "\n";
     // Установка пути приложения для подгрузки текстур
     ResourceManager::setExecutablePath(argv[0]);
-	// Инициализация класса игры
+    // Инициализация класса игры
     if (!g_Game.init())
     {
         std::cout << "Game init failed\n";
-        return -1;
+        return;
     }
     // Отчистка экрана чёрным цветом
     RenderEngine::Renderer::setClearColor(0, 0, 0, 1);
     RenderEngine::Renderer::setDepthTest(true);
     // Инициализация физического движка
-    Physics::PhysicsEngine::init();
-    // Сохранение времени для вычисления времени кадра
-    auto lastTime = std::chrono::high_resolution_clock::now();
+    Physics::PhysicsEngine::init();    
+}
 
-    while (!glfwWindowShouldClose(pWindow))
-    {
-        Engine::poolEvents();
+void Update(double delta)
+{
+    g_Game.update(delta);
 
-        auto currentTime = std::chrono::high_resolution_clock::now();
-        double duration = std::chrono::duration<double, std::milli>(currentTime - lastTime).count();
-        lastTime = currentTime;
+    Physics::PhysicsEngine::update(delta);
 
-        g_Game.update(duration);
+    RenderEngine::Renderer::clearColor();
 
-        Physics::PhysicsEngine::update(duration);
+    g_Game.render();
+}
 
-        RenderEngine::Renderer::clearColor();
-
-        g_Game.render();
-
-        glfwSwapBuffers(pWindow);
-    }
-    Engine::terminate();
+int main(int argc, char** argv)
+{
+    Engine::setStartFunc(Start);
+    Engine::setUpdateFunc(Update);
+    Engine::startEngine(argc, argv);
     return 0;
 }

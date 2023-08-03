@@ -7,6 +7,7 @@
 namespace RenderEngine
 {
 	class Sprite;
+	class Animator;
 }
 
 class Tank : public IGameObject
@@ -29,5 +30,5 @@ public:
 
 private:
 	EOrentation m_eOrentation;
-	std::shared_ptr<RenderEngine::Sprite> m_pSprite;
+	std::shared_ptr<RenderEngine::Animator> m_pAnimator;
 }; 

@@ -99,7 +99,7 @@ bool ResourceManager::loadJSONresources(const std::string & JSONpath)
 		}
 	}
 
-	auto animatorsIt = doc.FindMember("animators");
+	/*auto animatorsIt = doc.FindMember("animators");
 	if (animatorsIt != doc.MemberEnd())
 	{
 		for (const auto& currenAnimator : animatorsIt->value.GetArray())
@@ -131,7 +131,7 @@ bool ResourceManager::loadJSONresources(const std::string & JSONpath)
 					RenderEngine::ECallbackAction(callbackAction), RenderEngine::ETypeAnimation(typeAnimation)));
 			}
 		}
-	}
+	}*/
 	return true;
 }
 std::string ResourceManager::getFileString(const std::string& relativeFilePath)

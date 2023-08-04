@@ -6,6 +6,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 class Tank;
+class BrickWall;
 
 class Game 
 {
@@ -30,4 +31,5 @@ private:
 	glm::ivec2 m_WindowSize;
 
 	std::shared_ptr<Tank> m_pTank;
+	std::shared_ptr<BrickWall> m_pBrickWall;
 };

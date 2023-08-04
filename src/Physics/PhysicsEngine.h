@@ -3,6 +3,8 @@
 #include <unordered_set>
 #include <memory>
 #include <map>
+#include <vector>
+#include <string>
 #include<glm/vec2.hpp>
 
 class IGameObject;
@@ -10,6 +12,14 @@ class IGameObject;
 namespace Physics
 {
 	class Collider;	
+
+	enum EDirection
+	{
+		Up,
+		Down,
+		Left,
+		Right
+	};
 
 	class PhysicsEngine
 	{
@@ -24,23 +34,23 @@ namespace Physics
 
 		// Инициализация физического движка
 		static void init(bool useGravity = false);
-		static void addDynamicObj(std::shared_ptr<IGameObject> obj, int id);
-		static void addCollider(std::shared_ptr<Collider> collider, int id);
+		static void addDynamicObj(std::shared_ptr<IGameObject>& obj, int id);
 		static void addImpulse(glm::vec2, int id);
 		static void terminate();
 		static void update(const double delta);
-
+		// Возвращает указатель на объект с компонентом коллайдера первого вхождения при пересечении
+		static bool checkIntersection(std::shared_ptr<Collider>& collider, std::string& outName, EDirection& outDir);
+		static void addCollider(std::shared_ptr<Collider>& collider);
 	private:
-		static bool hasCollidersIntersection(const std::shared_ptr<Collider> collider1, const std::shared_ptr<Collider> collider2);
+		//static bool hasCollidersIntersection(const std::shared_ptr<Collider> collider1, const std::shared_ptr<Collider> collider2);
 
 		typedef std::map<const int, std::shared_ptr<IGameObject>> objMap;
 		static objMap m_dynamicObj;
 
-		typedef std::map<const int, std::shared_ptr<Collider>> ColliderMap;
-		static ColliderMap m_colliders;
-
 		typedef std::map<const int, glm::vec2> ImpulseMap;
 		static ImpulseMap m_impulses;
+
+		static std::vector<std::shared_ptr<Collider>> m_colliders;
 
 		static double m_g;
 		static int m_currentID;

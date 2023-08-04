@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "Tank.h"
+#include "BrickWall.h"
 
 #include<string>
 #include<iostream>
@@ -27,11 +28,8 @@ Game::~Game()
 
 void Game::render()
 {
-    ResourceManager::getSprite("wall")->render(glm::vec2(100.f, 200.f), glm::vec2(50.f, 50.f), 0, 0);
-    ResourceManager::getSprite("wall")->render(glm::vec2(150.f, 200.f), glm::vec2(50.f, 50.f), 0, 0);
-    ResourceManager::getSprite("wall")->render(glm::vec2(150.f, 250.f), glm::vec2(50.f, 50.f), 0, 0);
-    ResourceManager::getSprite("wall")->render(glm::vec2(100.f, 250.f), glm::vec2(50.f, 50.f), 0, 0);
     m_pTank->render();
+    m_pBrickWall->render();
 }
 void Game::update(const double delta)
 {
@@ -39,22 +37,22 @@ void Game::update(const double delta)
     {
         if (m_keys[GLFW_KEY_W])
         {
-            m_pTank->setOrentation(Tank::EOrentation::Top);
+            m_pTank->setOrentation(Physics::EDirection::Up);
             m_pTank->move(true);
         }
         else if ((m_keys[GLFW_KEY_A]))
         {
-            m_pTank->setOrentation(Tank::EOrentation::Left);
+            m_pTank->setOrentation(Physics::EDirection::Left);
             m_pTank->move(true);
         }
         else if ((m_keys[GLFW_KEY_S]))
         {
-            m_pTank->setOrentation(Tank::EOrentation::Bottom);
+            m_pTank->setOrentation(Physics::EDirection::Down);
             m_pTank->move(true);
         }
         else if ((m_keys[GLFW_KEY_D]))
         {
-            m_pTank->setOrentation(Tank::EOrentation::Right);
+            m_pTank->setOrentation(Physics::EDirection::Right);
             m_pTank->move(true);
         }
         else
@@ -80,7 +78,7 @@ bool Game::init()
     }
 
     auto pTankSprite = ResourceManager::getSprite("TankSprite");
-    ResourceManager::loadSprite("wall", "WallAtlas", "spriteShader", "BrickWall");
+    auto pWallSprite = ResourceManager::getSprite("BrickWallSprite");
 
     glm::mat4 projectionMatrix = glm::ortho(0.0f, (float)m_WindowSize.x, 0.0f, (float)m_WindowSize.y, -100.0f, 100.0f);
 
@@ -89,7 +87,8 @@ bool Game::init()
     pSpriteShaderProgram->setMatrix4("projectionMat", projectionMatrix);
 
 
-    m_pTank = std::make_shared<Tank>(pTankSprite, 0.5, 0.05, glm::vec2(100.f, 200.f), glm::vec2(125.f, 125.f));
+    m_pTank = std::make_shared<Tank>(pTankSprite, 0.5, 0.05, glm::vec2(0.f, 0.f), glm::vec2(100.f, 100.f));
+    m_pBrickWall = std::make_shared<BrickWall>(pWallSprite, glm::vec2(200.f, 100.f), glm::vec2(160.f, 160.f));
     //m_pTank2 = std::make_shared<Tank>(pTankSprite, 0.5, 1, glm::vec2(100.f, 0.f), glm::vec2(100.f, 100.f));
 
     //m_pTank->setKinematicState(false);

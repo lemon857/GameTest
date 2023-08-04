@@ -18,7 +18,7 @@ namespace RenderEngine
 
 		void startAnimation(std::string name);
 		void stopAnimations();
-		void addAnimation(const std::string name, std::shared_ptr<Animation> animation);
+		void addAnimation(const std::string name, std::shared_ptr<Animation>& animation);
 		void update(const double delta) override;
 	private:
 		std::shared_ptr<Animation> getAnimation(std::string name);

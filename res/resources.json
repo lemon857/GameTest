@@ -86,6 +86,12 @@
       "shader": "spriteShader",
       "textureAtlas": "TanksTextureAtlas",
       "initialSubTexture": "YellowUp11"
+    },
+    {
+      "name": "BrickWallSprite",
+      "shader": "spriteShader",
+      "textureAtlas": "WallAtlas",
+      "initialSubTexture": "BrickWall"
     }
   ]
 }

@@ -39,7 +39,7 @@ namespace RenderEngine
 	{
 		m_run = false;
 	}
-	void Animator::addAnimation(const std::string name, std::shared_ptr<Animation> animation)
+	void Animator::addAnimation(const std::string name, std::shared_ptr<Animation>& animation)
 	{
 		m_animations.emplace(name, animation);
 	}

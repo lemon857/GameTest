@@ -9,8 +9,8 @@ namespace Physics
 	double PhysicsEngine::m_g;
 	bool PhysicsEngine::m_useGravity;
 	PhysicsEngine::objMap PhysicsEngine::m_dynamicObj;
-	PhysicsEngine::ColliderMap PhysicsEngine::m_colliders;
 	PhysicsEngine::ImpulseMap PhysicsEngine::m_impulses;
+	std::vector<std::shared_ptr<Collider>> PhysicsEngine::m_colliders;
 
 	void PhysicsEngine::init(bool useGravity)
 	{
@@ -23,28 +23,42 @@ namespace Physics
 	}
 	void PhysicsEngine::update(const double delta)
 	{
-		for (auto currentObj : m_dynamicObj)
-		{
-			
-			//if (!currentObj.second->getKinematicState() && !currentObj.second->getGroundState()) pos.y -= static_cast<float>(delta * weight * m_g);
-			//ColliderMap::const_iterator it1 = m_colliders.find(1);
-			//ColliderMap::const_iterator it2 = m_colliders.find(2);
-			//currentObj.second->getGroundState(hasCollidersIntersection(it1->second, it2->second));
-		}
+
 	}
-	void PhysicsEngine::addDynamicObj(std::shared_ptr<IGameObject> obj, int id)
+	void PhysicsEngine::addDynamicObj(std::shared_ptr<IGameObject>& obj, int id)
 	{
 		m_dynamicObj.emplace(id, std::move(obj));
-	}
-	void PhysicsEngine::addCollider(std::shared_ptr<Collider> collider, int id)
-	{
-		m_colliders.emplace(id, std::move(collider));
 	}
 	void PhysicsEngine::addImpulse(glm::vec2 impulse, int id)
 	{
 		m_impulses.emplace(id, impulse);
 	}
-	bool PhysicsEngine::hasCollidersIntersection(const std::shared_ptr<Collider> collider1,	const std::shared_ptr<Collider> collider2)
+	// Õ≈ ”◊»“€¬¿≈“—ﬂ ”√ŒÀ œŒ¬Œ–Œ“¿ Œ¡⁄≈ “¿ (Õ¿ƒ≈ﬁ—‹ Õ¿ ‘» —)
+	bool PhysicsEngine::checkIntersection(std::shared_ptr<Collider>& collider, std::string& outName, EDirection& outDir)
+	{
+		for (auto currentCollider : m_colliders)
+		{
+			glm::vec2 pos = collider->getPosition();
+			glm::vec2 curPos = currentCollider->getPosition();
+			glm::vec2 size = collider->getSize();
+			glm::vec2 curSize = currentCollider->getSize();
+			
+			if (curPos.y > pos.y + size.y || curPos.y + curSize.y < pos.y) continue;
+
+			if (curPos.x + curSize.x < pos.x || curPos.x > pos.x + size.x) continue;
+
+			if (pos == curPos && size == curSize) continue;
+
+			outName = currentCollider->getObject().getName();
+			return true;
+		}
+		return false;
+	}
+	void PhysicsEngine::addCollider(std::shared_ptr<Collider>& collider)
+	{
+		m_colliders.push_back(collider);
+	}
+	/*bool PhysicsEngine::hasCollidersIntersection(const std::shared_ptr<Collider> collider1,	const std::shared_ptr<Collider> collider2)
 	{
 		const glm::vec2 collider1_bottomLeft_world = collider1->m_object->getPosition();
 		const glm::vec2 collider1_topRight_world = collider1->m_object->getPosition() + collider1->m_object->getSize();
@@ -71,5 +85,5 @@ namespace Physics
 		}
 
 		return true;
-	}
+	}*/
 }

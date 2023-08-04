@@ -4,6 +4,7 @@
 #include <glm/vec2.hpp>
 #include "../Engine/IGameObjec.h"
 #include "../Engine/IComponent.h"
+#include "../Physics/PhysicsEngine.h"	
 
 namespace RenderEngine
 {
@@ -11,29 +12,28 @@ namespace RenderEngine
 	class Animator;
 }
 
+namespace Physics
+{
+	class Collider;
+}
+
 class CharacterController;
 
 class Tank : public IGameObject
 {
 public:
-	enum class EOrentation
-	{
-		Top,
-		Bottom,
-		Left,    
-		Right
-	};
 
 	Tank(std::shared_ptr<RenderEngine::Sprite> pSprite, double velocity, double weight, glm::vec2& position, glm::vec2& size);
 
 	void render() const;
-	void setOrentation(const EOrentation orentation);
+	void setOrentation(const Physics::EDirection orentation);
 	void move(const bool move);
 	void update(const double delta) override;
 
 private:
 	void startAnimation();
-	EOrentation m_eOrentation;
+	Physics::EDirection m_eOrentation;
 	std::shared_ptr<RenderEngine::Animator> m_pAnimator;
+	std::shared_ptr<Physics::Collider> m_pCollider;
 	std::shared_ptr<CharacterController> m_pCharacterController;
 }; 

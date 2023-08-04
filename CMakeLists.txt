@@ -37,6 +37,8 @@ src/Game/Game.cpp
 src/Game/Game.h
 src/Game/Tank.cpp
 src/Game/Tank.h
+src/Game/BrickWall.h
+src/Game/BrickWall.cpp
 
 src/Physics/PhysicsEngine.h
 src/Physics/PhysicsEngine.cpp

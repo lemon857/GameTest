@@ -38,12 +38,12 @@ public:
 	};
 
 	template <class _Ty>
-	std::shared_ptr<_Ty> getComponent(std::string name)
+	_Ty* getComponent(std::string name)
 	{
 		componentsMap::const_iterator it = m_components.find(name);
 		if (it != m_components.end())
 		{
-			return std::make_shared<_Ty>(*(_Ty*)it->second.get());
+			return (_Ty*)it->second.get();
 		}
 		return nullptr;
 	};

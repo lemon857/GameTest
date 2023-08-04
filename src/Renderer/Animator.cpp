@@ -31,9 +31,9 @@ namespace RenderEngine
 		m_currentAnimation = name;
 		m_run = true;
 		//}
-		std::shared_ptr<Animation> anim = getAnimation(m_currentAnimation);
-		auto pSprite = m_targetObj.getpSprite();
-		pSprite->setSubTexture(anim->subTextureNames[anim->currentFrame]);
+		//std::shared_ptr<Animation> anim = getAnimation(m_currentAnimation);
+		//auto pSprite = m_targetObj.getpSprite();
+		//pSprite->setSubTexture(anim->subTextureNames[anim->currentFrame]);
 	}
 	void Animator::stopAnimations()
 	{
@@ -55,7 +55,7 @@ namespace RenderEngine
 			if (anim->currentFrame == anim->durations.size() - 1 && anim->eTypeAnimation == Single)
 			{
 				anim->currentFrame = 0;
-				m_run = false;
+				stopAnimations();
 				return;
 			} 
 			else if (anim->currentFrame == anim->durations.size() - 1 && anim->eTypeAnimation == Cyclical)

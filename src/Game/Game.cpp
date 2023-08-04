@@ -121,8 +121,9 @@ bool Game::init()
 
     std::shared_ptr<RenderEngine::Animator> m_pAnimator = std::make_shared<RenderEngine::Animator>(*m_pTank);
 
-    std::vector<std::string> subTextureNames = { "YellowUp11",	"YellowUp12" };
     std::vector<double> durations = { 100,	100 };
+
+    std::vector<std::string> subTextureNames = { "YellowUp11",	"YellowUp12" };
     m_pAnimator->addAnimation("TopMove", std::make_shared<RenderEngine::Animation>(subTextureNames, durations,
         RenderEngine::ECallbackAction(0), RenderEngine::ETypeAnimation(1)));
 

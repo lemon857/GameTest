@@ -55,10 +55,11 @@ void Tank::setOrentation(const Physics::EDirection orentation)
 		m_moveOffset.y = 1.f;
 		break;
 	}
+	startAnimation();
 }
 void Tank::startAnimation()
 {
-	std::shared_ptr<RenderEngine::Animator> m_pAnimator = getComponent<RenderEngine::Animator>("animator");
+	RenderEngine::Animator* m_pAnimator = getComponent<RenderEngine::Animator>("animator");
 	switch (m_eOrentation)
 	{
 	case Physics::EDirection::Up:
@@ -80,10 +81,10 @@ void Tank::startAnimation()
 }
 void Tank::move(const bool move)
 {
-	//std::shared_ptr<RenderEngine::Animator> m_pAnimator = getComponent<RenderEngine::Animator>("animator");
+	RenderEngine::Animator* m_pAnimator = getComponent<RenderEngine::Animator>("animator");
 	m_move = move;
-	//if (move == false) m_pAnimator->stopAnimations();
-	//else startAnimation();
+	if (move == false) m_pAnimator->stopAnimations();
+	else startAnimation();
 }
 void Tank::update(const double delta) 
 {

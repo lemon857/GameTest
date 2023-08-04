@@ -14,6 +14,9 @@ namespace Physics
 		Collider(IGameObject& targetObj)
 			: IComponent(targetObj)
 		{};
+
+		void update(const double delta) override;
+
 		glm::vec2& getSize() { return m_targetObj.getSize(); };
 		glm::vec2& getPosition() { return m_targetObj.getPosition(); };
 		IGameObject& getObject() { return m_targetObj; }

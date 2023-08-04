@@ -43,7 +43,7 @@ namespace RenderEngine
 	{
 		m_animations.emplace(name, animation);
 	}
-	void Animator::update(double delta)
+	void Animator::update(const double delta)
 	{
 		if (!m_run) return;
 		std::shared_ptr<Animation> anim = getAnimation(m_currentAnimation);

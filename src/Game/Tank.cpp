@@ -10,29 +10,9 @@
 
 Tank::Tank(std::shared_ptr<RenderEngine::Sprite> pSprite, double velocity, double weight, glm::vec2& position, glm::vec2& size)
 	: m_eOrentation(Physics::EDirection::Up)
-	, m_pAnimator(std::make_shared<RenderEngine::Animator>(*this))
-	, m_pCharacterController(std::make_shared<CharacterController>(*this))
-	, m_pCollider(std::make_shared<Physics::Collider>(*this))
 	, IGameObject(std::move(pSprite), "tank", position, size, glm::vec2(0.f, 1.f), velocity, weight)
-{
-	std::vector<std::string> subTextureNames = { "YellowUp11",	"YellowUp12" };
-	std::vector<double> durations = { 100,	100 };
-	m_pAnimator->addAnimation("TopMove", std::make_shared<RenderEngine::Animation>(subTextureNames, durations,
-		RenderEngine::ECallbackAction(0), RenderEngine::ETypeAnimation(1)));
+{	
 
-	subTextureNames = { "YellowDown11",	"YellowDown12" };
-	m_pAnimator->addAnimation("BottomMove", std::make_shared<RenderEngine::Animation>(subTextureNames, durations,
-		RenderEngine::ECallbackAction(0), RenderEngine::ETypeAnimation(1)));
-
-	subTextureNames = { "YellowLeft11",	"YellowLeft12" };
-	m_pAnimator->addAnimation("LeftMove", std::make_shared<RenderEngine::Animation>(subTextureNames, durations,
-		RenderEngine::ECallbackAction(0), RenderEngine::ETypeAnimation(1)));
-
-	subTextureNames = { "YellowRight11",	"YellowRight12" };
-	m_pAnimator->addAnimation("RightMove", std::make_shared<RenderEngine::Animation>(subTextureNames, durations,
-		RenderEngine::ECallbackAction(0), RenderEngine::ETypeAnimation(1)));
-
-	Physics::PhysicsEngine::addCollider(m_pCollider);
 }
 void Tank::render() const
 {
@@ -78,6 +58,7 @@ void Tank::setOrentation(const Physics::EDirection orentation)
 }
 void Tank::startAnimation()
 {
+	std::shared_ptr<RenderEngine::Animator> m_pAnimator = getComponent<RenderEngine::Animator>("animator");
 	switch (m_eOrentation)
 	{
 	case Physics::EDirection::Up:
@@ -99,38 +80,12 @@ void Tank::startAnimation()
 }
 void Tank::move(const bool move)
 {
+	//std::shared_ptr<RenderEngine::Animator> m_pAnimator = getComponent<RenderEngine::Animator>("animator");
 	m_move = move;
-	if (move == false) m_pAnimator->stopAnimations();
-	else startAnimation();
+	//if (move == false) m_pAnimator->stopAnimations();
+	//else startAnimation();
 }
 void Tank::update(const double delta) 
 {
-	m_pAnimator->update(delta);
-	m_pCharacterController->update(delta);
-	std::string obj = "";
-	if (Physics::PhysicsEngine::checkIntersection(m_pCollider, obj))
-	{
-		if (obj == "wall")
-		{
-			m_move = false;
-
-			m_moveOffset.x = 0.f;
-			m_moveOffset.y = 0.f;
-			/*switch (dir)
-			{
-			case Physics::Up:
-				if (m_moveOffset.y < 0) m_moveOffset.y = 0.f;
-				break;
-			case Physics::Down:
-				if (m_moveOffset.y > 0) m_moveOffset.y = 0.f;
-				break;
-			case Physics::Left:
-				if (m_moveOffset.x > 0) m_moveOffset.x = 0.f;
-				break;
-			case Physics::Right:
-				if (m_moveOffset.x < 0) m_moveOffset.x = 0.f;
-				break;
-			}*/
-		}
-	}
+	updateComponents(delta);
 }

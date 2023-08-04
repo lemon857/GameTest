@@ -11,9 +11,11 @@
 #include "../Renderer/Texture2D.h"
 #include "../Renderer/Sprite.h"
 #include "../Renderer/Animator.h"
+#include "../Renderer/Animation.h"
 #include "../Resources/ResourceManager.h"
 #include "../Physics/PhysicsEngine.h"
 #include "../Physics/Collider.h"
+#include "../Physics/CharacterController.h"
 
 Game::Game(const glm::ivec2& windowSize)
     : m_eCurrentGameState(EGameState::Active)
@@ -116,6 +118,37 @@ bool Game::init()
 
     //Physics::PhysicsEngine::addCollider(col1, 1);
     //Physics::PhysicsEngine::addCollider(col2, 2);
+
+    std::shared_ptr<RenderEngine::Animator> m_pAnimator = std::make_shared<RenderEngine::Animator>(*m_pTank);
+
+    std::vector<std::string> subTextureNames = { "YellowUp11",	"YellowUp12" };
+    std::vector<double> durations = { 100,	100 };
+    m_pAnimator->addAnimation("TopMove", std::make_shared<RenderEngine::Animation>(subTextureNames, durations,
+        RenderEngine::ECallbackAction(0), RenderEngine::ETypeAnimation(1)));
+
+    subTextureNames = { "YellowDown11",	"YellowDown12" };
+    m_pAnimator->addAnimation("BottomMove", std::make_shared<RenderEngine::Animation>(subTextureNames, durations,
+        RenderEngine::ECallbackAction(0), RenderEngine::ETypeAnimation(1)));
+
+    subTextureNames = { "YellowLeft11",	"YellowLeft12" };
+    m_pAnimator->addAnimation("LeftMove", std::make_shared<RenderEngine::Animation>(subTextureNames, durations,
+        RenderEngine::ECallbackAction(0), RenderEngine::ETypeAnimation(1)));
+
+    subTextureNames = { "YellowRight11",	"YellowRight12" };
+    m_pAnimator->addAnimation("RightMove", std::make_shared<RenderEngine::Animation>(subTextureNames, durations,
+        RenderEngine::ECallbackAction(0), RenderEngine::ETypeAnimation(1)));
+
+    auto tankCol = std::make_shared<Physics::Collider>(*m_pTank);
+    auto wallCol = std::make_shared<Physics::Collider>(*m_pBrickWall);
+
+    m_pTank->addComponent("collider", tankCol);
+    m_pTank->addComponent("characterController", std::make_shared<CharacterController>(*m_pTank));
+    m_pTank->addComponent("animator", m_pAnimator);
+    m_pBrickWall->addComponent("collider", wallCol);
+
+    Physics::PhysicsEngine::addCollider(tankCol);
+    Physics::PhysicsEngine::addCollider(wallCol);
+
 
 	return true;
 }

@@ -6,9 +6,7 @@ BrickWall::BrickWall(std::shared_ptr<RenderEngine::Sprite> pSprite,
 	glm::vec2& position,
 	glm::vec2& size)
 	: IGameObject(pSprite, "wall", position, size)
-	, m_pCollider(std::make_shared<Physics::Collider>(*this))
 {
-	Physics::PhysicsEngine::addCollider(m_pCollider);
 }
 void BrickWall::render() const
 {

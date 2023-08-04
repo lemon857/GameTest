@@ -33,7 +33,4 @@ public:
 private:
 	void startAnimation();
 	Physics::EDirection m_eOrentation;
-	std::shared_ptr<RenderEngine::Animator> m_pAnimator;
-	std::shared_ptr<Physics::Collider> m_pCollider;
-	std::shared_ptr<CharacterController> m_pCharacterController;
 }; 

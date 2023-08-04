@@ -34,7 +34,7 @@ namespace Physics
 		m_impulses.emplace(id, impulse);
 	}
 	// ме свхршбюеряъ сцнк онбнпнрю назейрю (мюдечяэ мю тхйя)
-	bool PhysicsEngine::checkIntersection(std::shared_ptr<Collider>& collider, std::string& outName)
+	bool PhysicsEngine::checkIntersection(std::shared_ptr<Collider>& collider, std::string& outName, EDirection& outDir)
 	{
 		for (auto currentCollider : m_colliders)
 		{
@@ -42,12 +42,17 @@ namespace Physics
 			glm::vec2 curPos = currentCollider->getPosition();
 			glm::vec2 size = collider->getSize();
 			glm::vec2 curSize = currentCollider->getSize();
-			
+
+			if (pos == curPos && size == curSize) continue;
+
 			if (curPos.y > pos.y + size.y || curPos.y + curSize.y < pos.y) continue;
 
 			if (curPos.x + curSize.x < pos.x || curPos.x > pos.x + size.x) continue;
 
-			if (pos == curPos && size == curSize) continue;
+			if (curPos.y <= pos.y + size.y && pos.y + size.y - 1.f < curPos.y && (pos.x <= curPos.x + curSize.x || pos.x + size.x <= curPos.x)) outDir = Up;
+			else if (curPos.y + curSize.y >= pos.y && pos.y + 1.f > curPos.y + curSize.y && (pos.x <= curPos.x + curSize.x || pos.x + size.x <= curPos.x)) outDir = Down;
+			else if (curPos.x + curSize.x >= pos.x && pos.x + size.x > curPos.x + curSize.x && (pos.y <= curPos.y + curSize.y || pos.y + size.y >= curPos.y)) outDir = Left;
+			else if (curPos.x <= pos.x + size.x && pos.x < curPos.x && (pos.y <= curPos.y + curSize.y || pos.y + size.y >= curPos.y)) outDir = Right;
 
 			outName = currentCollider->getObject().getName();
 			return true;

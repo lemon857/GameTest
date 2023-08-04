@@ -25,7 +25,7 @@ public:
 
 	Tank(std::shared_ptr<RenderEngine::Sprite> pSprite, double velocity, double weight, glm::vec2& position, glm::vec2& size);
 
-	void render() const;
+	void render();
 	void setOrentation(const Physics::EDirection orentation);
 	void move(const bool move);
 	void update(const double delta) override;

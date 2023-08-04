@@ -28,7 +28,7 @@ public:
 	bool getGroundState() { return m_isGrounded; };
 	glm::vec2& getSize() { return m_size; };
 	glm::vec2& getPosition() { return m_position; };
-	glm::vec2& getOffset() { return m_moveOffset; };
+	glm::vec2& getMoveOffset() { return m_moveOffset; };
 	std::string& getName() { return m_name; };
 	std::shared_ptr<RenderEngine::Sprite>& getpSprite() { return m_pSprite; };
 

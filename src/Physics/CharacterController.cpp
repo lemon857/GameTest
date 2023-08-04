@@ -8,7 +8,7 @@ CharacterController::CharacterController(IGameObject& targetObj)
 void CharacterController::update(const double delta)
 {
 	glm::vec2& pos = m_targetObj.getPosition();
-	glm::vec2 offset = m_targetObj.getOffset();
+	glm::vec2 offset = m_targetObj.getMoveOffset();
 	double vel = m_targetObj.getVelocity();
 	double weight = m_targetObj.getWeight();
 	if (m_targetObj.isMove())

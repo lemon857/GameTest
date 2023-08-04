@@ -31,6 +31,8 @@ src/Renderer/Point.h
 src/Renderer/Point.cpp
 src/Renderer/Line.h
 src/Renderer/Line.cpp
+src/Renderer/ShowOutline.h
+src/Renderer/ShowOutline.cpp
 
 src/Renderer/Animator.h
 src/Renderer/Animator.cpp

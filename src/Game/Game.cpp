@@ -12,6 +12,7 @@
 #include "../Renderer/Sprite.h"
 #include "../Renderer/Animator.h"
 #include "../Renderer/Animation.h"
+#include "../Renderer/ShowOutline.h"
 #include "../Resources/ResourceManager.h"
 #include "../Physics/PhysicsEngine.h"
 #include "../Physics/Collider.h"
@@ -32,8 +33,13 @@ void Game::render()
 {
     m_pTank->render();
     m_pBrickWall->render();
-    m_point->render(glm::vec2(50.f, 50.f), 2, glm::vec4(1));
-    m_line->render(glm::vec2(50.f, 50.f), glm::vec2(50.f, 50.f), 2, glm::vec4(1));
+    /*glm::vec2 pos = m_pTank->getPosition();
+    glm::vec2 size = m_pTank->getSize();
+
+    m_line->render(pos, glm::vec2(pos.x, pos.y + size.y), 1, glm::vec4(1));
+    m_line->render(pos, glm::vec2(pos.x + size.x, pos.y), 1, glm::vec4(1));
+    m_line->render(glm::vec2(pos.x + size.x, pos.y), glm::vec2(pos.x, pos.y + size.y), 1, glm::vec4(1));
+    m_line->render(glm::vec2(pos.x, pos.y + size.y), glm::vec2(pos.x + size.x, pos.y), 1, glm::vec4(1));*/
 }
 void Game::update(const double delta)
 {
@@ -103,7 +109,7 @@ bool Game::init()
     pShapeShaderProgram->use();
     pShapeShaderProgram->setMatrix4("projectionMat", projectionMatrix);
 
-    m_pTank = std::make_shared<Tank>(pTankSprite, 0.5, 0.05, glm::vec2(0.f, 0.f), glm::vec2(100.f, 100.f));
+    m_pTank = std::make_shared<Tank>(pTankSprite, 0.2, 0.05, glm::vec2(0.f, 0.f), glm::vec2(100.f, 100.f));
     m_pBrickWall = std::make_shared<BrickWall>(pWallSprite, glm::vec2(200.f, 100.f), glm::vec2(160.f, 160.f));
     //m_pTank2 = std::make_shared<Tank>(pTankSprite, 0.5, 1, glm::vec2(100.f, 0.f), glm::vec2(100.f, 100.f));
 
@@ -144,6 +150,7 @@ bool Game::init()
 
     m_pTank->addComponent("collider", tankCol);
     m_pTank->addComponent("characterController", std::make_shared<CharacterController>(*m_pTank));
+    m_pTank->addComponent("showOutline", std::make_shared<ShowOutline>(*m_pTank, pShapeShaderProgram, glm::vec4(1)));
     m_pTank->addComponent("animator", m_pAnimator);
     m_pBrickWall->addComponent("collider", wallCol);
 

@@ -1,6 +1,7 @@
 #include "Tank.h"
 #include "../Renderer/Sprite.h"
 #include "../Renderer/Animator.h"
+#include "../Renderer/ShowOutline.h"
 #include "../Renderer/Animation.h"
 #include "../Resources/ResourceManager.h"
 #include "../Physics/CharacterController.h"
@@ -14,9 +15,10 @@ Tank::Tank(std::shared_ptr<RenderEngine::Sprite> pSprite, double velocity, doubl
 {	
 
 }
-void Tank::render() const
+void Tank::render()
 {
 	m_pSprite->render(m_position, m_size, 0, 1);
+	getComponent<ShowOutline>("showOutline")->render();
 }
 void Tank::setOrentation(const Physics::EDirection orentation)
 {

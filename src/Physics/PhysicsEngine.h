@@ -38,8 +38,9 @@ namespace Physics
 		static void addImpulse(glm::vec2, int id);
 		static void terminate();
 		static void update(const double delta);
-		// Возвращает указатель на объект с компонентом коллайдера первого вхождения при пересечении
-		static bool checkIntersection(std::shared_ptr<Collider>& collider, std::string& outName);
+		// Возвращает указатель на объект с компонентом коллайдера первого вхождения при пересечении 
+		// Сторона касания считается относительно изначального коллайдера
+		static bool checkIntersection(std::shared_ptr<Collider>& collider, std::string& outName, EDirection& outDir);
 		static void addCollider(std::shared_ptr<Collider>& collider);
 	private:
 		//static bool hasCollidersIntersection(const std::shared_ptr<Collider> collider1, const std::shared_ptr<Collider> collider2);

@@ -1,32 +1,34 @@
 #include "Collider.h"
 #include "PhysicsEngine.h"	
 
+#include <iostream>
+
 namespace Physics
 {
 	void Collider::update(const double delta)
 	{
-
+		EDirection dir;
 		std::string obj = "";
-		if (PhysicsEngine::checkIntersection(std::make_shared<Collider>(*this), obj))
+		if (PhysicsEngine::checkIntersection(std::make_shared<Collider>(*this), obj, dir))
 		{
 			if (obj == "wall")
 			{
-				m_targetObj.setMoveOffset(glm::vec2(0));
-				/*switch (dir)
+				glm::vec2 offset = m_targetObj.getMoveOffset();
+				switch (dir)
 				{
 				case Physics::Up:
-					if (m_moveOffset.y < 0) m_moveOffset.y = 0.f;
+					if (offset.y > 0) m_targetObj.setMoveOffset(glm::vec2(offset.x, 0.f));
 					break;
 				case Physics::Down:
-					if (m_moveOffset.y > 0) m_moveOffset.y = 0.f;
+					if (offset.y < 0) m_targetObj.setMoveOffset(glm::vec2(offset.x, 0.f));
 					break;
 				case Physics::Left:
-					if (m_moveOffset.x > 0) m_moveOffset.x = 0.f;
+					if (offset.x < 0) m_targetObj.setMoveOffset(glm::vec2(0.f, offset.y));
 					break;
 				case Physics::Right:
-					if (m_moveOffset.x < 0) m_moveOffset.x = 0.f;
+					if (offset.x > 0) m_targetObj.setMoveOffset(glm::vec2(0.f, offset.y));
 					break;
-				}*/
+				}
 			}
 		}
 	}

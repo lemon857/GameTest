@@ -34,7 +34,7 @@ namespace Physics
 		m_impulses.emplace(id, impulse);
 	}
 	// ме свхршбюеряъ сцнк онбнпнрю назейрю (мюдечяэ мю тхйя)
-	bool PhysicsEngine::checkIntersection(std::shared_ptr<Collider>& collider, std::string& outName, EDirection& outDir)
+	bool PhysicsEngine::checkIntersection(std::shared_ptr<Collider>& collider, std::string& outName)
 	{
 		for (auto currentCollider : m_colliders)
 		{

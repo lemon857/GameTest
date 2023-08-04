@@ -30,6 +30,8 @@ void Game::render()
 {
     m_pTank->render();
     m_pBrickWall->render();
+    m_point->render(glm::vec2(50.f, 50.f), 2, glm::vec4(1));
+    m_line->render(glm::vec2(50.f, 50.f), glm::vec2(50.f, 50.f), 2, glm::vec4(1));
 }
 void Game::update(const double delta)
 {
@@ -77,6 +79,16 @@ bool Game::init()
         return false;
     }
 
+    auto pShapeShaderProgram = ResourceManager::getShaderProgram("shapeShader");
+    if (!pShapeShaderProgram)
+    {
+        std::cerr << "Can't create shader program!\n";
+        return false;
+    }
+
+    m_point = std::make_shared<RenderEngine::Point>(pShapeShaderProgram);
+    m_line = std::make_shared<RenderEngine::Line>(pShapeShaderProgram);
+
     auto pTankSprite = ResourceManager::getSprite("TankSprite");
     auto pWallSprite = ResourceManager::getSprite("BrickWallSprite");
 
@@ -86,6 +98,8 @@ bool Game::init()
     pSpriteShaderProgram->setInt("tex", 0);
     pSpriteShaderProgram->setMatrix4("projectionMat", projectionMatrix);
 
+    pShapeShaderProgram->use();
+    pShapeShaderProgram->setMatrix4("projectionMat", projectionMatrix);
 
     m_pTank = std::make_shared<Tank>(pTankSprite, 0.5, 0.05, glm::vec2(0.f, 0.f), glm::vec2(100.f, 100.f));
     m_pBrickWall = std::make_shared<BrickWall>(pWallSprite, glm::vec2(200.f, 100.f), glm::vec2(160.f, 160.f));

@@ -2,12 +2,24 @@
 
 namespace RenderEngine
 {
-	void Renderer::draw(const VertexArray& vertexArray, const IndexBuffer& indexBuffer, const ShaderProgram& shader)
+	void Renderer::drawTriangles(const VertexArray& vertexArray, const IndexBuffer& indexBuffer, const ShaderProgram& shader)
 	{
 		shader.use();
 		vertexArray.bind();
 		indexBuffer.bind();
 		glDrawElements(GL_TRIANGLES, indexBuffer.getCount(), GL_UNSIGNED_INT, 0);
+	}
+	void Renderer::drawPoint(const VertexArray& vertexArray, const ShaderProgram& shader)
+	{
+		shader.use();
+		vertexArray.bind();
+		glDrawArrays(GL_POINTS, 0, 1);
+	}
+	void Renderer::drawLine(const VertexArray& vertexArray, const ShaderProgram& shader)
+	{
+		shader.use();
+		vertexArray.bind();
+		glDrawArrays(GL_LINES, 0, 2);
 	}
 	void Renderer::bindTexture(const Texture2D& texture)
 	{

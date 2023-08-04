@@ -11,7 +11,7 @@
 namespace RenderEngine
 {
 	Sprite::Sprite(std::shared_ptr<Texture2D> pTexture, std::string initialSubTexture, std::shared_ptr<ShaderProgram> pShaderProgram)
-		: m_pTextureAtlas(pTexture), m_pShaderProgram(pShaderProgram)
+		: m_pTextureAtlas(std::move(pTexture)), m_pShaderProgram(std::move(pShaderProgram))
 	{
 	
 		const GLfloat vertexCoords[] = {
@@ -24,10 +24,10 @@ namespace RenderEngine
 			//0--3
 
 			//X --- Y
-			0.0f, 0.0f,
-			0.0f, 1.0f,
-			1.0f, 1.0f,
-			1.0f, 0.0f,
+			0.f, 0.f,
+			0.f, 1.f,
+			1.f, 1.f,
+			1.f, 0.f,
 		};
 		
 		auto aSubTexture = m_pTextureAtlas->getSubTexture(initialSubTexture);
@@ -62,20 +62,20 @@ namespace RenderEngine
 	{
 		m_pShaderProgram->use();
 
-		glm::mat4 model(1.0f);
+		glm::mat4 model(1.f);
 
-		model = glm::translate(model, glm::vec3(position, 0.0f));
-		model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f));
-		model = glm::rotate(model, static_cast<float>(glm::radians(rotation)),  glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f));
-		model = glm::scale(model, glm::vec3(size, 1.0f));
+		model = glm::translate(model, glm::vec3(position, 0.f));
+		model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.f));
+		model = glm::rotate(model, static_cast<float>(glm::radians(rotation)),  glm::vec3(0.f, 0.f, 1.f));
+		model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.f));
+		model = glm::scale(model, glm::vec3(size, 1.f));
 		
 		m_pShaderProgram->setMatrix4("modelMat", model);
 		m_pShaderProgram->setFloat("layer", layer);
 
 		Renderer::bindTexture(*m_pTextureAtlas);
 
-		Renderer::draw(m_vertexArray, m_indexBuffer, *m_pShaderProgram);
+		Renderer::drawTriangles(m_vertexArray, m_indexBuffer, *m_pShaderProgram);
 	}
 	void Sprite::setSubTexture(std::string subTexture)
 	{

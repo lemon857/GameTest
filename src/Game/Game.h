@@ -5,6 +5,8 @@
 #include <memory>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include "../Renderer/Point.h"
+#include "../Renderer/Line.h"
 class Tank;
 class BrickWall;
 
@@ -30,6 +32,8 @@ private:
 
 	glm::ivec2 m_WindowSize;
 
+	std::shared_ptr<RenderEngine::Point> m_point;
+	std::shared_ptr<RenderEngine::Line> m_line;
 	std::shared_ptr<Tank> m_pTank;
 	std::shared_ptr<BrickWall> m_pBrickWall;
 };

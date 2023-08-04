@@ -4,6 +4,11 @@
       "name": "spriteShader",
       "filePath_v": "res/shaders/sprite.vert",
       "filePath_f": "res/shaders/sprite.frag"
+    },
+    {
+      "name": "shapeShader",
+      "filePath_v": "res/shaders/shape.vert",
+      "filePath_f": "res/shaders/shape.frag"
     }
   ],
   "textureAtlases": [

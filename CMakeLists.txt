@@ -27,6 +27,10 @@ src/Renderer/VertexArray.h
 src/Renderer/VertexArray.cpp
 src/Renderer/VertexBufferLayout.h
 src/Renderer/VertexBufferLayout.cpp
+src/Renderer/Point.h
+src/Renderer/Point.cpp
+src/Renderer/Line.h
+src/Renderer/Line.cpp
 
 src/Renderer/Animator.h
 src/Renderer/Animator.cpp

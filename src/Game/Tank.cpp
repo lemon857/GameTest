@@ -108,8 +108,7 @@ void Tank::update(const double delta)
 	m_pAnimator->update(delta);
 	m_pCharacterController->update(delta);
 	std::string obj = "";
-	Physics::EDirection dir;
-	if (Physics::PhysicsEngine::checkIntersection(m_pCollider, obj, dir))
+	if (Physics::PhysicsEngine::checkIntersection(m_pCollider, obj))
 	{
 		if (obj == "wall")
 		{

@@ -39,7 +39,7 @@ namespace Physics
 		static void terminate();
 		static void update(const double delta);
 		// Возвращает указатель на объект с компонентом коллайдера первого вхождения при пересечении
-		static bool checkIntersection(std::shared_ptr<Collider>& collider, std::string& outName, EDirection& outDir);
+		static bool checkIntersection(std::shared_ptr<Collider>& collider, std::string& outName);
 		static void addCollider(std::shared_ptr<Collider>& collider);
 	private:
 		//static bool hasCollidersIntersection(const std::shared_ptr<Collider> collider1, const std::shared_ptr<Collider> collider2);

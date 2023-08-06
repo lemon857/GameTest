@@ -41,8 +41,9 @@ src/Renderer/Animator.cpp
 src/Renderer/Animation.h
 src/Renderer/Animation.cpp
 
-src/Game/Game.cpp
-src/Game/Game.h
+src/Examples/ColliderDemoGame.cpp
+src/Examples/ColliderDemoGame.h
+
 src/Game/Tank.cpp
 src/Game/Tank.h
 src/Game/BrickWall.h
@@ -62,6 +63,7 @@ src/Engine/Engine.h
 src/Engine/Engine.cpp
 src/Engine/IGameObjec.h
 src/Engine/IComponent.h
+src/Engine/IGame.h
 )
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)

@@ -5,7 +5,7 @@
 
 #include "Resources/ResourceManager.h"
 #include "Renderer/Renderer.h"
-#include "Game/Game.h"
+#include "Examples/ColliderDemoGame.h"
 
 #include "Physics/PhysicsEngine.h"
 #include "Engine/Engine.h"
@@ -13,23 +13,21 @@
 
 glm::ivec2 g_WindowSize(640, 480);
 
-Game g_Game(g_WindowSize);
+IGame* g_Game;
 
-void glfwWindowSizeCallback(GLFWwindow* pWindow, int width, int height) 
+void windowSizeCallback(GLFWwindow* pWindow, int width, int height)
 {
-    g_WindowSize.x = width;
-    g_WindowSize.y = height;
+    g_Game->setWindowSize(glm::ivec2(width, height));
     RenderEngine::Renderer::setViewport(width, height);
 }
 
-void glfwKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mode) 
+void keyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mode)
 {
     if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE)
     {
         glfwSetWindowShouldClose(pWindow, GL_TRUE);
-
     }
-    g_Game.setKey(key, action);
+    g_Game->setKey(key, action);
 }
 
 void Start(int argc, char** argv)
@@ -53,8 +51,8 @@ void Start(int argc, char** argv)
     }
 
     // Установка калбэков для отслеживания изменения размеров окна и нажатия клавиш
-    Engine::setWindowSizeCallBack(pWindow, glfwWindowSizeCallback);
-    Engine::setKeyCallback(pWindow, glfwKeyCallback);
+    Engine::setWindowSizeCallBack(pWindow, windowSizeCallback);
+    Engine::setKeyCallback(pWindow, keyCallback);
 
     // Выбор текущего окна
     Engine::makeContextCurrent(pWindow);
@@ -71,7 +69,7 @@ void Start(int argc, char** argv)
     // Установка пути приложения для подгрузки текстур
     ResourceManager::setExecutablePath(argv[0]);
     // Инициализация класса игры
-    if (!g_Game.init())
+    if (!g_Game->init())
     {
         std::cout << "Game init failed\n";
         return;
@@ -80,24 +78,28 @@ void Start(int argc, char** argv)
     RenderEngine::Renderer::setClearColor(0, 0, 0, 1);
     RenderEngine::Renderer::setDepthTest(true);
     // Инициализация физического движка
-    Physics::PhysicsEngine::init();    
+    Physics::PhysicsEngine::init();
 }
 
 void Update(double delta)
 {
-    g_Game.update(delta);
+    g_Game->update(delta);
 
     Physics::PhysicsEngine::update(delta);
 
     RenderEngine::Renderer::clearColor();
 
-    g_Game.render();
+    g_Game->render();
 }
 
 int main(int argc, char** argv)
 {
+    g_Game = new ColliderDemoGame(g_WindowSize);
+
     Engine::setStartFunc(Start);
     Engine::setUpdateFunc(Update);
     Engine::startEngine(argc, argv);
+
+    delete g_Game;
     return 0;
 }

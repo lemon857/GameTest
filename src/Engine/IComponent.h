@@ -1,5 +1,5 @@
 #pragma once
-
+// Интерфейс для создания компонентов для игровых объектов
 #include <memory>
 
 class IGameObject;

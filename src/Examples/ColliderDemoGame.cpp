@@ -1,6 +1,6 @@
-#include "Game.h"
-#include "Tank.h"
-#include "BrickWall.h"
+#include "ColliderDemoGame.h"
+#include "../Game/Tank.h"
+#include "../Game/BrickWall.h"
 
 #include<string>
 #include<iostream>
@@ -18,30 +18,21 @@
 #include "../Physics/Collider.h"
 #include "../Physics/CharacterController.h"
 
-Game::Game(const glm::ivec2& windowSize)
-    : m_eCurrentGameState(EGameState::Active)
-    , m_WindowSize(windowSize)
-{
-	m_keys.fill(false);
-}
-Game::~Game()
+ColliderDemoGame::ColliderDemoGame(const glm::ivec2& windowSize)
+    : IGame(windowSize)
 {
 
 }
+ColliderDemoGame::~ColliderDemoGame()
+{
 
-void Game::render()
+}
+void ColliderDemoGame::render() const
 {
     m_pTank->render();
     m_pBrickWall->render();
-    /*glm::vec2 pos = m_pTank->getPosition();
-    glm::vec2 size = m_pTank->getSize();
-
-    m_line->render(pos, glm::vec2(pos.x, pos.y + size.y), 1, glm::vec4(1));
-    m_line->render(pos, glm::vec2(pos.x + size.x, pos.y), 1, glm::vec4(1));
-    m_line->render(glm::vec2(pos.x + size.x, pos.y), glm::vec2(pos.x, pos.y + size.y), 1, glm::vec4(1));
-    m_line->render(glm::vec2(pos.x, pos.y + size.y), glm::vec2(pos.x + size.x, pos.y), 1, glm::vec4(1));*/
 }
-void Game::update(const double delta)
+void ColliderDemoGame::update(const double delta)
 {
     if (m_pTank)
     {
@@ -100,11 +91,7 @@ void Game::update(const double delta)
         m_cam->update(delta);
     }
 }
-void Game::setKey(const int key, const int action)
-{
-	m_keys[key] = action;
-}
-bool Game::init()
+bool ColliderDemoGame::init()
 {
     ResourceManager::loadJSONresources("res/resources.json");
 

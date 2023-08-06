@@ -1,5 +1,5 @@
 #pragma once
-
+// Интерфейс для создания игровых объектов
 #include <glm/vec2.hpp>
 #include <string>
 #include <memory>

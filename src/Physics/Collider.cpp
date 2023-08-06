@@ -11,25 +11,14 @@ namespace Physics
 		std::string obj = "";
 		if (PhysicsEngine::checkIntersection(std::make_shared<Collider>(*this), obj, dir))
 		{
-			if (obj == "wall")
+			if (m_onCollisionCallback)
 			{
-				glm::vec2 offset = m_targetObj.getMoveOffset();
-				switch (dir)
-				{
-				case Physics::Up:
-					if (offset.y > 0) m_targetObj.setMoveOffset(glm::vec2(offset.x, 0.f));
-					break;
-				case Physics::Down:
-					if (offset.y < 0) m_targetObj.setMoveOffset(glm::vec2(offset.x, 0.f));
-					break;
-				case Physics::Left:
-					if (offset.x < 0) m_targetObj.setMoveOffset(glm::vec2(0.f, offset.y));
-					break;
-				case Physics::Right:
-					if (offset.x > 0) m_targetObj.setMoveOffset(glm::vec2(0.f, offset.y));
-					break;
-				}
+				m_onCollisionCallback(m_targetObj, obj, dir);
 			}
 		}
+	}
+	void Collider::setOnCollisionCallback(std::function<void(IGameObject&, std::string, Physics::EDirection)> callback)
+	{
+		m_onCollisionCallback = callback;
 	}
 }

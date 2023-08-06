@@ -43,8 +43,8 @@ src/Renderer/Animation.cpp
 
 src/Examples/ColliderDemoGame.cpp
 src/Examples/ColliderDemoGame.h
-src/Examples/SnakeGame.cpp
-src/Examples/SnakeGame.h
+src/Examples/SnakeDemoGame.cpp
+src/Examples/SnakeDemoGame.h
 src/Examples/Tank.cpp
 src/Examples/Tank.h
 src/Examples/BrickWall.h

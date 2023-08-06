@@ -1,6 +1,8 @@
 #pragma once
 
 #include <memory>
+#include <string>
+#include <functional>
 #include <glm/vec2.hpp>
 #include "../Engine/IGameObjec.h"
 #include "../Engine/IComponent.h"

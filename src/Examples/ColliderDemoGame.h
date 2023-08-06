@@ -25,5 +25,6 @@ private:
 	std::shared_ptr<RenderEngine::Line> m_line;
 	std::shared_ptr<Tank> m_pTank;
 	std::shared_ptr<BrickWall> m_pBrickWall;
+	std::shared_ptr<BrickWall> m_pBrickWall2;
 	std::shared_ptr<Camera> m_cam;
 };

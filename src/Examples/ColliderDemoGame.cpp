@@ -27,10 +27,33 @@ ColliderDemoGame::~ColliderDemoGame()
 {
 
 }
+void onCollisionTank(IGameObject& targetObj, std::string name, Physics::EDirection dir)
+{
+
+    if (name == "wall")
+    {
+        switch (dir)
+        {
+        case Physics::Up:
+            if (targetObj.getMoveOffset().y > 0) targetObj.setMoveOffset(glm::vec2(targetObj.getMoveOffset().x, 0.f));
+            break;
+        case Physics::Down:
+            if (targetObj.getMoveOffset().y < 0) targetObj.setMoveOffset(glm::vec2(targetObj.getMoveOffset().x, 0.f));
+            break;
+        case Physics::Left:
+            if (targetObj.getMoveOffset().x < 0) targetObj.setMoveOffset(glm::vec2(0.f, targetObj.getMoveOffset().y));
+            break;
+        case Physics::Right:
+            if (targetObj.getMoveOffset().x > 0) targetObj.setMoveOffset(glm::vec2(0.f, targetObj.getMoveOffset().y));
+            break;
+        }
+    }
+}
 void ColliderDemoGame::render() const
 {
     m_pTank->render();
     m_pBrickWall->render();
+    m_pBrickWall2->render();
 }
 void ColliderDemoGame::update(const double delta)
 {
@@ -98,8 +121,9 @@ bool ColliderDemoGame::init()
     pSpriteShaderProgram->use();
     pSpriteShaderProgram->setInt("tex", 0);
 
-    m_pTank = std::make_shared<Tank>(pTankSprite, 0.2, 0.05, glm::vec2(0.f, 0.f), glm::vec2(100.f, 100.f));
+    m_pTank = std::make_shared<Tank>(pTankSprite, 0.2, 0.05, glm::vec2(100.f, 0.f), glm::vec2(100.f, 100.f));
     m_pBrickWall = std::make_shared<BrickWall>(pWallSprite, glm::vec2(200.f, 100.f), glm::vec2(160.f, 160.f));
+    m_pBrickWall2 = std::make_shared<BrickWall>(pWallSprite, glm::vec2(465.f, 100.f), glm::vec2(160.f, 160.f));
     //m_pTank2 = std::make_shared<Tank>(pTankSprite, 0.5, 1, glm::vec2(100.f, 0.f), glm::vec2(100.f, 100.f));
 
     //m_pTank->setKinematicState(false);
@@ -136,15 +160,20 @@ bool ColliderDemoGame::init()
 
     auto tankCol = std::make_shared<Physics::Collider>(*m_pTank);
     auto wallCol = std::make_shared<Physics::Collider>(*m_pBrickWall);
+    auto wallCol2 = std::make_shared<Physics::Collider>(*m_pBrickWall2);
+
+    tankCol->setOnCollisionCallback(onCollisionTank);
 
     m_pTank->addComponent("collider", tankCol);
     m_pTank->addComponent("characterController", std::make_shared<CharacterController>(*m_pTank));
     m_pTank->addComponent("showOutline", std::make_shared<ShowOutline>(*m_pTank, pShapeShaderProgram, glm::vec4(1)));
     m_pTank->addComponent("animator", m_pAnimator);
     m_pBrickWall->addComponent("collider", wallCol);
+    m_pBrickWall2->addComponent("collider", wallCol2);
 
     Physics::PhysicsEngine::addCollider(tankCol);
     Physics::PhysicsEngine::addCollider(wallCol);
+    Physics::PhysicsEngine::addCollider(wallCol2);
 
 
 	return true;

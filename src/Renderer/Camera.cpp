@@ -31,7 +31,7 @@ void Camera::update(const double delta)
 {
 	updateComponents(delta);
 	m_projectionMatrix = glm::ortho(
-		m_position.x - (m_size.x/2),
+		m_position.x - (m_size.x / 2),
 		m_position.x - (m_size.x / 2) + m_size.x,
 		m_position.y - (m_size.y / 2),
 		m_position.y - (m_size.x / 2) + m_size.y, 

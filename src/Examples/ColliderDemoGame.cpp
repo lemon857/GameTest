@@ -1,6 +1,6 @@
 #include "ColliderDemoGame.h"
-#include "../Game/Tank.h"
-#include "../Game/BrickWall.h"
+#include "Tank.h"
+#include "BrickWall.h"
 
 #include<string>
 #include<iostream>
@@ -61,7 +61,7 @@ void ColliderDemoGame::update(const double delta)
             m_pTank->move(false);
         }
         m_pTank->update(delta);
-        m_cam->setPosition(m_pTank->getPosition() + (m_pTank->getSize() / 2.f));
+        m_cam->setPosition(m_pTank->getPosition() + (m_pTank->getSize()/2.f));
         m_cam->update(delta);
     }    
 }

@@ -11,7 +11,7 @@
 #include "Engine/Engine.h"
 
 
-glm::ivec2 g_WindowSize(640, 480);
+glm::ivec2 g_WindowSize(800, 600);
 
 IGame* g_Game;
 

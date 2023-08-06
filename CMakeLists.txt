@@ -43,11 +43,12 @@ src/Renderer/Animation.cpp
 
 src/Examples/ColliderDemoGame.cpp
 src/Examples/ColliderDemoGame.h
-
-src/Game/Tank.cpp
-src/Game/Tank.h
-src/Game/BrickWall.h
-src/Game/BrickWall.cpp
+src/Examples/SnakeGame.cpp
+src/Examples/SnakeGame.h
+src/Examples/Tank.cpp
+src/Examples/Tank.h
+src/Examples/BrickWall.h
+src/Examples/BrickWall.cpp
 
 src/Physics/PhysicsEngine.h
 src/Physics/PhysicsEngine.cpp

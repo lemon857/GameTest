@@ -20,7 +20,7 @@ public:
 	void setKinematicState(bool isKinematic) { m_isKinematic = isKinematic; };
 	void setGroundState(bool isGrounded) { m_isGrounded = isGrounded; };
 	void setMoveOffset(glm::vec2& offset) { m_moveOffset = offset; };
-
+	void setPosition(glm::vec2& position) { m_position = position; };
 
 	double getVelocity() { return m_velocity; };
 	double getWeight() { return m_weight; };

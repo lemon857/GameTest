@@ -26,10 +26,6 @@ public:
 	void addShaderProgram(std::shared_ptr<RenderEngine::ShaderProgram>& program);
 
 	void update(const double delta) override;
-
-	void move(bool isMove);
-
-	void setOrentation(const Physics::EDirection orentation);
 private:
 	std::vector<std::shared_ptr<RenderEngine::ShaderProgram>> m_shaderPrograms;
 

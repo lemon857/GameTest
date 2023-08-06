@@ -61,35 +61,9 @@ void ColliderDemoGame::update(const double delta)
             m_pTank->move(false);
         }
         m_pTank->update(delta);
-    }
-    if (m_cam)
-    {
-        if (m_keys[GLFW_KEY_UP])
-        {
-            m_cam->setOrentation(Physics::EDirection::Up);
-            m_cam->move(true);
-        }
-        else if ((m_keys[GLFW_KEY_LEFT]))
-        {
-            m_cam->setOrentation(Physics::EDirection::Left);
-            m_cam->move(true);
-        }
-        else if ((m_keys[GLFW_KEY_DOWN]))
-        {
-            m_cam->setOrentation(Physics::EDirection::Down);
-            m_cam->move(true);
-        }
-        else if ((m_keys[GLFW_KEY_RIGHT]))
-        {
-            m_cam->setOrentation(Physics::EDirection::Right);
-            m_cam->move(true);
-        }
-        else
-        {
-            m_cam->move(false);
-        }
+        m_cam->setPosition(m_pTank->getPosition() + (m_pTank->getSize() / 2.f));
         m_cam->update(delta);
-    }
+    }    
 }
 bool ColliderDemoGame::init()
 {
@@ -168,8 +142,6 @@ bool ColliderDemoGame::init()
     m_pTank->addComponent("showOutline", std::make_shared<ShowOutline>(*m_pTank, pShapeShaderProgram, glm::vec4(1)));
     m_pTank->addComponent("animator", m_pAnimator);
     m_pBrickWall->addComponent("collider", wallCol);
-
-    m_cam->addComponent("characterController", std::make_shared<CharacterController>(*m_cam));
 
     Physics::PhysicsEngine::addCollider(tankCol);
     Physics::PhysicsEngine::addCollider(wallCol);

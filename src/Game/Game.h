@@ -7,6 +7,8 @@
 #include <GLFW/glfw3.h>
 #include "../Renderer/Point.h"
 #include "../Renderer/Line.h"
+#include "../Renderer/Camera.h"
+
 class Tank;
 class BrickWall;
 
@@ -36,4 +38,5 @@ private:
 	std::shared_ptr<RenderEngine::Line> m_line;
 	std::shared_ptr<Tank> m_pTank;
 	std::shared_ptr<BrickWall> m_pBrickWall;
+	std::shared_ptr<Camera> m_cam;
 };

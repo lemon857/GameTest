@@ -14,7 +14,7 @@ namespace RenderEngine
 class IGameObject 
 {
 public:	
-	virtual void update(double delta) {};
+	virtual void update(const double delta) {};
 	bool isMove() const { return m_move; };
 
 	void setKinematicState(bool isKinematic) { m_isKinematic = isKinematic; };

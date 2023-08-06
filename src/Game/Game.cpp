@@ -71,6 +71,34 @@ void Game::update(const double delta)
         }
         m_pTank->update(delta);
     }
+    if (m_cam)
+    {
+        if (m_keys[GLFW_KEY_UP])
+        {
+            m_cam->setOrentation(Physics::EDirection::Up);
+            m_cam->move(true);
+        }
+        else if ((m_keys[GLFW_KEY_LEFT]))
+        {
+            m_cam->setOrentation(Physics::EDirection::Left);
+            m_cam->move(true);
+        }
+        else if ((m_keys[GLFW_KEY_DOWN]))
+        {
+            m_cam->setOrentation(Physics::EDirection::Down);
+            m_cam->move(true);
+        }
+        else if ((m_keys[GLFW_KEY_RIGHT]))
+        {
+            m_cam->setOrentation(Physics::EDirection::Right);
+            m_cam->move(true);
+        }
+        else
+        {
+            m_cam->move(false);
+        }
+        m_cam->update(delta);
+    }
 }
 void Game::setKey(const int key, const int action)
 {
@@ -100,14 +128,14 @@ bool Game::init()
     auto pTankSprite = ResourceManager::getSprite("TankSprite");
     auto pWallSprite = ResourceManager::getSprite("BrickWallSprite");
 
-    glm::mat4 projectionMatrix = glm::ortho(0.0f, (float)m_WindowSize.x, 0.0f, (float)m_WindowSize.y, -100.0f, 100.0f);
+    m_cam = std::make_shared<Camera>(glm::vec2(0), m_WindowSize, -100.f, 100.f);
 
+    m_cam->addShaderProgram(pSpriteShaderProgram);
+    m_cam->addShaderProgram(pShapeShaderProgram);
+
+    //glm::perspective(90.f, 1.f, -100.f, 100.f);
     pSpriteShaderProgram->use();
     pSpriteShaderProgram->setInt("tex", 0);
-    pSpriteShaderProgram->setMatrix4("projectionMat", projectionMatrix);
-
-    pShapeShaderProgram->use();
-    pShapeShaderProgram->setMatrix4("projectionMat", projectionMatrix);
 
     m_pTank = std::make_shared<Tank>(pTankSprite, 0.2, 0.05, glm::vec2(0.f, 0.f), glm::vec2(100.f, 100.f));
     m_pBrickWall = std::make_shared<BrickWall>(pWallSprite, glm::vec2(200.f, 100.f), glm::vec2(160.f, 160.f));
@@ -153,6 +181,8 @@ bool Game::init()
     m_pTank->addComponent("showOutline", std::make_shared<ShowOutline>(*m_pTank, pShapeShaderProgram, glm::vec4(1)));
     m_pTank->addComponent("animator", m_pAnimator);
     m_pBrickWall->addComponent("collider", wallCol);
+
+    m_cam->addComponent("characterController", std::make_shared<CharacterController>(*m_cam));
 
     Physics::PhysicsEngine::addCollider(tankCol);
     Physics::PhysicsEngine::addCollider(wallCol);

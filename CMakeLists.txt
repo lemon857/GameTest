@@ -33,6 +33,8 @@ src/Renderer/Line.h
 src/Renderer/Line.cpp
 src/Renderer/ShowOutline.h
 src/Renderer/ShowOutline.cpp
+src/Renderer/Camera.h
+src/Renderer/Camera.cpp
 
 src/Renderer/Animator.h
 src/Renderer/Animator.cpp

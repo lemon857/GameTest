@@ -8,10 +8,6 @@ PongObject::PongObject(std::shared_ptr<RenderEngine::Sprite> sprite, const std::
 {
 
 }
-void PongObject::update(const double delta)
-{
-	updateComponents(delta);
-}
 void PongObject::render()
 {
 	getComponent<ShowOutline>("showOutline")->render();

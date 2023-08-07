@@ -20,9 +20,7 @@ public:
 		const glm::vec2& size,
 		const double velocity = 1);
 
-	void update(const double delta) override;
-
-	void render();
+	virtual void render();
 
 	void setOrentation(const Physics::EDirection orentation);
 

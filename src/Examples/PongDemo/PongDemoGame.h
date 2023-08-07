@@ -2,6 +2,7 @@
 
 #include "../../Engine/IGame.h"
 #include "../../Renderer/Point.h"
+#include "../../Renderer/Sprite.h"
 
 #include "PongObject.h"
 #include "Ball.h"
@@ -26,7 +27,12 @@ private:
 	std::shared_ptr<PongObject> m_downWall;
 	std::shared_ptr<PongObject> m_upWall;
 
+	std::shared_ptr<PongObject> m_leftWall;
+	std::shared_ptr<PongObject> m_rightWall;
+
 	std::shared_ptr<PongObject> m_plate1;
+	std::shared_ptr<PongObject> m_plate2;
+	std::shared_ptr<RenderEngine::Sprite> m_text;
 
 	std::shared_ptr<Ball> m_ball;
 };

@@ -19,7 +19,6 @@ public:
 	void update(const double delta) override;
 	bool init() override;
 private:
-	std::shared_ptr<RenderEngine::Point> m_point;
 	std::shared_ptr<RenderEngine::Line> m_line;
 	std::shared_ptr<Tank> m_pTank;
 	std::shared_ptr<BrickWall> m_pBrickWall;

@@ -106,7 +106,6 @@ bool ColliderDemoGame::init()
         return false;
     }
 
-    m_point = std::make_shared<RenderEngine::Point>(pShapeShaderProgram);
     m_line = std::make_shared<RenderEngine::Line>(pShapeShaderProgram);
 
     auto pTankSprite = ResourceManager::getSprite("TankSprite");

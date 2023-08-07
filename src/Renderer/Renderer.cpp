@@ -9,10 +9,11 @@ namespace RenderEngine
 		indexBuffer.bind();
 		glDrawElements(GL_TRIANGLES, indexBuffer.getCount(), GL_UNSIGNED_INT, 0);
 	}
-	void Renderer::drawPoint(const VertexArray& vertexArray, const ShaderProgram& shader)
+	void Renderer::drawPoint(const VertexArray& vertexArray, const ShaderProgram& shader, const GLfloat size)
 	{
 		shader.use();
 		vertexArray.bind();
+		glPointSize(size);
 		glDrawArrays(GL_POINTS, 0, 1);
 	}
 	void Renderer::drawLine(const VertexArray& vertexArray, const ShaderProgram& shader)

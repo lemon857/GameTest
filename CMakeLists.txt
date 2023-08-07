@@ -22,6 +22,10 @@ src/Examples/SnakeDemo/SnakePart.h
 
 src/Examples/PongDemo/PongDemoGame.h
 src/Examples/PongDemo/PongDemoGame.cpp
+src/Examples/PongDemo/PongObject.h
+src/Examples/PongDemo/PongObject.cpp
+src/Examples/PongDemo/Ball.h
+src/Examples/PongDemo/Ball.cpp
 
 src/Resources/ResourceManager.cpp
 src/Resources/ResourceManager.h

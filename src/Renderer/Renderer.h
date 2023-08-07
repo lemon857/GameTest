@@ -13,7 +13,7 @@ namespace RenderEngine
 	{
 	public:
 		static void drawTriangles(const VertexArray& vertexArray, const IndexBuffer& indexBuffer, const ShaderProgram& shader);
-		static void drawPoint(const VertexArray& vertexArray, const ShaderProgram& shader);
+		static void drawPoint(const VertexArray& vertexArray, const ShaderProgram& shader, const GLfloat size);
 		static void drawLine(const VertexArray& vertexArray, const ShaderProgram& shader);
 		static void bindTexture(const Texture2D& texture);
 		static void setClearColor(const float r, const float g, const float b, const float a = 1.0f);

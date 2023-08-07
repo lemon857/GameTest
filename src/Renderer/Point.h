@@ -17,7 +17,7 @@ namespace RenderEngine
 	class Point 
 	{
 	public:
-		Point(std::shared_ptr<ShaderProgram> pShaderProgram);
+		Point(std::shared_ptr<ShaderProgram> pShaderProgram, float size);
 
 		Point(const Point&) = delete;
 		Point& operator=(const Point&) = delete;
@@ -28,5 +28,6 @@ namespace RenderEngine
 
 		VertexArray m_vertexArray;
 		VertexBuffer m_vertexCoordsBuffer;
+		float m_size;
 	};
 }

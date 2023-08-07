@@ -9,8 +9,9 @@
 
 namespace RenderEngine
 {
-	Point::Point(std::shared_ptr<ShaderProgram> pShaderProgram)
+	Point::Point(std::shared_ptr<ShaderProgram> pShaderProgram, float size)
 		: m_pShaderProgram(std::move(pShaderProgram))
+		, m_size(size)
 	{
 
 		const GLfloat vertexCoords[] = {
@@ -36,6 +37,6 @@ namespace RenderEngine
 		m_pShaderProgram->setFloat("layer", layer);
 		m_pShaderProgram->setVec4("sourceColor", color);
 
-		Renderer::drawPoint(m_vertexArray, *m_pShaderProgram);
+		Renderer::drawPoint(m_vertexArray, *m_pShaderProgram, m_size);
 	}
 }

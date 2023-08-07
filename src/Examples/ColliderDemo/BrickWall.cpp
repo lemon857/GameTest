@@ -1,6 +1,6 @@
 #include "BrickWall.h"
-#include "../Renderer/Sprite.h"
-#include "../Physics/PhysicsEngine.h"
+#include "../../Renderer/Sprite.h"
+#include "../../Physics/PhysicsEngine.h"
 
 BrickWall::BrickWall(std::shared_ptr<RenderEngine::Sprite> pSprite,
 	glm::vec2& position,

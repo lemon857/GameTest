@@ -5,8 +5,8 @@
 
 #include "Resources/ResourceManager.h"
 #include "Renderer/Renderer.h"
-#include "Examples/ColliderDemoGame.h"
-#include "Examples/SnakeDemoGame.h"
+#include "Examples/ColliderDemo/ColliderDemoGame.h"
+#include "Examples/SnakeDemo/SnakeDemoGame.h"
 
 #include "Physics/PhysicsEngine.h"
 #include "Engine/Engine.h"

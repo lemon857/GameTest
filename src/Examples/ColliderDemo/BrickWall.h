@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../Engine/IGameObjec.h"
-#include "../Physics/Collider.h"
+#include "../../Engine/IGameObjec.h"
+#include "../../Physics/Collider.h"
 #include <memory>
 
 class BrickWall : public IGameObject

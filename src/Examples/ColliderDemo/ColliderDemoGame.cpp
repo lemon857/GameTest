@@ -7,16 +7,16 @@
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "../Renderer/ShaderProgram.h"
-#include "../Renderer/Texture2D.h"
-#include "../Renderer/Sprite.h"
-#include "../Renderer/Animator.h"
-#include "../Renderer/Animation.h"
-#include "../Renderer/ShowOutline.h"
-#include "../Resources/ResourceManager.h"
-#include "../Physics/PhysicsEngine.h"
-#include "../Physics/Collider.h"
-#include "../Physics/CharacterController.h"
+#include "../../Renderer/ShaderProgram.h"
+#include "../../Renderer/Texture2D.h"
+#include "../../Renderer/Sprite.h"
+#include "../../Renderer/Animator.h"
+#include "../../Renderer/Animation.h"
+#include "../../Renderer/ShowOutline.h"
+#include "../../Resources/ResourceManager.h"
+#include "../../Physics/PhysicsEngine.h"
+#include "../../Physics/Collider.h"
+#include "../../Physics/CharacterController.h"
 
 ColliderDemoGame::ColliderDemoGame(const glm::ivec2& windowSize)
     : IGame(windowSize)

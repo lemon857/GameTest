@@ -1,12 +1,12 @@
 #include "Tank.h"
-#include "../Renderer/Sprite.h"
-#include "../Renderer/Animator.h"
-#include "../Renderer/ShowOutline.h"
-#include "../Renderer/Animation.h"
-#include "../Resources/ResourceManager.h"
-#include "../Physics/CharacterController.h"
-#include "../Physics/Collider.h"
-#include "../Physics/PhysicsEngine.h"	
+#include "../../Renderer/Sprite.h"
+#include "../../Renderer/Animator.h"
+#include "../../Renderer/ShowOutline.h"
+#include "../../Renderer/Animation.h"
+#include "../../Resources/ResourceManager.h"
+#include "../../Physics/CharacterController.h"
+#include "../../Physics/Collider.h"
+#include "../../Physics/PhysicsEngine.h"	
 #include <iostream>
 
 Tank::Tank(std::shared_ptr<RenderEngine::Sprite> pSprite, double velocity, double weight, glm::vec2& position, glm::vec2& size)

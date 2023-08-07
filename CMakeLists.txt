@@ -7,6 +7,22 @@ project(${PROJECT_NAME})
 add_executable(${PROJECT_NAME}
 src/main.cpp
 
+src/Examples/ColliderDemo/ColliderDemoGame.cpp
+src/Examples/ColliderDemo/ColliderDemoGame.h
+src/Examples/ColliderDemo/Tank.cpp
+src/Examples/ColliderDemo/Tank.h
+src/Examples/ColliderDemo/BrickWall.h
+src/Examples/ColliderDemo/BrickWall.cpp
+
+src/Examples/SnakeDemo/SnakeDemoGame.cpp
+src/Examples/SnakeDemo/SnakeDemoGame.h
+src/Examples/SnakeDemo/SnakePart.h
+src/Examples/SnakeDemo/SnakePart.cpp
+src/Examples/SnakeDemo/SnakePart.h
+
+src/Examples/PongDemo/PongDemoGame.h
+src/Examples/PongDemo/PongDemoGame.cpp
+
 src/Resources/ResourceManager.cpp
 src/Resources/ResourceManager.h
 src/Resources/stb_image.h
@@ -40,17 +56,6 @@ src/Renderer/Animator.h
 src/Renderer/Animator.cpp
 src/Renderer/Animation.h
 src/Renderer/Animation.cpp
-
-src/Examples/ColliderDemoGame.cpp
-src/Examples/ColliderDemoGame.h
-src/Examples/SnakeDemoGame.cpp
-src/Examples/SnakeDemoGame.h
-src/Examples/Tank.cpp
-src/Examples/Tank.h
-src/Examples/BrickWall.h
-src/Examples/BrickWall.cpp
-src/Examples/SnakePart.h
-src/Examples/SnakePart.cpp
 
 src/Physics/PhysicsEngine.h
 src/Physics/PhysicsEngine.cpp

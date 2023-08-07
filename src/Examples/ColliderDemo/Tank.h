@@ -4,9 +4,9 @@
 #include <string>
 #include <functional>
 #include <glm/vec2.hpp>
-#include "../Engine/IGameObjec.h"
-#include "../Engine/IComponent.h"
-#include "../Physics/PhysicsEngine.h"	
+#include "../../Engine/IGameObjec.h"
+#include "../../Engine/IComponent.h"
+#include "../../Physics/PhysicsEngine.h"	
 
 namespace RenderEngine
 {

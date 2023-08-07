@@ -49,6 +49,8 @@ src/Examples/Tank.cpp
 src/Examples/Tank.h
 src/Examples/BrickWall.h
 src/Examples/BrickWall.cpp
+src/Examples/SnakePart.h
+src/Examples/SnakePart.cpp
 
 src/Physics/PhysicsEngine.h
 src/Physics/PhysicsEngine.cpp

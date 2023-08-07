@@ -2,10 +2,8 @@
 
 #include <array>
 #include<glm/vec2.hpp>
-#include <memory>
 #include "../Renderer/Point.h"
 #include "../Renderer/Line.h"
-#include "../Renderer/Camera.h"
 #include "../Engine/IGame.h"
 
 class Tank;
@@ -26,5 +24,4 @@ private:
 	std::shared_ptr<Tank> m_pTank;
 	std::shared_ptr<BrickWall> m_pBrickWall;
 	std::shared_ptr<BrickWall> m_pBrickWall2;
-	std::shared_ptr<Camera> m_cam;
 };

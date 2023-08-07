@@ -8,6 +8,7 @@
 #include "ShaderProgram.h"
 #include "../Engine/IGameObjec.h"
 #include "../Physics/PhysicsEngine.h"
+#include "../Renderer/Sprite.h"
 
 enum ETypeCamera
 {
@@ -26,6 +27,8 @@ public:
 	void addShaderProgram(std::shared_ptr<RenderEngine::ShaderProgram>& program);
 
 	void update(const double delta) override;
+
+	void updateSize(glm::vec2 size);
 private:
 	std::vector<std::shared_ptr<RenderEngine::ShaderProgram>> m_shaderPrograms;
 

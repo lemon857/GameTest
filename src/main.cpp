@@ -6,6 +6,7 @@
 #include "Resources/ResourceManager.h"
 #include "Renderer/Renderer.h"
 #include "Examples/ColliderDemoGame.h"
+#include "Examples/SnakeDemoGame.h"
 
 #include "Physics/PhysicsEngine.h"
 #include "Engine/Engine.h"
@@ -94,7 +95,8 @@ void Update(double delta)
 
 int main(int argc, char** argv)
 {
-    g_Game = new ColliderDemoGame(g_WindowSize);
+    //g_Game = new ColliderDemoGame(g_WindowSize);
+    g_Game = new SnakeDemoGame(g_WindowSize, glm::vec2(100));
 
     Engine::setStartFunc(Start);
     Engine::setUpdateFunc(Update);

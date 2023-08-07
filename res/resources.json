@@ -83,6 +83,18 @@
         "bulletLeft",
         "bulletRight"
       ]
+    },
+    {
+      "name": "SnakeTextureAtlas",
+      "filePath": "res/textures/SnakeAtlas.png",
+      "width": 64,
+      "height": 32,
+      "subTexture_w": 32,
+      "subTexture_h": 32,
+      "subTextures": [
+        "snake",
+        "apple"
+      ]
     }
   ],
   "sprites": [
@@ -97,6 +109,24 @@
       "shader": "spriteShader",
       "textureAtlas": "WallAtlas",
       "initialSubTexture": "BrickWall"
+    },
+    {
+      "name": "SnakePart",
+      "shader": "spriteShader",
+      "textureAtlas": "SnakeTextureAtlas",
+      "initialSubTexture": "snake"
+    },
+    {
+      "name": "Apple",
+      "shader": "spriteShader",
+      "textureAtlas": "SnakeTextureAtlas",
+      "initialSubTexture": "apple"
+    },
+    {
+      "name": "A",
+      "shader": "spriteShader",
+      "textureAtlas": "TextAtlas",
+      "initialSubTexture": "A"
     }
   ]
 }

@@ -42,3 +42,13 @@ void Camera::update(const double delta)
 		curProgram->setMatrix4("projectionMat", m_projectionMatrix);
 	}
 }
+void Camera::updateSize(glm::vec2 size)
+{
+	m_size = size;
+	m_projectionMatrix = glm::ortho(
+		m_position.x - (size.x / 2),
+		m_position.x - (size.x / 2) + size.x,
+		m_position.y - (size.y / 2),
+		m_position.y - (size.x / 2) + size.y,
+		-100.f, 100.f);
+}

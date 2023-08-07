@@ -8,16 +8,16 @@ namespace Physics
 	void Collider::update(const double delta)
 	{
 		EDirection dir;
-		std::string obj = "";
-		if (PhysicsEngine::checkIntersection(std::make_shared<Collider>(*this), obj, dir))
+		IGameObject* obj = PhysicsEngine::checkIntersection(std::make_shared<Collider>(*this), dir);
+		if (obj)
 		{
 			if (m_onCollisionCallback)
 			{
-				m_onCollisionCallback(m_targetObj, obj, dir);
+				m_onCollisionCallback(m_targetObj, *obj, dir);
 			}
 		}
 	}
-	void Collider::setOnCollisionCallback(std::function<void(IGameObject&, std::string, Physics::EDirection)> callback)
+	void Collider::setOnCollisionCallback(std::function<void(IGameObject&, IGameObject&, Physics::EDirection)> callback)
 	{
 		m_onCollisionCallback = callback;
 	}

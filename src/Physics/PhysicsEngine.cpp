@@ -34,7 +34,7 @@ namespace Physics
 		m_impulses.emplace(id, impulse);
 	}
 	// ме свхршбюеряъ сцнк онбнпнрю назейрю (мюдечяэ мю тхйя)
-	bool PhysicsEngine::checkIntersection(std::shared_ptr<Collider>& collider, std::string& outName, EDirection& outDir)
+	IGameObject* PhysicsEngine::checkIntersection(std::shared_ptr<Collider>& collider, EDirection& outDir)
 	{
 		for (auto currentCollider : m_colliders)
 		{
@@ -54,10 +54,9 @@ namespace Physics
 			else if (curPos.x + curSize.x >= pos.x && pos.x + size.x > curPos.x + curSize.x && (pos.y <= curPos.y + curSize.y || pos.y + size.y >= curPos.y)) outDir = Left;
 			else if (curPos.x <= pos.x + size.x && pos.x < curPos.x && (pos.y <= curPos.y + curSize.y || pos.y + size.y >= curPos.y)) outDir = Right;
 
-			outName = currentCollider->getObject().getName();
-			return true;
+			return &currentCollider->getObject();
 		}
-		return false;
+		return nullptr;
 	}
 	void PhysicsEngine::addCollider(std::shared_ptr<Collider>& collider)
 	{

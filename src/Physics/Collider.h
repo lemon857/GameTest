@@ -19,12 +19,12 @@ namespace Physics
 
 		void update(const double delta) override;
 		// Каллбэк который вызовет функцию при касании и передаст в неё имя объекта
-		void setOnCollisionCallback(std::function<void(IGameObject&, std::string, Physics::EDirection)> callback);
+		void setOnCollisionCallback(std::function<void(IGameObject&, IGameObject&, Physics::EDirection)> callback);
 
 		glm::vec2& getSize() { return m_targetObj.getSize(); };
 		glm::vec2& getPosition() { return m_targetObj.getPosition(); };
 		IGameObject& getObject() { return m_targetObj; }
 	private:
-		std::function<void(IGameObject&, std::string, Physics::EDirection)> m_onCollisionCallback;
+		std::function<void(IGameObject&, IGameObject&, Physics::EDirection)> m_onCollisionCallback;
 	};
 }

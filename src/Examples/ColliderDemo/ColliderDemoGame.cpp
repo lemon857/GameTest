@@ -27,10 +27,10 @@ ColliderDemoGame::~ColliderDemoGame()
 {
 
 }
-void onCollisionTank(IGameObject& targetObj, std::string name, Physics::EDirection dir)
+void onCollisionTank(IGameObject& targetObj, IGameObject& obj, Physics::EDirection dir)
 {
 
-    if (name == "wall")
+    if (obj.getName() == "wall")
     {
         switch (dir)
         {

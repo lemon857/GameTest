@@ -26,6 +26,7 @@ public:
 	double getWeight() { return m_weight; };
 	bool getKinematicState() { return m_isKinematic; };
 	bool getGroundState() { return m_isGrounded; };
+	bool getMove() { return m_move; };
 	glm::vec2& getSize() { return m_size; };
 	glm::vec2& getPosition() { return m_position; };
 	glm::vec2& getMoveOffset() { return m_moveOffset; };

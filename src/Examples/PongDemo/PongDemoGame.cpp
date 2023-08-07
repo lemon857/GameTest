@@ -12,9 +12,9 @@
 #define WALL_OFFSET 10
 
 
-void onCollisionPlate(IGameObject& targetObj, std::string name, Physics::EDirection dir)
+void onCollisionPlate(IGameObject& targetObj, IGameObject& obj, Physics::EDirection dir)
 {
-	if (name == "wall")
+	if (obj.getName() == "wall")
 	{
 		switch (dir)
 		{
@@ -34,7 +34,7 @@ void onCollisionPlate(IGameObject& targetObj, std::string name, Physics::EDirect
 	}
 }
 
-void onCollisionBall(IGameObject& targetObj, std::string name, Physics::EDirection dir)
+void onCollisionBall(IGameObject& targetObj, IGameObject& obj, Physics::EDirection dir)
 {
 	glm::vec2 offset = targetObj.getMoveOffset();
 	switch (dir)
@@ -51,14 +51,14 @@ void onCollisionBall(IGameObject& targetObj, std::string name, Physics::EDirecti
 	case Physics::Right:
 		targetObj.setMoveOffset(glm::vec2(-offset.x, offset.y));
 		break;
-	}
-	if (name == "plate")
+	}/*
+	if (obj.getName() == "plate" && obj.getMove())
 	{
-		if (dir == Physics::Left)
-		{
+		if (obj.getMoveOffset().y > 0.f) 
+			targetObj.setMoveOffset(glm::vec2(offset.x - 0.01f, offset.y + 0.01f));
+		else if (obj.getMoveOffset().y < 0.f) targetObj.setMoveOffset(glm::vec2(offset.x + 0.01f, offset.y - 0.01f));
 
-		}
-	}
+	}*/
 }
 
 PongDemoGame::PongDemoGame(glm::ivec2 windowSize)

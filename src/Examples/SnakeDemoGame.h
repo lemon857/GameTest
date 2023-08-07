@@ -40,7 +40,8 @@ private:
 	std::shared_ptr<RenderEngine::Line> m_pLine;
 	std::shared_ptr<RenderEngine::Sprite> m_pSprite;
 	std::shared_ptr<RenderEngine::Sprite> m_pSpriteApple;
-	std::shared_ptr<RenderEngine::Sprite> m_ptext;
+	std::shared_ptr<RenderEngine::Sprite> m_pSpriteEnd1;
+	std::shared_ptr<RenderEngine::Sprite> m_pSpriteEnd2;
 	std::shared_ptr<Timer> m_pTimer;
 
 	std::vector<std::shared_ptr<SnakePart>> m_snakeParts;

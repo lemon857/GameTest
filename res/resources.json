@@ -88,12 +88,14 @@
       "name": "SnakeTextureAtlas",
       "filePath": "res/textures/SnakeAtlas.png",
       "width": 64,
-      "height": 32,
+      "height": 64,
       "subTexture_w": 32,
       "subTexture_h": 32,
       "subTextures": [
         "snake",
-        "apple"
+        "apple",
+        "badsnake",
+        "pressenter"
       ]
     }
   ],
@@ -123,10 +125,16 @@
       "initialSubTexture": "apple"
     },
     {
-      "name": "A",
+      "name": "SnakeEnd1",
       "shader": "spriteShader",
-      "textureAtlas": "TextAtlas",
-      "initialSubTexture": "A"
+      "textureAtlas": "SnakeTextureAtlas",
+      "initialSubTexture": "badsnake"
+    },
+    {
+      "name": "SnakeEnd2",
+      "shader": "spriteShader",
+      "textureAtlas": "SnakeTextureAtlas",
+      "initialSubTexture": "pressenter"
     }
   ]
 }

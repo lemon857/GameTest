@@ -1,9 +1,20 @@
 #pragma once
 
+#include "EngineCore/Event.h"
+
 #include <glm/vec2.hpp>
 #include <string>
+#include <functional>
 
 struct GLFWwindow;
+
+struct ResizeWindowEvent
+{
+	unsigned int width;
+	unsigned int height;
+};
+
+using EventCallback = std::function<void(BaseEvent&)>;
 
 class Window
 {
@@ -18,14 +29,22 @@ public:
 
 	void on_update();
 
-	glm::ivec2& get_size() { return m_window_size; };
+	glm::ivec2& get_size() { return m_data.window_size; };
+
+	void set_event_callback(const EventCallback& callback);
+
+private:
+	struct WindowData
+	{
+		std::string title;
+		glm::ivec2 window_size;
+		EventCallback event_callback;
+	};
+
+	GLFWwindow* m_pWindow;
+	WindowData m_data;
 
 	int init();
 
 	void shuitdown();
-
-private:
-	GLFWwindow* m_pWindow;
-	std::string m_title;
-	glm::ivec2 m_window_size;
 };

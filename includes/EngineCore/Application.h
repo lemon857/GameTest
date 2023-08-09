@@ -1,5 +1,7 @@
 #pragma	once
 
+#include "EngineCore/Event.h"
+
 #include <memory>
 #include <glm/vec2.hpp>
 
@@ -20,5 +22,7 @@ public:
 
 	virtual void on_update(const double delta) {};
 private:
+	EventDispatcher m_event_dispather;
 	std::unique_ptr<class Window> m_pWindow;
+	bool m_pCloseWindow = true;
 };

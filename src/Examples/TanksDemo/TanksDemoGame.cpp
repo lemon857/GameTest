@@ -27,28 +27,6 @@ TanksDemoGame::~TanksDemoGame()
 {
 
 }
-void onCollisionTank(IGameObject& targetObj, IGameObject& obj, Physics::EDirection dir)
-{
-
-    if (obj.getName() == "wall")
-    {
-        switch (dir)
-        {
-        case Physics::Up:
-            if (targetObj.getMoveOffset().y > 0) targetObj.setMoveOffset(glm::vec2(targetObj.getMoveOffset().x, 0.f));
-            break;
-        case Physics::Down:
-            if (targetObj.getMoveOffset().y < 0) targetObj.setMoveOffset(glm::vec2(targetObj.getMoveOffset().x, 0.f));
-            break;
-        case Physics::Left:
-            if (targetObj.getMoveOffset().x < 0) targetObj.setMoveOffset(glm::vec2(0.f, targetObj.getMoveOffset().y));
-            break;
-        case Physics::Right:
-            if (targetObj.getMoveOffset().x > 0) targetObj.setMoveOffset(glm::vec2(0.f, targetObj.getMoveOffset().y));
-            break;
-        }
-    }
-}
 void TanksDemoGame::render() const
 {
     m_pTank->render();
@@ -163,7 +141,28 @@ bool TanksDemoGame::init()
     auto wallCol = std::make_shared<Physics::Collider>(*m_pBrickWall);
     auto wallCol2 = std::make_shared<Physics::Collider>(*m_pBrickWall2);
 
-    tankCol->setOnCollisionCallback(onCollisionTank);
+    tankCol->setOnCollisionCallback(
+        [](IGameObject& targetObj, IGameObject& obj, Physics::EDirection dir)
+        {
+            if (obj.getName() == "wall")
+            {
+                switch (dir)
+                {
+                case Physics::Up:
+                    if (targetObj.getMoveOffset().y > 0) targetObj.setMoveOffset(glm::vec2(targetObj.getMoveOffset().x, 0.f));
+                    break;
+                case Physics::Down:
+                    if (targetObj.getMoveOffset().y < 0) targetObj.setMoveOffset(glm::vec2(targetObj.getMoveOffset().x, 0.f));
+                    break;
+                case Physics::Left:
+                    if (targetObj.getMoveOffset().x < 0) targetObj.setMoveOffset(glm::vec2(0.f, targetObj.getMoveOffset().y));
+                    break;
+                case Physics::Right:
+                    if (targetObj.getMoveOffset().x > 0) targetObj.setMoveOffset(glm::vec2(0.f, targetObj.getMoveOffset().y));
+                    break;
+                }
+            }
+        });
 
     m_pTank->addComponent("collider", tankCol);
     m_pTank->addComponent("MoveController", std::make_shared<MoveController>(*m_pTank));

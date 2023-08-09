@@ -8,6 +8,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/IComponent.h
 	includes/EngineCore/IGameObject.h
 	includes/EngineCore/IGame.h
+	includes/EngineCore/Event.h
 		   
 	includes/EngineCore/System/Log.h
 	includes/EngineCore/System/Timer.h

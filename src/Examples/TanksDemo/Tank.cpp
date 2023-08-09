@@ -8,28 +8,6 @@
 #include "EngineCore/Physics/Collider.h"
 #include "EngineCore/Physics/PhysicsEngine.h"
 
-void onCollisionBullet(IGameObject& targetObj, IGameObject& obj, Physics::EDirection dir)
-{
-	if (obj.getName() == "wall")
-	{
-		switch (dir)
-		{
-		case Physics::Up:
-			if (targetObj.getMoveOffset().y > 0) targetObj.setMoveOffset(glm::vec2(targetObj.getMoveOffset().x, 0.f));
-			break;
-		case Physics::Down:
-			if (targetObj.getMoveOffset().y < 0) targetObj.setMoveOffset(glm::vec2(targetObj.getMoveOffset().x, 0.f));
-			break;
-		case Physics::Left:
-			if (targetObj.getMoveOffset().x < 0) targetObj.setMoveOffset(glm::vec2(0.f, targetObj.getMoveOffset().y));
-			break;
-		case Physics::Right:
-			if (targetObj.getMoveOffset().x > 0) targetObj.setMoveOffset(glm::vec2(0.f, targetObj.getMoveOffset().y));
-			break;
-		}
-	}
-}
-
 Tank::Tank(std::shared_ptr<RenderEngine::Sprite> pSprite,
 	std::shared_ptr<RenderEngine::Sprite> pBulletSprite,
 	double velocity, double weight,
@@ -39,7 +17,28 @@ Tank::Tank(std::shared_ptr<RenderEngine::Sprite> pSprite,
 	, IGameObject(std::move(pSprite), "tank", position, size, glm::vec2(0.f, 1.f), velocity, weight)
 {	
 	std::shared_ptr<Physics::Collider> bulCol = std::make_shared<Physics::Collider>(*m_bullet);
-	bulCol->setOnCollisionCallback(onCollisionBullet);
+	bulCol->setOnCollisionCallback(
+		[](IGameObject& targetObj, IGameObject& obj, Physics::EDirection dir)
+		{
+			if (obj.getName() == "wall")
+			{
+				switch (dir)
+				{
+				case Physics::Up:
+					if (targetObj.getMoveOffset().y > 0) targetObj.setMoveOffset(glm::vec2(targetObj.getMoveOffset().x, 0.f));
+					break;
+				case Physics::Down:
+					if (targetObj.getMoveOffset().y < 0) targetObj.setMoveOffset(glm::vec2(targetObj.getMoveOffset().x, 0.f));
+					break;
+				case Physics::Left:
+					if (targetObj.getMoveOffset().x < 0) targetObj.setMoveOffset(glm::vec2(0.f, targetObj.getMoveOffset().y));
+					break;
+				case Physics::Right:
+					if (targetObj.getMoveOffset().x > 0) targetObj.setMoveOffset(glm::vec2(0.f, targetObj.getMoveOffset().y));
+					break;
+				}
+			}
+		});
 	m_bullet->addComponent("moveController", std::make_shared<MoveController>(*m_bullet));
 	m_bullet->addComponent("collider", bulCol);
 }

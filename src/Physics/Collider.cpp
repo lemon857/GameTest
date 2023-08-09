@@ -17,7 +17,7 @@ namespace Physics
 			}
 		}
 	}
-	void Collider::setOnCollisionCallback(std::function<void(IGameObject&, IGameObject&, Physics::EDirection)> callback)
+	void Collider::setOnCollisionCallback(onCollisionCallback callback)
 	{
 		m_onCollisionCallback = callback;
 	}

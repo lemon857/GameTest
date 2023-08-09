@@ -3,10 +3,10 @@
 #include "../Engine/IComponent.h"
 #include "../Engine/IGameObjec.h"
 
-class CharacterController : public IComponent
+class MoveController : public IComponent
 {
 public:
-	CharacterController(IGameObject& targetObj);
+	MoveController(IGameObject& targetObj);
 
 	void update(const double delta) override;
 

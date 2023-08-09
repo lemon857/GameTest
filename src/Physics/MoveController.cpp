@@ -1,11 +1,11 @@
-#include "CharacterController.h"
+#include "MoveController.h"
 
-CharacterController::CharacterController(IGameObject& targetObj)
+MoveController::MoveController(IGameObject& targetObj)
 	: IComponent(targetObj)
 {
 
 }
-void CharacterController::update(const double delta)
+void MoveController::update(const double delta)
 {
 	glm::vec2& pos = m_targetObj.getPosition();
 	glm::vec2 offset = m_targetObj.getMoveOffset();

@@ -1,4 +1,4 @@
-#include "ColliderDemoGame.h"
+#include "TanksDemoGame.h"
 #include "Tank.h"
 #include "BrickWall.h"
 
@@ -16,14 +16,14 @@
 #include "../../Resources/ResourceManager.h"
 #include "../../Physics/PhysicsEngine.h"
 #include "../../Physics/Collider.h"
-#include "../../Physics/CharacterController.h"
+#include "../../Physics/MoveController.h"
 
-ColliderDemoGame::ColliderDemoGame(const glm::ivec2& windowSize)
+TanksDemoGame::TanksDemoGame(const glm::ivec2& windowSize)
     : IGame(windowSize)
 {
 
 }
-ColliderDemoGame::~ColliderDemoGame()
+TanksDemoGame::~TanksDemoGame()
 {
 
 }
@@ -49,46 +49,49 @@ void onCollisionTank(IGameObject& targetObj, IGameObject& obj, Physics::EDirecti
         }
     }
 }
-void ColliderDemoGame::render() const
+void TanksDemoGame::render() const
 {
     m_pTank->render();
     m_pBrickWall->render();
     m_pBrickWall2->render();
 }
-void ColliderDemoGame::update(const double delta)
+void TanksDemoGame::update(const double delta)
 {
-    if (m_pTank)
+    if (m_keys[GLFW_KEY_W])
     {
-        if (m_keys[GLFW_KEY_W])
-        {
-            m_pTank->setOrentation(Physics::EDirection::Up);
-            m_pTank->move(true);
-        }
-        else if ((m_keys[GLFW_KEY_A]))
-        {
-            m_pTank->setOrentation(Physics::EDirection::Left);
-            m_pTank->move(true);
-        }
-        else if ((m_keys[GLFW_KEY_S]))
-        {
-            m_pTank->setOrentation(Physics::EDirection::Down);
-            m_pTank->move(true);
-        }
-        else if ((m_keys[GLFW_KEY_D]))
-        {
-            m_pTank->setOrentation(Physics::EDirection::Right);
-            m_pTank->move(true);
-        }
-        else
-        {
-            m_pTank->move(false);
-        }
-        m_pTank->update(delta);
-        m_cam->setPosition(m_pTank->getPosition() + (m_pTank->getSize()/2.f));
-        m_cam->update(delta);
-    }    
+        m_pTank->setOrentation(Physics::EDirection::Up);
+        m_pTank->move(true);
+    }
+    else if ((m_keys[GLFW_KEY_A]))
+    {
+        m_pTank->setOrentation(Physics::EDirection::Left);
+        m_pTank->move(true);
+    }
+    else if ((m_keys[GLFW_KEY_S]))
+    {
+        m_pTank->setOrentation(Physics::EDirection::Down);
+        m_pTank->move(true);
+    }
+    else if ((m_keys[GLFW_KEY_D]))
+    {
+        m_pTank->setOrentation(Physics::EDirection::Right);
+        m_pTank->move(true);
+    }
+    else
+    {
+        m_pTank->move(false);
+    }
+    if (m_keys[GLFW_KEY_F])
+    {
+        m_pTank->fire();
+    }
+    m_pTank->update(delta);
+    m_cam->setPosition(m_pTank->getPosition() + (m_pTank->getSize() / 2.f));
+    m_cam->update(delta);
+    m_pBrickWall->update(delta);
+
 }
-bool ColliderDemoGame::init()
+bool TanksDemoGame::init()
 {
     ResourceManager::loadJSONresources("res/resources.json");
 
@@ -109,6 +112,7 @@ bool ColliderDemoGame::init()
     m_line = std::make_shared<RenderEngine::Line>(pShapeShaderProgram);
 
     auto pTankSprite = ResourceManager::getSprite("TankSprite");
+    auto pBulletSprite = ResourceManager::getSprite("BulletSprite");
     auto pWallSprite = ResourceManager::getSprite("BrickWallSprite");
 
     m_cam = std::make_shared<Camera>(glm::vec2(0), m_WindowSize, -100.f, 100.f);
@@ -120,8 +124,8 @@ bool ColliderDemoGame::init()
     pSpriteShaderProgram->use();
     pSpriteShaderProgram->setInt("tex", 0);
 
-    m_pTank = std::make_shared<Tank>(pTankSprite, 0.2, 0.05, glm::vec2(100.f, 0.f), glm::vec2(100.f, 100.f));
-    m_pBrickWall = std::make_shared<BrickWall>(pWallSprite, glm::vec2(200.f, 100.f), glm::vec2(160.f, 160.f));
+    m_pTank = std::make_shared<Tank>(pTankSprite, pBulletSprite, 0.2, 0.05, glm::vec2(100.f, 0.f), glm::vec2(100.f, 100.f));
+    m_pBrickWall = std::make_shared<BrickWall>(pWallSprite, glm::vec2(200.f, 100.f), glm::vec2(100.f, 100.f));
     m_pBrickWall2 = std::make_shared<BrickWall>(pWallSprite, glm::vec2(465.f, 100.f), glm::vec2(160.f, 160.f));
     //m_pTank2 = std::make_shared<Tank>(pTankSprite, 0.5, 1, glm::vec2(100.f, 0.f), glm::vec2(100.f, 100.f));
 
@@ -164,16 +168,16 @@ bool ColliderDemoGame::init()
     tankCol->setOnCollisionCallback(onCollisionTank);
 
     m_pTank->addComponent("collider", tankCol);
-    m_pTank->addComponent("characterController", std::make_shared<CharacterController>(*m_pTank));
+    m_pTank->addComponent("MoveController", std::make_shared<MoveController>(*m_pTank));
     m_pTank->addComponent("showOutline", std::make_shared<ShowOutline>(*m_pTank, pShapeShaderProgram, glm::vec4(1)));
     m_pTank->addComponent("animator", m_pAnimator);
     m_pBrickWall->addComponent("collider", wallCol);
     m_pBrickWall2->addComponent("collider", wallCol2);
+    m_pBrickWall->addComponent("showOutline", std::make_shared<ShowOutline>(*m_pBrickWall, pShapeShaderProgram, glm::vec4(1)));
 
     Physics::PhysicsEngine::addCollider(tankCol);
     Physics::PhysicsEngine::addCollider(wallCol);
     Physics::PhysicsEngine::addCollider(wallCol2);
-
 
 	return true;
 }

@@ -7,7 +7,7 @@
 #include "../../Resources/ResourceManager.h"
 #include "../../Physics/PhysicsEngine.h"
 #include "../../Physics/Collider.h"
-#include "../../Physics/CharacterController.h"
+#include "../../Physics/MoveController.h"
 
 #define WALL_OFFSET 10
 
@@ -145,9 +145,9 @@ bool PongDemoGame::init()
 	m_plate1->addComponent("showOutline", std::make_shared<ShowOutline>(*m_plate1, pShapeShader, glm::vec4(1)));
 	m_plate2->addComponent("showOutline", std::make_shared<ShowOutline>(*m_plate2, pShapeShader, glm::vec4(1)));
 
-	m_plate1->addComponent("characterController", std::make_shared<CharacterController>(*m_plate1));
-	m_plate2->addComponent("characterController", std::make_shared<CharacterController>(*m_plate2));
-	m_ball->addComponent("characterController", std::make_shared<CharacterController>(*m_ball));
+	m_plate1->addComponent("MoveController", std::make_shared<MoveController>(*m_plate1));
+	m_plate2->addComponent("MoveController", std::make_shared<MoveController>(*m_plate2));
+	m_ball->addComponent("MoveController", std::make_shared<MoveController>(*m_ball));
 
 	auto plate1Col = std::make_shared<Physics::Collider>(*m_plate1);
 	auto plate2Col = std::make_shared<Physics::Collider>(*m_plate2);

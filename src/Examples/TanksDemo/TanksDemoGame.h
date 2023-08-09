@@ -9,11 +9,11 @@
 class Tank;
 class BrickWall;
 
-class ColliderDemoGame : public IGame
+class TanksDemoGame : public IGame
 {
 public:
-	ColliderDemoGame(const glm::ivec2& windowSize);
-	~ColliderDemoGame();
+	TanksDemoGame(const glm::ivec2& windowSize);
+	~TanksDemoGame();
 
 	void render() const override;
 	void update(const double delta) override;

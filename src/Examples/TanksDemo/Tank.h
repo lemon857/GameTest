@@ -7,6 +7,7 @@
 #include "../../Engine/IGameObjec.h"
 #include "../../Engine/IComponent.h"
 #include "../../Physics/PhysicsEngine.h"	
+#include "Bullet.h"
 
 namespace RenderEngine
 {
@@ -19,20 +20,21 @@ namespace Physics
 	class Collider;
 }
 
-class CharacterController;
+class MoveController;
 
 class Tank : public IGameObject
 {
 public:
 
-	Tank(std::shared_ptr<RenderEngine::Sprite> pSprite, double velocity, double weight, glm::vec2& position, glm::vec2& size);
+	Tank(std::shared_ptr<RenderEngine::Sprite> pSprite, std::shared_ptr<RenderEngine::Sprite> pBulletSprite, double velocity, double weight, glm::vec2& position, glm::vec2& size);
 
 	void render();
 	void setOrentation(const Physics::EDirection orentation);
 	void move(const bool move);
 	void update(const double delta) override;
-
+	void fire();
 private:
 	void startAnimation();
 	Physics::EDirection m_eOrentation;
+	std::shared_ptr<Bullet> m_bullet;
 }; 

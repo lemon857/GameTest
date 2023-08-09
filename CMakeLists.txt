@@ -7,12 +7,14 @@ project(${PROJECT_NAME})
 add_executable(${PROJECT_NAME}
 src/main.cpp
 
-src/Examples/ColliderDemo/ColliderDemoGame.cpp
-src/Examples/ColliderDemo/ColliderDemoGame.h
-src/Examples/ColliderDemo/Tank.cpp
-src/Examples/ColliderDemo/Tank.h
-src/Examples/ColliderDemo/BrickWall.h
-src/Examples/ColliderDemo/BrickWall.cpp
+src/Examples/TanksDemo/TanksDemoGame.cpp
+src/Examples/TanksDemo/TanksDemoGame.h
+src/Examples/TanksDemo/Tank.cpp
+src/Examples/TanksDemo/Tank.h
+src/Examples/TanksDemo/BrickWall.h
+src/Examples/TanksDemo/BrickWall.cpp
+src/Examples/TanksDemo/Bullet.h
+src/Examples/TanksDemo/Bullet.cpp
 
 src/Examples/SnakeDemo/SnakeDemoGame.cpp
 src/Examples/SnakeDemo/SnakeDemoGame.h
@@ -65,11 +67,12 @@ src/Physics/PhysicsEngine.h
 src/Physics/PhysicsEngine.cpp
 src/Physics/Collider.h
 src/Physics/Collider.cpp
-src/Physics/CharacterController.h
-src/Physics/CharacterController.cpp
+src/Physics/MoveController.h
+src/Physics/MoveController.cpp
 
 src/System/Timer.h
 src/System/Timer.cpp
+src/System/TemplateTimer.h
 
 src/Engine/Engine.h
 src/Engine/Engine.cpp

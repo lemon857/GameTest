@@ -11,9 +11,9 @@ namespace RenderEngine
 	class Sprite;
 }
 
-class IGameObject 
+class IGameObject
 {
-public:	
+public:
 	virtual void update(const double delta) { updateComponents(delta); };
 	bool isMove() const { return m_move; };
 
@@ -49,6 +49,28 @@ public:
 		return nullptr;
 	};
 
+protected:
+	IGameObject(
+		std::shared_ptr<RenderEngine::Sprite> sprite,
+		const std::string name,
+		const glm::vec2& position,
+		const glm::vec2& size,
+		const glm::vec2& moveOffset = glm::vec2(0.f),
+		const double velocity = 1,
+		const double weight = 1)
+		: m_pSprite(std::move(sprite)),
+		m_name(name),
+		m_velocity(velocity),
+		m_weight(weight),
+		m_position(position),
+		m_size(size),
+		m_moveOffset(moveOffset)
+	{};
+	~IGameObject()
+	{
+
+	};
+
 	void updateComponents(double delta)
 	{
 		for (auto curCom : m_components)
@@ -56,28 +78,6 @@ public:
 			curCom.second->update(delta);
 		}
 	};
-
-protected:
-	IGameObject(
-	std::shared_ptr<RenderEngine::Sprite> sprite,
-	const std::string name,
-	const glm::vec2& position,
-	const glm::vec2& size,
-	const glm::vec2& moveOffset = glm::vec2(0.f),
-	const double velocity = 1,
-	const double weight = 1)
-	: m_pSprite(std::move(sprite)),
-	m_name(name),
-	m_velocity(velocity),
-	m_weight(weight),
-	m_position(position),
-	m_size(size),
-	m_moveOffset(moveOffset)
-{};
-		 ~IGameObject()
-		 {
-
-		 };
 	std::string m_name;
 
 	glm::vec2 m_position;

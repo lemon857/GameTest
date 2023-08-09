@@ -135,6 +135,12 @@
       "shader": "spriteShader",
       "textureAtlas": "SnakeTextureAtlas",
       "initialSubTexture": "pressenter"
+    },
+    {
+      "name": "BulletSprite",
+      "shader": "spriteShader",
+      "textureAtlas": "WallAtlas",
+      "initialSubTexture": "bulletUp"
     }
   ]
 }

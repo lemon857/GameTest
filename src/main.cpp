@@ -3,15 +3,15 @@
 #include <iostream>
 #include <chrono>
 
-#include "Resources/ResourceManager.h"
-#include "Renderer/Renderer.h"
+#include "EngineCore/Resources/ResourceManager.h"
+#include "EngineCore/Renderer/Renderer.h"
 #include "Examples/TanksDemo/TanksDemoGame.h"
 #include "Examples/SnakeDemo/SnakeDemoGame.h"
 #include "Examples/PongDemo/PongDemoGame.h"
 
-#include "Physics/PhysicsEngine.h"
-#include "Engine/Engine.h"
-#include "System/Log.h"
+#include "EngineCore/Physics/PhysicsEngine.h"
+#include "EngineCore/Engine.h"
+#include "EngineCore/System/Log.h"
 
 
 glm::ivec2 g_WindowSize(800, 600);

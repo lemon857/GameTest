@@ -1,6 +1,6 @@
 #include "Bullet.h"
 
-#include "../../Renderer/Sprite.h"
+#include "EngineCore/Renderer/Sprite.h"
 
 void deadCallback(Bullet* bullet)
 {

@@ -2,10 +2,10 @@
 
 #include <vector>
 
-#include "../../Engine/IGame.h"
-#include "../../Renderer/Line.h"
-#include "../../System/Timer.h"
-#include "../../Physics/PhysicsEngine.h"
+#include "EngineCore/IGame.h"
+#include "EngineCore/Renderer/Line.h"
+#include "EngineCore/System/Timer.h"
+#include "EngineCore/Physics/PhysicsEngine.h"
 #include "SnakePart.h"
 
 class SnakeDemoGame : public IGame

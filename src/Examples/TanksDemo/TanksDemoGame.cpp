@@ -7,16 +7,16 @@
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "../../Renderer/ShaderProgram.h"
-#include "../../Renderer/Texture2D.h"
-#include "../../Renderer/Sprite.h"
-#include "../../Renderer/Animator.h"
-#include "../../Renderer/Animation.h"
-#include "../../Renderer/ShowOutline.h"
-#include "../../Resources/ResourceManager.h"
-#include "../../Physics/PhysicsEngine.h"
-#include "../../Physics/Collider.h"
-#include "../../Physics/MoveController.h"
+#include "EngineCore/Renderer/ShaderProgram.h"
+#include "EngineCore/Renderer/Texture2D.h"
+#include "EngineCore/Renderer/Sprite.h"
+#include "EngineCore/Renderer/Animator.h"
+#include "EngineCore/Renderer/Animation.h"
+#include "EngineCore/Renderer/ShowOutline.h"
+#include "EngineCore/Resources/ResourceManager.h"
+#include "EngineCore/Physics/PhysicsEngine.h"
+#include "EngineCore/Physics/Collider.h"
+#include "EngineCore/Physics/MoveController.h"
 
 TanksDemoGame::TanksDemoGame(const glm::ivec2& windowSize)
     : IGame(windowSize)

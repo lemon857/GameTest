@@ -6,9 +6,9 @@
 #include <vector>
 
 #include "ShaderProgram.h"
-#include "../Engine/IGameObjec.h"
-#include "../Physics/PhysicsEngine.h"
-#include "../Renderer/Sprite.h"
+#include "EngineCore/IGameObject.h"
+#include "EngineCore/Physics/PhysicsEngine.h"
+#include "EngineCore/Renderer/Sprite.h"
 
 enum ETypeCamera
 {

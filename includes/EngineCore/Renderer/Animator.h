@@ -4,7 +4,7 @@
 #include <string>
 #include <map>
 
-#include "../Engine/IComponent.h"
+#include "EngineCore/IComponent.h"
 
 namespace RenderEngine
 {

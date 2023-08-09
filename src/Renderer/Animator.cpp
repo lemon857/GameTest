@@ -1,9 +1,9 @@
-#include "Animator.h"
+#include "EngineCore/Renderer/Animator.h"
 
-#include "Animation.h"
-#include "../Resources/ResourceManager.h"
-#include "../Engine/IGameObjec.h"
-#include "Sprite.h"
+#include "EngineCore/Renderer/Animation.h"
+#include "EngineCore/Resources/ResourceManager.h"
+#include "EngineCore/IGameObject.h"
+#include "EngineCore/Renderer/Sprite.h"
 
 namespace RenderEngine
 {

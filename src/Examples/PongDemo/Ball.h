@@ -4,8 +4,8 @@
 
 #include "PongObject.h"
 
-#include "../../Renderer/ShaderProgram.h"
-#include "../../Renderer/Point.h"
+#include "EngineCore/Renderer/ShaderProgram.h"
+#include "EngineCore/Renderer/Point.h"
 
 class Ball : public PongObject
 {

@@ -1,9 +1,9 @@
-#include "ResourceManager.h";
-#include "../Renderer/ShaderProgram.h"
-#include "../Renderer/Texture2D.h"
-#include "../Renderer/Sprite.h"
-#include "../Renderer/Animation.h"
-#include "../Renderer/Animator.h"
+#include "EngineCore/Resources/ResourceManager.h";
+#include "EngineCore/Renderer/ShaderProgram.h"
+#include "EngineCore/Renderer/Texture2D.h"
+#include "EngineCore/Renderer/Sprite.h"
+#include "EngineCore/Renderer/Animation.h"
+#include "EngineCore/Renderer/Animator.h"
 
 #include <sstream>
 #include <fstream>
@@ -14,7 +14,7 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #define STBI_ONLY_PNG
-#include "stb_image.h"
+#include "EngineCore/Resources/stb_image.h"
 
 ResourceManager::ShaderProgramsMap ResourceManager::m_ShaderPrograms;
 ResourceManager::TexturesMap ResourceManager::m_textures;

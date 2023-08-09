@@ -1,6 +1,6 @@
 #include "PongObject.h"
 
-#include "../../Renderer/ShowOutline.h"
+#include "EngineCore/Renderer/ShowOutline.h"
 
 PongObject::PongObject(std::shared_ptr<RenderEngine::Sprite> sprite, const std::string name, const glm::vec2& position, const glm::vec2& size, const double velocity)
 	: IGameObject(sprite, name, position, size, glm::vec2(0), velocity)

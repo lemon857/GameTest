@@ -5,7 +5,7 @@
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 #include "ShaderProgram.h"
-#include "../Engine/IComponent.h"
+#include "EngineCore/IComponent.h"
 #include "Line.h"
 
 namespace RenderEngine

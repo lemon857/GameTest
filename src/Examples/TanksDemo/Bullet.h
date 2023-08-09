@@ -2,9 +2,9 @@
 
 #include <memory>
 
-#include "../../Engine/IGameObjec.h"
-#include "../../Physics/PhysicsEngine.h"
-#include "../../System/TemplateTimer.h"
+#include "EngineCore/IGameObject.h"
+#include "EngineCore/Physics/PhysicsEngine.h"
+#include "EngineCore/System/TemplateTimer.h"
 
 enum EBulletState
 {

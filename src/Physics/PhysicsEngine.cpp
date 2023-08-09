@@ -1,7 +1,7 @@
-#include "PhysicsEngine.h"
+#include "EngineCore/Physics/PhysicsEngine.h"
 
-#include "../Engine/IGameObjec.h"
-#include "Collider.h"
+#include "EngineCore/IGameObject.h"
+#include "EngineCore/Physics/Collider.h"
 
 namespace Physics
 {

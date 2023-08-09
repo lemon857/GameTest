@@ -1,4 +1,4 @@
-#include "MoveController.h"
+#include "EngineCore/Physics/MoveController.h"
 
 MoveController::MoveController(IGameObject& targetObj)
 	: IComponent(targetObj)

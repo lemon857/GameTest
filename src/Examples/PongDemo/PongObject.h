@@ -3,8 +3,8 @@
 #include <memory>
 #include <glm/vec2.hpp>
 
-#include "../../Engine/IGameObjec.h"
-#include "../../Physics/PhysicsEngine.h"
+#include "EngineCore/IGameObject.h"
+#include "EngineCore/Physics/PhysicsEngine.h"
 
 namespace RenderEngine
 {

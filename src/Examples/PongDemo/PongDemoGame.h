@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../Engine/IGame.h"
-#include "../../Renderer/Point.h"
-#include "../../Renderer/Sprite.h"
+#include "EngineCore/IGame.h"
+#include "EngineCore/Renderer/Point.h"
+#include "EngineCore/Renderer/Sprite.h"
 
 #include "PongObject.h"
 #include "Ball.h"

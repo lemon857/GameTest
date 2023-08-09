@@ -3,9 +3,9 @@
 #include <memory>
 #include <functional>
 #include<glm/vec2.hpp>
-#include "../Engine/IGameObjec.h"
-#include "../Engine/IComponent.h"
-#include "../Physics/PhysicsEngine.h"
+#include "EngineCore/IGameObject.h"
+#include "EngineCore/IComponent.h"
+#include "EngineCore/Physics/PhysicsEngine.h"
 
 namespace Physics 
 {

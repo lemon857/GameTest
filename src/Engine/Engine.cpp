@@ -1,5 +1,5 @@
-#include "Engine.h"
-#include "../Resources/ResourceManager.h"
+#include "EngineCore/Engine.h"
+#include "EngineCore/Resources/ResourceManager.h"
 
 #include <iostream>
 #include <chrono>

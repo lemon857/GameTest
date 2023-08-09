@@ -1,8 +1,8 @@
-#include "Point.h";
+#include "EngineCore/Renderer/Point.h";
 
-#include "ShaderProgram.h"
-#include "VertexBufferLayout.h"
-#include "Renderer.h"
+#include "EngineCore/Renderer/ShaderProgram.h"
+#include "EngineCore/Renderer/VertexBufferLayout.h"
+#include "EngineCore/Renderer/Renderer.h"
 
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>

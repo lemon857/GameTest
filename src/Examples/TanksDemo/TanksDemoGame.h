@@ -2,9 +2,9 @@
 
 #include <array>
 #include<glm/vec2.hpp>
-#include "../../Renderer/Point.h"
-#include "../../Renderer/Line.h"
-#include "../../Engine/IGame.h"
+#include "EngineCore/Renderer/Point.h"
+#include "EngineCore/Renderer/Line.h"
+#include "EngineCore/IGame.h"
 
 class Tank;
 class BrickWall;

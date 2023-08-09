@@ -1,6 +1,6 @@
-#include "ShowOutline.h"
+#include "EngineCore/Renderer/ShowOutline.h"
 
-#include "../Engine/IGameObjec.h"
+#include "EngineCore/IGameObject.h"
 
 #include <iostream>
 

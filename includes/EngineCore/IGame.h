@@ -3,8 +3,8 @@
 
 #include "Engine.h"
 
-#include "../Renderer/Renderer.h"
-#include "../Renderer/Camera.h"
+#include "EngineCore/Renderer/Renderer.h"
+#include "EngineCore/Renderer/Camera.h"
 
 #include <glm/vec2.hpp>
 #include <array>

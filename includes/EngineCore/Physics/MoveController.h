@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../Engine/IComponent.h"
-#include "../Engine/IGameObjec.h"
+#include "EngineCore/IComponent.h"
+#include "EngineCore/IGameObject.h"
 
 class MoveController : public IComponent
 {

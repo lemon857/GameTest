@@ -2,84 +2,96 @@ cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 
 set(PROJECT_NAME EngineTest)
 
+set(ENGINE_PUBLIC_INCLUDES
+	includes/EngineCore/Engine.h
+	includes/EngineCore/IComponent.h
+	includes/EngineCore/IGameObject.h
+	includes/EngineCore/IGame.h
+		   
+	includes/EngineCore/System/Log.h
+	includes/EngineCore/System/Timer.h
+	includes/EngineCore/System/TemplateTimer.h
+)
+
+set(ENGINE_PRIVATE_INCLUDES
+	includes/EngineCore/Resources/ResourceManager.h
+	includes/EngineCore/Resources/stb_image.h
+	includes/EngineCore/Renderer/ShaderProgram.h
+	includes/EngineCore/Renderer/Texture2D.h
+	includes/EngineCore/Renderer/Sprite.h
+	includes/EngineCore/Renderer/VertexBuffer.h
+	includes/EngineCore/Renderer/IndexBuffer.h
+	includes/EngineCore/Renderer/Renderer.h
+	includes/EngineCore/Renderer/VertexArray.h
+	includes/EngineCore/Renderer/VertexBufferLayout.h
+	includes/EngineCore/Renderer/Point.h
+	includes/EngineCore/Renderer/Line.h
+	includes/EngineCore/Renderer/ShowOutline.h
+	includes/EngineCore/Renderer/Camera.h
+	includes/EngineCore/Renderer/Animator.h
+	includes/EngineCore/Renderer/Animation.h
+	includes/EngineCore/Physics/PhysicsEngine.h
+	includes/EngineCore/Physics/Collider.h
+	includes/EngineCore/Physics/MoveController.h
+)
+
+set(ENGINE_PRIVATE_SOURCES 
+	src/Engine/Engine.cpp
+	
+	src/Examples/TanksDemo/TanksDemoGame.cpp
+	src/Examples/TanksDemo/TanksDemoGame.h
+	src/Examples/TanksDemo/Tank.cpp
+	src/Examples/TanksDemo/Tank.h
+	src/Examples/TanksDemo/BrickWall.h
+	src/Examples/TanksDemo/BrickWall.cpp
+	src/Examples/TanksDemo/Bullet.h
+	src/Examples/TanksDemo/Bullet.cpp
+	
+	src/Examples/SnakeDemo/SnakeDemoGame.cpp
+	src/Examples/SnakeDemo/SnakeDemoGame.h
+	src/Examples/SnakeDemo/SnakePart.h
+	src/Examples/SnakeDemo/SnakePart.cpp
+	src/Examples/SnakeDemo/SnakePart.h
+	
+	src/Examples/PongDemo/PongDemoGame.h
+	src/Examples/PongDemo/PongDemoGame.cpp
+	src/Examples/PongDemo/PongObject.h
+	src/Examples/PongDemo/PongObject.cpp
+	src/Examples/PongDemo/Ball.h
+	src/Examples/PongDemo/Ball.cpp
+	
+	src/Resources/ResourceManager.cpp
+	
+	src/Renderer/ShaderProgram.cpp
+	src/Renderer/Texture2D.cpp
+	src/Renderer/Sprite.cpp
+	src/Renderer/VertexBuffer.cpp
+	src/Renderer/IndexBuffer.cpp
+	src/Renderer/Renderer.cpp
+	src/Renderer/VertexArray.cpp
+	src/Renderer/VertexBufferLayout.cpp
+	src/Renderer/Point.cpp
+	src/Renderer/Line.cpp
+	src/Renderer/ShowOutline.cpp
+	src/Renderer/Camera.cpp	
+	src/Renderer/Animator.cpp
+	src/Renderer/Animation.cpp
+	
+	src/Physics/PhysicsEngine.cpp
+	src/Physics/Collider.cpp
+	src/Physics/MoveController.cpp
+	
+	src/System/Timer.cpp
+)
+
+
 project(${PROJECT_NAME})
 
 add_executable(${PROJECT_NAME}
-src/main.cpp
-
-src/Examples/TanksDemo/TanksDemoGame.cpp
-src/Examples/TanksDemo/TanksDemoGame.h
-src/Examples/TanksDemo/Tank.cpp
-src/Examples/TanksDemo/Tank.h
-src/Examples/TanksDemo/BrickWall.h
-src/Examples/TanksDemo/BrickWall.cpp
-src/Examples/TanksDemo/Bullet.h
-src/Examples/TanksDemo/Bullet.cpp
-
-src/Examples/SnakeDemo/SnakeDemoGame.cpp
-src/Examples/SnakeDemo/SnakeDemoGame.h
-src/Examples/SnakeDemo/SnakePart.h
-src/Examples/SnakeDemo/SnakePart.cpp
-src/Examples/SnakeDemo/SnakePart.h
-
-src/Examples/PongDemo/PongDemoGame.h
-src/Examples/PongDemo/PongDemoGame.cpp
-src/Examples/PongDemo/PongObject.h
-src/Examples/PongDemo/PongObject.cpp
-src/Examples/PongDemo/Ball.h
-src/Examples/PongDemo/Ball.cpp
-
-src/Resources/ResourceManager.cpp
-src/Resources/ResourceManager.h
-src/Resources/stb_image.h
-
-src/Renderer/ShaderProgram.cpp
-src/Renderer/ShaderProgram.h
-src/Renderer/Texture2D.cpp
-src/Renderer/Texture2D.h
-src/Renderer/Sprite.cpp
-src/Renderer/Sprite.h
-src/Renderer/VertexBuffer.h
-src/Renderer/VertexBuffer.cpp
-src/Renderer/IndexBuffer.h
-src/Renderer/IndexBuffer.cpp
-src/Renderer/Renderer.h
-src/Renderer/Renderer.cpp
-src/Renderer/VertexArray.h
-src/Renderer/VertexArray.cpp
-src/Renderer/VertexBufferLayout.h
-src/Renderer/VertexBufferLayout.cpp
-src/Renderer/Point.h
-src/Renderer/Point.cpp
-src/Renderer/Line.h
-src/Renderer/Line.cpp
-src/Renderer/ShowOutline.h
-src/Renderer/ShowOutline.cpp
-src/Renderer/Camera.h
-src/Renderer/Camera.cpp
-
-src/Renderer/Animator.h
-src/Renderer/Animator.cpp
-src/Renderer/Animation.h
-src/Renderer/Animation.cpp
-
-src/Physics/PhysicsEngine.h
-src/Physics/PhysicsEngine.cpp
-src/Physics/Collider.h
-src/Physics/Collider.cpp
-src/Physics/MoveController.h
-src/Physics/MoveController.cpp
-
-src/System/Timer.h
-src/System/Timer.cpp
-src/System/TemplateTimer.h
-src/System/Log.h
-
-src/Engine/Engine.h
-src/Engine/Engine.cpp
-src/Engine/IGameObjec.h
-src/Engine/IComponent.h
-src/Engine/IGame.h
+	src/main.cpp
+	${ENGINE_PRIVATE_SOURCES}
+	${ENGINE_PUBLIC_INCLUDES}
+	${ENGINE_PRIVATE_INCLUDES}
 )
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
@@ -97,6 +109,7 @@ target_link_libraries(${PROJECT_NAME} glfw)
 target_link_libraries(${PROJECT_NAME} glad)
 target_link_libraries(${PROJECT_NAME} spdlog)
 
+target_include_directories(${PROJECT_NAME} PRIVATE includes)
 include_directories(external/glm)
 include_directories(external/rapidjson/include)
 

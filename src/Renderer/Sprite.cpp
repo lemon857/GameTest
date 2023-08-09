@@ -1,9 +1,9 @@
-#include "Sprite.h";
+#include "EngineCore/Renderer/Sprite.h";
 
-#include "ShaderProgram.h"
-#include "Texture2D.h"
-#include "VertexBufferLayout.h"
-#include "Renderer.h"
+#include "EngineCore/Renderer/ShaderProgram.h"
+#include "EngineCore/Renderer/Texture2D.h"
+#include "EngineCore/Renderer/VertexBufferLayout.h"
+#include "EngineCore/Renderer/Renderer.h"
 
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>

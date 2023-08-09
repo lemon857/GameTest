@@ -1,5 +1,5 @@
-#include "Collider.h"
-#include "PhysicsEngine.h"	
+#include "EngineCore/Physics/Collider.h"
+#include "EngineCore/Physics/PhysicsEngine.h"	
 
 #include <iostream>
 

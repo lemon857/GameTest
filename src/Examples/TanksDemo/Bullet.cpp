@@ -32,7 +32,7 @@ void Bullet::update(double delta)
 void Bullet::render()
 {
 	if (m_state == Passive) return;
-	m_pSprite->render(m_position, m_size, 0, 1);
+	m_pSprite->render(m_position, m_size, 0, 0);
 }
 
 void Bullet::fire(const glm::vec2& position, Physics::EDirection dir)

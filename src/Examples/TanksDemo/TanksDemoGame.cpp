@@ -93,8 +93,6 @@ void TanksDemoGame::update(const double delta)
 }
 bool TanksDemoGame::init()
 {
-    ResourceManager::loadJSONresources("res/resources.json");
-
     auto pSpriteShaderProgram = ResourceManager::getShaderProgram("spriteShader");
     if (!pSpriteShaderProgram)
     {

@@ -4,6 +4,7 @@ set(PROJECT_NAME EngineTest)
 
 set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/Engine.h
+	includes/EngineCore/Application.h
 	includes/EngineCore/IComponent.h
 	includes/EngineCore/IGameObject.h
 	includes/EngineCore/IGame.h
@@ -14,6 +15,8 @@ set(ENGINE_PUBLIC_INCLUDES
 )
 
 set(ENGINE_PRIVATE_INCLUDES
+	includes/EngineCore/Window.h
+	
 	includes/EngineCore/Resources/ResourceManager.h
 	includes/EngineCore/Resources/stb_image.h
 	includes/EngineCore/Renderer/ShaderProgram.h
@@ -35,8 +38,10 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Physics/MoveController.h
 )
 
-set(ENGINE_PRIVATE_SOURCES 
+set(ENGINE_PRIVATE_SOURCES
 	src/Engine/Engine.cpp
+	src/Engine/Window.cpp
+	src/Engine/Application.cpp
 	
 	src/Examples/TanksDemo/TanksDemoGame.cpp
 	src/Examples/TanksDemo/TanksDemoGame.h

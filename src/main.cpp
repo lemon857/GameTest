@@ -11,6 +11,7 @@
 
 #include "Physics/PhysicsEngine.h"
 #include "Engine/Engine.h"
+#include "System/Log.h"
 
 
 glm::ivec2 g_WindowSize(800, 600);
@@ -37,7 +38,7 @@ void Start(int argc, char** argv)
     // Инициализация графических библиотек в движке
     if (!Engine::initGraphics())
     {
-        std::cout << "Init graphics failed\n";
+        LOG_CRIT("Init graphics failed");
         return;
     }
 
@@ -47,7 +48,7 @@ void Start(int argc, char** argv)
 
     if (!pWindow)
     {
-        std::cout << "Generate window failed\n";
+        LOG_CRIT("Generate window failed");
         glfwTerminate();
         return;
     }
@@ -61,19 +62,19 @@ void Start(int argc, char** argv)
     // Иницициализация OprnGL
     if (!Engine::initOpenGL())
     {
-        std::cout << "Init OpenGL failed\n";
+        LOG_CRIT("Init OpenGL failed");
         return;
     }
 
     // Вывод версии OpenGL и рендерера в консоль
-    std::cout << "Renderer: " << RenderEngine::Renderer::getRendererStr() << "\n";
-    std::cout << "OpenGL Version: " << RenderEngine::Renderer::getVersionStr() << "\n";
+    LOG_INFO("Renderer: " + RenderEngine::Renderer::getRendererStr());
+    LOG_INFO("OpenGL Version: " + RenderEngine::Renderer::getVersionStr());
     // Установка пути приложения для подгрузки текстур
     ResourceManager::setExecutablePath(argv[0]);
     // Инициализация класса игры
     if (!g_Game->init())
     {
-        std::cout << "Game init failed\n";
+        LOG_CRIT("Init graphics failed");
         return;
     }
     // Отчистка экрана чёрным цветом

@@ -73,6 +73,7 @@ src/Physics/MoveController.cpp
 src/System/Timer.h
 src/System/Timer.cpp
 src/System/TemplateTimer.h
+src/System/Log.h
 
 src/Engine/Engine.h
 src/Engine/Engine.cpp
@@ -90,9 +91,11 @@ set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(external/glfw)
 add_subdirectory(external/glad)
+add_subdirectory(external/spdlog)
 
 target_link_libraries(${PROJECT_NAME} glfw)
 target_link_libraries(${PROJECT_NAME} glad)
+target_link_libraries(${PROJECT_NAME} spdlog)
 
 include_directories(external/glm)
 include_directories(external/rapidjson/include)

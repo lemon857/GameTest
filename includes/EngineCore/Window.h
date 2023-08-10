@@ -1,13 +1,14 @@
 #pragma once
 
 #include "EngineCore/Event.h"
-#include "EngineCore/Renderer/Camera.h"
 
 #include <glm/vec2.hpp>
 #include <string>
 #include <functional>
 
 struct GLFWwindow;
+
+class Camera;
 
 struct ResizeWindowEvent
 {
@@ -46,6 +47,14 @@ private:
 	WindowData m_data;
 
 	Camera* m_cam;
+
+	float m_colors[4] = { 0.f, 0.f, 0.f, 0.f };
+	float m_cam_pos[3] = { 0.f, 0.f, 0.f };
+	float m_cam_rot[3] = { 0.f, 0.f, 0.f };
+
+	float m_sprite_pos[3] = { 0.f, 0.f, 0.f };
+
+	bool m_isPerspectiveCam = true;
 
 	int init();
 

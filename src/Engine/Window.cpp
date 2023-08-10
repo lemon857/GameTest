@@ -4,6 +4,7 @@
 #include "EngineCore/Renderer/Renderer.h"
 #include "EngineCore/Physics/PhysicsEngine.h"
 #include "EngineCore/Renderer/Sprite.h"
+#include "EngineCore/Renderer/Camera.h"
 #include "EngineCore/Resources/ResourceManager.h"
 
 #include <GLFW/glfw3.h>
@@ -30,7 +31,36 @@ Window::~Window()
 
 void Window::on_update()
 {
-    //ResourceManager::getSprite("BulletSprite")->render(glm::vec2(100), glm::vec2(100), 0, 1);
+    RenderEngine::Renderer::setClearColor(m_colors[0], m_colors[1], m_colors[2], m_colors[3]);
+
+    RenderEngine::Renderer::clearColor();
+
+    ImGuiIO& io = ImGui::GetIO();
+    io.DisplaySize.x = static_cast<float>(m_data.window_size.x);
+    io.DisplaySize.y = static_cast<float>(m_data.window_size.y);
+
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui::NewFrame();
+
+    ImGui::Begin("Background Color Window");
+    ImGui::ColorEdit4("Background Color", m_colors);
+    ImGui::SliderFloat3("Sprite position", m_sprite_pos, -50.f, 50.f);
+    ImGui::SliderFloat3("Camera position", m_cam_pos, -50.f, 50.f);
+    ImGui::SliderFloat3("Camera rotation", m_cam_rot, 0.f, 360.f);
+    ImGui::Checkbox("Perspective camera", &m_isPerspectiveCam);
+    ImGui::End();
+
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    m_cam->set_position_rotation(glm::vec3(m_cam_pos[0], m_cam_pos[1], m_cam_pos[2]), glm::vec3(m_cam_rot[0], m_cam_rot[1], m_cam_rot[2]));
+
+    m_cam->set_projection_mode(m_isPerspectiveCam ? Camera::ProjectionMode::Perspective : Camera::ProjectionMode::Orthographic);
+
+    ResourceManager::getShaderProgram("spriteShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+
+    ResourceManager::getSprite("TankSprite")->render(glm::vec2(m_sprite_pos[0], m_sprite_pos[1]), glm::vec2(1), 0, 0);
+
     glfwSwapBuffers(m_pWindow);
     glfwPollEvents();    
 }
@@ -42,8 +72,8 @@ void Window::set_event_callback(const EventCallback& callback)
 
 int Window::init()
 {
-    //m_cam = new Camera(glm::vec2(0), glm::vec2(1000), -100, 100);
-    //m_cam->addShaderProgram(ResourceManager::getShaderProgram("spriteShader"));
+    m_cam = new Camera();
+
     LOG_INFO("Creating window {0} size {1}x{2}", m_data.title, m_data.window_size.x, m_data.window_size.y);
     if (!glfwInit())
     {
@@ -112,7 +142,6 @@ int Window::init()
 
 void Window::shuitdown()
 {
-    delete m_cam;
     glfwDestroyWindow(m_pWindow);
     glfwTerminate();
 }

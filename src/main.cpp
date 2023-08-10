@@ -3,9 +3,6 @@
 #include <iostream>
 #include <chrono>
 
-#include <imgui/imgui.h>
-#include <imgui/backends/imgui_impl_opengl3.h>
-
 #include "EngineCore/Window.h"
 
 #include "EngineCore/Resources/ResourceManager.h"
@@ -35,25 +32,9 @@ public:
     }
     void on_update(const double delta) override
     {
-        RenderEngine::Renderer::setClearColor(m_colors[0], m_colors[1], m_colors[2], m_colors[3]);
-
-        RenderEngine::Renderer::clearColor();
-
-        ImGuiIO& io = ImGui::GetIO();
-        io.DisplaySize.x = m_pWindow->get_size().x;
-        io.DisplaySize.y = m_pWindow->get_size().y;
-
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui::NewFrame();
-
-        ImGui::Begin("Background Color Window");
-        ImGui::ColorEdit4("Background Color", m_colors);
-        ImGui::End();
-
-        ImGui::Render();
+        
     }
 private:
-    float m_colors[4] = { 0.f, 0.f, 0.f, 0.f };
 };
 
 void keyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mode)

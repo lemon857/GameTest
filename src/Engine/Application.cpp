@@ -8,6 +8,8 @@
 #include "../Examples/SnakeDemo/SnakeDemoGame.h"
 #include "../Examples/PongDemo/PongDemoGame.h"
 
+#include <GLFW/glfw3.h>
+#include <glad/glad.h>
 #include <chrono>
 
 Application::Application()
@@ -22,16 +24,13 @@ Application::~Application()
 }
 
 int Application::start(glm::ivec2& window_size, const char* title)
-{
-    //ResourceManager::loadJSONresources("res/resources.json");
-
-    glCreateShader(GL_VERTEX_SHADER);
-
+{   
     m_pCloseWindow = false;
     m_pWindow = std::make_unique<Window>(title, window_size);
     m_event_dispather.add_event_listener<EventWindowResize>([](EventWindowResize& e)
         {
             LOG_INFO("[EVENT] Resize: {0}x{1}", e.width, e.height);
+            RenderEngine::Renderer::setViewport(e.width, e.height);
         });
     m_event_dispather.add_event_listener<EventMouseMoved>([](EventMouseMoved& e)
         {
@@ -47,6 +46,8 @@ int Application::start(glm::ivec2& window_size, const char* title)
         {
             m_event_dispather.dispatch(e);
         });
+
+    ResourceManager::loadJSONresources("res/resources.json");
 
     if (!init())
     {

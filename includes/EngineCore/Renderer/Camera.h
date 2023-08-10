@@ -1,38 +1,40 @@
 #pragma once
 
-#include <glm/vec2.hpp>
-#include <glm/mat4x4.hpp>
+#include <glm/vec3.hpp>
+#include <glm/ext/matrix_float4x4.hpp>
 #include <memory>
 #include <vector>
 
-#include "ShaderProgram.h"
-#include "EngineCore/IGameObject.h"
-#include "EngineCore/Physics/PhysicsEngine.h"
-#include "EngineCore/Renderer/Sprite.h"
 
-enum ETypeCamera
-{
-	Orthographic,
-	Perspective
-};
-
-class Camera : public IGameObject
+class Camera
 {
 public:
-	// Ортографический конструктор
-	Camera(glm::vec2 position, glm::vec2 size, float zNear, float zFar);
-	// Перспективный конструктор
-	Camera(glm::vec2 position, float fov, float zNear, float zFar);
+	enum class ProjectionMode
+	{
+		Orthographic,
+		Perspective
+	};
+	Camera(const glm::vec3& position = { 0, 0, 0 },
+		const glm::vec3& rotation = { 0, 0, 0 },
+		const ProjectionMode mode = ProjectionMode::Perspective);
 
-	void addShaderProgram(std::shared_ptr<RenderEngine::ShaderProgram>& program);
+	void set_position(const glm::vec3& position);
+	void set_rotation(const glm::vec3& rotation);
+	void set_position_rotation(const glm::vec3& position, const glm::vec3& rotation);
+	void set_projection_mode(const ProjectionMode mode);
 
-	void update(const double delta) override;
+	glm::mat4 get_view_matrix() const { return m_veiw_matrix; };
+	glm::mat4 get_projection_matrix() const { return m_projection_matrix; };
 
-	void updateSize(glm::vec2 size);
 private:
-	std::vector<std::shared_ptr<RenderEngine::ShaderProgram>> m_shaderPrograms;
+	void update_veiw_matrix();
+	void update_projection_matrix();
 
-	ETypeCamera m_type;
-	glm::mat4 m_projectionMatrix;
-	Physics::EDirection m_eOrentation;
+	glm::vec3 m_position;
+	glm::vec3 m_rotation;
+
+	glm::mat4 m_veiw_matrix;
+	glm::mat4 m_projection_matrix;
+
+	ProjectionMode m_projection_mode;
 };

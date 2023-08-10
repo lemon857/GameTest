@@ -23,7 +23,7 @@ public:
     virtual void render() const {};
     virtual bool init() { return false; };
     
-    void setWindowSize(const glm::ivec2& windowSize) { m_WindowSize = windowSize; m_cam->updateSize((glm::vec2)windowSize);  };
+    void setWindowSize(const glm::ivec2& windowSize) { m_WindowSize = windowSize; /*m_cam->updateSize((glm::vec2)windowSize);*/ };
     void setKey(const int key, const int action) { m_keys[key] = action; };
 protected:
     glm::ivec2 m_WindowSize;

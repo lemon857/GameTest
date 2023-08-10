@@ -1,6 +1,7 @@
 #pragma	once
 
 #include "EngineCore/Event.h"
+#include "EngineCore/Renderer/Camera.h"
 
 #include <memory>
 #include <glm/vec2.hpp>

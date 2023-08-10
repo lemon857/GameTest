@@ -64,8 +64,8 @@ void TanksDemoGame::update(const double delta)
         m_pTank->fire();
     }
     m_pTank->update(delta);
-    m_cam->setPosition(m_pTank->getPosition() + (m_pTank->getSize() / 2.f));
-    m_cam->update(delta);
+    //m_cam->setPosition(m_pTank->getPosition() + (m_pTank->getSize() / 2.f));
+    //m_cam->update(delta);
     m_pBrickWall->update(delta);
 
 }
@@ -91,10 +91,10 @@ bool TanksDemoGame::init()
     auto pBulletSprite = ResourceManager::getSprite("BulletSprite");
     auto pWallSprite = ResourceManager::getSprite("BrickWallSprite");
 
-    m_cam = std::make_shared<Camera>(glm::vec2(0), m_WindowSize, -100.f, 100.f);
+    //m_cam = std::make_shared<Camera>(glm::vec2(0), m_WindowSize, -100.f, 100.f);
 
-    m_cam->addShaderProgram(pSpriteShaderProgram);
-    m_cam->addShaderProgram(pShapeShaderProgram);
+    //m_cam->addShaderProgram(pSpriteShaderProgram);
+    //m_cam->addShaderProgram(pShapeShaderProgram);
 
     //glm::perspective(90.f, 1.f, -100.f, 100.f);
     pSpriteShaderProgram->use();

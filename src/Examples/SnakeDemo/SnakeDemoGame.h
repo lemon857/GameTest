@@ -5,6 +5,7 @@
 #include "EngineCore/IGame.h"
 #include "EngineCore/Renderer/Line.h"
 #include "EngineCore/System/Timer.h"
+#include "EngineCore/Renderer/Sprite.h"
 #include "EngineCore/Physics/PhysicsEngine.h"
 #include "SnakePart.h"
 

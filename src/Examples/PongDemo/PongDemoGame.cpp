@@ -124,10 +124,10 @@ bool PongDemoGame::init()
 
 	m_ball = std::make_shared<Ball>(pShapeShader, 15.f, m_WindowSize / 2, 0.2);
  
-	m_cam = std::make_shared<Camera>(glm::vec2(0) + (glm::vec2)(m_WindowSize / 2), m_WindowSize, -100.f, 100.f);
+	//m_cam = std::make_shared<Camera>(glm::vec2(0) + (glm::vec2)(m_WindowSize / 2), m_WindowSize, -100.f, 100.f);
 
-	m_cam->addShaderProgram(pShapeShader);
-	m_cam->addShaderProgram(pSpriteShader);
+	//m_cam->addShaderProgram(pShapeShader);
+	//m_cam->addShaderProgram(pSpriteShader);
 
 	m_downWall = std::make_shared<PongObject>(nullptr, "wall", glm::vec2(-1.f), glm::vec2(m_WindowSize.x + 2.f, WALL_OFFSET));
 	m_upWall = std::make_shared<PongObject>(nullptr, "wall", glm::vec2(0.f, m_WindowSize.y - 100.f - WALL_OFFSET), glm::vec2(m_WindowSize.x + 2.f, WALL_OFFSET));

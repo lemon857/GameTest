@@ -111,9 +111,9 @@ add_subdirectory(external/glfw)
 add_subdirectory(external/glad)
 add_subdirectory(external/spdlog)
 
-target_link_libraries(${PROJECT_NAME} glfw)
-target_link_libraries(${PROJECT_NAME} glad)
-target_link_libraries(${PROJECT_NAME} spdlog)
+target_link_libraries(${PROJECT_NAME} PRIVATE glfw)
+target_link_libraries(${PROJECT_NAME} PRIVATE glad)
+target_link_libraries(${PROJECT_NAME} PRIVATE spdlog)
 
 target_include_directories(${PROJECT_NAME} PRIVATE includes)
 include_directories(external/glm)
@@ -124,3 +124,28 @@ set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAK
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 					COMMAND ${CMAKE_COMMAND} -E copy_directory
 					${CMAKE_SOURCE_DIR}/res $<TARGET_FILE_DIR:${PROJECT_NAME}>/res)
+					
+set(IMGUI_INCLUDES
+	external/imgui/imgui.h
+	external/imgui/backends/imgui_impl_opengl3.h
+	external/imgui/backends/imgui_impl_glfw.h)
+	
+set(IMGUI_SOURCES
+	external/imgui/imgui.cpp
+	external/imgui/backends/imgui_impl_opengl3.cpp
+	external/imgui/backends/imgui_impl_glfw.cpp
+	external/imgui/imgui_widgets.cpp
+	external/imgui/imgui_tables.cpp
+	external/imgui/imgui_draw.cpp
+	external/imgui/imgui_demo.cpp)
+
+add_library(ImGUI STATIC
+	${IMGUI_INCLUDES}
+	${IMGUI_SOURCES})
+	
+target_include_directories(ImGUI PUBLIC external)
+target_include_directories(ImGUI PRIVATE external/imgui)
+
+target_link_libraries(ImGUI PRIVATE glad glfw)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE ImGUI)

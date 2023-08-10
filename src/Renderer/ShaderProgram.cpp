@@ -1,5 +1,5 @@
 #include "EngineCore/Renderer/ShaderProgram.h"
-#include <iostream>
+#include "EngineCore/System/Log.h"
 #include <glm/gtc/type_ptr.hpp>
 
 namespace RenderEngine 
@@ -9,13 +9,13 @@ namespace RenderEngine
 		GLuint vertexShaderID;
 		if (!createShader(vertexShader, GL_VERTEX_SHADER, vertexShaderID)) 
 		{
-			std::cerr << "VERTEX SHADER ERROR COMPILE\n";
+			LOG_ERROR("VERTEX SHADER ERROR COMPILE");
 			return;
 		}
 		GLuint fragmentShaderID;
 		if (!createShader(fragmentShader, GL_FRAGMENT_SHADER, fragmentShaderID))
 		{
-			std::cerr << "FRAGMENT SHADER ERROR COMPILE\n";
+			LOG_ERROR("FRAGMENT SHADER ERROR COMPILE");
 			glDeleteShader(vertexShaderID);
 			return;
 		}
@@ -30,7 +30,7 @@ namespace RenderEngine
 		{
 			GLchar infoLog[1024];
 			glGetProgramInfoLog(m_ID, 1024, nullptr, infoLog);
-			std::cerr << "ERROR: PROGRAM: Link:\n" << infoLog << "\n";
+			LOG_ERROR("PROGRAM: Link: {0}", infoLog);
 		}
 		else 
 		{
@@ -42,6 +42,7 @@ namespace RenderEngine
 	ShaderProgram::~ShaderProgram() 
 	{
 		glDeleteProgram(m_ID);
+		m_cacheUniformMap.clear();
 	}
 	bool ShaderProgram::createShader(const std::string& sousce, const GLenum shaderType, GLuint& shaderID) 
 	{
@@ -56,29 +57,75 @@ namespace RenderEngine
 		{
 			GLchar infoLog[1024];
 			glGetShaderInfoLog(shaderID, 1024, nullptr, infoLog);
-			std::cerr << "ERROR: SHADER: Compile:\n" << infoLog << "\n";
+			LOG_ERROR("SHADER: Compile: {0}", infoLog);
 			return false;
 		}
 		return true;
 	}
+	bool ShaderProgram::getLocation(const std::string& name, GLuint& location) const
+	{
+		cacheMap::const_iterator it = m_cacheUniformMap.find(name);
+		if (it != m_cacheUniformMap.end())
+		{
+			location = it->second;
+			return true;
+		}
+		return false;
+	}
+	void ShaderProgram::addLocation(const std::string& name, GLuint& location)
+	{
+		m_cacheUniformMap.emplace(name, location);
+	}
 	void ShaderProgram::use() const {
 		glUseProgram(m_ID);
 	}
-	void ShaderProgram::setInt(const std::string& name, const GLint& value) const 
+	void ShaderProgram::setInt(const std::string& name, const GLint& value)
 	{
-		glUniform1i(glGetUniformLocation(m_ID, name.c_str()), value);
+		GLuint location;
+		if (getLocation(name, location))
+		{
+			glUniform1i(location, value);
+			return;
+		}
+		location = glGetUniformLocation(m_ID, name.c_str());
+		addLocation(name, location);
+		glUniform1i(location, value);
 	}
-	void ShaderProgram::setFloat(const std::string& name, const GLfloat& value) const
+	void ShaderProgram::setFloat(const std::string& name, const GLfloat& value) 
 	{
-		glUniform1f(glGetUniformLocation(m_ID, name.c_str()), value);
+		GLuint location;
+		if (getLocation(name, location))
+		{
+			glUniform1f(location, value);
+			return;
+		}
+		location = glGetUniformLocation(m_ID, name.c_str());
+		addLocation(name, location);
+		glUniform1f(location, value);
 	}
-	void ShaderProgram::setMatrix4(const std::string& name, const glm::mat4& matrix) const
+	void ShaderProgram::setMatrix4(const std::string& name, const glm::mat4& matrix)
 	{
-		glUniformMatrix4fv(glGetUniformLocation(m_ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
+		GLuint location;
+		if (getLocation(name, location))
+		{
+			glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
+			return;
+		}
+		location = glGetUniformLocation(m_ID, name.c_str());
+		addLocation(name, location);
+		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 	}
-	void ShaderProgram::setVec4(const std::string& name, const glm::vec4& vec) const
+	void ShaderProgram::setVec4(const std::string& name, const glm::vec4& vec)
 	{
-		glUniform4f(glGetUniformLocation(m_ID, name.c_str()), vec.x, vec.y, vec.z, vec.w);
+		GLuint location;
+		if (getLocation(name, location))
+		{
+			glUniform4f(location, vec.x, vec.y, vec.z, vec.w);
+			return;
+		}
+		location = glGetUniformLocation(m_ID, name.c_str());
+		addLocation(name, location);
+		glUniform4f(location, vec.x, vec.y, vec.z, vec.w);
 	}
 	bool ShaderProgram::isCompiled() const {
 		return m_isCompiled;

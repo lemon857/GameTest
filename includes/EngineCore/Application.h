@@ -21,7 +21,7 @@ public:
 	virtual bool init() { return false; };
 
 	virtual void on_update(const double delta) {};
-private:
+protected:
 	EventDispatcher m_event_dispather;
 	std::unique_ptr<class Window> m_pWindow;
 	bool m_pCloseWindow = true;

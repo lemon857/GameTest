@@ -3,6 +3,11 @@
 #include <iostream>
 #include <chrono>
 
+#include <imgui/imgui.h>
+#include <imgui/backends/imgui_impl_opengl3.h>
+
+#include "EngineCore/Window.h"
+
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Renderer/Renderer.h"
 #include "Examples/TanksDemo/TanksDemoGame.h"
@@ -16,29 +21,39 @@
 class MyApp : public Application
 {
 public:
-    MyApp(IGame* game)
-        : m_Game(game)
+    MyApp()
     {
 
     }
     ~MyApp()
     {
-        delete m_Game;
+
     }
     bool init() override
     {
-        return m_Game->init();
+        return true;
     }
     void on_update(const double delta) override
     {
-        m_Game->update(delta);
+        RenderEngine::Renderer::setClearColor(m_colors[0], m_colors[1], m_colors[2], m_colors[3]);
 
         RenderEngine::Renderer::clearColor();
 
-        m_Game->render();
+        ImGuiIO& io = ImGui::GetIO();
+        io.DisplaySize.x = m_pWindow->get_size().x;
+        io.DisplaySize.y = m_pWindow->get_size().y;
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui::NewFrame();
+
+        ImGui::Begin("Background Color Window");
+        ImGui::ColorEdit4("Background Color", m_colors);
+        ImGui::End();
+
+        ImGui::Render();
     }
 private:
-    IGame* m_Game;
+    float m_colors[4] = { 0.f, 0.f, 0.f, 0.f };
 };
 
 void keyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mode)
@@ -54,13 +69,13 @@ int main(int argc, char** argv)
 {
     glm::ivec2 g_WindowSize(800, 600);
 
-    IGame* g_Game;
+    //IGame* g_Game;
     ResourceManager::setExecutablePath(argv[0]);
-    g_Game = new TanksDemoGame(g_WindowSize);
+    //g_Game = new TanksDemoGame(g_WindowSize);
     //g_Game = new SnakeDemoGame(g_WindowSize, glm::vec2(100));
     //g_Game = new PongDemoGame(g_WindowSize);
 
-    Application* myApp = new MyApp(g_Game);
+    Application* myApp = new MyApp();
 
     myApp->start(g_WindowSize, "Test game");
 

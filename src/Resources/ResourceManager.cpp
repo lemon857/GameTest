@@ -4,6 +4,7 @@
 #include "EngineCore/Renderer/Sprite.h"
 #include "EngineCore/Renderer/Animation.h"
 #include "EngineCore/Renderer/Animator.h"
+#include "EngineCore/System/Log.h"
 
 #include <sstream>
 #include <fstream>
@@ -39,15 +40,15 @@ bool ResourceManager::loadJSONresources(const std::string & JSONpath)
 	const std::string JSONstr = getFileString(JSONpath);
 	if (JSONstr.empty())
 	{
-		std::cerr << "No JSON file: " << JSONpath << "\n";
+		LOG_CRIT("No JSON file: {0}", JSONpath);
 		return false;
 	}
 	rapidjson::Document doc;
 	rapidjson::ParseResult result = doc.Parse(JSONstr.c_str());
 	if (!result)
 	{
-		std::cerr << "JSON parse error: " << rapidjson::GetParseError_En(result.Code()) << "(" << result.Offset() << ")\n";
-		std::cerr << "In JSON file: " << JSONpath << "\n";
+		LOG_CRIT("JSON parse error: {0} ({1})", rapidjson::GetParseError_En(result.Code()),  result.Offset());
+		LOG_CRIT("In JSON file: ", JSONpath);
 		return false;
 	}
 	auto shadersIt = doc.FindMember("shaders");
@@ -98,7 +99,7 @@ bool ResourceManager::loadJSONresources(const std::string & JSONpath)
 			loadSprite(name, atlas, shader, initSubTexture);			
 		}
 	}
-
+	LOG_INFO("Loadind data in JSON file complete");
 	/*auto animatorsIt = doc.FindMember("animators");
 	if (animatorsIt != doc.MemberEnd())
 	{
@@ -140,7 +141,7 @@ std::string ResourceManager::getFileString(const std::string& relativeFilePath)
 	f.open(m_path + "/" + relativeFilePath, std::ios::in | std::ios::binary);
 	if (!f.is_open()) 
 	{
-		std::cerr << "Failed to open file: " + relativeFilePath + "\n";
+		LOG_ERROR("Failed to open file: {0}", relativeFilePath);
 		return std::string();
 	}
 	std::stringstream buffer;
@@ -152,13 +153,13 @@ std::shared_ptr<RenderEngine::ShaderProgram> ResourceManager::loadShaders(const 
 	std::string vertexString = getFileString(vertexPath);
 	if (vertexString.empty()) 
 	{
-		std::cerr << "Vertex shader file is empty\n";
+		LOG_ERROR("Vertex shader file is empty");
 		return nullptr;
 	}
 	std::string fragmentString = getFileString(fragmentPath);
 	if (fragmentString.empty())
 	{
-		std::cerr << "Fragment shader file is empty\n";
+		LOG_ERROR("Fragment shader file is empty");
 		return nullptr;
 	}
 
@@ -168,7 +169,7 @@ std::shared_ptr<RenderEngine::ShaderProgram> ResourceManager::loadShaders(const 
 		return newShader;
 	}
 
-	std::cerr << "Can't load shader program:\n" << "Vertex: " << vertexPath << "\nFragment: " << fragmentPath;
+	LOG_ERROR("Can't load shader program: \nVertex: {0} \nFragment: {1}", vertexPath, fragmentPath);
 	return nullptr;
 }
 std::shared_ptr<RenderEngine::ShaderProgram> ResourceManager::getShaderProgram(const std::string& shaderName)
@@ -178,7 +179,7 @@ std::shared_ptr<RenderEngine::ShaderProgram> ResourceManager::getShaderProgram(c
 	{
 		return it->second;
 	}
-	std::cerr << "Can't find shader program: " << shaderName << "\n";
+	LOG_ERROR("Can't find shader program: {0}", shaderName);
 	return nullptr;
 }
 std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTexture(const std::string& textureName, const std::string& texturePath)
@@ -191,7 +192,7 @@ std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTexture(const std:
 
 	if (!pixels)
 	{
-		std::cerr << "Can't load image: " << texturePath << "\n";
+		LOG_ERROR("Can't load image: {0}", texturePath);
 		return nullptr;
 	}
 
@@ -209,7 +210,7 @@ std::shared_ptr<RenderEngine::Texture2D> ResourceManager::getTexture(const std::
 	{
 		return it->second;
 	}
-	std::cerr << "Can't find texture: " << textureName << "\n";
+	LOG_ERROR("Can't find texture: {0}", textureName);
 	return nullptr;
 }
 std::shared_ptr<RenderEngine::Sprite>  ResourceManager::loadSprite(const std::string& spriteName, const std::string& textureName,
@@ -218,14 +219,14 @@ std::shared_ptr<RenderEngine::Sprite>  ResourceManager::loadSprite(const std::st
 	auto pTexture = getTexture(textureName);
 	if (!pTexture)
 	{
-		std::cerr << "Can't find texture: " << textureName << " for the sprite: " << spriteName << "\n";
+		LOG_ERROR("Can't find texture: {0} for the sprite: {1}", textureName, spriteName);
 		return nullptr;
 	}
 
 	auto pShaderProgram = getShaderProgram(shaderName);
 	if (!pShaderProgram)
 	{
-		std::cerr << "Can't find shader program: " << shaderName << " for the sprite: " << spriteName << "\n";
+		LOG_ERROR("Can't find shader program: {0} for the sprite: {1}", shaderName, spriteName);
 		return nullptr;
 	}
 	std::shared_ptr<RenderEngine::Sprite>& newSprite = m_sprites.emplace(spriteName, std::make_shared<RenderEngine::Sprite>(pTexture, subTextureName, 
@@ -239,7 +240,7 @@ std::shared_ptr<RenderEngine::Sprite> ResourceManager::getSprite(const std::stri
 	{
 		return it->second;
 	}
-	std::cerr << "Can't find sprite: " << spriteName << "\n";
+	LOG_ERROR("Can't find sprite: {0}", spriteName);
 	return nullptr;
 }
 std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTextureAtlas(

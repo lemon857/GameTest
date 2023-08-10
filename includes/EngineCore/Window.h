@@ -1,6 +1,7 @@
 #pragma once
 
 #include "EngineCore/Event.h"
+#include "EngineCore/Renderer/Camera.h"
 
 #include <glm/vec2.hpp>
 #include <string>
@@ -43,6 +44,8 @@ private:
 
 	GLFWwindow* m_pWindow;
 	WindowData m_data;
+
+	Camera* m_cam;
 
 	int init();
 

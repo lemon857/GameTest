@@ -3,14 +3,24 @@
 #include "EngineCore/System/Log.h"
 #include "EngineCore/Renderer/Renderer.h"
 #include "EngineCore/Physics/PhysicsEngine.h"
+#include "EngineCore/Renderer/Sprite.h"
+#include "EngineCore/Resources/ResourceManager.h"
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
+
+#include <imgui/imgui.h>
+#include <imgui/backends/imgui_impl_opengl3.h>
+#include <imgui/backends/imgui_impl_glfw.h>
 
 Window::Window(std::string title, glm::ivec2& window_size)
     : m_data({ std::move(title), window_size, nullptr })
 {
 	init();
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui_ImplOpenGL3_Init();
+    ImGui_ImplGlfw_InitForOpenGL(m_pWindow, true);
 }
 
 Window::~Window()
@@ -20,6 +30,7 @@ Window::~Window()
 
 void Window::on_update()
 {
+    //ResourceManager::getSprite("BulletSprite")->render(glm::vec2(100), glm::vec2(100), 0, 1);
     glfwSwapBuffers(m_pWindow);
     glfwPollEvents();    
 }
@@ -31,6 +42,8 @@ void Window::set_event_callback(const EventCallback& callback)
 
 int Window::init()
 {
+    //m_cam = new Camera(glm::vec2(0), glm::vec2(1000), -100, 100);
+    //m_cam->addShaderProgram(ResourceManager::getShaderProgram("spriteShader"));
     LOG_INFO("Creating window {0} size {1}x{2}", m_data.title, m_data.window_size.x, m_data.window_size.y);
     if (!glfwInit())
     {
@@ -99,6 +112,7 @@ int Window::init()
 
 void Window::shuitdown()
 {
+    delete m_cam;
     glfwDestroyWindow(m_pWindow);
     glfwTerminate();
 }

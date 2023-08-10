@@ -9,6 +9,8 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/IGameObject.h
 	includes/EngineCore/IGame.h
 	includes/EngineCore/Event.h
+	includes/EngineCore/Keys.h
+	includes/EngineCore/Input.h
 		   
 	includes/EngineCore/System/Log.h
 	includes/EngineCore/System/Timer.h
@@ -43,6 +45,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Engine/Engine.cpp
 	src/Engine/Window.cpp
 	src/Engine/Application.cpp
+	src/Engine/Input.cpp
 	
 	src/Examples/TanksDemo/TanksDemoGame.cpp
 	src/Examples/TanksDemo/TanksDemoGame.h

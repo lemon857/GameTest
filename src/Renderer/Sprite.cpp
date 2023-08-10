@@ -58,17 +58,17 @@ namespace RenderEngine
 		m_vertexArray.unbind();
 		m_indexBuffer.unbind();
 	}
-	void Sprite::render(const glm::vec2 position, const glm::vec2 size, const double rotation, const int layer) const
+	void Sprite::render(const glm::vec3& position, const glm::vec3& size, const double rotation, const int layer) const
 	{
 		m_pShaderProgram->use();
 
 		glm::mat4 model(1.f);
 
-		model = glm::translate(model, glm::vec3(position, 0.f));
+		model = glm::translate(model, position);
 		//model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.f));
 		//model = glm::rotate(model, static_cast<float>(glm::radians(rotation)),  glm::vec3(0.f, 0.f, 1.f));
 		//model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.f));
-		model = glm::scale(model, glm::vec3(size, 1.f));
+		model = glm::scale(model, size);
 		
 		m_pShaderProgram->setMatrix4("modelMat", model);
 		m_pShaderProgram->setFloat("layer", layer);

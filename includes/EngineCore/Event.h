@@ -1,5 +1,7 @@
 #pragma once
 
+#include "EngineCore/Keys.h"
+
 #include <array>
 #include <functional>
 
@@ -100,42 +102,42 @@ struct EventWindowClose : public BaseEvent
     static const EventType type = EventType::WindowClose;
 };
 
-//struct EventKeyPressed : public BaseEvent
-//{
-//    EventKeyPressed(const KeyCode key_code, const bool repeated)
-//        : key_code(key_code)
-//        , repeated(repeated)
-//    {
-//    }
-//
-//    virtual EventType get_type() const override
-//    {
-//        return type;
-//    }
-//
-//    KeyCode key_code;
-//    bool repeated;
-//
-//    static const EventType type = EventType::KeyPressed;
-//};
-//
-//struct EventKeyReleased : public BaseEvent
-//{
-//    EventKeyReleased(const KeyCode key_code)
-//        : key_code(key_code)
-//    {
-//    }
-//
-//    virtual EventType get_type() const override
-//    {
-//        return type;
-//    }
-//
-//    KeyCode key_code;
-//
-//    static const EventType type = EventType::KeyReleased;
-//};
-//
+struct EventKeyPressed : public BaseEvent
+{
+    EventKeyPressed(const KeyCode key_code, const bool repeated)
+        : key_code(key_code)
+        , repeated(repeated)
+    {
+    }
+
+    virtual EventType get_type() const override
+    {
+        return type;
+    }
+
+    KeyCode key_code;
+    bool repeated;
+
+    static const EventType type = EventType::KeyPressed;
+};
+
+struct EventKeyReleased : public BaseEvent
+{
+    EventKeyReleased(const KeyCode key_code)
+        : key_code(key_code)
+    {
+    }
+
+    virtual EventType get_type() const override
+    {
+        return type;
+    }
+
+    KeyCode key_code;
+
+    static const EventType type = EventType::KeyReleased;
+};
+
 //struct EventMouseButtonPressed : public BaseEvent
 //{
 //    EventMouseButtonPressed(const MouseButton mouse_button, const double x_pos, const double y_pos)

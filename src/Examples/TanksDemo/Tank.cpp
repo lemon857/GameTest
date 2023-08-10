@@ -44,7 +44,7 @@ Tank::Tank(std::shared_ptr<RenderEngine::Sprite> pSprite,
 }
 void Tank::render()
 {
-	m_pSprite->render(m_position, m_size, 0, 1);
+	//m_pSprite->render(m_position, m_size, 0, 1);
 	getComponent<ShowOutline>("showOutline")->render();
 	if (m_bullet != nullptr) m_bullet->render();
 }

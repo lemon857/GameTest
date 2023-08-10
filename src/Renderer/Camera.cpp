@@ -1,6 +1,6 @@
 #include "EngineCore/Renderer/Camera.h"
 
-#include <glm/gtc/matrix_transform.hpp>
+#include <glm/ext/matrix_transform.hpp>
 #include <glm/trigonometric.hpp>
 
 Camera::Camera(const glm::vec3& position, const glm::vec3& rotation, const ProjectionMode mode)
@@ -36,39 +36,57 @@ void Camera::set_projection_mode(const ProjectionMode mode)
 	m_projection_mode = mode;
 	update_projection_matrix();
 }
+void Camera::move_forward(const float delta)
+{
+	m_position += m_direction * delta;
+	update_veiw_matrix();
+}
+void Camera::move_right(const float delta)
+{
+	m_position += m_right * delta;
+	update_veiw_matrix();
+}
+void Camera::move_up(const float delta)
+{
+	m_position += m_up * delta;
+	update_veiw_matrix();
+}
+void Camera::add_movement_and_rotate(const glm::vec3& movement_delta, const glm::vec3& rotation_delta)
+{
+	m_position += m_direction * movement_delta.x;
+	m_position += m_right * movement_delta.y;
+	m_position += m_up * movement_delta.z;
+	m_rotation += rotation_delta;
+	update_veiw_matrix();
+}
 void Camera::update_veiw_matrix()
 {
-	float rotate_in_radians_x = glm::radians(-m_rotation.x);
+	const float roll_radians = glm::radians(-m_rotation.x);
+	const float pitch_radians = glm::radians(-m_rotation.y);
+	const float yaw_radians = glm::radians(-m_rotation.z);
 
-	glm::mat4 rotate_matrix_x(
-		1, 0, 0, 0,
-		0, cos(rotate_in_radians_x), sin(rotate_in_radians_x), 0,
-		0, -sin(rotate_in_radians_x), cos(rotate_in_radians_x), 0,
-		0, 0, 0, 1);
+	const glm::mat3 rotate_matrix_x(
+		1, 0, 0, 
+		0, cos(roll_radians), sin(roll_radians),
+		0, -sin(roll_radians), cos(roll_radians));
 
-	float rotate_in_radians_y = glm::radians(-m_rotation.y);
+	const glm::mat3 rotate_matrix_y(
+		cos(pitch_radians), 0, -sin(pitch_radians),
+		0, 1, 0,
+		sin(pitch_radians), 0, cos(pitch_radians));
 
-	glm::mat4 rotate_matrix_y(
-		cos(rotate_in_radians_y), 0, -sin(rotate_in_radians_y), 0,
-		0, 1, 0, 0,
-		sin(rotate_in_radians_y), 0, cos(rotate_in_radians_y), 0,
-		0, 0, 0, 1);
+	const glm::mat3 rotate_matrix_z(
+		cos(yaw_radians), sin(yaw_radians), 0.f, 
+		-sin(yaw_radians), cos(yaw_radians), 0.f,
+		0.f, 0.f, 1.f);
 
-	float rotate_in_radians_z = glm::radians(-m_rotation.z);
+	const glm::mat3 euler_rotate_matrix = rotate_matrix_z * rotate_matrix_y * rotate_matrix_x;
 
-	glm::mat4 rotate_matrix_z(
-		cos(rotate_in_radians_z), sin(rotate_in_radians_z), 0.f, 0.f, 
-		-sin(rotate_in_radians_z), cos(rotate_in_radians_z), 0.f, 0.f,
-		0.f, 0.f, 1.f, 0.f,
-		0.f, 0.f, 0.f, 1.f);
+	m_direction = glm::normalize(euler_rotate_matrix * s_world_forward);
+	m_right = glm::normalize(euler_rotate_matrix * s_world_rigt);
+	m_up = glm::cross(m_right, m_direction);
 
-	glm::mat4 translate_matrix(
-		1, 0, 0, 0,
-		0, 1, 0, 0,
-		0, 0, 1, 0,
-		-m_position[0], -m_position[1], -m_position[2], 1);
-
-	m_veiw_matrix = rotate_matrix_x * rotate_matrix_y * translate_matrix;
+	m_veiw_matrix = glm::lookAt(m_position, m_position + m_direction, m_up);
 }
 
 void Camera::update_projection_matrix()

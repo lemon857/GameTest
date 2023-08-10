@@ -8,7 +8,6 @@
 #include "EngineCore/Resources/ResourceManager.h"
 
 #include <GLFW/glfw3.h>
-#include <glad/glad.h>
 
 #include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
@@ -31,38 +30,8 @@ Window::~Window()
 
 void Window::on_update()
 {
-    RenderEngine::Renderer::setClearColor(m_colors[0], m_colors[1], m_colors[2], m_colors[3]);
-
-    RenderEngine::Renderer::clearColor();
-
-    ImGuiIO& io = ImGui::GetIO();
-    io.DisplaySize.x = static_cast<float>(m_data.window_size.x);
-    io.DisplaySize.y = static_cast<float>(m_data.window_size.y);
-
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui::NewFrame();
-
-    ImGui::Begin("Background Color Window");
-    ImGui::ColorEdit4("Background Color", m_colors);
-    ImGui::SliderFloat3("Sprite position", m_sprite_pos, -50.f, 50.f);
-    ImGui::SliderFloat3("Camera position", m_cam_pos, -50.f, 50.f);
-    ImGui::SliderFloat3("Camera rotation", m_cam_rot, 0.f, 360.f);
-    ImGui::Checkbox("Perspective camera", &m_isPerspectiveCam);
-    ImGui::End();
-
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-    m_cam->set_position_rotation(glm::vec3(m_cam_pos[0], m_cam_pos[1], m_cam_pos[2]), glm::vec3(m_cam_rot[0], m_cam_rot[1], m_cam_rot[2]));
-
-    m_cam->set_projection_mode(m_isPerspectiveCam ? Camera::ProjectionMode::Perspective : Camera::ProjectionMode::Orthographic);
-
-    ResourceManager::getShaderProgram("spriteShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
-
-    ResourceManager::getSprite("TankSprite")->render(glm::vec2(m_sprite_pos[0], m_sprite_pos[1]), glm::vec2(1), 0, 0);
-
     glfwSwapBuffers(m_pWindow);
-    glfwPollEvents();    
+    glfwPollEvents();
 }
 
 void Window::set_event_callback(const EventCallback& callback)
@@ -72,12 +41,11 @@ void Window::set_event_callback(const EventCallback& callback)
 
 int Window::init()
 {
-    m_cam = new Camera();
-
     LOG_INFO("Creating window {0} size {1}x{2}", m_data.title, m_data.window_size.x, m_data.window_size.y);
-    if (!glfwInit())
+    
+    if (!RenderEngine::Renderer::init(m_pWindow))
     {
-        LOG_CRIT("GLFW init failed");
+        LOG_CRIT("Fail init OpenGL renderer");
         return -1;
     }
 
@@ -104,6 +72,39 @@ int Window::init()
     }
 
     glfwSetWindowUserPointer(m_pWindow, &m_data);
+
+    glfwSetErrorCallback( 
+        [](int error_code, const char* description)
+        {
+            LOG_CRIT("GLFW Error: {0}: {1}", error_code, description);
+        });
+
+    glfwSetKeyCallback(m_pWindow,
+        [](GLFWwindow* pWindow, int key, int scancode, int action, int mods)
+        {
+            WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(pWindow));
+            switch (action)
+            {
+            case GLFW_PRESS:
+            {
+                EventKeyPressed e(static_cast<KeyCode>(key), false);
+                data.event_callback(e);
+                break;
+            }
+            case GLFW_REPEAT:
+            {
+                EventKeyPressed e(static_cast<KeyCode>(key), true);
+                data.event_callback(e);
+                break;
+            }
+            case GLFW_RELEASE:
+            {
+                EventKeyReleased e(static_cast<KeyCode>(key));
+                data.event_callback(e);
+                break;
+            }
+            }
+        });
 
     glfwSetWindowSizeCallback(m_pWindow, 
         [](GLFWwindow* pWindow, int width, int height)
@@ -142,6 +143,10 @@ int Window::init()
 
 void Window::shuitdown()
 {
+    if (ImGui::GetCurrentContext())
+    {
+        ImGui::DestroyContext();
+    }
     glfwDestroyWindow(m_pWindow);
     glfwTerminate();
 }

@@ -1,7 +1,19 @@
 #include "EngineCore/Renderer/Renderer.h"
+#include "EngineCore/System/Log.h"
+
+#include <glad/glad.h>
 
 namespace RenderEngine
 {
+	bool Renderer::init(GLFWwindow* pWindow)
+	{
+		if (!glfwInit())
+		{
+			LOG_CRIT("GLFW init failed");
+			return false;
+		}
+		return true;
+	}
 	void Renderer::drawTriangles(const VertexArray& vertexArray, const IndexBuffer& indexBuffer, const ShaderProgram& shader)
 	{
 		shader.use();

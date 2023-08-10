@@ -8,8 +8,6 @@
 
 struct GLFWwindow;
 
-class Camera;
-
 struct ResizeWindowEvent
 {
 	unsigned int width;
@@ -45,16 +43,6 @@ private:
 
 	GLFWwindow* m_pWindow;
 	WindowData m_data;
-
-	Camera* m_cam;
-
-	float m_colors[4] = { 0.f, 0.f, 0.f, 0.f };
-	float m_cam_pos[3] = { 0.f, 0.f, 0.f };
-	float m_cam_rot[3] = { 0.f, 0.f, 0.f };
-
-	float m_sprite_pos[3] = { 0.f, 0.f, 0.f };
-
-	bool m_isPerspectiveCam = true;
 
 	int init();
 

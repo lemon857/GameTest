@@ -26,14 +26,6 @@ public:
     {
 
     }
-    bool init() override
-    {
-        return true;
-    }
-    void on_update(const double delta) override
-    {
-        
-    }
 private:
 };
 

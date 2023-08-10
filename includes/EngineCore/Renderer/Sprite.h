@@ -2,7 +2,7 @@
 
 #include <memory>
 #include <string>
-#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
 
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
@@ -25,7 +25,7 @@ namespace RenderEngine
 
 		void setSubTexture(std::string subTexture);
 
-		void render(const glm::vec2 position, const glm::vec2 size, const double rotation, const int layer) const;
+		void render(const glm::vec3& position, const glm::vec3& size, const double rotation, const int layer) const;
 	private:
 		std::shared_ptr<Texture2D> m_pTextureAtlas;
 		std::shared_ptr<ShaderProgram> m_pShaderProgram;

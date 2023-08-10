@@ -19,11 +19,23 @@ public:
 
 	int start(glm::ivec2& window_size, const char* title);
 
-	virtual bool init() { return false; };
+	virtual bool init() { return true; };
 
-	virtual void on_update(const double delta) {};
+	virtual void on_update(const double delta);
 protected:
 	EventDispatcher m_event_dispather;
 	std::unique_ptr<class Window> m_pWindow;
 	bool m_pCloseWindow = true;
+
+	Camera* m_cam;
+
+	float m_colors[4] = { 0.f, 0.f, 0.f, 0.f };
+	float m_cam_pos[3] = { -5.f, 0.f, 0.f };
+	float m_cam_rot[3] = { 0.f, 0.f, 0.f };
+
+	float m_sprite_pos[3] = { 0.f, 0.f, 0.f };
+
+	float m_cam_velocity = 0.01f;
+
+	bool m_isPerspectiveCam = true;
 };

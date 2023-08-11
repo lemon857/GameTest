@@ -24,10 +24,10 @@ namespace RenderEngine
 			//0--3
 
 			//X --- Y
-			-0.5f, 0.0f, -0.5f,
-			-0.5f, 0.0f,  0.5f,
-			 0.5f, 0.0f,  0.5f,
-			 0.5f, 0.0f, -0.5f
+			-0.5f, 0.f, -0.5f,
+			-0.5f, 0.f,  0.5f,
+			 0.5f, 0.f,  0.5f,
+			 0.5f, 0.f, -0.5f
 		};
 		
 		auto aSubTexture = m_pTextureAtlas->getSubTexture(initialSubTexture);
@@ -45,7 +45,7 @@ namespace RenderEngine
 			
 		m_vertexCoordsBuffer.init(&vertexCoords, 3 * 4 * sizeof(GLfloat));
 		VertexBufferLayout vertexCoordsLayout;
-		vertexCoordsLayout.addElementLayoutFloat(2, false);
+		vertexCoordsLayout.addElementLayoutFloat(3, false);
 		m_vertexArray.addBuffer(m_vertexCoordsBuffer, vertexCoordsLayout);
 
 		m_textureCoordsBuffer.init(&textureCoords, 2 * 4 * sizeof(GLfloat));

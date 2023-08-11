@@ -36,6 +36,7 @@ protected:
 	float m_sprite_pos[3] = { 0.f, 0.f, 0.f };
 
 	float m_cam_velocity = 0.01f;
+	float m_cam_rotate_velocity = 0.1f;
 
 	bool m_isPerspectiveCam = true;
 };

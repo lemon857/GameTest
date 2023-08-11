@@ -5,6 +5,11 @@
 #include "EngineCore/System/Log.h"
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Renderer/Renderer.h"
+#include "EngineCore/Renderer/Sprite.h"
+#include "EngineCore/Renderer/ShaderProgram.h"
+#include "EngineCore/Renderer/VertexArray.h"
+#include "EngineCore/Renderer/VertexBuffer.h"
+#include "EngineCore/Renderer/IndexBuffer.h"
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
@@ -13,6 +18,51 @@
 #include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/backends/imgui_impl_glfw.h>
+
+//GLfloat positions[] = {
+//        0.0f, -0.5f, -0.5f,
+//        0.0f,  0.5f, -0.5f,
+//        0.0f, -0.5f,  0.5f,
+//        0.0f,  0.5f,  0.5f
+//};
+//GLfloat colors[] = {
+//           1.0f, 1.0f, 0.0f,
+//           0.0f, 1.0f, 1.0f,
+//           1.0f, 0.0f, 1.0f,
+//           1.0f, 0.0f, 0.0f
+//};
+//
+//GLuint indices[] = {
+//    0, 1, 2, 3, 2, 1
+//};
+//
+//const char* vertex_shader =
+//R"(#version 460
+//           layout(location = 0) in vec3 vertex_position;
+//           layout(location = 1) in vec3 vertex_color;
+//           uniform mat4 model_matrix;
+//           uniform mat4 view_projection_matrix;
+//           out vec3 color;
+//           void main() {
+//              color = vertex_color;
+//              gl_Position = view_projection_matrix * model_matrix * vec4(vertex_position, 1.0);
+//           }
+//        )";
+//
+//const char* fragment_shader =
+//R"(#version 460
+//           in vec3 color;
+//           out vec4 frag_color;
+//           void main() {
+//              frag_color = vec4(color, 1.0);
+//           }
+//        )";
+//
+//std::unique_ptr<RenderEngine::ShaderProgram> p_shader_program;
+//std::unique_ptr<RenderEngine::VertexBuffer> p_positions_vbo;
+//std::unique_ptr<RenderEngine::VertexBuffer> p_colors_vbo;
+//std::unique_ptr<RenderEngine::IndexBuffer> p_index_buffer;
+//std::unique_ptr<RenderEngine::VertexArray> p_vao;
 
 Application::Application()
 {
@@ -27,7 +77,19 @@ Application::~Application()
 
 int Application::start(glm::ivec2& window_size, const char* title)
 {   
-    m_cam = new Camera(glm::vec3(0));
+    /*p_shader_program = std::move(std::make_unique<RenderEngine::ShaderProgram>(vertex_shader, fragment_shader));
+    p_positions_vbo = std::move(std::make_unique<RenderEngine::VertexBuffer>());
+    p_colors_vbo = std::move(std::make_unique<RenderEngine::VertexBuffer>());
+
+    p_positions_vbo->init(positions, sizeof(positions) / sizeof(GLfloat));
+    p_colors_vbo->init(colors, sizeof(colors) / sizeof(GLfloat));
+
+    p_index_buffer = std::move(std::make_unique<RenderEngine::IndexBuffer>());
+    p_index_buffer->init(indices, 6);
+
+    p_vao = std::move(std::make_unique<RenderEngine::VertexArray>());*/
+
+    m_cam = new Camera(glm::vec3(0), glm::vec3(0, 90, 0));
 
     m_pCloseWindow = false;
     m_pWindow = std::make_unique<Window>(title, window_size);
@@ -112,7 +174,7 @@ int Application::start(glm::ivec2& window_size, const char* title)
         m_cam->set_projection_mode(m_isPerspectiveCam ? Camera::ProjectionMode::Perspective : Camera::ProjectionMode::Orthographic);
 
         ResourceManager::getShaderProgram("spriteShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
-
+        ResourceManager::getSprite("TankSprite")->render(glm::vec3(m_sprite_pos[0], m_sprite_pos[1], m_sprite_pos[2]), glm::vec3(10), 0);
 
         m_pWindow->on_update();
         on_update(duration);
@@ -162,32 +224,32 @@ void Application::on_update(const double delta)
 
     else if (Input::isKeyPressed(KeyCode::KEY_UP))
     {
-        rotation_delta.y += static_cast<float>(m_cam_velocity * delta);
+        rotation_delta.y += static_cast<float>(m_cam_rotate_velocity * delta);
         isMoveCam = true;
     }
     else if (Input::isKeyPressed(KeyCode::KEY_DOWN))
     {
-        rotation_delta.y -= static_cast<float>(m_cam_velocity * delta);
+        rotation_delta.y -= static_cast<float>(m_cam_rotate_velocity * delta);
         isMoveCam = true;
     }
     else if (Input::isKeyPressed(KeyCode::KEY_LEFT))
     {
-        rotation_delta.z -= static_cast<float>(m_cam_velocity * delta);
+        rotation_delta.z -= static_cast<float>(m_cam_rotate_velocity * delta);
         isMoveCam = true;
     }
     else if (Input::isKeyPressed(KeyCode::KEY_RIGHT))
     {
-        rotation_delta.z += static_cast<float>(m_cam_velocity * delta);
+        rotation_delta.z += static_cast<float>(m_cam_rotate_velocity * delta);
         isMoveCam = true;
     }
     else if (Input::isKeyPressed(KeyCode::KEY_Q))
     {
-        rotation_delta.x += static_cast<float>(m_cam_velocity * delta);
+        rotation_delta.x += static_cast<float>(m_cam_rotate_velocity * delta);
         isMoveCam = true;
     }
     else if (Input::isKeyPressed(KeyCode::KEY_E))
     {
-        rotation_delta.x -= static_cast<float>(m_cam_velocity * delta);
+        rotation_delta.x -= static_cast<float>(m_cam_rotate_velocity * delta);
         isMoveCam = true;
     }
     if (isMoveCam) m_cam->add_movement_and_rotate(movement_delta, rotation_delta);

@@ -24,10 +24,10 @@ namespace RenderEngine
 			//0--3
 
 			//X --- Y
-			-0.5f, 0.f, -0.5f,
-			-0.5f, 0.f,  0.5f,
-			 0.5f, 0.f,  0.5f,
-			 0.5f, 0.f, -0.5f
+			0.f,-0.5f,  -0.5f,
+			0.f,-0.5f,   0.5f,
+			0.f, 0.5f,   0.5f,
+			0.f, 0.5f,  -0.5f
 		};
 		
 		auto aSubTexture = m_pTextureAtlas->getSubTexture(initialSubTexture);

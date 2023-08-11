@@ -11,53 +11,61 @@ Camera::Camera(const glm::vec3& position, const glm::vec3& rotation, const Proje
 	update_veiw_matrix();
 	update_projection_matrix();
 }
+glm::mat4 Camera::get_view_matrix()
+{
+	if (m_update_view_matrix)
+	{
+		update_veiw_matrix();
+	}
+	return m_veiw_matrix;
+}
 
 void Camera::set_position(const glm::vec3& position)
 {
 	m_position = position;
-	update_veiw_matrix();
+	m_update_view_matrix = true;
 }
 
 void Camera::set_rotation(const glm::vec3& rotation)
 {
 	m_rotation = rotation;
-	update_veiw_matrix();
+	m_update_view_matrix = true;
 }
 
 void Camera::set_position_rotation(const glm::vec3& position, const glm::vec3& rotation)
 {
 	m_position = position;
 	m_rotation = rotation;
-	update_veiw_matrix();
+	m_update_view_matrix = true;
 }
 
 void Camera::set_projection_mode(const ProjectionMode mode)
 {
 	m_projection_mode = mode;
-	update_projection_matrix();
+	m_update_view_matrix = true;
 }
 void Camera::move_forward(const float delta)
 {
 	m_position += m_direction * delta;
-	update_veiw_matrix();
+	m_update_view_matrix = true;
 }
 void Camera::move_right(const float delta)
 {
 	m_position += m_right * delta;
-	update_veiw_matrix();
+	m_update_view_matrix = true;
 }
 void Camera::move_up(const float delta)
 {
 	m_position += m_up * delta;
-	update_veiw_matrix();
+	m_update_view_matrix = true;
 }
-void Camera::add_movement_and_rotate(const glm::vec3& movement_delta, const glm::vec3& rotation_delta)
+void Camera::add_movement_and_rotation(const glm::vec3& movement_delta, const glm::vec3& rotation_delta)
 {
 	m_position += m_direction * movement_delta.x;
 	m_position += m_right * movement_delta.y;
 	m_position += m_up * movement_delta.z;
 	m_rotation += rotation_delta;
-	update_veiw_matrix();
+	m_update_view_matrix = true;
 }
 void Camera::update_veiw_matrix()
 {
@@ -95,14 +103,13 @@ void Camera::update_projection_matrix()
 	{
 		float r = 0.1f;
 		float t = 0.1f;
-		float f = 10;
+		float f = 30;
 		float n = 0.1f;
 		m_projection_matrix = glm::mat4(
 			n / r, 0, 0, 0,
 			0, n / t, 0, 0,
 			0, 0, (-f - n) / (f - n), -1,
-			0, 0, -2 * f * n / (f - n), 0
-		);
+			0, 0, -2 * f * n / (f - n), 0); 
 	}
 	else
 	{

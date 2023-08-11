@@ -19,15 +19,19 @@ namespace RenderEngine
 			m_mode = GL_RGB;
 			break;
 		}
-		glGenTextures(1, &m_ID);
+		const GLsizei mip_levels = static_cast<GLsizei>(log2(std::max(width, height))) + 1;
+		glCreateTextures(GL_TEXTURE_2D, 1, &m_ID);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, m_ID);
+		glTextureStorage2D(GL_TEXTURE_2D, mip_levels, m_mode, width, height);
 		glTexImage2D(GL_TEXTURE_2D, 0, m_mode, width, height, 0, m_mode, GL_UNSIGNED_BYTE, data);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
+		
+		glGenerateTextureMipmap(GL_TEXTURE_2D);
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}

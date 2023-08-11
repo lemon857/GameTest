@@ -1,3 +1,4 @@
+//#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #include <glm/vec2.hpp>
 
 #include <iostream>

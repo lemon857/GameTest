@@ -6,10 +6,6 @@
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Renderer/Renderer.h"
 #include "EngineCore/Renderer/Sprite.h"
-#include "EngineCore/Renderer/ShaderProgram.h"
-#include "EngineCore/Renderer/VertexArray.h"
-#include "EngineCore/Renderer/VertexBuffer.h"
-#include "EngineCore/Renderer/IndexBuffer.h"
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
@@ -18,6 +14,42 @@
 #include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/backends/imgui_impl_glfw.h>
+
+const GLfloat vertexCoords[] = {
+
+    -1.f, -1.f, -1.f,
+    -1.f, 1.f,  -1.f,
+    -1.f, -1.f,  1.f,
+    -1.f,  1.f,  1.f,
+
+    1.f, -1.f, -1.f,
+    1.f, 1.f,  -1.f,
+    1.f, -1.f,  1.f,
+    1.f,  1.f,  1.f
+};
+
+const GLfloat textureCoords[] = {
+
+    1.f, 0.f,
+    0.f, 0.f, 
+    1.f, 1.f,
+    0.f, 1.f,
+
+    1.f, 0.f, 
+    0.f, 0.f,  
+    1.f, 1.f, 
+    0.f, 1.f, 
+};
+
+GLuint indexes[]
+{
+    0, 1, 2, 3, 2, 1,
+    4, 5, 6, 7, 6, 5,
+    0, 4, 6, 0, 2, 6,
+    1, 5, 3, 3, 7, 5,
+    3, 7, 2, 7, 6, 2,
+    1, 5, 0, 5, 0, 4
+};
 
 Application::Application()
 {
@@ -32,7 +64,6 @@ Application::~Application()
 
 int Application::start(glm::ivec2& window_size, const char* title)
 { 
-
     m_cam = new Camera(glm::vec3(0), glm::vec3(0));
 
     m_pCloseWindow = false;
@@ -71,6 +102,18 @@ int Application::start(glm::ivec2& window_size, const char* title)
             LOG_INFO("[EVENT] Window close");
             m_pCloseWindow = true;
         });
+    m_event_dispather.add_event_listener<EventMouseButtonPressed>([&](EventMouseButtonPressed& e)
+        {
+            LOG_INFO("[EVENT]: Mouse button pressed at ({0}x{1})", e.x_pos, e.y_pos);
+            Input::pressMouseButton(e.mouse_button);
+            on_button_mouse_event(e.mouse_button, e.x_pos, e.y_pos, true);
+        }); 
+    m_event_dispather.add_event_listener<EventMouseButtonReleased>([&](EventMouseButtonReleased& e)
+        {
+            LOG_INFO("[EVENT]: Mouse button released at ({0}x{1})", e.x_pos, e.y_pos);
+            Input::releaseMouseButton(e.mouse_button);
+            on_button_mouse_event(e.mouse_button, e.x_pos, e.y_pos, false);
+        });
     m_pWindow->set_event_callback(
         [&](BaseEvent& e)
         {
@@ -78,6 +121,26 @@ int Application::start(glm::ivec2& window_size, const char* title)
         });
 
     ResourceManager::loadJSONresources("res/resources.json");
+
+    m_pTextureAtlas = ResourceManager::getTexture("CubeTexture");
+    m_pShaderProgram = ResourceManager::getShaderProgram("spriteShader");
+
+    m_vertexArray = std::make_shared<RenderEngine::VertexArray>();
+
+    m_vertexCoordsBuffer.init(&vertexCoords, 3 * 8 * sizeof(GLfloat));
+    RenderEngine::VertexBufferLayout vertexCoordsLayout;
+    vertexCoordsLayout.addElementLayoutFloat(3, false);
+    m_vertexArray->addBuffer(m_vertexCoordsBuffer, vertexCoordsLayout);
+
+    m_textureCoordsBuffer.init(&textureCoords, 2 * 8 * sizeof(GLfloat));
+    RenderEngine::VertexBufferLayout textureCoordsLayout;
+    textureCoordsLayout.addElementLayoutFloat(2, false);
+    m_vertexArray->addBuffer(m_textureCoordsBuffer, textureCoordsLayout);
+
+    m_indexBuffer.init(&indexes, sizeof(indexes) / sizeof(GLuint));
+
+    m_vertexArray->unbind();
+    m_indexBuffer.unbind();
 
     if (!init())
     {
@@ -128,7 +191,9 @@ int Application::start(glm::ivec2& window_size, const char* title)
         {
             m_cam->set_rotation(glm::vec3(m_cam_rot[0], m_cam_rot[1], m_cam_rot[2]));
         }
+        ImGui::SliderFloat("Sensetivity", &m_cam_sensetivity, 0.001f, 1.f);
         ImGui::Checkbox("Perspective camera", &m_isPerspectiveCam);
+        ImGui::Checkbox("Inversive mouse", &m_isInversiveMouseY);
         ImGui::End();
 
         ImGui::Render();
@@ -137,7 +202,11 @@ int Application::start(glm::ivec2& window_size, const char* title)
         m_cam->set_projection_mode(m_isPerspectiveCam ? Camera::ProjectionMode::Perspective : Camera::ProjectionMode::Orthographic);
 
         ResourceManager::getShaderProgram("spriteShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
-        ResourceManager::getSprite("TankSprite")->render(glm::vec3(m_sprite_pos[0], m_sprite_pos[1], m_sprite_pos[2]), glm::vec3(10), 0);
+        ResourceManager::getSprite("TankSprite")->render(glm::vec3(m_sprite_pos[0], m_sprite_pos[1], m_sprite_pos[2]), glm::vec3(5), 0);
+
+        RenderEngine::Renderer::bindTexture(*m_pTextureAtlas);
+
+        RenderEngine::Renderer::drawTriangles(*m_vertexArray, m_indexBuffer, *m_pShaderProgram);
 
         m_pWindow->on_update();
         on_update(duration);
@@ -202,5 +271,23 @@ void Application::on_update(const double delta)
     {
         rotation_delta.x -= static_cast<float>(m_cam_rotate_velocity * delta);
     }
+
+    if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_RIGHT))
+    {
+       glm::vec2 pos = m_pWindow->get_current_cursor_position();
+       rotation_delta.z = m_isInversiveMouseY 
+           ? (rotation_delta.z + ((m_init_mouse_pos_x - pos.x) / m_cam_sensetivity)) 
+           : (rotation_delta.z - ((m_init_mouse_pos_x - pos.x) / m_cam_sensetivity));
+       rotation_delta.y += (m_init_mouse_pos_y - pos.y) / m_cam_sensetivity;
+       m_init_mouse_pos_x = pos.x;
+       m_init_mouse_pos_y = pos.y;
+    }
+
     m_cam->add_movement_and_rotation(movement_delta, rotation_delta);
+}
+
+void Application::on_button_mouse_event(const MouseButton button, const double pos_x, const double pos_y, const bool isPressed)
+{
+    m_init_mouse_pos_x = pos_x;
+    m_init_mouse_pos_y = pos_y;
 }

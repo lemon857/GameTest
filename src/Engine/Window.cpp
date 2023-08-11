@@ -34,6 +34,13 @@ void Window::on_update()
     glfwPollEvents();
 }
 
+glm::vec2 Window::get_current_cursor_position() const
+{
+    double x_pos, y_pos;
+    glfwGetCursorPos(m_pWindow, &x_pos, &y_pos);
+    return glm::vec2(x_pos, y_pos);
+}
+
 void Window::set_event_callback(const EventCallback& callback)
 {
     m_data.event_callback = callback;
@@ -77,6 +84,29 @@ int Window::init()
         [](int error_code, const char* description)
         {
             LOG_CRIT("GLFW Error: {0}: {1}", error_code, description);
+        });
+
+    glfwSetMouseButtonCallback(m_pWindow, 
+        [](GLFWwindow* pWindow, int key, int action, int mods)
+        {
+            WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(pWindow));
+            double x_pos = 0, y_pos = 0;
+            glfwGetCursorPos(pWindow, &x_pos, &y_pos);
+            switch (action)
+            {
+            case GLFW_PRESS:
+            {
+                EventMouseButtonPressed e(static_cast<MouseButton>(key), x_pos, y_pos);
+                data.event_callback(e);
+                break;
+            }
+            case GLFW_RELEASE:
+            {
+                EventMouseButtonReleased e(static_cast<MouseButton>(key), x_pos, y_pos);
+                data.event_callback(e);
+                break;
+            }
+            }
         });
 
     glfwSetKeyCallback(m_pWindow,

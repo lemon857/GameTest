@@ -2,6 +2,12 @@
 
 #include "EngineCore/Event.h"
 #include "EngineCore/Renderer/Camera.h"
+#include "EngineCore/Renderer/VertexArray.h"
+#include "EngineCore/Renderer/VertexBuffer.h"
+#include "EngineCore/Renderer/VertexBufferLayout.h"
+#include "EngineCore/Renderer/IndexBuffer.h"
+#include "EngineCore/Renderer/Texture2D.h"
+#include "EngineCore/Renderer/ShaderProgram.h"
 
 #include <memory>
 #include <glm/vec2.hpp>
@@ -22,6 +28,8 @@ public:
 	virtual bool init() { return true; };
 
 	virtual void on_update(const double delta);
+
+	virtual void on_button_mouse_event(const MouseButton button, const double pos_x, const double pos_y, const bool isPressed);
 protected:
 	EventDispatcher m_event_dispather;
 	std::unique_ptr<class Window> m_pWindow;
@@ -29,14 +37,27 @@ protected:
 
 	Camera* m_cam;
 
-	float m_colors[4] = { 0.f, 0.f, 0.f, 0.f };
+	float m_colors[4] = { 0.33f, 0.33f, 0.33f, 0.f };
 	float m_cam_pos[3] = { -5.f, 0.f, 0.f };
 	float m_cam_rot[3] = { 0.f, 0.f, 0.f };
 
-	float m_sprite_pos[3] = { 0.f, 0.f, 0.f };
+	float m_sprite_pos[3] = { 5.f, 0.f, 0.f };
 
 	float m_cam_velocity = 0.01f;
 	float m_cam_rotate_velocity = 0.1f;
+	float m_cam_sensetivity = 1.f;
 
+	double m_init_mouse_pos_x = 0;
+	double m_init_mouse_pos_y = 0;
+	
 	bool m_isPerspectiveCam = true;
+	bool m_isInversiveMouseY = false;
+
+	std::shared_ptr<RenderEngine::VertexArray> m_vertexArray;
+	RenderEngine::VertexBuffer m_vertexCoordsBuffer;
+	RenderEngine::VertexBuffer m_textureCoordsBuffer;
+	RenderEngine::IndexBuffer m_indexBuffer;
+
+	std::shared_ptr<RenderEngine::Texture2D> m_pTextureAtlas;
+	std::shared_ptr<RenderEngine::ShaderProgram> m_pShaderProgram;
 };

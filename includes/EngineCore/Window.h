@@ -30,6 +30,7 @@ public:
 	void on_update();
 
 	glm::ivec2& get_size() { return m_data.window_size; };
+	glm::vec2 get_current_cursor_position() const;
 
 	void set_event_callback(const EventCallback& callback);
 

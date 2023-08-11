@@ -42,7 +42,7 @@ void Camera::set_position_rotation(const glm::vec3& position, const glm::vec3& r
 void Camera::set_projection_mode(const ProjectionMode mode)
 {
 	m_projection_mode = mode;
-	m_update_view_matrix = true;
+	update_projection_matrix();
 }
 void Camera::move_forward(const float delta)
 {
@@ -103,7 +103,7 @@ void Camera::update_projection_matrix()
 	{
 		float r = 0.1f;
 		float t = 0.1f;
-		float f = 30;
+		float f = 60;
 		float n = 0.1f;
 		m_projection_matrix = glm::mat4(
 			n / r, 0, 0, 0,

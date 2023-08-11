@@ -97,6 +97,17 @@
         "badsnake",
         "pressenter"
       ]
+    },
+    {
+      "name": "CubeTexture",
+      "filePath": "res/textures/cubeTexture.png",
+      "width": 128,
+      "height": 128,
+      "subTexture_w": 128,
+      "subTexture_h": 128,
+      "subTextures": [
+        "default"
+      ]
     }
   ],
   "sprites": [

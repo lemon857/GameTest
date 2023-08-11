@@ -51,7 +51,7 @@ private:
 	glm::mat4 m_projection_matrix;
 
 	static constexpr glm::vec3 s_world_up{ 0.f, 0.f, 1.f };
-	static constexpr glm::vec3 s_world_rigt{ 0.f, -1.f, 1.f };
+	static constexpr glm::vec3 s_world_rigt{ 0.f, -1.f, 0.f };
 	static constexpr glm::vec3 s_world_forward{ 1.f, 0.f, 0.f };
 
 	ProjectionMode m_projection_mode;

@@ -25,7 +25,7 @@ namespace RenderEngine
 
 		void setSubTexture(std::string subTexture);
 
-		void render(const glm::vec3& position, const glm::vec3& size, const double rotation, const int layer) const;
+		void render(const glm::vec3& position, const glm::vec3& size, const double rotation) const;
 	private:
 		std::shared_ptr<Texture2D> m_pTextureAtlas;
 		std::shared_ptr<ShaderProgram> m_pShaderProgram;

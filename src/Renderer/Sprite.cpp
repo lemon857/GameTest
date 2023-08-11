@@ -24,10 +24,10 @@ namespace RenderEngine
 			//0--3
 
 			//X --- Y
-			0.f, 0.f,
-			0.f, 1.f,
-			1.f, 1.f,
-			1.f, 0.f,
+			-0.5f, 0.0f, -0.5f,
+			-0.5f, 0.0f,  0.5f,
+			 0.5f, 0.0f,  0.5f,
+			 0.5f, 0.0f, -0.5f
 		};
 		
 		auto aSubTexture = m_pTextureAtlas->getSubTexture(initialSubTexture);
@@ -43,7 +43,7 @@ namespace RenderEngine
 
 		const GLuint indexes[] = { 0, 1, 2, 2, 3, 0 };
 			
-		m_vertexCoordsBuffer.init(&vertexCoords, 2 * 4 * sizeof(GLfloat));
+		m_vertexCoordsBuffer.init(&vertexCoords, 3 * 4 * sizeof(GLfloat));
 		VertexBufferLayout vertexCoordsLayout;
 		vertexCoordsLayout.addElementLayoutFloat(2, false);
 		m_vertexArray.addBuffer(m_vertexCoordsBuffer, vertexCoordsLayout);
@@ -58,7 +58,7 @@ namespace RenderEngine
 		m_vertexArray.unbind();
 		m_indexBuffer.unbind();
 	}
-	void Sprite::render(const glm::vec3& position, const glm::vec3& size, const double rotation, const int layer) const
+	void Sprite::render(const glm::vec3& position, const glm::vec3& size, const double rotation) const
 	{
 		m_pShaderProgram->use();
 
@@ -71,7 +71,6 @@ namespace RenderEngine
 		model = glm::scale(model, size);
 		
 		m_pShaderProgram->setMatrix4("modelMat", model);
-		m_pShaderProgram->setFloat("layer", layer);
 
 		Renderer::bindTexture(*m_pTextureAtlas);
 

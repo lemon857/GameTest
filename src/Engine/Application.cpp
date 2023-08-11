@@ -4,10 +4,7 @@
 
 #include "EngineCore/System/Log.h"
 #include "EngineCore/Resources/ResourceManager.h"
-
-#include "../Examples/TanksDemo/TanksDemoGame.h"
-#include "../Examples/SnakeDemo/SnakeDemoGame.h"
-#include "../Examples/PongDemo/PongDemoGame.h"
+#include "EngineCore/Renderer/Renderer.h"
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
@@ -30,7 +27,7 @@ Application::~Application()
 
 int Application::start(glm::ivec2& window_size, const char* title)
 {   
-    m_cam = new Camera();
+    m_cam = new Camera(glm::vec3(0));
 
     m_pCloseWindow = false;
     m_pWindow = std::make_unique<Window>(title, window_size);
@@ -116,7 +113,6 @@ int Application::start(glm::ivec2& window_size, const char* title)
 
         ResourceManager::getShaderProgram("spriteShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
 
-        ResourceManager::getSprite("TankSprite")->render(glm::vec3(m_sprite_pos[0], m_sprite_pos[1], m_sprite_pos[2]), glm::vec3(1), 0, 0);
 
         m_pWindow->on_update();
         on_update(duration);
@@ -164,14 +160,34 @@ void Application::on_update(const double delta)
         isMoveCam = true;
     }
 
-    else if (Input::isKeyPressed(KeyCode::KEY_Q))
+    else if (Input::isKeyPressed(KeyCode::KEY_UP))
+    {
+        rotation_delta.y += static_cast<float>(m_cam_velocity * delta);
+        isMoveCam = true;
+    }
+    else if (Input::isKeyPressed(KeyCode::KEY_DOWN))
+    {
+        rotation_delta.y -= static_cast<float>(m_cam_velocity * delta);
+        isMoveCam = true;
+    }
+    else if (Input::isKeyPressed(KeyCode::KEY_LEFT))
+    {
+        rotation_delta.z -= static_cast<float>(m_cam_velocity * delta);
+        isMoveCam = true;
+    }
+    else if (Input::isKeyPressed(KeyCode::KEY_RIGHT))
     {
         rotation_delta.z += static_cast<float>(m_cam_velocity * delta);
         isMoveCam = true;
     }
+    else if (Input::isKeyPressed(KeyCode::KEY_Q))
+    {
+        rotation_delta.x += static_cast<float>(m_cam_velocity * delta);
+        isMoveCam = true;
+    }
     else if (Input::isKeyPressed(KeyCode::KEY_E))
     {
-        rotation_delta.z -= static_cast<float>(m_cam_velocity * delta);
+        rotation_delta.x -= static_cast<float>(m_cam_velocity * delta);
         isMoveCam = true;
     }
     if (isMoveCam) m_cam->add_movement_and_rotate(movement_delta, rotation_delta);

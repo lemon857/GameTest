@@ -143,6 +143,8 @@ Application::~Application()
 
 int Application::start(glm::ivec2& window_size, const char* title)
 {
+    ResourceManager::loadINIsettings("EngineTest.ini", window_size, false);
+
     m_cam = new Camera(glm::vec3(0), glm::vec3(0));
 
     m_pCloseWindow = false;
@@ -204,13 +206,13 @@ int Application::start(glm::ivec2& window_size, const char* title)
 
     ResourceManager::loadJSONresources("res/resources.json");
 
-    //auto pShapeProgram = ResourceManager::getShaderProgram("shapeShader");
+    auto pShapeProgram = ResourceManager::getShaderProgram("shapeShader");
 
-    //m_line = new RenderEngine::Line(pShapeProgram);
+    m_line = new RenderEngine::Line(pShapeProgram);
 
     // --------------------------------------------------------- //
     m_pTextureAtlas = ResourceManager::getTexture("CubeTexture");
-    m_pShaderProgram_light = ResourceManager::getShaderProgram("lightCubeShader");
+    m_pShaderProgram_light = ResourceManager::getShaderProgram("lightSourceShader");
     m_pShaderProgram = ResourceManager::getShaderProgram("shape3DShader");
 
     m_vertexArray = std::make_shared<RenderEngine::VertexArray>();
@@ -281,10 +283,12 @@ int Application::start(glm::ivec2& window_size, const char* title)
 
         ImGui::Begin("Something settings");
         ImGui::ColorEdit4("Background Color", m_colors);
+        ImGui::ColorPicker3("Light source Color", m_light_color);
         ImGui::SliderFloat3("Sprite position", m_sprite_pos, -50.f, 50.f);
         ImGui::SliderFloat3("Cube position", m_cube_pos, -50.f, 50.f);
         ImGui::SliderFloat3("Cube scale", m_cube_scale, -50.f, 50.f);
-        ImGui::SliderFloat3("Light pos", m_light_pos, -50.f, 50.f);
+        ImGui::SliderFloat3("Light source position", m_light_pos, -50.f, 50.f);
+        ImGui::SliderFloat("Ambient factor", &m_ambient_factor, 0.1f, 1.f);
         if (ImGui::SliderFloat3("Camera position", m_cam_pos, -50.f, 50.f))
         {
             m_cam->set_position(glm::vec3(m_cam_pos[0], m_cam_pos[1], m_cam_pos[2]));
@@ -315,66 +319,71 @@ int Application::start(glm::ivec2& window_size, const char* title)
         ResourceManager::getShaderProgram("shape3DShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
         ResourceManager::getShaderProgram("spriteShader")->use();
         ResourceManager::getShaderProgram("spriteShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
-        ResourceManager::getShaderProgram("lightCubeShader")->use();
-        ResourceManager::getShaderProgram("lightCubeShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+        ResourceManager::getShaderProgram("lightSourceShader")->use();
+        ResourceManager::getShaderProgram("lightSourceShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
 
-        //ResourceManager::getSprite("TankSprite")->render(glm::vec3(m_sprite_pos[0], m_sprite_pos[1], m_sprite_pos[2]), glm::vec3(5), 0);
+        ResourceManager::getSprite("TankSprite")->render(glm::vec3(m_sprite_pos[0], m_sprite_pos[1], m_sprite_pos[2]), glm::vec3(5), 0);
 
-        //m_line->render(glm::vec3(0.f), glm::vec3(-10.f), glm::vec3(1.f));
+        m_line->render(glm::vec3(0.f), glm::vec3(-10.f), glm::vec3(1.f));
 
         // --------------------------------------------------------- //
-        
 
-        {
-            m_pShaderProgram->use();
-            glm::mat4 scaleMat(
-                m_cube_scale[0], 0, 0, 0,
-                0, m_cube_scale[1], 0, 0,
-                0, 0, m_cube_scale[2], 0,
-                0, 0, 0, 1);
+        // Cubes
 
-            glm::mat4 translateMat(
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-                m_cube_pos[0], m_cube_pos[1], m_cube_pos[2], 1);
+        m_pShaderProgram->use();
+        glm::mat4 scaleMat(
+            m_cube_scale[0], 0, 0, 0,
+            0, m_cube_scale[1], 0, 0,
+            0, 0, m_cube_scale[2], 0,
+            0, 0, 0, 1);
 
-            glm::mat4 model = translateMat * scaleMat;
-            m_pShaderProgram->setMatrix4("modelMat", model);
+        glm::mat4 translateMat(
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            m_cube_pos[0], m_cube_pos[1], m_cube_pos[2], 1);
 
-            RenderEngine::Renderer::bindTexture(*m_pTextureAtlas);
-            RenderEngine::Renderer::drawTriangles(*m_vertexArray, m_indexBuffer);
+        glm::mat4 model = translateMat * scaleMat;
+        m_pShaderProgram->setVec3("light_color", glm::vec3(m_light_color[0], m_light_color[1], m_light_color[2]));
+        m_pShaderProgram->setFloat("ambient_factor", m_ambient_factor);
+        m_pShaderProgram->setMatrix4("modelMat", model);
 
-            glm::mat4 translateMatA(
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-                m_cube_pos[0] + 5, m_cube_pos[1], m_cube_pos[2], 1);
+        RenderEngine::Renderer::bindTexture(*m_pTextureAtlas);
+        RenderEngine::Renderer::drawTriangles(*m_vertexArray, m_indexBuffer);
 
-            model = translateMatA * scaleMat;
-            m_pShaderProgram->setMatrix4("modelMat", model);
+        glm::mat4 translateMatA(
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            m_cube_pos[0] + 5, m_cube_pos[1], m_cube_pos[2], 1);
 
-            RenderEngine::Renderer::drawTriangles(*m_vertexArray, m_indexBuffer);
-        }
+        model = translateMatA * scaleMat;
+        m_pShaderProgram->setMatrix4("modelMat", model);
 
-        {
-            glm::mat4 translateMatLight(
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-                m_light_pos[0], m_light_pos[1], m_light_pos[2], 1);
+        RenderEngine::Renderer::drawTriangles(*m_vertexArray, m_indexBuffer);
 
-            m_pShaderProgram_light->use();
-            m_pShaderProgram_light->setMatrix4("modelMat", translateMatLight);
-            m_pShaderProgram_light->setVec3("light_color", glm::vec3(1));
-            RenderEngine::Renderer::drawTriangles(*m_vertexArray, m_indexBuffer);
-        }
+
+        // Light source
+
+        glm::mat4 translateMatLight(
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            m_light_pos[0], m_light_pos[1], m_light_pos[2], 1);
+
+        m_pShaderProgram_light->use();
+        m_pShaderProgram_light->setMatrix4("modelMat", translateMatLight);
+        m_pShaderProgram_light->setVec3("light_color", glm::vec3(m_light_color[0], m_light_color[1], m_light_color[2]));
+        RenderEngine::Renderer::drawTriangles(*m_vertexArray_light, m_indexBuffer);
+
+
         // --------------------------------------------------------- //
 
         m_pWindow->on_update();
-        on_update(duration);
+        on_update(duration);        
     }
 
+    ResourceManager::loadINIsettings("EngineTest.ini", m_pWindow->get_size(), true);
     m_pWindow = nullptr;
 
     return 0;

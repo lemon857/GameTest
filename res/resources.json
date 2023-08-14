@@ -16,7 +16,7 @@
       "filePath_f": "res/shaders/shape3DFrag.glsl"
     },
     {
-      "name": "lightCubeShader",
+      "name": "lightSourceShader",
       "filePath_v": "res/shaders/lightCubeVert.glsl",
       "filePath_f": "res/shaders/lightCubeFrag.glsl"
     }

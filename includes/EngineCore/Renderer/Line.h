@@ -17,7 +17,7 @@ namespace RenderEngine
 	class Line 
 	{
 	public:
-		Line(std::shared_ptr<ShaderProgram> pShaderProgram);
+		Line(std::shared_ptr<ShaderProgram> pShaderProgram, float size = 1.f);
 
 		Line(const Line&) = delete;
 		Line& operator=(const Line&) = delete;
@@ -25,6 +25,7 @@ namespace RenderEngine
 		void render(const glm::vec3& position, const glm::vec3& size, glm::vec3& color) const;
 	private:
 		std::shared_ptr<ShaderProgram> m_pShaderProgram;
+		float m_size;
 
 		VertexArray m_vertexArray;
 		VertexBuffer m_vertexCoordsBuffer;

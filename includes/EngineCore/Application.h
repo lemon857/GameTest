@@ -8,7 +8,7 @@
 #include "EngineCore/Renderer/IndexBuffer.h"
 #include "EngineCore/Renderer/Texture2D.h"
 #include "EngineCore/Renderer/ShaderProgram.h"
-//#include "EngineCore/Renderer/Line.h"
+#include "EngineCore/Renderer/Line.h"
 
 #include <memory>
 #include <glm/vec2.hpp>
@@ -38,15 +38,16 @@ protected:
 
 	Camera* m_cam;
 
-	//RenderEngine::Line* m_line;
+	RenderEngine::Line* m_line;
 
 	float m_colors[4] = { 0.33f, 0.33f, 0.33f, 0.f };
 	float m_cam_pos[3] = { -5.f, 0.f, 0.f };
 	float m_cam_rot[3] = { 0.f, 0.f, 0.f };
 
-	float m_sprite_pos[3] = { 5.f, 0.f, 0.f };
+	float m_sprite_pos[3] = { 5.f, -5.f, 0.f };
 
 	float m_light_pos[3] = { 12.f, 5.f, 0.f };
+	float m_light_color[3] = { 1.f, 1.f, 1.f };
 
 	float m_cube_pos[3] = { 10.f, 0.f, 0.f };
 	float m_cube_scale[3] = { 1.f, 1.f, 1.f };
@@ -57,6 +58,8 @@ protected:
 	float m_cam_fov = 60.f;
 
 	float m_add_ctrl_speed = 2.f;
+
+	float m_ambient_factor = 0.1f;
 
 	double m_init_mouse_pos_x = 0;
 	double m_init_mouse_pos_y = 0;

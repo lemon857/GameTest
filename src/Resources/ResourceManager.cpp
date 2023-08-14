@@ -135,6 +135,45 @@ bool ResourceManager::loadJSONresources(const std::string & JSONpath)
 	}*/
 	return true;
 }
+bool ResourceManager::loadINIsettings(const std::string& INIpath, glm::ivec2& size, const bool isWrite)
+{
+	std::ifstream f;
+	f.open(m_path + "/" + INIpath, std::ios::in | std::ios::binary);
+
+	if (f.is_open() && !isWrite)
+	{
+
+		std::stringstream buf;
+		buf << f.rdbuf();
+
+		std::string INIstr = buf.str();
+		if (!INIstr.empty() && !isWrite)
+		{
+			const std::string width = INIstr.substr(0, INIstr.find(' '));
+			const std::string height = INIstr.substr(INIstr.find(' ') + 1, INIstr.size() - INIstr.find(' '));
+
+			LOG_INFO("Succsess read file {0}, data: {1}x{2}", INIpath, width, height);
+
+			size = glm::ivec2(std::stoi(width), std::stoi(height));
+		}
+	}
+	std::ofstream writeStream;
+	writeStream.open(m_path + "/" + INIpath);
+
+	if (writeStream.is_open())
+	{
+		LOG_INFO("Succsess open file {0} for write data", INIpath);
+		writeStream << std::to_string(size.x) << " " << std::to_string(size.y);
+		writeStream.close();
+		return true;
+	}
+	else
+	{
+		LOG_ERROR("Error open file: {0}", INIpath);
+		writeStream.close();
+		return false;
+	}
+}
 std::string ResourceManager::getFileString(const std::string& relativeFilePath)
 {
 	std::ifstream f;

@@ -17,7 +17,7 @@ namespace RenderEngine
 	class Point 
 	{
 	public:
-		Point(std::shared_ptr<ShaderProgram> pShaderProgram, float size);
+		Point(std::shared_ptr<ShaderProgram> pShaderProgram, float size = 1.f);
 
 		Point(const Point&) = delete;
 		Point& operator=(const Point&) = delete;

@@ -9,8 +9,9 @@
 
 namespace RenderEngine
 {
-	Line::Line(std::shared_ptr<ShaderProgram> pShaderProgram)
+	Line::Line(std::shared_ptr<ShaderProgram> pShaderProgram, float size)
 		: m_pShaderProgram(std::move(pShaderProgram))
+		, m_size(size)
 	{
 
 		const GLfloat vertexCoords[] = {
@@ -46,6 +47,6 @@ namespace RenderEngine
 		m_pShaderProgram->setMatrix4("modelMat", model);
 		m_pShaderProgram->setVec4("sourceColor", glm::vec4(color, 1.f));
 
-		Renderer::drawLine(m_vertexArray, *m_pShaderProgram);
+		Renderer::drawLine(m_vertexArray, *m_pShaderProgram, m_size);
 	}
 }

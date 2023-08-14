@@ -4,6 +4,7 @@
 #include <memory>
 #include <map>
 #include <vector>
+#include <glm/vec2.hpp>
 
 namespace RenderEngine
 {
@@ -27,6 +28,8 @@ namespace RenderEngine
 		ResourceManager& operator=(const ResourceManager&&) = delete;
 
 		static bool loadJSONresources(const std::string& JSONpath);
+
+		static bool loadINIsettings(const std::string& INIpath, glm::ivec2& size, const bool isWrite);
 
 		static std::shared_ptr<RenderEngine::ShaderProgram> loadShaders(
 			const std::string& shaderName, 

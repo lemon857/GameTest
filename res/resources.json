@@ -13,7 +13,7 @@
     {
       "name": "shape3DShader",
       "filePath_v": "res/shaders/shape3DVert.glsl",
-      "filePath_f": "res/shaders/shape3DVrag.glsl"
+      "filePath_f": "res/shaders/shape3DFrag.glsl"
     },
     {
       "name": "lightCubeShader",

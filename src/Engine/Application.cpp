@@ -279,7 +279,7 @@ int Application::start(glm::ivec2& window_size, const char* title)
         ImGui_ImplOpenGL3_NewFrame();
         ImGui::NewFrame();
 
-        ImGui::Begin("Background Color Window");
+        ImGui::Begin("Something settings");
         ImGui::ColorEdit4("Background Color", m_colors);
         ImGui::SliderFloat3("Sprite position", m_sprite_pos, -50.f, 50.f);
         ImGui::SliderFloat3("Cube position", m_cube_pos, -50.f, 50.f);
@@ -309,10 +309,13 @@ int Application::start(glm::ivec2& window_size, const char* title)
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-
+        ResourceManager::getShaderProgram("shapeShader")->use();
         ResourceManager::getShaderProgram("shapeShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+        ResourceManager::getShaderProgram("shape3DShader")->use();
         ResourceManager::getShaderProgram("shape3DShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+        ResourceManager::getShaderProgram("spriteShader")->use();
         ResourceManager::getShaderProgram("spriteShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+        ResourceManager::getShaderProgram("lightCubeShader")->use();
         ResourceManager::getShaderProgram("lightCubeShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
 
         //ResourceManager::getSprite("TankSprite")->render(glm::vec3(m_sprite_pos[0], m_sprite_pos[1], m_sprite_pos[2]), glm::vec3(5), 0);
@@ -321,21 +324,6 @@ int Application::start(glm::ivec2& window_size, const char* title)
 
         // --------------------------------------------------------- //
         
-
-
-        {
-            glm::mat4 translateMatLight(
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-                m_light_pos[0], m_light_pos[1], m_light_pos[2], 1);
-
-            m_pShaderProgram_light->use();
-            m_pShaderProgram_light->setMatrix4("modelMat", translateMatLight);
-            m_pShaderProgram_light->setVec3("light_color", glm::vec3(1));
-            RenderEngine::Renderer::drawTriangles(*m_vertexArray, m_indexBuffer);
-        }
-
 
         {
             m_pShaderProgram->use();
@@ -366,6 +354,19 @@ int Application::start(glm::ivec2& window_size, const char* title)
             model = translateMatA * scaleMat;
             m_pShaderProgram->setMatrix4("modelMat", model);
 
+            RenderEngine::Renderer::drawTriangles(*m_vertexArray, m_indexBuffer);
+        }
+
+        {
+            glm::mat4 translateMatLight(
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                m_light_pos[0], m_light_pos[1], m_light_pos[2], 1);
+
+            m_pShaderProgram_light->use();
+            m_pShaderProgram_light->setMatrix4("modelMat", translateMatLight);
+            m_pShaderProgram_light->setVec3("light_color", glm::vec3(1));
             RenderEngine::Renderer::drawTriangles(*m_vertexArray, m_indexBuffer);
         }
         // --------------------------------------------------------- //

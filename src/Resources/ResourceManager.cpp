@@ -135,7 +135,7 @@ bool ResourceManager::loadJSONresources(const std::string & JSONpath)
 	}*/
 	return true;
 }
-bool ResourceManager::loadINIsettings(const std::string& INIpath, glm::ivec2& size, const bool isWrite)
+bool ResourceManager::loadINIsettings(const std::string& INIpath, INIdata& data, const bool isWrite)
 {
 	std::ifstream f;
 	f.open(m_path + "/" + INIpath, std::ios::in | std::ios::binary);
@@ -149,12 +149,27 @@ bool ResourceManager::loadINIsettings(const std::string& INIpath, glm::ivec2& si
 		std::string INIstr = buf.str();
 		if (!INIstr.empty() && !isWrite)
 		{
-			const std::string width = INIstr.substr(0, INIstr.find(' '));
-			const std::string height = INIstr.substr(INIstr.find(' ') + 1, INIstr.size() - INIstr.find(' '));
+			const size_t newLine = INIstr.find('\n');
+			const size_t newLine2 = INIstr.substr(newLine + 1, INIstr.size() - newLine + 1).find('\n');
 
-			LOG_INFO("Succsess read file {0}, data: {1}x{2}", INIpath, width, height);
+			const std::string size = INIstr.substr(0, newLine - 1);
+			const std::string pos = INIstr.substr(newLine + 1, newLine2 - 1);
 
-			size = glm::ivec2(std::stoi(width), std::stoi(height));
+			const std::string width = size.substr(0, size.find(' '));
+			const std::string height = size.substr(size.find(' ') + 1, size.size());
+
+			const std::string posX = pos.substr(0, pos.find(' '));
+			const std::string posY = pos.substr(pos.find(' ') + 1, pos.size());
+
+			const std::string maximized = INIstr.substr(newLine + newLine2 + 2, INIstr.size() - newLine2 - newLine);
+
+			LOG_INFO("Succsess read file {0}", INIpath);
+			LOG_INFO("Data {2} {0}x{1} {3}x{4}", width, height, maximized, posX, posY);
+
+			data.window_size = glm::ivec2(std::stoi(width), std::stoi(height));
+			data.window_position = glm::ivec2(std::stoi(posX), std::stoi(posY));
+			data.maximized_window = std::stoi(maximized) == 1 ? true : false;
+			return true;
 		}
 	}
 	std::ofstream writeStream;
@@ -163,7 +178,9 @@ bool ResourceManager::loadINIsettings(const std::string& INIpath, glm::ivec2& si
 	if (writeStream.is_open())
 	{
 		LOG_INFO("Succsess open file {0} for write data", INIpath);
-		writeStream << std::to_string(size.x) << " " << std::to_string(size.y);
+		writeStream << std::to_string(data.window_size.x) << " " << std::to_string(data.window_size.y) << "\n";
+		writeStream << std::to_string(data.window_position.x) << " " << std::to_string(data.window_position.y) << "\n";
+		writeStream << std::to_string(data.maximized_window == true ? 1 : 0);
 		writeStream.close();
 		return true;
 	}

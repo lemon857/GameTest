@@ -28,6 +28,8 @@ public:
 	Window& operator=(Window&&) = delete;
 
 	void on_update();
+	void maximize();
+	void set_pos(glm::ivec2& pos);
 
 	glm::ivec2& get_size() { return m_data.window_size; };
 	glm::vec2 get_current_cursor_position() const;

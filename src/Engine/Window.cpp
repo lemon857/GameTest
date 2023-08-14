@@ -34,6 +34,16 @@ void Window::on_update()
     glfwPollEvents();
 }
 
+void Window::maximize()
+{
+    glfwMaximizeWindow(m_pWindow);
+}
+
+void Window::set_pos(glm::ivec2& pos)
+{
+    glfwSetWindowPos(m_pWindow, pos.x, pos.y);
+}
+
 glm::vec2 Window::get_current_cursor_position() const
 {
     double x_pos, y_pos;
@@ -160,6 +170,23 @@ int Window::init()
             WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(pWindow));
 
             EventWindowClose e = EventWindowClose();
+            data.event_callback(e);
+        });
+
+    glfwSetWindowMaximizeCallback(m_pWindow, 
+        [](GLFWwindow* pWindow, int maximized)
+        {
+            WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(pWindow));
+
+            EventMaximizeWindow e = EventMaximizeWindow(maximized == 1 ? true : false);
+            data.event_callback(e);
+        });
+    glfwSetWindowPosCallback(m_pWindow,
+        [](GLFWwindow* pWindow, int x_pos, int y_pos)
+        {
+            WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(pWindow));
+
+            EventMoveWindow e = EventMoveWindow(x_pos, y_pos);
             data.event_callback(e);
         });
 

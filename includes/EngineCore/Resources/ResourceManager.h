@@ -6,6 +6,13 @@
 #include <vector>
 #include <glm/vec2.hpp>
 
+struct INIdata
+{
+	glm::ivec2& window_size;
+	glm::ivec2& window_position;
+	bool& maximized_window;
+};
+
 namespace RenderEngine
 {
 	class ShaderProgram;
@@ -29,7 +36,7 @@ namespace RenderEngine
 
 		static bool loadJSONresources(const std::string& JSONpath);
 
-		static bool loadINIsettings(const std::string& INIpath, glm::ivec2& size, const bool isWrite);
+		static bool loadINIsettings(const std::string& INIpath, INIdata& data, const bool isWrite);
 
 		static std::shared_ptr<RenderEngine::ShaderProgram> loadShaders(
 			const std::string& shaderName, 

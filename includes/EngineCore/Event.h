@@ -17,6 +17,9 @@ enum class EventType
     MouseButtonReleased,
     MouseMoved,
 
+    MaximizeWindow,
+    MoveWindow,
+
     EventsCount
 };
 
@@ -178,4 +181,39 @@ struct EventMouseButtonReleased : public BaseEvent
     double y_pos;
 
     static const EventType type = EventType::MouseButtonReleased;
+};
+
+struct EventMaximizeWindow : public BaseEvent
+{
+    EventMaximizeWindow(const bool isMaximixedWindow)
+        : isMaximized(isMaximixedWindow)
+    {
+    }
+
+    virtual EventType get_type() const override
+    {
+        return type;
+    }
+
+    bool isMaximized;
+
+    static const EventType type = EventType::MaximizeWindow;
+};
+struct EventMoveWindow : public BaseEvent
+{
+    EventMoveWindow(const int xPos, const int yPos)
+        : x_pos(xPos)
+        , y_pos(yPos)
+    {
+    }
+
+    virtual EventType get_type() const override
+    {
+        return type;
+    }
+
+    int x_pos;
+    int y_pos;
+
+    static const EventType type = EventType::MoveWindow;
 };

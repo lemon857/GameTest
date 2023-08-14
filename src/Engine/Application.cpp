@@ -143,19 +143,24 @@ Application::~Application()
 
 int Application::start(glm::ivec2& window_size, const char* title)
 {
-    ResourceManager::loadINIsettings("EngineTest.ini", window_size, false);
+    INIdata data{ window_size, m_window_position, m_maximized_window };
+    ResourceManager::loadINIsettings("EngineTest.ini", data, false);
 
     m_cam = new Camera(glm::vec3(0), glm::vec3(0));
 
     m_pCloseWindow = false;
     m_pWindow = std::make_unique<Window>(title, window_size);
+
     m_cam->set_viewport_size(static_cast<float>(window_size.x), static_cast<float>(window_size.y));
 
     m_event_dispather.add_event_listener<EventWindowResize>([&](EventWindowResize& e)
         {
             LOG_INFO("[EVENT] Resize: {0}x{1}", e.width, e.height);
-            RenderEngine::Renderer::setViewport(e.width, e.height);
-            m_cam->set_viewport_size(e.width, e.height);
+            if (e.width != 0 && e.height != 0)
+            {
+                RenderEngine::Renderer::setViewport(e.width, e.height);
+                m_cam->set_viewport_size(e.width, e.height);
+            }
         });
     m_event_dispather.add_event_listener<EventKeyPressed>([](EventKeyPressed& e)
         {
@@ -188,15 +193,25 @@ int Application::start(glm::ivec2& window_size, const char* title)
         });
     m_event_dispather.add_event_listener<EventMouseButtonPressed>([&](EventMouseButtonPressed& e)
         {
-            LOG_INFO("[EVENT]: Mouse button pressed at ({0}x{1})", e.x_pos, e.y_pos);
+            LOG_INFO("[EVENT] Mouse button pressed at ({0}x{1})", e.x_pos, e.y_pos);
             Input::pressMouseButton(e.mouse_button);
             on_button_mouse_event(e.mouse_button, e.x_pos, e.y_pos, true);
         });
     m_event_dispather.add_event_listener<EventMouseButtonReleased>([&](EventMouseButtonReleased& e)
         {
-            LOG_INFO("[EVENT]: Mouse button released at ({0}x{1})", e.x_pos, e.y_pos);
+            LOG_INFO("[EVENT] Mouse button released at ({0}x{1})", e.x_pos, e.y_pos);
             Input::releaseMouseButton(e.mouse_button);
             on_button_mouse_event(e.mouse_button, e.x_pos, e.y_pos, false);
+        });
+    m_event_dispather.add_event_listener<EventMaximizeWindow>([&](EventMaximizeWindow& e)
+        {
+            LOG_INFO("[EVENT] Maximized window: {0}", e.isMaximized);
+            m_maximized_window = e.isMaximized;
+        });
+    m_event_dispather.add_event_listener<EventMoveWindow>([&](EventMoveWindow& e)
+        {
+            LOG_INFO("[EVENT] Move window to: {0}x{1}", e.x_pos, e.y_pos);
+            m_window_position = glm::ivec2(e.x_pos, e.y_pos);
         });
     m_pWindow->set_event_callback(
         [&](BaseEvent& e)
@@ -205,6 +220,9 @@ int Application::start(glm::ivec2& window_size, const char* title)
         });
 
     ResourceManager::loadJSONresources("res/resources.json");
+
+    m_pWindow->set_pos(m_window_position);
+    if (m_maximized_window) m_pWindow->maximize();
 
     auto pShapeProgram = ResourceManager::getShaderProgram("shapeShader");
 
@@ -382,8 +400,8 @@ int Application::start(glm::ivec2& window_size, const char* title)
         m_pWindow->on_update();
         on_update(duration);        
     }
-
-    ResourceManager::loadINIsettings("EngineTest.ini", m_pWindow->get_size(), true);
+    
+    ResourceManager::loadINIsettings("EngineTest.ini", data, true);
     m_pWindow = nullptr;
 
     return 0;

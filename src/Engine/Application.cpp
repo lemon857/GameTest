@@ -43,42 +43,42 @@ const GLfloat vertexCoords[] = {
      1.f, -1.f,  1.f,
     // BOTTOM
     -1.f, -1.f, -1.f,
-    -1.f, -1.f, -1.f,
-     1.f, -1.f, -1.f,
+    -1.f,  1.f, -1.f,
+     1.f,  1.f, -1.f,
      1.f, -1.f, -1.f
 };
 
 const GLfloat textureCoords[] = {
     // FRONT
+    1.f, 0.f,
     0.f, 0.f,
-    1.f, 0.f, 
-    1.f, 1.f,
     0.f, 1.f,
+    1.f, 1.f,
     // BACK
-    1.f, 0.f, 
-    0.f, 0.f,  
-    0.f, 1.f, 
+    0.f, 0.f,
+    1.f, 0.f,
     1.f, 1.f,
+    0.f, 1.f,
     // RIGHT
-    0.f, 0.f,
     1.f, 0.f,
-    1.f, 1.f,
+    0.f, 0.f,
     0.f, 1.f,
+    1.f, 1.f,
     // LEFT
-    1.f, 0.f,
     0.f, 0.f,
-    0.f, 1.f,
+    1.f, 0.f,
     1.f, 1.f,
+    0.f, 1.f,
     // TOP
-    0.f, 0.f,
     1.f, 0.f,
-    1.f, 1.f,
+    0.f, 0.f,
     0.f, 1.f,
+    1.f, 1.f,
     // BOTTOM
-    1.f, 0.f,
     0.f, 0.f,
-    0.f, 1.f,
+    1.f, 0.f,
     1.f, 1.f,
+    0.f, 1.f,
 };
 
 const GLfloat normalCoords[] = {

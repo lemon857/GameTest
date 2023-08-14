@@ -142,7 +142,7 @@ Application::~Application()
 }
 
 int Application::start(glm::ivec2& window_size, const char* title)
-{ 
+{
     m_cam = new Camera(glm::vec3(0), glm::vec3(0));
 
     m_pCloseWindow = false;
@@ -154,27 +154,27 @@ int Application::start(glm::ivec2& window_size, const char* title)
             LOG_INFO("[EVENT] Resize: {0}x{1}", e.width, e.height);
             RenderEngine::Renderer::setViewport(e.width, e.height);
             m_cam->set_viewport_size(e.width, e.height);
-        }); 
+        });
     m_event_dispather.add_event_listener<EventKeyPressed>([](EventKeyPressed& e)
+        {
+            if (e.key_code <= KeyCode::KEY_Z)
             {
-                if (e.key_code <= KeyCode::KEY_Z)
+                if (e.repeated)
                 {
-                    if (e.repeated)
-                    {
-                        LOG_INFO("[EVENT] Key repeated {0}", static_cast<char>(e.key_code));
-                    }
-                    else
-                    {
-                        LOG_INFO("[EVENT] Key pressed {0}", static_cast<char>(e.key_code));
-                    }
+                    LOG_INFO("[EVENT] Key repeated {0}", static_cast<char>(e.key_code));
                 }
-                Input::pressKey(e.key_code);
-            });
-    m_event_dispather.add_event_listener<EventKeyReleased>([](EventKeyReleased& e)
+                else
                 {
-                if (e.key_code <= KeyCode::KEY_Z)  LOG_INFO("[EVENT] Key released {0}", static_cast<char>(e.key_code));
-                Input::releaseKey(e.key_code);
-                });
+                    LOG_INFO("[EVENT] Key pressed {0}", static_cast<char>(e.key_code));
+                }
+            }
+            Input::pressKey(e.key_code);
+        });
+    m_event_dispather.add_event_listener<EventKeyReleased>([](EventKeyReleased& e)
+        {
+            if (e.key_code <= KeyCode::KEY_Z)  LOG_INFO("[EVENT] Key released {0}", static_cast<char>(e.key_code));
+            Input::releaseKey(e.key_code);
+        });
     m_event_dispather.add_event_listener<EventMouseMoved>([](EventMouseMoved& e)
         {
             LOG_INFO("[EVENT] Mouse moved to {0}x{1}", e.x, e.y);
@@ -189,7 +189,7 @@ int Application::start(glm::ivec2& window_size, const char* title)
             LOG_INFO("[EVENT]: Mouse button pressed at ({0}x{1})", e.x_pos, e.y_pos);
             Input::pressMouseButton(e.mouse_button);
             on_button_mouse_event(e.mouse_button, e.x_pos, e.y_pos, true);
-        }); 
+        });
     m_event_dispather.add_event_listener<EventMouseButtonReleased>([&](EventMouseButtonReleased& e)
         {
             LOG_INFO("[EVENT]: Mouse button released at ({0}x{1})", e.x_pos, e.y_pos);
@@ -210,6 +210,7 @@ int Application::start(glm::ivec2& window_size, const char* title)
 
     // --------------------------------------------------------- //
     m_pTextureAtlas = ResourceManager::getTexture("CubeTexture");
+    m_pShaderProgram_light = ResourceManager::getShaderProgram("lightCubeShader");
     m_pShaderProgram = ResourceManager::getShaderProgram("shape3DShader");
 
     m_vertexArray = std::make_shared<RenderEngine::VertexArray>();
@@ -232,6 +233,11 @@ int Application::start(glm::ivec2& window_size, const char* title)
     m_indexBuffer.init(&indexes, sizeof(indexes) / sizeof(GLuint));
 
     m_vertexArray->unbind();
+    m_vertexArray_light = std::make_shared<RenderEngine::VertexArray>();
+
+    m_vertexArray_light->addBuffer(m_vertexCoordsBuffer, vertexCoordsLayout);
+
+    m_vertexArray_light->unbind();
     m_indexBuffer.unbind();
     // --------------------------------------------------------- //
 
@@ -278,6 +284,7 @@ int Application::start(glm::ivec2& window_size, const char* title)
         ImGui::SliderFloat3("Sprite position", m_sprite_pos, -50.f, 50.f);
         ImGui::SliderFloat3("Cube position", m_cube_pos, -50.f, 50.f);
         ImGui::SliderFloat3("Cube scale", m_cube_scale, -50.f, 50.f);
+        ImGui::SliderFloat3("Light pos", m_light_pos, -50.f, 50.f);
         if (ImGui::SliderFloat3("Camera position", m_cam_pos, -50.f, 50.f))
         {
             m_cam->set_position(glm::vec3(m_cam_pos[0], m_cam_pos[1], m_cam_pos[2]));
@@ -304,44 +311,63 @@ int Application::start(glm::ivec2& window_size, const char* title)
 
 
         ResourceManager::getShaderProgram("shapeShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
-        ResourceManager::getShaderProgram("shape3DShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix()* m_cam->get_view_matrix());
+        ResourceManager::getShaderProgram("shape3DShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
         ResourceManager::getShaderProgram("spriteShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+        ResourceManager::getShaderProgram("lightCubeShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
 
         //ResourceManager::getSprite("TankSprite")->render(glm::vec3(m_sprite_pos[0], m_sprite_pos[1], m_sprite_pos[2]), glm::vec3(5), 0);
 
         //m_line->render(glm::vec3(0.f), glm::vec3(-10.f), glm::vec3(1.f));
 
         // --------------------------------------------------------- //
-        m_pShaderProgram->use();
+        
 
-        glm::mat4 scaleMat(
-            m_cube_scale[0], 0, 0, 0,
-            0, m_cube_scale[1], 0, 0,
-            0, 0, m_cube_scale[2], 0,
-            0, 0, 0, 1);
 
-        glm::mat4 translateMat(
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            m_cube_pos[0], m_cube_pos[1], m_cube_pos[2], 1);
+        {
+            glm::mat4 translateMatLight(
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                m_light_pos[0], m_light_pos[1], m_light_pos[2], 1);
 
-        glm::mat4 model = translateMat * scaleMat;
-        m_pShaderProgram->setMatrix4("modelMat", model);
+            m_pShaderProgram_light->use();
+            m_pShaderProgram_light->setMatrix4("modelMat", translateMatLight);
+            m_pShaderProgram_light->setVec3("light_color", glm::vec3(1));
+            RenderEngine::Renderer::drawTriangles(*m_vertexArray, m_indexBuffer);
+        }
 
-        RenderEngine::Renderer::bindTexture(*m_pTextureAtlas);
-        RenderEngine::Renderer::drawTriangles(*m_vertexArray, m_indexBuffer, *m_pShaderProgram);
 
-        glm::mat4 translateMatA(
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            m_cube_pos[0] + 5, m_cube_pos[1], m_cube_pos[2], 1);
+        {
+            m_pShaderProgram->use();
+            glm::mat4 scaleMat(
+                m_cube_scale[0], 0, 0, 0,
+                0, m_cube_scale[1], 0, 0,
+                0, 0, m_cube_scale[2], 0,
+                0, 0, 0, 1);
 
-        model = translateMatA * scaleMat;
-        m_pShaderProgram->setMatrix4("modelMat", model);
+            glm::mat4 translateMat(
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                m_cube_pos[0], m_cube_pos[1], m_cube_pos[2], 1);
 
-        RenderEngine::Renderer::drawTriangles(*m_vertexArray, m_indexBuffer, *m_pShaderProgram);
+            glm::mat4 model = translateMat * scaleMat;
+            m_pShaderProgram->setMatrix4("modelMat", model);
+
+            RenderEngine::Renderer::bindTexture(*m_pTextureAtlas);
+            RenderEngine::Renderer::drawTriangles(*m_vertexArray, m_indexBuffer);
+
+            glm::mat4 translateMatA(
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                m_cube_pos[0] + 5, m_cube_pos[1], m_cube_pos[2], 1);
+
+            model = translateMatA * scaleMat;
+            m_pShaderProgram->setMatrix4("modelMat", model);
+
+            RenderEngine::Renderer::drawTriangles(*m_vertexArray, m_indexBuffer);
+        }
         // --------------------------------------------------------- //
 
         m_pWindow->on_update();

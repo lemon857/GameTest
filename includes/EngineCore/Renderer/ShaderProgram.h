@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/mat4x4.hpp>
 #include <glm/vec4.hpp>
+#include <glm/vec3.hpp>
 
 namespace RenderEngine
 {
@@ -22,6 +23,7 @@ namespace RenderEngine
 		void setFloat(const std::string& name, const GLfloat& value);
 		void setMatrix4(const std::string& name, const glm::mat4& matrix);
 		void setVec4(const std::string& name, const glm::vec4& vec);
+		void setVec3(const std::string& name, const glm::vec3& vec);
 
 		ShaderProgram() = delete;
 		ShaderProgram(ShaderProgram&) = delete;

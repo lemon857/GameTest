@@ -46,6 +46,7 @@ protected:
 
 	float m_sprite_pos[3] = { 5.f, 0.f, 0.f };
 
+	float m_light_pos[3] = { 12.f, 5.f, 0.f };
 
 	float m_cube_pos[3] = { 10.f, 0.f, 0.f };
 	float m_cube_scale[3] = { 1.f, 1.f, 1.f };
@@ -64,6 +65,7 @@ protected:
 	bool m_isInversiveMouseY = false;
 
 	std::shared_ptr<RenderEngine::VertexArray> m_vertexArray;
+	std::shared_ptr<RenderEngine::VertexArray> m_vertexArray_light;
 	RenderEngine::VertexBuffer m_vertexCoordsBuffer;
 	RenderEngine::VertexBuffer m_vertexNormalBuffer;
 	RenderEngine::VertexBuffer m_textureCoordsBuffer;
@@ -71,4 +73,5 @@ protected:
 
 	std::shared_ptr<RenderEngine::Texture2D> m_pTextureAtlas;
 	std::shared_ptr<RenderEngine::ShaderProgram> m_pShaderProgram;
+	std::shared_ptr<RenderEngine::ShaderProgram> m_pShaderProgram_light;
 };

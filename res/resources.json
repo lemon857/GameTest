@@ -2,18 +2,23 @@
   "shaders": [
     {
       "name": "spriteShader",
-      "filePath_v": "res/shaders/sprite.vert",
-      "filePath_f": "res/shaders/sprite.frag"
+      "filePath_v": "res/shaders/spriteVert.glsl",
+      "filePath_f": "res/shaders/spriteFrag.glsl"
     },
     {
       "name": "shapeShader",
-      "filePath_v": "res/shaders/shape.vert",
-      "filePath_f": "res/shaders/shape.frag"
+      "filePath_v": "res/shaders/shapeVert.glsl",
+      "filePath_f": "res/shaders/shapeFrag.glsl"
     },
     {
       "name": "shape3DShader",
-      "filePath_v": "res/shaders/shape3D.vert",
-      "filePath_f": "res/shaders/shape3D.frag"
+      "filePath_v": "res/shaders/shape3DVert.glsl",
+      "filePath_f": "res/shaders/shape3DVrag.glsl"
+    },
+    {
+      "name": "lightCubeShader",
+      "filePath_v": "res/shaders/lightCubeVert.glsl",
+      "filePath_f": "res/shaders/lightCubeFrag.glsl"
     }
   ],
   "textureAtlases": [

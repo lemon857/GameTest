@@ -15,7 +15,7 @@ namespace RenderEngine
 	{
 	public:
 		static bool init(GLFWwindow* pWindow);
-		static void drawTriangles(const VertexArray& vertexArray, const IndexBuffer& indexBuffer, const ShaderProgram& shader);
+		static void drawTriangles(const VertexArray& vertexArray, const IndexBuffer& indexBuffer);
 		static void drawPoint(const VertexArray& vertexArray, const ShaderProgram& shader, const GLfloat size);
 		static void drawLine(const VertexArray& vertexArray, const ShaderProgram& shader);
 		static void bindTexture(const Texture2D& texture);

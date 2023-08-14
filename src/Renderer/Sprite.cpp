@@ -74,7 +74,7 @@ namespace RenderEngine
 
 		Renderer::bindTexture(*m_pTextureAtlas);
 
-		Renderer::drawTriangles(m_vertexArray, m_indexBuffer, *m_pShaderProgram);
+		Renderer::drawTriangles(m_vertexArray, m_indexBuffer);
 	}
 	void Sprite::setSubTexture(std::string subTexture)
 	{

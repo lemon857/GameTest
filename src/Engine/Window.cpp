@@ -13,8 +13,8 @@
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/backends/imgui_impl_glfw.h>
 
-Window::Window(std::string title, glm::ivec2& window_size)
-    : m_data({ std::move(title), window_size, nullptr })
+Window::Window(std::string title, glm::ivec2& window_position, glm::ivec2& window_size, bool maximized)
+    : m_data({ std::move(title), window_size, window_position, maximized, nullptr })
 {
 	init();
     IMGUI_CHECKVERSION();
@@ -81,7 +81,9 @@ int Window::init()
     }
 
     glfwMakeContextCurrent(m_pWindow);
-
+    if (m_data.maximized) maximize();
+    set_pos(m_data.window_position);
+    
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         LOG_CRIT("Glad load failed");

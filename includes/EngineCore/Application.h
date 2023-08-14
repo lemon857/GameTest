@@ -62,12 +62,16 @@ protected:
 	float m_add_ctrl_speed = 2.f;
 
 	float m_ambient_factor = 0.1f;
+	float m_diffuse_factor = 1.f;
+	float m_specular_factor = 1.f;
+	float m_shininess = 1.f;
 
 	double m_init_mouse_pos_x = 0;
 	double m_init_mouse_pos_y = 0;
 	
 	bool m_isPerspectiveCam = true;
 	bool m_isInversiveMouseY = false;
+	bool m_isMetalic = false;
 
 	std::shared_ptr<RenderEngine::VertexArray> m_vertexArray;
 	std::shared_ptr<RenderEngine::VertexArray> m_vertexArray_light;

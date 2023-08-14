@@ -19,7 +19,7 @@ using EventCallback = std::function<void(BaseEvent&)>;
 class Window
 {
 public:
-	Window(std::string title, glm::ivec2& window_size);
+	Window(std::string title, glm::ivec2& window_position, glm::ivec2& window_size, bool maximized);
 	~Window();
 
 	Window(const Window&) = delete;
@@ -41,6 +41,8 @@ private:
 	{
 		std::string title;
 		glm::ivec2 window_size;
+		glm::ivec2 window_position;
+		bool maximized;
 		EventCallback event_callback;
 	};
 

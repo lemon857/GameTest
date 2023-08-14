@@ -149,7 +149,7 @@ int Application::start(glm::ivec2& window_size, const char* title)
     m_cam = new Camera(glm::vec3(0), glm::vec3(0));
 
     m_pCloseWindow = false;
-    m_pWindow = std::make_unique<Window>(title, window_size);
+    m_pWindow = std::make_unique<Window>(title, m_window_position, window_size, m_maximized_window);
 
     m_cam->set_viewport_size(static_cast<float>(window_size.x), static_cast<float>(window_size.y));
 
@@ -220,9 +220,6 @@ int Application::start(glm::ivec2& window_size, const char* title)
         });
 
     ResourceManager::loadJSONresources("res/resources.json");
-
-    m_pWindow->set_pos(m_window_position);
-    if (m_maximized_window) m_pWindow->maximize();
 
     auto pShapeProgram = ResourceManager::getShaderProgram("shapeShader");
 
@@ -306,7 +303,11 @@ int Application::start(glm::ivec2& window_size, const char* title)
         ImGui::SliderFloat3("Cube position", m_cube_pos, -50.f, 50.f);
         ImGui::SliderFloat3("Cube scale", m_cube_scale, -50.f, 50.f);
         ImGui::SliderFloat3("Light source position", m_light_pos, -50.f, 50.f);
-        ImGui::SliderFloat("Ambient factor", &m_ambient_factor, 0.1f, 1.f);
+        ImGui::SliderFloat("Ambient factor", &m_ambient_factor, 0.f, 1.f);
+        ImGui::SliderFloat("Diffuse factor", &m_diffuse_factor, 0.f, 1.f);
+        ImGui::SliderFloat("Specular factor", &m_specular_factor, 0.f, 1.f);
+        ImGui::SliderFloat("Shininess", &m_shininess, 0.f, 100.f);
+        ImGui::Checkbox("Is metalic", &m_isMetalic);
         if (ImGui::SliderFloat3("Camera position", m_cam_pos, -50.f, 50.f))
         {
             m_cam->set_position(glm::vec3(m_cam_pos[0], m_cam_pos[1], m_cam_pos[2]));
@@ -363,7 +364,13 @@ int Application::start(glm::ivec2& window_size, const char* title)
 
         glm::mat4 model = translateMat * scaleMat;
         m_pShaderProgram->setVec3("light_color", glm::vec3(m_light_color[0], m_light_color[1], m_light_color[2]));
+        m_pShaderProgram->setVec3("light_position", glm::vec3(m_light_pos[0], m_light_pos[1], m_light_pos[2]));
+        m_pShaderProgram->setVec3("cam_position", m_cam->get_position());
         m_pShaderProgram->setFloat("ambient_factor", m_ambient_factor);
+        m_pShaderProgram->setFloat("diffuse_factor", m_diffuse_factor);
+        m_pShaderProgram->setFloat("specular_factor", m_specular_factor);
+        m_pShaderProgram->setFloat("shininess", m_shininess);
+        m_pShaderProgram->setInt("isMetalic", m_isMetalic == true ? 1 : 0);
         m_pShaderProgram->setMatrix4("modelMat", model);
 
         RenderEngine::Renderer::bindTexture(*m_pTextureAtlas);

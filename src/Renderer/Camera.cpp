@@ -89,9 +89,9 @@ void Camera::move_up(const float delta)
 
 void Camera::add_movement_and_rotation(const glm::vec3& movement_delta, const glm::vec3& rotation_delta)
 {
-	m_position += m_direction * movement_delta.x;
-	m_position += m_right * movement_delta.y;
-	m_position += m_up * movement_delta.z;
+	m_position += m_direction * movement_delta.z;
+	m_position += m_right * movement_delta.x;
+	m_position += m_up * movement_delta.y;
 	m_rotation += rotation_delta;
 	m_update_view_matrix = true;
 }
@@ -102,8 +102,9 @@ void Camera::update_veiw_matrix()
 	const float pitch_radians = glm::radians(-m_rotation.y);
 	const float yaw_radians = glm::radians(-m_rotation.z);
 
+
 	const glm::mat3 rotate_matrix_x(
-		1, 0, 0, 
+		1, 0, 0,
 		0, cos(roll_radians), sin(roll_radians),
 		0, -sin(roll_radians), cos(roll_radians));
 
@@ -116,6 +117,7 @@ void Camera::update_veiw_matrix()
 		cos(yaw_radians), sin(yaw_radians), 0.f, 
 		-sin(yaw_radians), cos(yaw_radians), 0.f,
 		0.f, 0.f, 1.f);
+
 
 	const glm::mat3 euler_rotate_matrix = rotate_matrix_z * rotate_matrix_y * rotate_matrix_x;
 

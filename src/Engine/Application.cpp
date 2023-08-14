@@ -17,63 +17,63 @@
 
 const GLfloat vertexCoords[] = {
     // FRONT
-    -1.f, -1.f, -1.f,
-    -1.f,  1.f, -1.f,
-    -1.f,  1.f,  1.f,
-    -1.f, -1.f,  1.f,
+    -1.f, -1.f, -1.f,//1
+    -1.f,  1.f, -1.f,//2
+     1.f,  1.f,  -1.f,//3
+     1.f, -1.f,  -1.f,//4
     // BACK
-    1.f, -1.f, -1.f,
-    1.f,  1.f, -1.f,
-    1.f,  1.f,  1.f,
-    1.f, -1.f,  1.f,
+    1.f, -1.f, 1.f,//5
+    1.f,  1.f, 1.f,//6
+    -1.f,  1.f,  1.f,//7
+    -1.f, -1.f,  1.f,//8
     // RIGHT
-    -1.f,  1.f, -1.f,
-     1.f,  1.f, -1.f,
-     1.f,  1.f,  1.f,
-    -1.f,  1.f,  1.f,
+    1.f,  -1.f, -1.f,//9
+     1.f,  1.f, -1.f,//10
+     1.f,  1.f,  1.f,//11
+    1.f,  -1.f,  1.f,//12
     // LEFT
-    -1.f, -1.f, -1.f,
-     1.f, -1.f, -1.f,
-     1.f, -1.f,  1.f,
-    -1.f, -1.f,  1.f,
+    -1.f, -1.f, 1.f,//13
+    -1.f,  1.f, 1.f,//14
+    -1.f,  1.f, -1.f,//15
+    -1.f, -1.f, -1.f,//16
     // TOP
-    -1.f, -1.f,  1.f,
-    -1.f,  1.f,  1.f,
-     1.f,  1.f,  1.f,
-     1.f, -1.f,  1.f,
+    -1.f,  1.f,  -1.f,//17
+    -1.f,  1.f,  1.f,//18
+     1.f,  1.f,  1.f,//19
+     1.f,  1.f,  -1.f,//20
     // BOTTOM
-    -1.f, -1.f, -1.f,
-    -1.f,  1.f, -1.f,
-     1.f,  1.f, -1.f,
-     1.f, -1.f, -1.f
+    1.f, -1.f, -1.f,//21
+    1.f, -1.f, 1.f,//22
+    -1.f, -1.f, 1.f,//23
+    -1.f, -1.f, -1.f //24
 };
 
 const GLfloat textureCoords[] = {
     // FRONT
-    1.f, 0.f,
     0.f, 0.f,
-    0.f, 1.f,
+    1.f, 0.f,
     1.f, 1.f,
+    0.f, 1.f,
     // BACK
     0.f, 0.f,
     1.f, 0.f,
     1.f, 1.f,
     0.f, 1.f,
     // RIGHT
-    1.f, 0.f,
     0.f, 0.f,
-    0.f, 1.f,
+    1.f, 0.f,
     1.f, 1.f,
+    0.f, 1.f,
     // LEFT
     0.f, 0.f,
     1.f, 0.f,
     1.f, 1.f,
     0.f, 1.f,
     // TOP
-    1.f, 0.f,
     0.f, 0.f,
-    0.f, 1.f,
+    1.f, 0.f,
     1.f, 1.f,
+    0.f, 1.f,
     // BOTTOM
     0.f, 0.f,
     1.f, 0.f,
@@ -83,35 +83,35 @@ const GLfloat textureCoords[] = {
 
 const GLfloat normalCoords[] = {
     // FRONT
-    -1.f, 0.f, 0.f,
-    -1.f, 0.f, 0.f,
-    -1.f, 0.f, 0.f,
-    -1.f, 0.f, 0.f,
+    0.f, 0.f, -1.f,
+    0.f, 0.f, -1.f,
+    0.f, 0.f, -1.f,
+    0.f, 0.f, -1.f,
     // BACK
-    1.f, 0.f, 0.f,
-    1.f, 0.f, 0.f,
-    1.f, 0.f, 0.f,
-    1.f, 0.f, 0.f,
+    0.f, 0.f, 1.f,
+    0.f, 0.f, 1.f,
+    0.f, 0.f, 1.f,
+    0.f, 0.f, 1.f,
     // RIGHT
-    0.f,  1.f, 0.f,
-    0.f,  1.f, 0.f,
-    0.f,  1.f, 0.f,
-    0.f,  1.f, 0.f,
+    1.f,  0.f, 0.f,
+    1.f,  0.f, 0.f,
+    1.f,  0.f, 0.f,
+    1.f,  0.f, 0.f,
     // LEFT
-    0.f, -1.f, 0.f,
-    0.f, -1.f, 0.f,
-    0.f, -1.f, 0.f,
-    0.f, -1.f, 0.f,
+    -1.f, 0.f, 0.f,
+    -1.f, 0.f, 0.f,
+    -1.f, 0.f, 0.f,
+    -1.f, 0.f, 0.f,
     // TOP
-    0.f, 0.f,  1.f,
-    0.f, 0.f,  1.f,
-    0.f, 0.f,  1.f,
-    0.f, 0.f,  1.f,
+    0.f, 1.f,  0.f,
+    0.f, 1.f,  0.f,
+    0.f, 1.f,  0.f,
+    0.f, 1.f,  0.f,
      // BOTTOM
-     0.f, 0.f, -1.f,
-     0.f, 0.f, -1.f,
-     0.f, 0.f, -1.f,
-     0.f, 0.f, -1.f
+     0.f, -1.f, 0.f,
+     0.f, -1.f, 0.f,
+     0.f, -1.f, 0.f,
+     0.f, -1.f, 0.f
 };
 
 GLuint indexes[]
@@ -302,7 +302,7 @@ int Application::start(glm::ivec2& window_size, const char* title)
         ImGui::SliderFloat3("Sprite position", m_sprite_pos, -50.f, 50.f);
         ImGui::SliderFloat3("Cube position", m_cube_pos, -50.f, 50.f);
         ImGui::SliderFloat3("Cube scale", m_cube_scale, -50.f, 50.f);
-        ImGui::SliderFloat3("Light source position", m_light_pos, -50.f, 50.f);
+        ImGui::SliderFloat3("Light source position", m_light_pos, -20.f, 20.f);
         ImGui::SliderFloat("Ambient factor", &m_ambient_factor, 0.f, 1.f);
         ImGui::SliderFloat("Diffuse factor", &m_diffuse_factor, 0.f, 1.f);
         ImGui::SliderFloat("Specular factor", &m_specular_factor, 0.f, 1.f);
@@ -428,61 +428,61 @@ void Application::on_update(const double delta)
 
     if (Input::isKeyPressed(KeyCode::KEY_W))
     {
-        movement_delta.x += static_cast<float>(addSpeed * m_cam_velocity * delta);
+        movement_delta.z += static_cast<float>(addSpeed * m_cam_velocity * delta);
     }
     else if (Input::isKeyPressed(KeyCode::KEY_S))
     {
-        movement_delta.x -= static_cast<float>(addSpeed * m_cam_velocity * delta);
+        movement_delta.z -= static_cast<float>(addSpeed * m_cam_velocity * delta);
     }
     else if (Input::isKeyPressed(KeyCode::KEY_A))
     {
-        movement_delta.y -= static_cast<float>(addSpeed * m_cam_velocity * delta);
+        movement_delta.x -= static_cast<float>(addSpeed * m_cam_velocity * delta);
     }
     else if (Input::isKeyPressed(KeyCode::KEY_D))
     {
-        movement_delta.y += static_cast<float>(addSpeed * m_cam_velocity * delta);
+        movement_delta.x += static_cast<float>(addSpeed * m_cam_velocity * delta);
     }
     else if (Input::isKeyPressed(KeyCode::KEY_SPACE))
     {
-        movement_delta.z += static_cast<float>(addSpeed * m_cam_velocity * delta);
+        movement_delta.y += static_cast<float>(addSpeed * m_cam_velocity * delta);
     }
     else if (Input::isKeyPressed(KeyCode::KEY_LEFT_SHIFT))
     {
-        movement_delta.z -= static_cast<float>(addSpeed * m_cam_velocity * delta);
+        movement_delta.y -= static_cast<float>(addSpeed * m_cam_velocity * delta);
     }
 
     else if (Input::isKeyPressed(KeyCode::KEY_UP))
     {
-        rotation_delta.y += static_cast<float>(addSpeed * m_cam_rotate_velocity * delta);
+        rotation_delta.x -= static_cast<float>(addSpeed * m_cam_rotate_velocity * delta);
     }
     else if (Input::isKeyPressed(KeyCode::KEY_DOWN))
     {
-        rotation_delta.y -= static_cast<float>(addSpeed * m_cam_rotate_velocity * delta);
+        rotation_delta.x += static_cast<float>(addSpeed * m_cam_rotate_velocity * delta);
     }
     else if (Input::isKeyPressed(KeyCode::KEY_LEFT))
     {
-        rotation_delta.z -= static_cast<float>(addSpeed * m_cam_rotate_velocity * delta);
+        rotation_delta.y -= static_cast<float>(addSpeed * m_cam_rotate_velocity * delta);
     }
     else if (Input::isKeyPressed(KeyCode::KEY_RIGHT))
     {
-        rotation_delta.z += static_cast<float>(addSpeed * m_cam_rotate_velocity * delta);
+        rotation_delta.y += static_cast<float>(addSpeed * m_cam_rotate_velocity * delta);
     }
     else if (Input::isKeyPressed(KeyCode::KEY_Q))
     {
-        rotation_delta.x += static_cast<float>(addSpeed * m_cam_rotate_velocity * delta);
+        rotation_delta.z += static_cast<float>(addSpeed * m_cam_rotate_velocity * delta);
     }
     else if (Input::isKeyPressed(KeyCode::KEY_E))
     {
-        rotation_delta.x -= static_cast<float>(addSpeed * m_cam_rotate_velocity * delta);
+        rotation_delta.z -= static_cast<float>(addSpeed * m_cam_rotate_velocity * delta);
     }
 
     if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_RIGHT))
     {
        glm::vec2 pos = m_pWindow->get_current_cursor_position();
-       rotation_delta.z = m_isInversiveMouseY 
-           ? (rotation_delta.z + ((m_init_mouse_pos_x - pos.x) / (1 / m_cam_sensetivity)))
-           : (rotation_delta.z - ((m_init_mouse_pos_x - pos.x) / (1 / m_cam_sensetivity)));
-       rotation_delta.y += (m_init_mouse_pos_y - pos.y) / (1 / m_cam_sensetivity);
+       rotation_delta.y = m_isInversiveMouseY 
+           ? (rotation_delta.y + ((m_init_mouse_pos_x - pos.x) / (1 / m_cam_sensetivity)))
+           : (rotation_delta.y - ((m_init_mouse_pos_x - pos.x) / (1 / m_cam_sensetivity)));
+       rotation_delta.x += (m_init_mouse_pos_y - pos.y) / (1 / m_cam_sensetivity);
        m_init_mouse_pos_x = pos.x;
        m_init_mouse_pos_y = pos.y;
     }

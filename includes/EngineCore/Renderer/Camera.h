@@ -39,8 +39,8 @@ public:
 	/// <summary>
 	/// Move and rotate camera
 	/// </summary>
-	/// <param name="movement_delta">: X - forward, Y - right, Z - up</param>
-	/// <param name="rotation_delta">: X - roll, Y - pitch, Z - yaw</param>
+	/// <param name="movement_delta">: X - right, Y - yp, Z - forward</param>
+	/// <param name="rotation_delta">: X - roll, Y - yaw, Z - roll</param>
 	void add_movement_and_rotation(const glm::vec3& movement_delta, const glm::vec3& rotation_delta);
 
 private:
@@ -60,9 +60,9 @@ private:
 	float m_viewport_height{ 600.1f };
 	float m_field_of_view{ 60.f };
 
-	static constexpr glm::vec3 s_world_up{ 0.f, 0.f, 1.f };
-	static constexpr glm::vec3 s_world_rigt{ 0.f, -1.f, 0.f };
-	static constexpr glm::vec3 s_world_forward{ 1.f, 0.f, 0.f };
+	static constexpr glm::vec3 s_world_up{ 0.f, 1.f, 0.f };
+	static constexpr glm::vec3 s_world_rigt{ -1.f, 0.f, 0.f };
+	static constexpr glm::vec3 s_world_forward{ 0.f, 0.f, 1.f };
 
 	glm::mat4 m_veiw_matrix;
 	glm::mat4 m_projection_matrix;

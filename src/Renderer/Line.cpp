@@ -14,29 +14,37 @@ namespace RenderEngine
 	{
 
 		const GLfloat vertexCoords[] = {
-			0.f, 0.f,
-			1.f, 1.f
+			0.f, 0.f, 0.f,
+			1.f, 1.f, 1.f
 		};
 
-		m_vertexCoordsBuffer.init(&vertexCoords, 2 * 2 * sizeof(GLfloat));
+		m_vertexCoordsBuffer.init(&vertexCoords, 3 * 2 * sizeof(GLfloat));
 		VertexBufferLayout vertexCoordsLayout;
-		vertexCoordsLayout.addElementLayoutFloat(2, false);
+		vertexCoordsLayout.addElementLayoutFloat(3, false);
 		m_vertexArray.addBuffer(m_vertexCoordsBuffer, vertexCoordsLayout);
 
 		m_vertexArray.unbind();
 	}
-	void Line::render(const glm::vec2& position, const glm::vec2& size, const int layer, glm::vec4& color) const
+	void Line::render(const glm::vec3& position, const glm::vec3& size, glm::vec3& color) const
 	{
 		m_pShaderProgram->use();
 
-		glm::mat4 model(1.f);
+		glm::mat4 scaleMat(
+			size.x, 0, 0, 0,
+			0, size.y, 0, 0,
+			0, 0, size.z, 0,
+			0, 0, 0, 1);
 
-		model = glm::translate(model, glm::vec3(position, 0.f));
-		model = glm::scale(model, glm::vec3(size, 1.f));
+		glm::mat4 translateMat(
+			1, 0, 0, 0,
+			0, 1, 0, 0,
+			0, 0, 1, 0,
+			position.x, position.y, position.z, 1);
+
+		glm::mat4 model = translateMat * scaleMat;
 
 		m_pShaderProgram->setMatrix4("modelMat", model);
-		m_pShaderProgram->setFloat("layer", layer);
-		m_pShaderProgram->setVec4("sourceColor", color);
+		m_pShaderProgram->setVec4("sourceColor", glm::vec4(color, 1.f));
 
 		Renderer::drawLine(m_vertexArray, *m_pShaderProgram);
 	}

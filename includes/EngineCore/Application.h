@@ -8,6 +8,7 @@
 #include "EngineCore/Renderer/IndexBuffer.h"
 #include "EngineCore/Renderer/Texture2D.h"
 #include "EngineCore/Renderer/ShaderProgram.h"
+//#include "EngineCore/Renderer/Line.h"
 
 #include <memory>
 #include <glm/vec2.hpp>
@@ -37,15 +38,24 @@ protected:
 
 	Camera* m_cam;
 
+	//RenderEngine::Line* m_line;
+
 	float m_colors[4] = { 0.33f, 0.33f, 0.33f, 0.f };
 	float m_cam_pos[3] = { -5.f, 0.f, 0.f };
 	float m_cam_rot[3] = { 0.f, 0.f, 0.f };
 
 	float m_sprite_pos[3] = { 5.f, 0.f, 0.f };
 
+
+	float m_cube_pos[3] = { 10.f, 0.f, 0.f };
+	float m_cube_scale[3] = { 1.f, 1.f, 1.f };
+
 	float m_cam_velocity = 0.01f;
 	float m_cam_rotate_velocity = 0.1f;
 	float m_cam_sensetivity = 1.f;
+	float m_cam_fov = 60.f;
+
+	float m_add_ctrl_speed = 2.f;
 
 	double m_init_mouse_pos_x = 0;
 	double m_init_mouse_pos_y = 0;
@@ -55,6 +65,7 @@ protected:
 
 	std::shared_ptr<RenderEngine::VertexArray> m_vertexArray;
 	RenderEngine::VertexBuffer m_vertexCoordsBuffer;
+	RenderEngine::VertexBuffer m_vertexNormalBuffer;
 	RenderEngine::VertexBuffer m_textureCoordsBuffer;
 	RenderEngine::IndexBuffer m_indexBuffer;
 

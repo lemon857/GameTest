@@ -9,6 +9,11 @@
       "name": "shapeShader",
       "filePath_v": "res/shaders/shape.vert",
       "filePath_f": "res/shaders/shape.frag"
+    },
+    {
+      "name": "shape3DShader",
+      "filePath_v": "res/shaders/shape3D.vert",
+      "filePath_f": "res/shaders/shape3D.frag"
     }
   ],
   "textureAtlases": [

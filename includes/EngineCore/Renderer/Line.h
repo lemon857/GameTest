@@ -2,7 +2,7 @@
 
 #include <memory>
 #include <string>
-#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
 #include "VertexBuffer.h"
@@ -22,7 +22,7 @@ namespace RenderEngine
 		Line(const Line&) = delete;
 		Line& operator=(const Line&) = delete;
 
-		void render(const glm::vec2& position, const glm::vec2& size, const int layer, glm::vec4& color) const;
+		void render(const glm::vec3& position, const glm::vec3& size, glm::vec3& color) const;
 	private:
 		std::shared_ptr<ShaderProgram> m_pShaderProgram;
 

@@ -32,6 +32,7 @@ namespace RenderEngine
 	{
 		shader.use();
 		vertexArray.bind();
+		glLineWidth(20.f);
 		glDrawArrays(GL_LINES, 0, 2);
 	}
 	void Renderer::bindTexture(const Texture2D& texture)

@@ -163,5 +163,12 @@
       "textureAtlas": "WallAtlas",
       "initialSubTexture": "bulletUp"
     }
+  ],
+  "objects": [
+    {
+      "name": "defaultCube",
+      "shader": "shapeShader",
+      "source": "res/models/test.obj"
+    }
   ]
 }

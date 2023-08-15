@@ -1,6 +1,7 @@
 #include "EngineCore/Resources/ResourceManager.h";
 #include "EngineCore/Renderer/ShaderProgram.h"
 #include "EngineCore/Renderer/Texture2D.h"
+#include "EngineCore/Renderer3D/GraphicsObject.h"
 #include "EngineCore/Renderer/Sprite.h"
 #include "EngineCore/Renderer/Animation.h"
 #include "EngineCore/Renderer/Animator.h"
@@ -20,6 +21,7 @@
 ResourceManager::ShaderProgramsMap ResourceManager::m_ShaderPrograms;
 ResourceManager::TexturesMap ResourceManager::m_textures;
 ResourceManager::SpritesMap ResourceManager::m_sprites;
+ResourceManager::GraphObjMap ResourceManager::m_graph_objs;
 //ResourceManager::AnimatorsMap ResourceManager::m_animators;
 std::string ResourceManager::m_path;
 
@@ -99,6 +101,18 @@ bool ResourceManager::loadJSONresources(const std::string & JSONpath)
 			loadSprite(name, atlas, shader, initSubTexture);			
 		}
 	}
+	auto objectsIt = doc.FindMember("objects");
+	if (objectsIt != doc.MemberEnd())
+	{
+		for (const auto& currenObject : objectsIt->value.GetArray())
+		{
+			const std::string name = currenObject["name"].GetString();
+			const std::string shader = currenObject["shader"].GetString();
+			const std::string source = currenObject["source"].GetString();
+			
+			loadGraphicsObject(name, shader, source);
+		}
+	}
 	LOG_INFO("Loadind data in JSON file complete");
 	/*auto animatorsIt = doc.FindMember("animators");
 	if (animatorsIt != doc.MemberEnd())
@@ -145,6 +159,7 @@ bool ResourceManager::loadINIsettings(const std::string& INIpath, INIdata& data,
 
 		std::stringstream buf;
 		buf << f.rdbuf();
+		f.close();
 
 		std::string INIstr = buf.str();
 		if (!INIstr.empty() && !isWrite)
@@ -198,10 +213,12 @@ std::string ResourceManager::getFileString(const std::string& relativeFilePath)
 	if (!f.is_open()) 
 	{
 		LOG_ERROR("Failed to open file: {0}", relativeFilePath);
+		f.close();
 		return std::string();
 	}
 	std::stringstream buffer;
 	buffer << f.rdbuf();
+	f.close();
 	return buffer.str();
 }
 std::shared_ptr<RenderEngine::ShaderProgram> ResourceManager::loadShaders(const std::string& shaderName, const std::string& vertexPath, const std::string& fragmentPath)
@@ -297,6 +314,156 @@ std::shared_ptr<RenderEngine::Sprite> ResourceManager::getSprite(const std::stri
 		return it->second;
 	}
 	LOG_ERROR("Can't find sprite: {0}", spriteName);
+	return nullptr;
+}
+std::shared_ptr<RenderEngine::GraphicsObject> ResourceManager::loadGraphicsObject(const std::string& objName, const std::string& shaderName, const std::string& source)
+{
+	auto pShaderProgram = getShaderProgram(shaderName);
+	if (!pShaderProgram)
+	{
+		LOG_ERROR("Can't find shader program: {0} for the grapics object: {1}", shaderName, objName);
+		return nullptr;
+	}
+
+	const std::string objStr = getFileString(source);
+
+	std::string vertStr = objStr;
+
+	std::string numStr = "0.0";
+
+	std::vector<float> textures = std::vector<float>();
+	std::vector<float> normals = std::vector<float>();
+	std::vector<float> vertexes = std::vector<float>();
+	std::vector<int> indexes = std::vector<int>();
+
+	while (true)
+	{
+		vertStr = vertStr.substr(vertStr.find('v'), vertStr.size());
+		if (vertStr.substr(1, 1) == "n" || vertStr.empty()) break;
+		vertStr = vertStr.substr(vertStr.find('v') + 1, vertStr.size() - 1);
+	}
+	while (true)
+	{
+		if (vertStr.find('v') != 0) break;
+		vertStr = vertStr.substr(3, vertStr.size());
+
+		numStr = vertStr.substr(0, vertStr.find(' '));
+		normals.push_back(std::stof(numStr));
+
+		vertStr = vertStr.substr(numStr.size() + 1, vertStr.size());
+
+		numStr = vertStr.substr(0, vertStr.find(' '));
+		normals.push_back(std::stof(numStr));
+
+		vertStr = vertStr.substr(numStr.size() + 1, vertStr.size());
+
+		numStr = vertStr.substr(0, vertStr.find('\r'));
+		normals.push_back(std::stof(numStr));
+
+		vertStr = vertStr.substr(numStr.size() + 2, vertStr.size());
+	}
+
+	vertStr = vertStr.substr(vertStr.find('\n') + 1, vertStr.size());
+	vertStr = vertStr.substr(vertStr.find('\n') + 1, vertStr.size());
+
+	while (true)
+	{
+		if (vertStr.find('v') != 0) break;
+		vertStr = vertStr.substr(3, vertStr.size());
+
+		numStr = vertStr.substr(0, vertStr.find(' '));
+		textures.push_back(std::stof(numStr));
+		vertStr = vertStr.substr(numStr.size() + 1, vertStr.size());
+
+		numStr = vertStr.substr(0, vertStr.find('\r'));
+		textures.push_back(std::stof(numStr));
+		vertStr = vertStr.substr(numStr.size() + 2, vertStr.size());
+	}
+
+	vertStr = vertStr.substr(vertStr.find('\n') + 1, vertStr.size());
+	vertStr = vertStr.substr(vertStr.find('\n') + 1, vertStr.size());
+
+	while (true)
+	{
+		if (vertStr.find('v') != 0) break;
+		vertStr = vertStr.substr(2, vertStr.size());
+
+		numStr = vertStr.substr(0, vertStr.find(' '));
+		vertexes.push_back(std::stof(numStr));
+
+		vertStr = vertStr.substr(numStr.size() + 1, vertStr.size());
+
+		numStr = vertStr.substr(0, vertStr.find(' '));
+		vertexes.push_back(std::stof(numStr));
+
+		vertStr = vertStr.substr(numStr.size() + 1, vertStr.size());
+
+		numStr = vertStr.substr(0, vertStr.find('\r'));
+		vertexes.push_back(std::stof(numStr));
+
+		vertStr = vertStr.substr(numStr.size() + 2, vertStr.size());
+	}
+
+	vertStr = vertStr.substr(vertStr.find('\n') + 1, vertStr.size());
+	vertStr = vertStr.substr(vertStr.find('\n') + 1, vertStr.size());
+
+	while (true)
+	{
+		if (vertStr.find('f') != 0) break;
+
+		vertStr = vertStr.substr(2, vertStr.size());
+		// 1 - 3
+		numStr = vertStr.substr(0, vertStr.find('/'));
+		indexes.push_back(std::stoi(numStr) - 1);
+		vertStr = vertStr.substr(numStr.size() + 1, vertStr.size());
+
+		numStr = vertStr.substr(0, vertStr.find('/'));
+		indexes.push_back(std::stoi(numStr) - 1);
+		vertStr = vertStr.substr(numStr.size() + 1, vertStr.size());
+
+		numStr = vertStr.substr(0, vertStr.find(' '));
+		indexes.push_back(std::stoi(numStr) - 1);
+		vertStr = vertStr.substr(numStr.size() + 1, vertStr.size());
+		// 2 - 3 
+		numStr = vertStr.substr(0, vertStr.find('/'));
+		indexes.push_back(std::stoi(numStr) - 1);
+		vertStr = vertStr.substr(numStr.size() + 1, vertStr.size());
+
+		numStr = vertStr.substr(0, vertStr.find('/'));
+		indexes.push_back(std::stoi(numStr) - 1);
+		vertStr = vertStr.substr(numStr.size() + 1, vertStr.size());
+
+		numStr = vertStr.substr(0, vertStr.find(' '));
+		indexes.push_back(std::stoi(numStr) - 1);
+		vertStr = vertStr.substr(numStr.size() + 1, vertStr.size());
+		// 3 - 3
+		numStr = vertStr.substr(0, vertStr.find('/'));
+		indexes.push_back(std::stoi(numStr) - 1);
+		vertStr = vertStr.substr(numStr.size() + 1, vertStr.size());
+
+		numStr = vertStr.substr(0, vertStr.find('/'));
+		indexes.push_back(std::stoi(numStr) - 1);
+		vertStr = vertStr.substr(numStr.size() + 1, vertStr.size());
+
+		numStr = vertStr.substr(0, vertStr.find('\r'));
+		indexes.push_back(std::stoi(numStr) - 1);
+		vertStr = vertStr.substr(numStr.size() + 2, vertStr.size());
+	}
+
+	std::shared_ptr<RenderEngine::GraphicsObject>& graphObj = m_graph_objs.emplace(objName, std::make_shared<RenderEngine::GraphicsObject>
+		(pShaderProgram, vertexes, indexes, textures, normals)).first->second;
+
+	//return graphObj;
+	return nullptr;
+}
+std::shared_ptr<RenderEngine::GraphicsObject> ResourceManager::getGraphicsObject(const std::string& objName)
+{
+	GraphObjMap::const_iterator it = m_graph_objs.find(objName);
+	if (it != m_graph_objs.end())
+	{
+		return it->second;
+	}
+	LOG_ERROR("Can't find graphics object: {0}", objName);
 	return nullptr;
 }
 std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTextureAtlas(

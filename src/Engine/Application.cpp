@@ -6,6 +6,7 @@
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Renderer/Renderer.h"
 #include "EngineCore/Renderer/Sprite.h"
+#include "EngineCore/Renderer3D/GraphicsObject.h"
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
@@ -343,6 +344,10 @@ int Application::start(glm::ivec2& window_size, const char* title)
 
         ResourceManager::getSprite("TankSprite")->render(glm::vec3(m_sprite_pos[0], m_sprite_pos[1], m_sprite_pos[2]), glm::vec3(5), 0);
 
+        ResourceManager::getShaderProgram("shapeShader")->use();
+        ResourceManager::getShaderProgram("shapeShader")->setVec4("sourceColor", glm::vec4(1.f));
+        ResourceManager::getGraphicsObject("defaultCube")->render(glm::vec3(m_sprite_pos[0], m_sprite_pos[1], m_sprite_pos[2]), glm::vec3(5));
+
         m_line->render(glm::vec3(0.f), glm::vec3(-10.f), glm::vec3(1.f));
 
         // --------------------------------------------------------- //
@@ -407,8 +412,9 @@ int Application::start(glm::ivec2& window_size, const char* title)
         m_pWindow->on_update();
         on_update(duration);        
     }
-    
-    ResourceManager::loadINIsettings("EngineTest.ini", data, true);
+
+    INIdata endData{ m_pWindow->get_size(), m_window_position, m_maximized_window};
+    ResourceManager::loadINIsettings("EngineTest.ini", endData, true);
     m_pWindow = nullptr;
 
     return 0;
@@ -469,11 +475,11 @@ void Application::on_update(const double delta)
     }
     else if (Input::isKeyPressed(KeyCode::KEY_Q))
     {
-        rotation_delta.z += static_cast<float>(addSpeed * m_cam_rotate_velocity * delta);
+        rotation_delta.z -= static_cast<float>(addSpeed * m_cam_rotate_velocity * delta);
     }
     else if (Input::isKeyPressed(KeyCode::KEY_E))
     {
-        rotation_delta.z -= static_cast<float>(addSpeed * m_cam_rotate_velocity * delta);
+        rotation_delta.z += static_cast<float>(addSpeed * m_cam_rotate_velocity * delta);
     }
 
     if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_RIGHT))

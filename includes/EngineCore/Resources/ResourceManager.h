@@ -19,6 +19,7 @@ namespace RenderEngine
 	class Texture2D;
 	class Sprite;
 	class Animator;
+	class GraphicsObject;
 }
 
 	class ResourceManager {
@@ -33,6 +34,8 @@ namespace RenderEngine
 		ResourceManager(const ResourceManager&&) = delete;
 		ResourceManager& operator=(const ResourceManager&) = delete;
 		ResourceManager& operator=(const ResourceManager&&) = delete;
+
+		static std::string getFileString(const std::string& relativeFilePath);
 
 		static bool loadJSONresources(const std::string& JSONpath);
 
@@ -57,6 +60,12 @@ namespace RenderEngine
 			const std::string& subTextureName = "default");
 		static std::shared_ptr<RenderEngine::Sprite> getSprite(const std::string& spriteName);
 
+		static std::shared_ptr<RenderEngine::GraphicsObject>  loadGraphicsObject(
+			const std::string& objName,
+			const std::string& shaderName,
+			const std::string& source);
+		static std::shared_ptr<RenderEngine::GraphicsObject> getGraphicsObject(const std::string& objName);
+
 		/*static std::shared_ptr<RenderEngine::Animator>  loadAnimator(
 			const std::string& animatorName,
 			const std::string& spriteName);*/
@@ -71,7 +80,6 @@ namespace RenderEngine
 			const unsigned int subTextureWidth,
 			const unsigned int subTextureHeight);
 	private:
-		static std::string getFileString(const std::string& relativeFilePath);
 
 		typedef std::map<const std::string, std::shared_ptr<RenderEngine::ShaderProgram>> ShaderProgramsMap;
 		static ShaderProgramsMap m_ShaderPrograms;
@@ -84,6 +92,9 @@ namespace RenderEngine
 
 		//typedef std::map<const std::string, std::shared_ptr<RenderEngine::Animator>> AnimatorsMap;
 		//static AnimatorsMap m_animators;
+
+		typedef std::map<const std::string, std::shared_ptr<RenderEngine::GraphicsObject>> GraphObjMap;
+		static GraphObjMap m_graph_objs;
 
 		static std::string m_path;
 	};

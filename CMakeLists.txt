@@ -38,8 +38,9 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Renderer/Animation.h
 	includes/EngineCore/Physics/PhysicsEngine.h
 	includes/EngineCore/Physics/Collider.h
-	includes/EngineCore/Physics/MoveController.h
-		
+	includes/EngineCore/Physics/MoveController.h		
+	includes/EngineCore/Physics/Ray.h
+	
 	includes/EngineCore/Renderer3D/GraphicsObject.h
 )
 
@@ -91,6 +92,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Physics/PhysicsEngine.cpp
 	src/Physics/Collider.cpp
 	src/Physics/MoveController.cpp
+	src/Physics/Ray.cpp
 	
 	src/System/Timer.cpp
 		

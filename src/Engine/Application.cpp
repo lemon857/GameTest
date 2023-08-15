@@ -12,6 +12,7 @@
 #include <glad/glad.h>
 #include <chrono>
 
+#include <glm/ext/matrix_transform.hpp>   
 #include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/backends/imgui_impl_glfw.h>
@@ -83,32 +84,32 @@ const GLfloat textureCoords[] = {
 };
 
 const GLfloat normalCoords[] = {
-    // FRONT
+    // FRONT // 4
     0.f, 0.f, -1.f,
     0.f, 0.f, -1.f,
     0.f, 0.f, -1.f,
     0.f, 0.f, -1.f,
-    // BACK
+    // BACK // 3
     0.f, 0.f, 1.f,
     0.f, 0.f, 1.f,
     0.f, 0.f, 1.f,
     0.f, 0.f, 1.f,
-    // RIGHT
+    // RIGHT // 2
     1.f,  0.f, 0.f,
     1.f,  0.f, 0.f,
     1.f,  0.f, 0.f,
     1.f,  0.f, 0.f,
-    // LEFT
+    // LEFT // 1
     -1.f, 0.f, 0.f,
     -1.f, 0.f, 0.f,
     -1.f, 0.f, 0.f,
     -1.f, 0.f, 0.f,
-    // TOP
+    // TOP // 6
     0.f, 1.f,  0.f,
     0.f, 1.f,  0.f,
     0.f, 1.f,  0.f,
     0.f, 1.f,  0.f,
-     // BOTTOM
+     // BOTTOM // 5
      0.f, -1.f, 0.f,
      0.f, -1.f, 0.f,
      0.f, -1.f, 0.f,
@@ -130,7 +131,6 @@ GLuint indexes[]
     // bottom
     20, 21, 22, 22, 23, 20
 };
-
 Application::Application()
 {
     LOG_INFO("Starting Application");
@@ -148,6 +148,8 @@ int Application::start(glm::ivec2& window_size, const char* title)
     ResourceManager::loadINIsettings("EngineTest.ini", data, false);
 
     m_cam = new Camera(glm::vec3(0), glm::vec3(0));
+    
+    m_ray = new Ray();
 
     m_pCloseWindow = false;
     m_pWindow = std::make_unique<Window>(title, m_window_position, window_size, m_maximized_window);
@@ -183,8 +185,9 @@ int Application::start(glm::ivec2& window_size, const char* title)
             if (e.key_code <= KeyCode::KEY_Z)  LOG_INFO("[EVENT] Key released {0}", static_cast<char>(e.key_code));
             Input::releaseKey(e.key_code);
         });
-    m_event_dispather.add_event_listener<EventMouseMoved>([](EventMouseMoved& e)
+    m_event_dispather.add_event_listener<EventMouseMoved>([&](EventMouseMoved& e)
         {
+            m_ray->set_2d_ray(glm::vec2(m_pWindow->get_size() / 2), glm::vec2(e.x, e.y));
             LOG_INFO("[EVENT] Mouse moved to {0}x{1}", e.x, e.y);
         });
     m_event_dispather.add_event_listener<EventWindowClose>([&](EventWindowClose& e)
@@ -293,22 +296,24 @@ int Application::start(glm::ivec2& window_size, const char* title)
         ImGuiIO& io = ImGui::GetIO();
         io.DisplaySize.x = static_cast<float>(m_pWindow->get_size().x);
         io.DisplaySize.y = static_cast<float>(m_pWindow->get_size().y);
-
+        // ------------------------------------------------------------ // 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui::NewFrame();
 
         ImGui::Begin("Something settings");
+        ImGui::SliderFloat3("ASS position", m_line_pos, -50.f, 50.f);
         ImGui::ColorEdit4("Background Color", m_colors);
         ImGui::ColorPicker3("Light source Color", m_light_color);
         ImGui::SliderFloat3("Sprite position", m_sprite_pos, -50.f, 50.f);
         ImGui::SliderFloat3("Cube position", m_cube_pos, -50.f, 50.f);
         ImGui::SliderFloat3("Cube scale", m_cube_scale, -50.f, 50.f);
+        ImGui::SliderFloat3("Cube rotation", m_cube_rot, 0.f, 360.f);
         ImGui::SliderFloat3("Light source position", m_light_pos, -20.f, 20.f);
         ImGui::SliderFloat("Ambient factor", &m_ambient_factor, 0.f, 1.f);
         ImGui::SliderFloat("Diffuse factor", &m_diffuse_factor, 0.f, 1.f);
         ImGui::SliderFloat("Specular factor", &m_specular_factor, 0.f, 1.f);
         ImGui::SliderFloat("Shininess", &m_shininess, 0.f, 100.f);
-        ImGui::Checkbox("Is metalic", &m_isMetalic);
+        ImGui::SliderInt("Is metalic", &m_isMetalic, 0, 2);
         if (ImGui::SliderFloat3("Camera position", m_cam_pos, -50.f, 50.f))
         {
             m_cam->set_position(glm::vec3(m_cam_pos[0], m_cam_pos[1], m_cam_pos[2]));
@@ -321,6 +326,10 @@ int Application::start(glm::ivec2& window_size, const char* title)
         {
             m_cam->set_field_of_view(m_cam_fov);
         }
+        if (ImGui::SliderFloat("Camera far clip plane", &m_cam_far_plane, 1.f, 300.f))
+        {
+            m_cam->set_far_clip_plane(m_cam_far_plane);
+        }
         ImGui::SliderFloat("Sensetivity", &m_cam_sensetivity, 0.001f, 1.f);
         ImGui::SliderFloat("Addition speed", &m_add_ctrl_speed, 1.f, 4.f);
         if (ImGui::Checkbox("Perspective camera", &m_isPerspectiveCam))
@@ -332,6 +341,7 @@ int Application::start(glm::ivec2& window_size, const char* title)
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        // ------------------------------------------------------------ // 
 
         ResourceManager::getShaderProgram("shapeShader")->use();
         ResourceManager::getShaderProgram("shapeShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
@@ -344,11 +354,7 @@ int Application::start(glm::ivec2& window_size, const char* title)
 
         ResourceManager::getSprite("TankSprite")->render(glm::vec3(m_sprite_pos[0], m_sprite_pos[1], m_sprite_pos[2]), glm::vec3(5), 0);
 
-        ResourceManager::getShaderProgram("shapeShader")->use();
-        ResourceManager::getShaderProgram("shapeShader")->setVec4("sourceColor", glm::vec4(1.f));
-        ResourceManager::getGraphicsObject("defaultCube")->render(glm::vec3(m_sprite_pos[0], m_sprite_pos[1], m_sprite_pos[2]), glm::vec3(5));
-
-        m_line->render(glm::vec3(0.f), glm::vec3(-10.f), glm::vec3(1.f));
+        m_line->render(glm::vec3(0.f), glm::vec3(m_line_pos[0], m_line_pos[1], m_line_pos[2]), glm::vec3(1.f));
 
         // --------------------------------------------------------- //
 
@@ -367,7 +373,30 @@ int Application::start(glm::ivec2& window_size, const char* title)
             0, 0, 1, 0,
             m_cube_pos[0], m_cube_pos[1], m_cube_pos[2], 1);
 
-        glm::mat4 model = translateMat * scaleMat;
+        float xRotRadians = glm::radians(m_cube_rot[0]);
+        float yRotRadians = glm::radians(m_cube_rot[1]);
+        float zRotRadians = glm::radians(m_cube_rot[2]);
+
+        glm::mat4 rotateXmat(
+            1, 0, 0, 0,
+            0, cos(xRotRadians), -sin(xRotRadians), 0,
+            0, sin(xRotRadians), cos(xRotRadians), 0,
+            0, 0, 0, 1);
+
+        glm::mat4 rotateYmat(
+            cos(yRotRadians), 0, -sin(yRotRadians), 0,
+            0, 1, 0, 0,
+            sin(yRotRadians), 0, cos(yRotRadians), 0,
+            0, 0, 0, 1);
+
+        glm::mat4 rotateZmat(
+            cos(zRotRadians), -sin(zRotRadians), 0, 0,
+            sin(zRotRadians), cos(zRotRadians), 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1);
+
+        glm::mat4 model =  translateMat * rotateXmat * rotateYmat * rotateZmat * scaleMat;
+
         m_pShaderProgram->setVec3("light_color", glm::vec3(m_light_color[0], m_light_color[1], m_light_color[2]));
         m_pShaderProgram->setVec3("light_position", glm::vec3(m_light_pos[0], m_light_pos[1], m_light_pos[2]));
         m_pShaderProgram->setVec3("cam_position", m_cam->get_position());
@@ -375,7 +404,8 @@ int Application::start(glm::ivec2& window_size, const char* title)
         m_pShaderProgram->setFloat("diffuse_factor", m_diffuse_factor);
         m_pShaderProgram->setFloat("specular_factor", m_specular_factor);
         m_pShaderProgram->setFloat("shininess", m_shininess);
-        m_pShaderProgram->setInt("isMetalic", m_isMetalic == true ? 1 : 0);
+        m_pShaderProgram->setInt("isMetalic", m_isMetalic);
+        m_pShaderProgram->setVec4("sourceColor", glm::vec4(1.f));
         m_pShaderProgram->setMatrix4("modelMat", model);
 
         RenderEngine::Renderer::bindTexture(*m_pTextureAtlas);

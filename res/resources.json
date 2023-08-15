@@ -167,8 +167,13 @@
   "objects": [
     {
       "name": "defaultCube",
-      "shader": "shapeShader",
+      "shader": "shape3DShader",
       "source": "res/models/test.obj"
+    },
+    {
+      "name": "pyramind",
+      "shader": "shape3DShader",
+      "source": "res/models/finaly.obj"
     }
   ]
 }

@@ -37,6 +37,8 @@ namespace RenderEngine
 
 		static std::string getFileString(const std::string& relativeFilePath);
 
+		static std::string getExeFilePath() { return m_path; };
+
 		static bool loadJSONresources(const std::string& JSONpath);
 
 		static bool loadINIsettings(const std::string& INIpath, INIdata& data, const bool isWrite);

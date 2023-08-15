@@ -26,14 +26,14 @@ namespace RenderEngine
 
 		m_vertexArray.unbind();
 	}
-	void Line::render(const glm::vec3& position, const glm::vec3& size, glm::vec3& color) const
+	void Line::render(const glm::vec3& position, const glm::vec3& to, glm::vec3& color) const
 	{
 		m_pShaderProgram->use();
 
 		glm::mat4 scaleMat(
-			size.x, 0, 0, 0,
-			0, size.y, 0, 0,
-			0, 0, size.z, 0,
+			to.x, 0, 0, 0,
+			0, to.y, 0, 0,
+			0, 0, to.z, 0,
 			0, 0, 0, 1);
 
 		glm::mat4 translateMat(

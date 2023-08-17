@@ -12,10 +12,7 @@
 #include <glad/glad.h>
 #include <chrono>
 
-#include <glm/ext/matrix_transform.hpp>   
-#include <imgui/imgui.h>
-#include <imgui/backends/imgui_impl_opengl3.h>
-#include <imgui/backends/imgui_impl_glfw.h>
+#include <glm/ext/matrix_transform.hpp> 
 
 const GLfloat vertexCoords[] = {
     // FRONT
@@ -149,7 +146,7 @@ int Application::start(glm::ivec2& window_size, const char* title)
 
     m_cam = new Camera(glm::vec3(0), glm::vec3(0));
     
-    m_ray = new Ray();
+    //m_ray = new Ray();
 
     m_pCloseWindow = false;
     m_pWindow = std::make_unique<Window>(title, m_window_position, window_size, m_maximized_window);
@@ -187,7 +184,10 @@ int Application::start(glm::ivec2& window_size, const char* title)
         });
     m_event_dispather.add_event_listener<EventMouseMoved>([&](EventMouseMoved& e)
         {
-            m_ray->set_2d_ray(glm::vec2(m_pWindow->get_size() / 2), glm::vec2(e.x, e.y));
+            //m_ray->set_2d_ray(glm::vec2(m_pWindow->get_size() / 2), glm::vec2(e.x, e.y));
+            //glm::vec4 ass = glm::vec4(e.x, e.y, 0, 0) * glm::inverse(m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+            m_mouse_pos_x = e.x;
+            m_mouse_pos_y = e.y;
             LOG_INFO("[EVENT] Mouse moved to {0}x{1}", e.x, e.y);
         });
     m_event_dispather.add_event_listener<EventWindowClose>([&](EventWindowClose& e)
@@ -199,13 +199,13 @@ int Application::start(glm::ivec2& window_size, const char* title)
         {
             LOG_INFO("[EVENT] Mouse button pressed at ({0}x{1})", e.x_pos, e.y_pos);
             Input::pressMouseButton(e.mouse_button);
-            on_button_mouse_event(e.mouse_button, e.x_pos, e.y_pos, true);
+            on_mouse_button_event(e.mouse_button, e.x_pos, e.y_pos, true);
         });
     m_event_dispather.add_event_listener<EventMouseButtonReleased>([&](EventMouseButtonReleased& e)
         {
             LOG_INFO("[EVENT] Mouse button released at ({0}x{1})", e.x_pos, e.y_pos);
             Input::releaseMouseButton(e.mouse_button);
-            on_button_mouse_event(e.mouse_button, e.x_pos, e.y_pos, false);
+            on_mouse_button_event(e.mouse_button, e.x_pos, e.y_pos, false);
         });
     m_event_dispather.add_event_listener<EventMaximizeWindow>([&](EventMaximizeWindow& e)
         {
@@ -293,56 +293,6 @@ int Application::start(glm::ivec2& window_size, const char* title)
         m_cam_rot[1] = rot.y;
         m_cam_rot[2] = rot.z;
 
-        ImGuiIO& io = ImGui::GetIO();
-        io.DisplaySize.x = static_cast<float>(m_pWindow->get_size().x);
-        io.DisplaySize.y = static_cast<float>(m_pWindow->get_size().y);
-        // ------------------------------------------------------------ // 
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui::NewFrame();
-
-        ImGui::Begin("Something settings");
-        ImGui::SliderFloat3("ASS position", m_line_pos, -50.f, 50.f);
-        ImGui::ColorEdit4("Background Color", m_colors);
-        ImGui::ColorPicker3("Light source Color", m_light_color);
-        ImGui::SliderFloat3("Sprite position", m_sprite_pos, -50.f, 50.f);
-        ImGui::SliderFloat3("Cube position", m_cube_pos, -50.f, 50.f);
-        ImGui::SliderFloat3("Cube scale", m_cube_scale, -50.f, 50.f);
-        ImGui::SliderFloat3("Cube rotation", m_cube_rot, 0.f, 360.f);
-        ImGui::SliderFloat3("Light source position", m_light_pos, -20.f, 20.f);
-        ImGui::SliderFloat("Ambient factor", &m_ambient_factor, 0.f, 1.f);
-        ImGui::SliderFloat("Diffuse factor", &m_diffuse_factor, 0.f, 1.f);
-        ImGui::SliderFloat("Specular factor", &m_specular_factor, 0.f, 1.f);
-        ImGui::SliderFloat("Shininess", &m_shininess, 0.f, 100.f);
-        ImGui::SliderInt("Is metalic", &m_isMetalic, 0, 2);
-        if (ImGui::SliderFloat3("Camera position", m_cam_pos, -50.f, 50.f))
-        {
-            m_cam->set_position(glm::vec3(m_cam_pos[0], m_cam_pos[1], m_cam_pos[2]));
-        }
-        if (ImGui::SliderFloat3("Camera rotation", m_cam_rot, 0.f, 360.f))
-        {
-            m_cam->set_rotation(glm::vec3(m_cam_rot[0], m_cam_rot[1], m_cam_rot[2]));
-        }
-        if (ImGui::SliderFloat("Camera fov", &m_cam_fov, 1.f, 120.f))
-        {
-            m_cam->set_field_of_view(m_cam_fov);
-        }
-        if (ImGui::SliderFloat("Camera far clip plane", &m_cam_far_plane, 1.f, 300.f))
-        {
-            m_cam->set_far_clip_plane(m_cam_far_plane);
-        }
-        ImGui::SliderFloat("Sensetivity", &m_cam_sensetivity, 0.001f, 1.f);
-        ImGui::SliderFloat("Addition speed", &m_add_ctrl_speed, 1.f, 4.f);
-        if (ImGui::Checkbox("Perspective camera", &m_isPerspectiveCam))
-        {
-            m_cam->set_projection_mode(m_isPerspectiveCam ? Camera::ProjectionMode::Perspective : Camera::ProjectionMode::Orthographic);
-        }
-        ImGui::Checkbox("Inversive mouse", &m_isInversiveMouseY);
-        ImGui::End();
-
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-        // ------------------------------------------------------------ // 
-
         ResourceManager::getShaderProgram("shapeShader")->use();
         ResourceManager::getShaderProgram("shapeShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
         ResourceManager::getShaderProgram("shape3DShader")->use();
@@ -356,8 +306,19 @@ int Application::start(glm::ivec2& window_size, const char* title)
 
         m_line->render(glm::vec3(0.f), glm::vec3(m_line_pos[0], m_line_pos[1], m_line_pos[2]), glm::vec3(1.f));
 
-        // --------------------------------------------------------- //
+        if (m_drawNullIntersection)
+        {
+            m_line->render(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 0.f, -50.f), glm::vec3(1.f));
+            m_line->render(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, -50.f, 0.f), glm::vec3(1.f));
+            m_line->render(glm::vec3(0.f, 0.f, 0.f), glm::vec3(-50.f, 0.f, 0.f), glm::vec3(1.f));
 
+            m_line->render(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 0.f, 50.f), glm::vec3(1.f));
+            m_line->render(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 50.f, 0.f), glm::vec3(1.f));
+            m_line->render(glm::vec3(0.f, 0.f, 0.f), glm::vec3(50.f, 0.f, 0.f), glm::vec3(1.f));
+        }
+
+        // --------------------------------------------------------- //
+        
         // Cubes
 
         m_pShaderProgram->use();
@@ -439,8 +400,12 @@ int Application::start(glm::ivec2& window_size, const char* title)
 
         // --------------------------------------------------------- //
 
+
+        // ------------------------------------------------------------ // 
+        on_ui_render();
+        // ------------------------------------------------------------ // 
         m_pWindow->on_update();
-        on_update(duration);        
+        on_key_update(duration);
     }
 
     INIdata endData{ m_pWindow->get_size(), m_window_position, m_maximized_window};
@@ -450,7 +415,7 @@ int Application::start(glm::ivec2& window_size, const char* title)
     return 0;
 }
 
-void Application::on_update(const double delta)
+void Application::on_key_update(const double delta)
 {
     glm::vec3 movement_delta{ 0,0,0 };
     glm::vec3 rotation_delta{ 0,0,0 };
@@ -526,7 +491,7 @@ void Application::on_update(const double delta)
     m_cam->add_movement_and_rotation(movement_delta, rotation_delta);
 }
 
-void Application::on_button_mouse_event(const MouseButton button, const double pos_x, const double pos_y, const bool isPressed)
+void Application::on_mouse_button_event(const MouseButton button, const double pos_x, const double pos_y, const bool isPressed)
 {
     m_init_mouse_pos_x = pos_x;
     m_init_mouse_pos_y = pos_y;

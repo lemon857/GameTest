@@ -29,9 +29,11 @@ public:
 
 	virtual bool init() { return true; };
 
-	void on_update(const double delta);
+	virtual void on_key_update(const double delta);
 
-	void on_button_mouse_event(const MouseButton button, const double pos_x, const double pos_y, const bool isPressed);
+	virtual void on_mouse_button_event(const MouseButton button, const double pos_x, const double pos_y, const bool isPressed);
+
+	virtual void on_ui_render() {};
 protected:
 	EventDispatcher m_event_dispather;
 	std::unique_ptr<class Window> m_pWindow;
@@ -75,10 +77,14 @@ protected:
 
 	double m_init_mouse_pos_x = 0;
 	double m_init_mouse_pos_y = 0;
+
+	int m_mouse_pos_x = 0;
+	int m_mouse_pos_y = 0;
 	
 	bool m_isPerspectiveCam = true;
 	bool m_isInversiveMouseY = false;
 	int m_isMetalic = 0;
+	bool m_drawNullIntersection = false;
 
 	std::shared_ptr<RenderEngine::VertexArray> m_vertexArray;
 	std::shared_ptr<RenderEngine::VertexArray> m_vertexArray_light;

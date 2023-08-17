@@ -1,5 +1,6 @@
 #include "EngineCore/Window.h"
 
+#include "EngineCore/UImodule.h"
 #include "EngineCore/System/Log.h"
 #include "EngineCore/Renderer/Renderer.h"
 #include "EngineCore/Physics/PhysicsEngine.h"
@@ -9,18 +10,11 @@
 
 #include <GLFW/glfw3.h>
 
-#include <imgui/imgui.h>
-#include <imgui/backends/imgui_impl_opengl3.h>
-#include <imgui/backends/imgui_impl_glfw.h>
-
 Window::Window(std::string title, glm::ivec2& window_position, glm::ivec2& window_size, bool maximized)
     : m_data({ std::move(title), window_size, window_position, maximized, nullptr })
 {
 	init();
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGui_ImplOpenGL3_Init();
-    ImGui_ImplGlfw_InitForOpenGL(m_pWindow, true);
+    UImodule::on_window_create(m_pWindow);
 }
 
 Window::~Window()
@@ -202,10 +196,7 @@ int Window::init()
 
 void Window::shuitdown()
 {
-    if (ImGui::GetCurrentContext())
-    {
-        ImGui::DestroyContext();
-    }
+    UImodule::on_window_close();
     glfwDestroyWindow(m_pWindow);
     glfwTerminate();
 }

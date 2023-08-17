@@ -11,6 +11,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/Event.h
 	includes/EngineCore/Keys.h
 	includes/EngineCore/Input.h
+	includes/EngineCore/UImodule.h
 		   
 	includes/EngineCore/System/Log.h
 	includes/EngineCore/System/Timer.h
@@ -42,6 +43,7 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Physics/Ray.h
 	
 	includes/EngineCore/Renderer3D/GraphicsObject.h
+	includes/EngineCore/Renderer3D/Mesh.h
 )
 
 set(ENGINE_PRIVATE_SOURCES
@@ -49,6 +51,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Engine/Window.cpp
 	src/Engine/Application.cpp
 	src/Engine/Input.cpp
+	src/Engine/UImodule.cpp	
 	
 	src/Examples/TanksDemo/TanksDemoGame.cpp
 	src/Examples/TanksDemo/TanksDemoGame.h
@@ -97,6 +100,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/System/Timer.cpp
 		
 	src/Renderer3D/GraphicsObject.cpp
+	src/Renderer3D/Mesh.cpp
 )
 
 

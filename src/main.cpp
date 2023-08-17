@@ -44,7 +44,7 @@ public:
         ImGui::Text(("Mouse position X: " +  std::to_string(m_mouse_pos_x)).c_str());
         ImGui::Text(("Mouse position Y: " + std::to_string(m_mouse_pos_y)).c_str());
         ImGui::End();
-
+        
         ImGui::Begin("Aera settings");
         ImGui::ColorEdit4("Background Color", m_colors);
         ImGui::ColorPicker3("Light source Color", m_light_color);
@@ -67,7 +67,6 @@ public:
         //ImGui::ListBox("WE", &a, &b, 3);
         //ImGui::EndListBox();
         ImGui::End();
-
 
         ImGui::Begin("Camera settings");
         if (ImGui::SliderFloat3("Camera position", m_cam_pos, -50.f, 50.f))

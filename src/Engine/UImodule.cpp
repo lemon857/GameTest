@@ -61,12 +61,15 @@ void UImodule::show_example_app_dock_space(bool* p_open)
     //         ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
     //     }
 
+    static bool opt_NoDockingCentral = true;
+    static bool opt_PassthruCentral = true;
     static bool opt_fullscreen = true;
     static bool opt_padding = false;
     static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
-    dockspace_flags |= ImGuiDockNodeFlags_NoDockingInCentralNode;
-    dockspace_flags |= ImGuiDockNodeFlags_PassthruCentralNode;
+
+    if (opt_NoDockingCentral) dockspace_flags |= ImGuiDockNodeFlags_NoDockingInCentralNode;
+    if (opt_PassthruCentral)  dockspace_flags |= ImGuiDockNodeFlags_PassthruCentralNode;
 
     // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
     // because it would be confusing to have two docking targets within each others.
@@ -126,9 +129,11 @@ void UImodule::show_example_app_dock_space(bool* p_open)
 
             if (ImGui::MenuItem("Flag: NoSplit", "", (dockspace_flags & ImGuiDockNodeFlags_NoSplit) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoSplit; }
             if (ImGui::MenuItem("Flag: NoResize", "", (dockspace_flags & ImGuiDockNodeFlags_NoResize) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoResize; }
-            if (ImGui::MenuItem("Flag: NoDockingInCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_NoDockingInCentralNode) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoDockingInCentralNode; }
+            if (ImGui::MenuItem("Flag: NoDockingInCentralNode", "", &opt_NoDockingCentral))
+            { dockspace_flags ^= ImGuiDockNodeFlags_NoDockingInCentralNode;   }
             if (ImGui::MenuItem("Flag: AutoHideTabBar", "", (dockspace_flags & ImGuiDockNodeFlags_AutoHideTabBar) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_AutoHideTabBar; }
-            if (ImGui::MenuItem("Flag: PassthruCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode) != 0, opt_fullscreen)) { dockspace_flags ^= ImGuiDockNodeFlags_PassthruCentralNode; }
+            if (ImGui::MenuItem("Flag: PassthruCentralNode", "", &opt_PassthruCentral, opt_fullscreen))
+            { dockspace_flags ^= ImGuiDockNodeFlags_PassthruCentralNode; }
             ImGui::Separator();
 
             if (ImGui::MenuItem("Close", NULL, false, p_open != NULL))

@@ -80,6 +80,10 @@ protected:
 
 	int m_mouse_pos_x = 0;
 	int m_mouse_pos_y = 0;
+
+	double m_world_mouse_pos_x = 0;
+	double m_world_mouse_pos_y = 0;
+	double m_world_mouse_pos_z = 0;
 	
 	bool m_isPerspectiveCam = true;
 	bool m_isInversiveMouseY = false;

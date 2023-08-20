@@ -1,4 +1,5 @@
 #include "EngineCore/Renderer/Camera.h"
+#include "EngineCore/Renderer/Renderer.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/trigonometric.hpp>
@@ -69,6 +70,15 @@ void Camera::set_field_of_view(const float fov)
 {
 	m_field_of_view = fov;
 	m_update_projection_matrix = true;
+}
+
+glm::vec3 Camera::get_world_mouse_position(glm::vec2 mouse_position, glm::vec2 window_size)
+{
+	glm::vec4 viewport = glm::vec4(0, 0, window_size.x, window_size.y);
+	glm::vec3 wincoord = glm::vec3(mouse_position.x, window_size.y - mouse_position.y - 1, RenderEngine::Renderer::get_depth_pixel(mouse_position.x, mouse_position.y, window_size.y));
+	glm::vec3 objcoord = glm::unProject(wincoord, get_view_matrix(), get_projection_matrix(), viewport);
+
+	return objcoord;
 }
 
 void Camera::move_forward(const float delta)

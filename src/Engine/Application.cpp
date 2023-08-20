@@ -12,7 +12,7 @@
 #include <glad/glad.h>
 #include <chrono>
 
-#include <glm/ext/matrix_transform.hpp> 
+#include <glm/gtc/matrix_transform.hpp>
 
 const GLfloat vertexCoords[] = {
     // FRONT
@@ -184,8 +184,12 @@ int Application::start(glm::ivec2& window_size, const char* title)
         });
     m_event_dispather.add_event_listener<EventMouseMoved>([&](EventMouseMoved& e)
         {
-            //m_ray->set_2d_ray(glm::vec2(m_pWindow->get_size() / 2), glm::vec2(e.x, e.y));
-            //glm::vec4 ass = glm::vec4(e.x, e.y, 0, 0) * glm::inverse(m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+            glm::vec3 objcoord = m_cam->get_world_mouse_position(glm::vec2(e.x, e.y), m_pWindow->get_size());
+
+            m_world_mouse_pos_x = objcoord.x;
+            m_world_mouse_pos_y = objcoord.y;
+            m_world_mouse_pos_z = objcoord.z;
+
             m_mouse_pos_x = e.x;
             m_mouse_pos_y = e.y;
             LOG_INFO("[EVENT] Mouse moved to {0}x{1}", e.x, e.y);
@@ -305,6 +309,8 @@ int Application::start(glm::ivec2& window_size, const char* title)
         ResourceManager::getSprite("TankSprite")->render(glm::vec3(m_sprite_pos[0], m_sprite_pos[1], m_sprite_pos[2]), glm::vec3(5), 0);
 
         m_line->render(glm::vec3(0.f), glm::vec3(m_line_pos[0], m_line_pos[1], m_line_pos[2]), glm::vec3(1.f));
+
+        //m_line->render(glm::vec3(0.f), glm::vec3(m_world_mouse_pos_x, m_world_mouse_pos_y, m_world_mouse_pos_z), glm::vec3(1.f));
 
         if (m_drawNullIntersection)
         {

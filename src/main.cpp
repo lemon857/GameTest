@@ -1,5 +1,6 @@
 //#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #include <glm/vec2.hpp>
+#include <glm/vec4.hpp>
 
 #include <iostream>
 #include <chrono>
@@ -22,6 +23,7 @@
 #include "EngineCore/System/Log.h"
 
 char* b;
+
 class MyApp : public Application
 {
 public:
@@ -43,6 +45,10 @@ public:
         ImGui::Begin("Info");
         ImGui::Text(("Mouse position X: " +  std::to_string(m_mouse_pos_x)).c_str());
         ImGui::Text(("Mouse position Y: " + std::to_string(m_mouse_pos_y)).c_str());
+
+        ImGui::Text(("Mouse world position X: " + std::to_string(m_world_mouse_pos_x)).c_str());
+        ImGui::Text(("Mouse world position Y: " + std::to_string(m_world_mouse_pos_y)).c_str());
+        ImGui::Text(("Mouse world position Z: " + std::to_string(m_world_mouse_pos_z)).c_str());
         ImGui::End();
         
         ImGui::Begin("Aera settings");

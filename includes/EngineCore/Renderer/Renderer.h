@@ -26,5 +26,6 @@ namespace RenderEngine
 
 		static std::string getRendererStr();
 		static std::string getVersionStr();
+		static float get_depth_pixel(float pix_x, float pix_y, float window_height);
 	};
 }

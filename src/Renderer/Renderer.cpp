@@ -70,4 +70,10 @@ namespace RenderEngine
 	{
 		return (char*)glGetString(GL_VERSION);
 	}
+	float Renderer::get_depth_pixel(float pix_x, float pix_y, float window_height)
+	{
+		GLfloat depth = 0.f;
+		glReadPixels(pix_x, window_height - pix_y - 1, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+		return depth;
+	}
 }

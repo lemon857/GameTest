@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
 #include <glm/ext/matrix_float4x4.hpp>
 #include <memory>
 #include <vector>
@@ -32,6 +33,7 @@ public:
 
 	glm::vec3 get_position() const { return m_position; };
 	glm::vec3 get_rotation() const { return m_rotation; };
+	glm::vec3 get_world_mouse_position(glm::vec2 mouse_position, glm::vec2 window_size);
 
 	void move_forward(const float delta);
 	void move_right(const float delta);

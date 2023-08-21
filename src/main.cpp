@@ -64,7 +64,7 @@ public:
         {
             m_test_obj.getComponent<Transform>()->set_scale(glm::vec3(m_SpriteRenderer_scale[0], m_SpriteRenderer_scale[1], m_SpriteRenderer_scale[2]));
         }
-        if (ImGui::SliderFloat3("Sprite rotation", m_SpriteRenderer_rot, -50.f, 50.f))
+        if (ImGui::SliderFloat3("Sprite rotation", m_SpriteRenderer_rot, 0.f, 360.f))
         {
             m_test_obj.getComponent<Transform>()->set_rotation(glm::vec3(m_SpriteRenderer_rot[0], m_SpriteRenderer_rot[1], m_SpriteRenderer_rot[2]));
         }

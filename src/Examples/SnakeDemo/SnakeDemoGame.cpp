@@ -25,8 +25,8 @@ void SnakeDemoGame::render() const
 {
 	if (m_status == Loose)
 	{
-		//m_pSpriteEnd1->render(glm::vec2(m_cellSize.x * ((m_cellPlaceSize.x / 2) - 1), m_cellSize.y * ((m_cellPlaceSize.y / 2) - 1)), m_cellSize, 0, 2);
-		//m_pSpriteEnd2->render(glm::vec2(m_cellSize.x * ((m_cellPlaceSize.x / 2)), m_cellSize.y * ((m_cellPlaceSize.y / 2) - 1)), m_cellSize, 0, 2);
+		//m_pSpriteRendererEnd1->render(glm::vec2(m_cellSize.x * ((m_cellPlaceSize.x / 2) - 1), m_cellSize.y * ((m_cellPlaceSize.y / 2) - 1)), m_cellSize, 0, 2);
+		//m_pSpriteRendererEnd2->render(glm::vec2(m_cellSize.x * ((m_cellPlaceSize.x / 2)), m_cellSize.y * ((m_cellPlaceSize.y / 2) - 1)), m_cellSize, 0, 2);
 	}
 	/*for (size_t i = 0; i < m_cellPlaceSize.x; i++)
 	{
@@ -41,9 +41,9 @@ void SnakeDemoGame::render() const
 	for (size_t i = 0; i < m_snakeParts.size(); i++)
 	{
 		glm::ivec2 pos = m_snakeParts[i]->getPosition();
-		//m_pSprite->render(glm::vec2(pos.x * m_cellSize.x, pos.y * m_cellSize.y), m_cellSize, 0, 1);
+		//m_pSpriteRenderer->render(glm::vec2(pos.x * m_cellSize.x, pos.y * m_cellSize.y), m_cellSize, 0, 1);
 	}
-	//m_pSpriteApple->render(glm::vec2(m_posApple.x * m_cellSize.x, m_posApple.y * m_cellSize.y), m_cellSize, 0, 0);
+	//m_pSpriteRendererApple->render(glm::vec2(m_posApple.x * m_cellSize.x, m_posApple.y * m_cellSize.y), m_cellSize, 0, 0);
 }
 
 void SnakeDemoGame::update(const double delta)
@@ -86,19 +86,19 @@ bool SnakeDemoGame::init()
 	ResourceManager::loadJSONresources("res/resources.json");
 
 	auto pShapeShaderProgram = ResourceManager::getShaderProgram("shapeShader");
-	auto pSpriteShaderProgram = ResourceManager::getShaderProgram("spriteShader");
+	auto pSpriteRendererShaderProgram = ResourceManager::getShaderProgram("SpriteRendererShader");
 
 	//m_cam = std::make_shared<Camera>(glm::vec2(0) + (glm::vec2)(m_WindowSize / 2), m_WindowSize, -100.f, 100.f);
 
-	//m_cam->addShaderProgram(pSpriteShaderProgram);
+	//m_cam->addShaderProgram(pSpriteRendererShaderProgram);
 	//m_cam->addShaderProgram(pShapeShaderProgram);
 
 	m_pLine = std::make_shared<RenderEngine::Line>(pShapeShaderProgram);
 
-	m_pSprite = ResourceManager::getSprite("SnakePart");
-	m_pSpriteApple = ResourceManager::getSprite("Apple");
-	m_pSpriteEnd1 = ResourceManager::getSprite("SnakeEnd1");
-	m_pSpriteEnd2 = ResourceManager::getSprite("SnakeEnd2");
+	/*m_pSpriteRenderer = ResourceManager::getSpriteRenderer("SnakePart");
+	m_pSpriteRendererApple = ResourceManager::getSpriteRenderer("Apple");
+	m_pSpriteRendererEnd1 = ResourceManager::getSpriteRenderer("SnakeEnd1");
+	m_pSpriteRendererEnd2 = ResourceManager::getSpriteRenderer("SnakeEnd2");*/
 
 	m_pTimer->start(400);
 

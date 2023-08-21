@@ -14,34 +14,19 @@
 
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Renderer/Renderer.h"
-#include "EngineCore/IGameObject.h"
 #include "EngineCore/Physics/Collider.h"
 
 #include "EngineCore/Physics/PhysicsEngine.h"
 #include "EngineCore/Application.h"
 #include "EngineCore/System/Log.h"
-
-char* b;
-
-class TestObj : public IGameObject
-{
-public:
-    TestObj(std::string name)
-        : IGameObject(name)
-    {
-
-    }
-
-private:
-
-};
+#include "EngineCore/Components/Transform.h"
 
 class MyApp : public Application
 {
 public:
     MyApp()
     {
-        b = new char[3] { 'c', 'a', 'n' };
+
     }
     ~MyApp()
     {
@@ -69,9 +54,20 @@ public:
         ImGui::SliderFloat3("Line final position", m_line_pos, -50.f, 50.f);
         ImGui::Checkbox("Draw null intersection", &m_drawNullIntersection);
         ImGui::End();
-        int a = 0;
+
         ImGui::Begin("Something settings");
-        ImGui::SliderFloat3("Sprite position", m_sprite_pos, -50.f, 50.f);
+        if (ImGui::SliderFloat3("Sprite position", m_SpriteRenderer_pos, -50.f, 50.f))
+        {
+            m_test_obj.getComponent<Transform>()->set_position(glm::vec3(m_SpriteRenderer_pos[0], m_SpriteRenderer_pos[1], m_SpriteRenderer_pos[2]));
+        }
+        if (ImGui::SliderFloat3("Sprite scale", m_SpriteRenderer_scale, -50.f, 50.f))
+        {
+            m_test_obj.getComponent<Transform>()->set_scale(glm::vec3(m_SpriteRenderer_scale[0], m_SpriteRenderer_scale[1], m_SpriteRenderer_scale[2]));
+        }
+        if (ImGui::SliderFloat3("Sprite rotation", m_SpriteRenderer_rot, -50.f, 50.f))
+        {
+            m_test_obj.getComponent<Transform>()->set_rotation(glm::vec3(m_SpriteRenderer_rot[0], m_SpriteRenderer_rot[1], m_SpriteRenderer_rot[2]));
+        }
         ImGui::SliderFloat3("Cube position", m_cube_pos, -50.f, 50.f);
         ImGui::SliderFloat3("Cube scale", m_cube_scale, -50.f, 50.f);
         ImGui::SliderFloat3("Cube rotation", m_cube_rot, 0.f, 360.f);
@@ -81,9 +77,6 @@ public:
         ImGui::SliderFloat("Specular factor", &m_specular_factor, 0.f, 1.f);
         ImGui::SliderFloat("Shininess", &m_shininess, 0.f, 100.f);
         ImGui::SliderInt("Is metalic", &m_isMetalic, 0, 2);
-        //ImGui::BeginListBox("ASS");
-        //ImGui::ListBox("WE", &a, &b, 3);
-        //ImGui::EndListBox();
         ImGui::End();
 
         ImGui::Begin("Camera settings");

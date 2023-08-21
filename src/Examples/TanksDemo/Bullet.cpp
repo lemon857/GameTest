@@ -1,6 +1,6 @@
 #include "Bullet.h"
 
-#include "EngineCore/Renderer/Sprite.h"
+//#include "EngineCore/Renderer/SpriteRenderer.h"
 
 void deadCallback(Bullet* bullet)
 {
@@ -8,7 +8,7 @@ void deadCallback(Bullet* bullet)
 }
 
 Bullet::Bullet(
-	std::shared_ptr<RenderEngine::Sprite> sprite,
+	std::shared_ptr<RenderEngine::SpriteRenderer> SpriteRenderer,
 	const std::string name,
 	const glm::vec2& position,
 	const glm::vec2& size,
@@ -32,7 +32,7 @@ void Bullet::update(double delta)
 void Bullet::render()
 {
 	if (m_state == Passive) return;
-	//m_pSprite->render(m_position, m_size, 0, 0);
+	//m_pSpriteRenderer->render(m_position, m_size, 0, 0);
 }
 
 void Bullet::fire(const glm::vec2& position, Physics::EDirection dir)
@@ -42,19 +42,19 @@ void Bullet::fire(const glm::vec2& position, Physics::EDirection dir)
 	switch (dir)
 	{
 	case Physics::Up:
-		m_pSprite->setSubTexture("bulletUp");
+		m_pSpriteRenderer->setSubTexture("bulletUp");
 		m_moveOffset = glm::vec2(0.f, 1.f);
 		break;
 	case Physics::Down:
-		m_pSprite->setSubTexture("bulletDown");
+		m_pSpriteRenderer->setSubTexture("bulletDown");
 		m_moveOffset = glm::vec2(0.f, -1.f);
 		break;
 	case Physics::Left:
-		m_pSprite->setSubTexture("bulletLeft");
+		m_pSpriteRenderer->setSubTexture("bulletLeft");
 		m_moveOffset = glm::vec2(-1.f, 0.f);
 		break;
 	case Physics::Right:
-		m_pSprite->setSubTexture("bulletRight");
+		m_pSpriteRenderer->setSubTexture("bulletRight");
 		m_moveOffset = glm::vec2(1.f, 0.f);
 		break;
 	}*/

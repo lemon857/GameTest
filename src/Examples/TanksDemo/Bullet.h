@@ -8,7 +8,7 @@
 
 namespace RenderEngine
 {
-	class Sprite;
+	class SpriteRenderer;
 }
 
 enum EBulletState
@@ -21,7 +21,7 @@ class Bullet : public IGameObject
 {
 public:
 	Bullet(
-		std::shared_ptr<RenderEngine::Sprite> sprite,
+		std::shared_ptr<RenderEngine::SpriteRenderer> SpriteRenderer,
 		const std::string name,
 		const glm::vec2& position,
 		const glm::vec2& size,

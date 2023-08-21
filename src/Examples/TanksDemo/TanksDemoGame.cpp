@@ -9,7 +9,7 @@
 
 #include "EngineCore/Renderer/ShaderProgram.h"
 #include "EngineCore/Renderer/Texture2D.h"
-#include "EngineCore/Renderer/Sprite.h"
+//#include "EngineCore/Renderer/SpriteRenderer.h"
 #include "EngineCore/Renderer/Animator.h"
 #include "EngineCore/Renderer/Animation.h"
 #include "EngineCore/Renderer/ShowOutline.h"
@@ -71,8 +71,8 @@ void TanksDemoGame::update(const double delta)
 }
 bool TanksDemoGame::init()
 {
-    auto pSpriteShaderProgram = ResourceManager::getShaderProgram("spriteShader");
-    if (!pSpriteShaderProgram)
+    auto pSpriteRendererShaderProgram = ResourceManager::getShaderProgram("SpriteRendererShader");
+    if (!pSpriteRendererShaderProgram)
     {
         std::cerr << "Can't create shader program!\n";
         return false;
@@ -87,23 +87,23 @@ bool TanksDemoGame::init()
 
     m_line = std::make_shared<RenderEngine::Line>(pShapeShaderProgram);
 
-    auto pTankSprite = ResourceManager::getSprite("TankSprite");
-    auto pBulletSprite = ResourceManager::getSprite("BulletSprite");
-    auto pWallSprite = ResourceManager::getSprite("BrickWallSprite");
+    //auto pTankSpriteRenderer = ResourceManager::getSpriteRenderer("TankSpriteRenderer");
+    //auto pBulletSpriteRenderer = ResourceManager::getSpriteRenderer("BulletSpriteRenderer");
+    //auto pWallSpriteRenderer = ResourceManager::getSpriteRenderer("BrickWallSpriteRenderer");
 
     //m_cam = std::make_shared<Camera>(glm::vec2(0), m_WindowSize, -100.f, 100.f);
 
-    //m_cam->addShaderProgram(pSpriteShaderProgram);
+    //m_cam->addShaderProgram(pSpriteRendererShaderProgram);
     //m_cam->addShaderProgram(pShapeShaderProgram);
 
     //glm::perspective(90.f, 1.f, -100.f, 100.f);
-    pSpriteShaderProgram->use();
-    pSpriteShaderProgram->setInt("tex", 0);
+    pSpriteRendererShaderProgram->use();
+    pSpriteRendererShaderProgram->setInt("tex", 0);
 
-    m_pTank = std::make_shared<Tank>(pTankSprite, pBulletSprite, 0.2, 0.05, glm::vec2(100.f, 0.f), glm::vec2(100.f, 100.f));
-    m_pBrickWall = std::make_shared<BrickWall>(pWallSprite, glm::vec2(200.f, 100.f), glm::vec2(100.f, 100.f));
-    m_pBrickWall2 = std::make_shared<BrickWall>(pWallSprite, glm::vec2(465.f, 100.f), glm::vec2(160.f, 160.f));
-    //m_pTank2 = std::make_shared<Tank>(pTankSprite, 0.5, 1, glm::vec2(100.f, 0.f), glm::vec2(100.f, 100.f));
+    //m_pTank = std::make_shared<Tank>(pTankSpriteRenderer, pBulletSpriteRenderer, 0.2, 0.05, glm::vec2(100.f, 0.f), glm::vec2(100.f, 100.f));
+    //m_pBrickWall = std::make_shared<BrickWall>(pWallSpriteRenderer, glm::vec2(200.f, 100.f), glm::vec2(100.f, 100.f));
+    //m_pBrickWall2 = std::make_shared<BrickWall>(pWallSpriteRenderer, glm::vec2(465.f, 100.f), glm::vec2(160.f, 160.f));
+    //m_pTank2 = std::make_shared<Tank>(pTankSpriteRenderer, 0.5, 1, glm::vec2(100.f, 0.f), glm::vec2(100.f, 100.f));
 
     //m_pTank->setKinematicState(false);
     //m_pTank2->setKinematicState(true);

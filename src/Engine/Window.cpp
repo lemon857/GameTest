@@ -4,7 +4,7 @@
 #include "EngineCore/System/Log.h"
 #include "EngineCore/Renderer/Renderer.h"
 #include "EngineCore/Physics/PhysicsEngine.h"
-#include "EngineCore/Renderer/Sprite.h"
+#include "EngineCore/Components/SpriteRenderer.h"
 #include "EngineCore/Renderer/Camera.h"
 #include "EngineCore/Resources/ResourceManager.h"
 

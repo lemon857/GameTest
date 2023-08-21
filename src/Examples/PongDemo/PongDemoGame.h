@@ -2,7 +2,7 @@
 
 #include "EngineCore/IGame.h"
 #include "EngineCore/Renderer/Point.h"
-#include "EngineCore/Renderer/Sprite.h"
+//#include "EngineCore/Renderer/SpriteRenderer.h"
 
 #include "PongObject.h"
 #include "Ball.h"
@@ -32,7 +32,7 @@ private:
 
 	std::shared_ptr<PongObject> m_plate1;
 	std::shared_ptr<PongObject> m_plate2;
-	std::shared_ptr<RenderEngine::Sprite> m_text;
+	std::shared_ptr<RenderEngine::SpriteRenderer> m_text;
 
 	std::shared_ptr<Ball> m_ball;
 };

@@ -2,7 +2,7 @@
 
 #include "EngineCore/Renderer/ShowOutline.h"
 
-PongObject::PongObject(std::shared_ptr<RenderEngine::Sprite> sprite, const std::string name, const glm::vec2& position, const glm::vec2& size, const double velocity)
+PongObject::PongObject(std::shared_ptr<RenderEngine::SpriteRenderer> SpriteRenderer, const std::string name, const glm::vec2& position, const glm::vec2& size, const double velocity)
 	: IGameObject(name)
 	, m_eOrentation(Physics::EDirection::Left)
 {

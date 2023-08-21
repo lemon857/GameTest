@@ -5,8 +5,10 @@
 #include "EngineCore/System/Log.h"
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Renderer/Renderer.h"
-#include "EngineCore/Renderer/Sprite.h"
+#include "EngineCore/Components/SpriteRenderer.h"
 #include "EngineCore/Renderer3D/GraphicsObject.h"
+#include "EngineCore/Components/Transform.h"
+#include "EngineCore/IComponent.h"
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
@@ -145,7 +147,7 @@ int Application::start(glm::ivec2& window_size, const char* title)
     ResourceManager::loadINIsettings("EngineTest.ini", data, false);
 
     m_cam = new Camera(glm::vec3(0), glm::vec3(0));
-    
+
     //m_ray = new Ray();
 
     m_pCloseWindow = false;
@@ -230,8 +232,14 @@ int Application::start(glm::ivec2& window_size, const char* title)
     ResourceManager::loadJSONresources("res/resources.json");
 
     auto pShapeProgram = ResourceManager::getShaderProgram("shapeShader");
+    auto pSpriteProgram = ResourceManager::getShaderProgram("spriteShader");
 
     m_line = new RenderEngine::Line(pShapeProgram);
+
+    m_test_obj.addComponent<Transform>();
+    m_test_obj.addComponent<SpriteRenderer>();
+
+    m_test_obj.getComponent<SpriteRenderer>()->init(ResourceManager::getTexture("TanksTextureAtlas"), "YellowUp11", pSpriteProgram);
 
     // --------------------------------------------------------- //
     m_pTextureAtlas = ResourceManager::getTexture("CubeTexture");
@@ -306,8 +314,6 @@ int Application::start(glm::ivec2& window_size, const char* title)
         ResourceManager::getShaderProgram("lightSourceShader")->use();
         ResourceManager::getShaderProgram("lightSourceShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
 
-        ResourceManager::getSprite("TankSprite")->render(glm::vec3(m_sprite_pos[0], m_sprite_pos[1], m_sprite_pos[2]), glm::vec3(5), 0);
-
         m_line->render(glm::vec3(0.f), glm::vec3(m_line_pos[0], m_line_pos[1], m_line_pos[2]), glm::vec3(1.f));
 
         //m_line->render_from_to(m_cam->get_position() - glm::vec3(1.f), glm::vec3(m_world_mouse_pos_x, m_world_mouse_pos_y, m_world_mouse_pos_z), glm::vec3(1.f));
@@ -316,13 +322,9 @@ int Application::start(glm::ivec2& window_size, const char* title)
 
         if (m_drawNullIntersection)
         {
-            m_line->render(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 0.f, -50.f), glm::vec3(1.f));
-            m_line->render(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, -50.f, 0.f), glm::vec3(1.f));
-            m_line->render(glm::vec3(0.f, 0.f, 0.f), glm::vec3(-50.f, 0.f, 0.f), glm::vec3(1.f));
-
-            m_line->render(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 0.f, 50.f), glm::vec3(1.f));
-            m_line->render(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 50.f, 0.f), glm::vec3(1.f));
-            m_line->render(glm::vec3(0.f, 0.f, 0.f), glm::vec3(50.f, 0.f, 0.f), glm::vec3(1.f));
+            m_line->render_from_to(glm::vec3(0.f, 0.f, 50.f), glm::vec3(0.f, 0.f, -50.f), glm::vec3(0.f, 0.f, 1.f));
+            m_line->render_from_to(glm::vec3(0.f, 50.f, 0.f), glm::vec3(0.f, -50.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
+            m_line->render_from_to(glm::vec3(50.f, 0.f, 0.f), glm::vec3(-50.f, 0.f, 0.f), glm::vec3(1.f, 0.f, 0.f));
         }
 
         // --------------------------------------------------------- //
@@ -405,9 +407,9 @@ int Application::start(glm::ivec2& window_size, const char* title)
         m_pShaderProgram_light->setVec3("light_color", glm::vec3(m_light_color[0], m_light_color[1], m_light_color[2]));
         RenderEngine::Renderer::drawTriangles(*m_vertexArray_light, m_indexBuffer);
 
-
         // --------------------------------------------------------- //
 
+        m_test_obj.update(duration);
 
         // ------------------------------------------------------------ // 
         on_ui_render();

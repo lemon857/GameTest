@@ -1,5 +1,6 @@
 #include "EngineCore/Renderer/VertexArray.h"
 
+#include <glad/glad.h>
 
 namespace RenderEngine
 {

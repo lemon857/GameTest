@@ -2,7 +2,6 @@
 #include "EngineCore/Renderer/ShaderProgram.h"
 #include "EngineCore/Renderer/Texture2D.h"
 #include "EngineCore/Renderer3D/GraphicsObject.h"
-#include "EngineCore/Renderer/Sprite.h"
 #include "EngineCore/Renderer/Animation.h"
 #include "EngineCore/Renderer/Animator.h"
 #include "EngineCore/System/Log.h"
@@ -20,8 +19,8 @@
 
 ResourceManager::ShaderProgramsMap ResourceManager::m_ShaderPrograms;
 ResourceManager::TexturesMap ResourceManager::m_textures;
-ResourceManager::SpritesMap ResourceManager::m_sprites;
-ResourceManager::GraphObjMap ResourceManager::m_graph_objs;
+//ResourceManager::SpriteRenderersMap ResourceManager::m_SpriteRenderers;
+//ResourceManager::GraphObjMap ResourceManager::m_graph_objs;
 //ResourceManager::AnimatorsMap ResourceManager::m_animators;
 std::string ResourceManager::m_path;
 
@@ -30,7 +29,7 @@ void ResourceManager::unloadAllResources()
 {
 	m_ShaderPrograms.clear();
 	m_textures.clear();
-	m_sprites.clear();
+	//m_SpriteRenderers.clear();
 }
 void ResourceManager::setExecutablePath(const std::string& executablePath)
 {
@@ -88,17 +87,17 @@ bool ResourceManager::loadJSONresources(const std::string & JSONpath)
 			loadTextureAtlas(name, subTextures, path, width, height, subTextureWidth, subTextureHeight);
 		}
 	}
-	auto spritesIt = doc.FindMember("sprites");
-	if (spritesIt != doc.MemberEnd())
+	/*auto SpriteRenderersIt = doc.FindMember("SpriteRenderers");
+	if (SpriteRenderersIt != doc.MemberEnd())
 	{
-		for (const auto& currenSprite : spritesIt->value.GetArray())
+		for (const auto& currenSpriteRenderer : SpriteRenderersIt->value.GetArray())
 		{
-			const std::string name = currenSprite["name"].GetString();
-			const std::string shader = currenSprite["shader"].GetString();
-			const std::string atlas = currenSprite["textureAtlas"].GetString();
-			const std::string initSubTexture = currenSprite["initialSubTexture"].GetString();
+			const std::string name = currenSpriteRenderer["name"].GetString();
+			const std::string shader = currenSpriteRenderer["shader"].GetString();
+			const std::string atlas = currenSpriteRenderer["textureAtlas"].GetString();
+			const std::string initSubTexture = currenSpriteRenderer["initialSubTexture"].GetString();
 
-			loadSprite(name, atlas, shader, initSubTexture);			
+			loadSpriteRenderer(name, atlas, shader, initSubTexture);			
 		}
 	}
 	auto objectsIt = doc.FindMember("objects");
@@ -112,7 +111,7 @@ bool ResourceManager::loadJSONresources(const std::string & JSONpath)
 			
 			loadGraphicsObject(name, shader, source);
 		}
-	}
+	}*/
 	LOG_INFO("Loadind data in JSON file complete");
 	/*auto animatorsIt = doc.FindMember("animators");
 	if (animatorsIt != doc.MemberEnd())
@@ -120,8 +119,8 @@ bool ResourceManager::loadJSONresources(const std::string & JSONpath)
 		for (const auto& currenAnimator : animatorsIt->value.GetArray())
 		{
 			const std::string name = currenAnimator["name"].GetString();
-			const std::string spriteName = currenAnimator["spriteName"].GetString();
-			auto pAnimator = loadAnimator(name, spriteName);
+			const std::string SpriteRendererName = currenAnimator["SpriteRendererName"].GetString();
+			auto pAnimator = loadAnimator(name, SpriteRendererName);
 
 			const auto animationsArray = currenAnimator["Animations"].GetArray();
 
@@ -286,60 +285,60 @@ std::shared_ptr<RenderEngine::Texture2D> ResourceManager::getTexture(const std::
 	LOG_ERROR("Can't find texture: {0}", textureName);
 	return nullptr;
 }
-std::shared_ptr<RenderEngine::Sprite>  ResourceManager::loadSprite(const std::string& spriteName, const std::string& textureName,
-	const std::string& shaderName, const std::string& subTextureName)
-{
-	auto pTexture = getTexture(textureName);
-	if (!pTexture)
-	{
-		LOG_ERROR("Can't find texture: {0} for the sprite: {1}", textureName, spriteName);
-		return nullptr;
-	}
-
-	auto pShaderProgram = getShaderProgram(shaderName);
-	if (!pShaderProgram)
-	{
-		LOG_ERROR("Can't find shader program: {0} for the sprite: {1}", shaderName, spriteName);
-		return nullptr;
-	}
-	std::shared_ptr<RenderEngine::Sprite>& newSprite = m_sprites.emplace(spriteName, std::make_shared<RenderEngine::Sprite>(pTexture, subTextureName, 
-		pShaderProgram)).first->second;
-	return newSprite;
-}
-std::shared_ptr<RenderEngine::Sprite> ResourceManager::getSprite(const std::string& spriteName)
-{
-	SpritesMap::const_iterator it = m_sprites.find(spriteName);
-	if (it != m_sprites.end())
-	{
-		return it->second;
-	}
-	LOG_ERROR("Can't find sprite: {0}", spriteName);
-	return nullptr;
-}
-std::shared_ptr<RenderEngine::GraphicsObject> ResourceManager::loadGraphicsObject(const std::string& objName, const std::string& shaderName, const std::string& source)
-{
-	auto pShaderProgram = getShaderProgram(shaderName);
-	if (!pShaderProgram)
-	{
-		LOG_ERROR("Can't find shader program: {0} for the grapics object: {1}", shaderName, objName);
-		return nullptr;
-	}
-
-	std::shared_ptr<RenderEngine::GraphicsObject>& graphObj = m_graph_objs.emplace(objName, std::make_shared<RenderEngine::GraphicsObject>
-		(pShaderProgram, m_path + "/" + source)).first->second;
-
-	return graphObj;
-}
-std::shared_ptr<RenderEngine::GraphicsObject> ResourceManager::getGraphicsObject(const std::string& objName)
-{
-	GraphObjMap::const_iterator it = m_graph_objs.find(objName);
-	if (it != m_graph_objs.end())
-	{
-		return it->second;
-	}
-	LOG_ERROR("Can't find graphics object: {0}", objName);
-	return nullptr;
-}
+//std::shared_ptr<RenderEngine::SpriteRenderer>  ResourceManager::loadSpriteRenderer(const std::string& SpriteRendererName, const std::string& textureName,
+//	const std::string& shaderName, const std::string& subTextureName)
+//{
+//	auto pTexture = getTexture(textureName);
+//	if (!pTexture)
+//	{
+//		LOG_ERROR("Can't find texture: {0} for the SpriteRenderer: {1}", textureName, SpriteRendererName);
+//		return nullptr;
+//	}
+//
+//	auto pShaderProgram = getShaderProgram(shaderName);
+//	if (!pShaderProgram)
+//	{
+//		LOG_ERROR("Can't find shader program: {0} for the SpriteRenderer: {1}", shaderName, SpriteRendererName);
+//		return nullptr;
+//	}
+//	std::shared_ptr<RenderEngine::SpriteRenderer>& newSpriteRenderer = m_SpriteRenderers.emplace(SpriteRendererName, std::make_shared<RenderEngine::SpriteRenderer>(pTexture, subTextureName, 
+//		pShaderProgram)).first->second;
+//	return newSpriteRenderer;
+//}
+//std::shared_ptr<RenderEngine::SpriteRenderer> ResourceManager::getSpriteRenderer(const std::string& SpriteRendererName)
+//{
+//	SpriteRenderersMap::const_iterator it = m_SpriteRenderers.find(SpriteRendererName);
+//	if (it != m_SpriteRenderers.end())
+//	{
+//		return it->second;
+//	}
+//	LOG_ERROR("Can't find SpriteRenderer: {0}", SpriteRendererName);
+//	return nullptr;
+//}
+//std::shared_ptr<RenderEngine::GraphicsObject> ResourceManager::loadGraphicsObject(const std::string& objName, const std::string& shaderName, const std::string& source)
+//{
+//	auto pShaderProgram = getShaderProgram(shaderName);
+//	if (!pShaderProgram)
+//	{
+//		LOG_ERROR("Can't find shader program: {0} for the grapics object: {1}", shaderName, objName);
+//		return nullptr;
+//	}
+//
+//	std::shared_ptr<RenderEngine::GraphicsObject>& graphObj = m_graph_objs.emplace(objName, std::make_shared<RenderEngine::GraphicsObject>
+//		(pShaderProgram, m_path + "/" + source)).first->second;
+//
+//	return graphObj;
+//}
+//std::shared_ptr<RenderEngine::GraphicsObject> ResourceManager::getGraphicsObject(const std::string& objName)
+//{
+//	GraphObjMap::const_iterator it = m_graph_objs.find(objName);
+//	if (it != m_graph_objs.end())
+//	{
+//		return it->second;
+//	}
+//	LOG_ERROR("Can't find graphics object: {0}", objName);
+//	return nullptr;
+//}
 std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTextureAtlas(
 	std::string textureName,
 	std::vector<std::string> subTextures,
@@ -372,9 +371,9 @@ std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTextureAtlas(
 
 //std::shared_ptr<RenderEngine::Animator>  ResourceManager::loadAnimator(
 //	const std::string& animatorName,
-//	const std::string& spriteName)
+//	const std::string& SpriteRendererName)
 //{
-//	std::shared_ptr<RenderEngine::Animator>& newAnimator = m_animators.emplace(animatorName, std::make_shared<RenderEngine::Animator>(spriteName)).first->second;
+//	std::shared_ptr<RenderEngine::Animator>& newAnimator = m_animators.emplace(animatorName, std::make_shared<RenderEngine::Animator>(SpriteRendererName)).first->second;
 //	return newAnimator;
 //}
 //std::shared_ptr<RenderEngine::Animator> ResourceManager::getAnimator(const std::string& animatorName)

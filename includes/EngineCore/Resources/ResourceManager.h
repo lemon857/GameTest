@@ -17,7 +17,7 @@ namespace RenderEngine
 {
 	class ShaderProgram;
 	class Texture2D;
-	class Sprite;
+	//class SpriteRenderer;
 	class Animator;
 	class GraphicsObject;
 }
@@ -55,22 +55,22 @@ namespace RenderEngine
 			const std::string& texturePath);
 		static std::shared_ptr<RenderEngine::Texture2D> getTexture(const std::string& textureName);
 
-		static std::shared_ptr<RenderEngine::Sprite>  loadSprite(
-			const std::string& spriteName, 
+		/*static std::shared_ptr<RenderEngine::SpriteRenderer>  loadSpriteRenderer(
+			const std::string& SpriteRendererName, 
 			const std::string& textureName,
 			const std::string& shaderName,
 			const std::string& subTextureName = "default");
-		static std::shared_ptr<RenderEngine::Sprite> getSprite(const std::string& spriteName);
+		static std::shared_ptr<RenderEngine::SpriteRenderer> getSpriteRenderer(const std::string& SpriteRendererName);
 
 		static std::shared_ptr<RenderEngine::GraphicsObject>  loadGraphicsObject(
 			const std::string& objName,
 			const std::string& shaderName,
 			const std::string& source);
-		static std::shared_ptr<RenderEngine::GraphicsObject> getGraphicsObject(const std::string& objName);
+		static std::shared_ptr<RenderEngine::GraphicsObject> getGraphicsObject(const std::string& objName);*/
 
 		/*static std::shared_ptr<RenderEngine::Animator>  loadAnimator(
 			const std::string& animatorName,
-			const std::string& spriteName);*/
+			const std::string& SpriteRendererName);*/
 		//static std::shared_ptr<RenderEngine::Animator> getAnimator(const std::string& animatorName);
 
 		static std::shared_ptr<RenderEngine::Texture2D> loadTextureAtlas(
@@ -89,14 +89,14 @@ namespace RenderEngine
 		typedef std::map<const std::string, std::shared_ptr<RenderEngine::Texture2D>> TexturesMap;
 		static TexturesMap m_textures;
 
-		typedef std::map<const std::string, std::shared_ptr<RenderEngine::Sprite>> SpritesMap;
-		static SpritesMap m_sprites;
+		//typedef std::map<const std::string, std::shared_ptr<RenderEngine::SpriteRenderer>> SpriteRenderersMap;
+		//static SpriteRenderersMap m_SpriteRenderers;
 
 		//typedef std::map<const std::string, std::shared_ptr<RenderEngine::Animator>> AnimatorsMap;
 		//static AnimatorsMap m_animators;
 
-		typedef std::map<const std::string, std::shared_ptr<RenderEngine::GraphicsObject>> GraphObjMap;
-		static GraphObjMap m_graph_objs;
+		//typedef std::map<const std::string, std::shared_ptr<RenderEngine::GraphicsObject>> GraphObjMap;
+		//static GraphObjMap m_graph_objs;
 
 		static std::string m_path;
 	};

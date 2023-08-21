@@ -6,13 +6,13 @@
 
 namespace RenderEngine
 {
-	class Sprite;
+	class SpriteRenderer;
 }
 
 class BrickWall : public IGameObject
 {
 public:
-	BrickWall(std::shared_ptr<RenderEngine::Sprite> pSprite, glm::vec2& position, glm::vec2& size);
+	BrickWall(std::shared_ptr<RenderEngine::SpriteRenderer> pSpriteRenderer, glm::vec2& position, glm::vec2& size);
 
 	void render();
 private:

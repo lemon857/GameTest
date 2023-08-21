@@ -4,8 +4,6 @@
 #include "IndexBuffer.h"
 #include "VertexBufferLayout.h"
 
-#include <glad/glad.h>
-
 namespace RenderEngine
 {
 	class VertexArray

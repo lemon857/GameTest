@@ -1,5 +1,5 @@
 #include "Tank.h"
-#include "EngineCore/Renderer/Sprite.h"
+//#include "EngineCore/Renderer/SpriteRenderer.h"
 #include "EngineCore/Renderer/Animator.h"
 #include "EngineCore/Renderer/ShowOutline.h"
 #include "EngineCore/Renderer/Animation.h"
@@ -8,12 +8,12 @@
 #include "EngineCore/Physics/Collider.h"
 #include "EngineCore/Physics/PhysicsEngine.h"
 
-Tank::Tank(std::shared_ptr<RenderEngine::Sprite> pSprite,
-	std::shared_ptr<RenderEngine::Sprite> pBulletSprite,
+Tank::Tank(std::shared_ptr<RenderEngine::SpriteRenderer> pSpriteRenderer,
+	std::shared_ptr<RenderEngine::SpriteRenderer> pBulletSpriteRenderer,
 	double velocity, double weight,
 	glm::vec2& position, glm::vec2& size)
 	: m_eOrentation(Physics::EDirection::Up)
-	, m_bullet(std::make_shared<Bullet>(pBulletSprite, "bullet", position + size / 2.f, size / 2.f, 2000, 0.5))
+	, m_bullet(std::make_shared<Bullet>(pBulletSpriteRenderer, "bullet", position + size / 2.f, size / 2.f, 2000, 0.5))
 	, IGameObject("tank")
 {
 	std::shared_ptr<Physics::Collider> bulCol = std::make_shared<Physics::Collider>();
@@ -44,7 +44,7 @@ Tank::Tank(std::shared_ptr<RenderEngine::Sprite> pSprite,
 }
 void Tank::render()
 {
-	//m_pSprite->render(m_position, m_size, 0, 1);
+	//m_pSpriteRenderer->render(m_position, m_size, 0, 1);
 	//getComponent<ShowOutline>("showOutline")->render();
 	if (m_bullet != nullptr) m_bullet->render();
 }
@@ -55,31 +55,31 @@ void Tank::setOrentation(const Physics::EDirection orentation)
 	switch (m_eOrentation)
 	{
 	case Physics::EDirection::Up:
-		//m_pSprite->setState("TopState");
+		//m_pSpriteRenderer->setState("TopState");
 		//m_pAnimator->startAnimation("TopMove");
 		//m_moveOffset.x = 0.f;
 		//m_moveOffset.y = 1.f;
 		break;
 	case Physics::EDirection::Down:
-		//m_pSprite->setState("BottomState");
+		//m_pSpriteRenderer->setState("BottomState");
 		//m_pAnimator->startAnimation("BottomMove");
 		//m_moveOffset.x = 0.f;
 		//m_moveOffset.y = -1.f;
 		break;
 	case Physics::EDirection::Left:
-		//m_pSprite->setState("LeftState");
+		//m_pSpriteRenderer->setState("LeftState");
 		//m_pAnimator->startAnimation("LeftMove");
 		//m_moveOffset.x = -1.f;
 		//m_moveOffset.y = 0.f;
 		break;
 	case Physics::EDirection::Right:
-		//m_pSprite->setState("RightState");
+		//m_pSpriteRenderer->setState("RightState");
 		//m_pAnimator->startAnimation("RightMove");
 		//m_moveOffset.x = 1.f;
 		//m_moveOffset.y = 0.f;
 		break;
 	default:
-		//m_pSprite->setState("TopState");
+		//m_pSpriteRenderer->setState("TopState");
 		//m_pAnimator->startAnimation("TopMove");
 		//m_moveOffset.x = 0.f;
 		//m_moveOffset.y = 1.f;

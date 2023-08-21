@@ -5,7 +5,7 @@
 #include "EngineCore/IGame.h"
 #include "EngineCore/Renderer/Line.h"
 #include "EngineCore/System/Timer.h"
-#include "EngineCore/Renderer/Sprite.h"
+//#include "EngineCore/Renderer/SpriteRenderer.h"
 #include "EngineCore/Physics/PhysicsEngine.h"
 #include "SnakePart.h"
 
@@ -39,10 +39,10 @@ private:
 	bool m_flag = false;
 
 	std::shared_ptr<RenderEngine::Line> m_pLine;
-	std::shared_ptr<RenderEngine::Sprite> m_pSprite;
-	std::shared_ptr<RenderEngine::Sprite> m_pSpriteApple;
-	std::shared_ptr<RenderEngine::Sprite> m_pSpriteEnd1;
-	std::shared_ptr<RenderEngine::Sprite> m_pSpriteEnd2;
+	//std::shared_ptr<RenderEngine::SpriteRenderer> m_pSpriteRenderer;
+	//std::shared_ptr<RenderEngine::SpriteRenderer> m_pSpriteRendererApple;
+	//std::shared_ptr<RenderEngine::SpriteRenderer> m_pSpriteRendererEnd1;
+	//std::shared_ptr<RenderEngine::SpriteRenderer> m_pSpriteRendererEnd2;
 	std::shared_ptr<Timer> m_pTimer;
 
 	std::vector<std::shared_ptr<SnakePart>> m_snakeParts;

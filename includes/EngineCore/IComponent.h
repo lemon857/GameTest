@@ -6,6 +6,8 @@ class IGameObject;
 class IComponent
 {
 public:
+	IComponent(const IComponent&) = delete;
+	IComponent& operator=(const IComponent&) = delete;
 
 	virtual void update(const double delta) {};
 

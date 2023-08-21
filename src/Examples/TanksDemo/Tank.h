@@ -11,7 +11,7 @@
 
 namespace RenderEngine
 {
-	class Sprite;
+	class SpriteRenderer;
 	class Animator;
 }
 
@@ -26,7 +26,7 @@ class Tank : public IGameObject
 {
 public:
 
-	Tank(std::shared_ptr<RenderEngine::Sprite> pSprite, std::shared_ptr<RenderEngine::Sprite> pBulletSprite, double velocity, double weight, glm::vec2& position, glm::vec2& size);
+	Tank(std::shared_ptr<RenderEngine::SpriteRenderer> pSpriteRenderer, std::shared_ptr<RenderEngine::SpriteRenderer> pBulletSpriteRenderer, double velocity, double weight, glm::vec2& position, glm::vec2& size);
 
 	void render();
 	void setOrentation(const Physics::EDirection orentation);

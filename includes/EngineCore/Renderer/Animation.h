@@ -6,7 +6,7 @@
 
 namespace RenderEngine
 {
-	class Sprite;
+	class SpriteRenderer;
 
 	enum ECallbackAction
 	{

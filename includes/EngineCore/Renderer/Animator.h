@@ -8,7 +8,7 @@
 
 namespace RenderEngine
 {
-	class Sprite;
+	class SpriteRenderer;
 	struct Animation;
 
 	class Animator : public IComponent

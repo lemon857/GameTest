@@ -8,13 +8,13 @@
 
 namespace RenderEngine
 {
-	class Sprite;
+	class SpriteRenderer;
 }
 
 class PongObject : public IGameObject
 {
 public:
-	PongObject(std::shared_ptr<RenderEngine::Sprite> sprite,
+	PongObject(std::shared_ptr<RenderEngine::SpriteRenderer> SpriteRenderer,
 		const std::string name,
 		const glm::vec2& position,
 		const glm::vec2& size,

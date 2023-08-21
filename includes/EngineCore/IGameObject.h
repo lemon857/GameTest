@@ -52,9 +52,9 @@ protected:
 			curCom.second->update(delta);
 		}
 	};
-	std::string m_name;
 
 private:
 	typedef std::map<std::string, IComponent*> componentsMap;
 	componentsMap m_components;
+	std::string m_name;
 };

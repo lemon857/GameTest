@@ -25,7 +25,6 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Resources/stb_image.h
 	includes/EngineCore/Renderer/ShaderProgram.h
 	includes/EngineCore/Renderer/Texture2D.h
-	includes/EngineCore/Renderer/Sprite.h
 	includes/EngineCore/Renderer/VertexBuffer.h
 	includes/EngineCore/Renderer/IndexBuffer.h
 	includes/EngineCore/Renderer/Renderer.h
@@ -44,6 +43,9 @@ set(ENGINE_PRIVATE_INCLUDES
 	
 	includes/EngineCore/Renderer3D/GraphicsObject.h
 	includes/EngineCore/Renderer3D/MeshRenderer.h
+	
+	includes/EngineCore/Components/Transform.h
+	includes/EngineCore/Components/SpriteRenderer.h
 )
 
 set(ENGINE_PRIVATE_SOURCES
@@ -79,7 +81,6 @@ set(ENGINE_PRIVATE_SOURCES
 	
 	src/Renderer/ShaderProgram.cpp
 	src/Renderer/Texture2D.cpp
-	src/Renderer/Sprite.cpp
 	src/Renderer/VertexBuffer.cpp
 	src/Renderer/IndexBuffer.cpp
 	src/Renderer/Renderer.cpp
@@ -101,6 +102,9 @@ set(ENGINE_PRIVATE_SOURCES
 		
 	src/Renderer3D/GraphicsObject.cpp
 	src/Renderer3D/MeshRenderer.cpp
+	
+	src/Components/Transform.cpp
+	src/Components/SpriteRenderer.cpp
 )
 
 

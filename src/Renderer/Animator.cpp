@@ -3,7 +3,7 @@
 #include "EngineCore/Renderer/Animation.h"
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/IGameObject.h"
-#include "EngineCore/Renderer/Sprite.h"
+//#include "EngineCore/Renderer/SpriteRenderer.h"
 
 namespace RenderEngine
 {
@@ -32,8 +32,8 @@ namespace RenderEngine
 		m_run = true;
 		//}
 		//std::shared_ptr<Animation> anim = getAnimation(m_currentAnimation);
-		//auto pSprite = m_targetObj.getpSprite();
-		//pSprite->setSubTexture(anim->subTextureNames[anim->currentFrame]);
+		//auto pSpriteRenderer = m_targetObj.getpSpriteRenderer();
+		//pSpriteRenderer->setSubTexture(anim->subTextureNames[anim->currentFrame]);
 	}
 	void Animator::stopAnimations()
 	{
@@ -49,8 +49,8 @@ namespace RenderEngine
 		std::shared_ptr<Animation> anim = getAnimation(m_currentAnimation);
 		if (m_currentTime >= anim->durations[anim->currentFrame])
 		{
-			//auto pSprite = m_targetObj.getpSprite();
-			//pSprite->setSubTexture(anim->subTextureNames[anim->currentFrame]);
+			//auto pSpriteRenderer = m_targetObj.getpSpriteRenderer();
+			//pSpriteRenderer->setSubTexture(anim->subTextureNames[anim->currentFrame]);
 			m_currentTime = 0;
 			if (anim->currentFrame == anim->durations.size() - 1 && anim->eTypeAnimation == Single)
 			{

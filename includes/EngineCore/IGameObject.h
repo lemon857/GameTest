@@ -1,71 +1,45 @@
 #pragma once
 // Интерфейс для создания игровых объектов
-#include <glm/vec2.hpp>
-#include <string>
-#include <memory>
-#include <map>
-#include "IComponent.h"
 
-namespace RenderEngine
-{
-	class Sprite;
-}
+#include <string>
+#include <map>
+
+#include "IComponent.h"
 
 class IGameObject
 {
 public:
 	virtual void update(const double delta) { updateComponents(delta); };
-	bool isMove() const { return m_move; };
 
-	void setKinematicState(bool isKinematic) { m_isKinematic = isKinematic; };
-	void setGroundState(bool isGrounded) { m_isGrounded = isGrounded; };
-	void setMoveOffset(glm::vec2& offset) { m_moveOffset = offset; };
-	void setPosition(glm::vec2& position) { m_position = position; };
+	std::string get_name() { return m_name; };
 
-	double getVelocity() { return m_velocity; };
-	double getWeight() { return m_weight; };
-	bool getKinematicState() { return m_isKinematic; };
-	bool getGroundState() { return m_isGrounded; };
-	bool getMove() { return m_move; };
-	glm::vec2& getSize() { return m_size; };
-	glm::vec2& getPosition() { return m_position; };
-	glm::vec2& getMoveOffset() { return m_moveOffset; };
-	std::string& getName() { return m_name; };
-	std::shared_ptr<RenderEngine::Sprite>& getpSprite() { return m_pSprite; };
-
-	void addComponent(std::string name, std::shared_ptr<IComponent> component)
+	template <class _Ty>
+	_Ty* addComponent()
 	{
-		m_components.emplace(name, component);
+		if (getComponent<_Ty>() != nullptr) return nullptr;
+		IComponent* component = (IComponent*)(new _Ty());
+		component->set_target_object(this);
+		m_components.emplace(typeid(_Ty).name(), component);
+		return (_Ty*)component;
 	};
 
 	template <class _Ty>
-	_Ty* getComponent(std::string name)
+	_Ty* getComponent()
 	{
-		componentsMap::const_iterator it = m_components.find(name);
+		componentsMap::const_iterator it = m_components.find(typeid(_Ty).name());
 		if (it != m_components.end())
 		{
-			return (_Ty*)it->second.get();
+			return (_Ty*)it->second;
 		}
 		return nullptr;
 	};
 
 protected:
-	IGameObject(
-		std::shared_ptr<RenderEngine::Sprite> sprite,
-		const std::string name,
-		const glm::vec2& position,
-		const glm::vec2& size,
-		const glm::vec2& moveOffset = glm::vec2(0.f),
-		const double velocity = 1,
-		const double weight = 1)
-		: m_pSprite(std::move(sprite)),
-		m_name(name),
-		m_velocity(velocity),
-		m_weight(weight),
-		m_position(position),
-		m_size(size),
-		m_moveOffset(moveOffset)
-	{};
+	IGameObject(const std::string name)
+		: m_name(name)
+	{
+
+	};
 	~IGameObject()
 	{
 
@@ -80,18 +54,7 @@ protected:
 	};
 	std::string m_name;
 
-	glm::vec2 m_position;
-	glm::vec2 m_size;
-	glm::vec2 m_moveOffset;
-
-	std::shared_ptr<RenderEngine::Sprite> m_pSprite;
-
-	double m_weight;
-	double m_velocity;
-	bool m_move = false;
-	bool m_isKinematic = false;
-	bool m_isGrounded = false;
-
-	typedef std::map<std::string, std::shared_ptr<IComponent>> componentsMap;
+private:
+	typedef std::map<std::string, IComponent*> componentsMap;
 	componentsMap m_components;
 };

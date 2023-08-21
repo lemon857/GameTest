@@ -10,7 +10,7 @@ namespace RenderEngine
 	Animator::Animator(IGameObject& targetObj)
 		: m_currentTime(0)
 		, m_run(false)
-		, IComponent(targetObj)
+		, IComponent()
 	{
 	}
 
@@ -49,8 +49,8 @@ namespace RenderEngine
 		std::shared_ptr<Animation> anim = getAnimation(m_currentAnimation);
 		if (m_currentTime >= anim->durations[anim->currentFrame])
 		{
-			auto pSprite = m_targetObj.getpSprite();
-			pSprite->setSubTexture(anim->subTextureNames[anim->currentFrame]);
+			//auto pSprite = m_targetObj.getpSprite();
+			//pSprite->setSubTexture(anim->subTextureNames[anim->currentFrame]);
 			m_currentTime = 0;
 			if (anim->currentFrame == anim->durations.size() - 1 && anim->eTypeAnimation == Single)
 			{

@@ -27,6 +27,7 @@ public:
 	void set_near_clip_plane(const float near);
 	void set_viewport_size(const float width, const float height);
 	void set_field_of_view(const float fov);
+	void set_size_of_view(const float sov);
 
 	glm::mat4 get_view_matrix();
 	glm::mat4 get_projection_matrix();
@@ -61,6 +62,7 @@ private:
 	float m_viewport_width{ 800.1f };
 	float m_viewport_height{ 600.1f };
 	float m_field_of_view{ 60.f };
+	float m_size_of_view{ 1.f };
 
 	static constexpr glm::vec3 s_world_up{ 0.f, 1.f, 0.f };
 	static constexpr glm::vec3 s_world_rigt{ -1.f, 0.f, 0.f };

@@ -14,15 +14,27 @@
 
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Renderer/Renderer.h"
-#include "Examples/TanksDemo/TanksDemoGame.h"
-#include "Examples/SnakeDemo/SnakeDemoGame.h"
-#include "Examples/PongDemo/PongDemoGame.h"
+#include "EngineCore/IGameObject.h"
+#include "EngineCore/Physics/Collider.h"
 
 #include "EngineCore/Physics/PhysicsEngine.h"
 #include "EngineCore/Application.h"
 #include "EngineCore/System/Log.h"
 
 char* b;
+
+class TestObj : public IGameObject
+{
+public:
+    TestObj(std::string name)
+        : IGameObject(name)
+    {
+
+    }
+
+private:
+
+};
 
 class MyApp : public Application
 {
@@ -86,6 +98,10 @@ public:
         if (ImGui::SliderFloat("Camera fov", &m_cam_fov, 1.f, 120.f))
         {
             m_cam->set_field_of_view(m_cam_fov);
+        }
+        if (ImGui::SliderFloat("Camera sov", &m_cam_sov, 0.1f, 20.f))
+        {
+            m_cam->set_size_of_view(m_cam_sov);
         }
         if (ImGui::SliderFloat("Camera far clip plane", &m_cam_far_plane, 1.f, 300.f))
         {

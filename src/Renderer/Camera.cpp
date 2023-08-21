@@ -72,6 +72,11 @@ void Camera::set_field_of_view(const float fov)
 	m_update_projection_matrix = true;
 }
 
+void Camera::set_size_of_view(const float sov)
+{
+	m_size_of_view = sov;
+}
+
 glm::vec3 Camera::get_world_mouse_position(glm::vec2 mouse_position, glm::vec2 window_size)
 {
 	glm::vec4 viewport = glm::vec4(0, 0, window_size.x, window_size.y);
@@ -146,15 +151,7 @@ void Camera::update_projection_matrix()
 	}
 	else
 	{
-		float r = 2;
-		float t = 2;
-		float f = 100;
-		float n = 0.1f;
-		m_projection_matrix = glm::mat4(
-			1 / r, 0, 0, 0,
-			0, 1 / t, 0, 0,
-			0, 0, -2 / (f - n), 0,
-			0, 0, (-f - n) / (f - n), 1
-		);
+		const float aspect = m_viewport_width / m_viewport_height;
+		m_projection_matrix = glm::ortho(-m_size_of_view, m_size_of_view, -m_size_of_view * aspect, m_size_of_view * aspect, m_near_clip_plane, m_far_clip_plane);
 	}
 }

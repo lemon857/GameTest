@@ -1,6 +1,5 @@
 #pragma once
 // Интерфейс для создания компонентов для игровых объектов
-#include <memory>
 
 class IGameObject;
 
@@ -10,10 +9,11 @@ public:
 
 	virtual void update(const double delta) {};
 
+	void set_target_object(IGameObject* targetObj) { m_targetObj = targetObj; };
 
 protected:
-	IComponent(IGameObject& targetObj)
-		: m_targetObj(targetObj)
+	IComponent()
+		: m_targetObj(nullptr) 
 	{};
-	IGameObject& m_targetObj;
+	IGameObject* m_targetObj;
 };

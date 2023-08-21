@@ -6,7 +6,7 @@
 BrickWall::BrickWall(std::shared_ptr<RenderEngine::Sprite> pSprite,
 	glm::vec2& position,
 	glm::vec2& size)
-	: IGameObject(pSprite, "wall", position, size)
+	: IGameObject("wall")
 {
 }
 void BrickWall::render()

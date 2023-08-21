@@ -26,14 +26,39 @@ namespace RenderEngine
 
 		m_vertexArray.unbind();
 	}
-	void Line::render(const glm::vec3& position, const glm::vec3& to, glm::vec3& color) const
+	void Line::render(const glm::vec3& position, const glm::vec3& dir, glm::vec3& color) const
 	{
 		m_pShaderProgram->use();
 
 		glm::mat4 scaleMat(
-			to.x, 0, 0, 0,
-			0, to.y, 0, 0,
-			0, 0, to.z, 0,
+			dir.x, 0, 0, 0,
+			0, dir.y, 0, 0,
+			0, 0, dir.z, 0,
+			0, 0, 0, 1);
+
+		glm::mat4 translateMat(
+			1, 0, 0, 0,
+			0, 1, 0, 0,
+			0, 0, 1, 0,
+			position.x, position.y, position.z, 1);
+
+		glm::mat4 model = translateMat * scaleMat;
+
+		m_pShaderProgram->setMatrix4("modelMat", model);
+		m_pShaderProgram->setVec4("sourceColor", glm::vec4(color, 1.f));
+
+		Renderer::drawLine(m_vertexArray, *m_pShaderProgram, m_size);
+	}
+	void Line::render_from_to(const glm::vec3& position, const glm::vec3& to, glm::vec3& color) const
+	{
+		glm::vec3 dir = to - position;
+
+		m_pShaderProgram->use();
+
+		glm::mat4 scaleMat(
+			dir.x, 0, 0, 0,
+			0, dir.y, 0, 0,
+			0, 0, dir.z, 0,
 			0, 0, 0, 1);
 
 		glm::mat4 translateMat(

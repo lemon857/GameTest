@@ -6,6 +6,11 @@
 #include "EngineCore/Physics/PhysicsEngine.h"
 #include "EngineCore/System/TemplateTimer.h"
 
+namespace RenderEngine
+{
+	class Sprite;
+}
+
 enum EBulletState
 {
 	Active,

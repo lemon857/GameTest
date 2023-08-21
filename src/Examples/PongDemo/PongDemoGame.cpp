@@ -14,7 +14,7 @@
 
 void onCollisionPlate(IGameObject& targetObj, IGameObject& obj, Physics::EDirection dir)
 {
-	if (obj.getName() == "wall")
+	/*if (obj.getName() == "wall")
 	{
 		switch (dir)
 		{
@@ -31,12 +31,12 @@ void onCollisionPlate(IGameObject& targetObj, IGameObject& obj, Physics::EDirect
 			if (targetObj.getMoveOffset().x > 0) targetObj.setMoveOffset(glm::vec2(0.f, targetObj.getMoveOffset().y));
 			break;
 		}
-	}
+	}*/
 }
 
 void onCollisionBall(IGameObject& targetObj, IGameObject& obj, Physics::EDirection dir)
 {
-	glm::vec2 offset = targetObj.getMoveOffset();
+	/*glm::vec2 offset = targetObj.getMoveOffset();
 	switch (dir)
 	{
 	case Physics::Up:
@@ -51,7 +51,7 @@ void onCollisionBall(IGameObject& targetObj, IGameObject& obj, Physics::EDirecti
 	case Physics::Right:
 		targetObj.setMoveOffset(glm::vec2(-offset.x, offset.y));
 		break;
-	}/*
+	}
 	if (obj.getName() == "plate" && obj.getMove())
 	{
 		if (obj.getMoveOffset().y > 0.f) 
@@ -138,7 +138,7 @@ bool PongDemoGame::init()
 	m_plate1 = std::make_shared<PongObject>(nullptr, "plate", glm::vec2(30.f, 100.f), glm::vec2(20.f, 100.f), 0.6);
 	m_plate2 = std::make_shared<PongObject>(nullptr, "plate", glm::vec2(750.f, 100.f), glm::vec2(20.f, 100.f), 0.6);
 
-	m_rightWall->addComponent("showOutline", std::make_shared<ShowOutline>(*m_rightWall, pShapeShader, glm::vec4(1)));
+	/*m_rightWall->addComponent("showOutline", std::make_shared<ShowOutline>(*m_rightWall, pShapeShader, glm::vec4(1)));
 	m_leftWall->addComponent("showOutline", std::make_shared<ShowOutline>(*m_leftWall, pShapeShader, glm::vec4(1)));
 	m_downWall->addComponent("showOutline", std::make_shared<ShowOutline>(*m_downWall, pShapeShader, glm::vec4(1)));
 	m_upWall->addComponent("showOutline", std::make_shared<ShowOutline>(*m_upWall, pShapeShader, glm::vec4(1)));
@@ -147,37 +147,37 @@ bool PongDemoGame::init()
 
 	m_plate1->addComponent("MoveController", std::make_shared<MoveController>(*m_plate1));
 	m_plate2->addComponent("MoveController", std::make_shared<MoveController>(*m_plate2));
-	m_ball->addComponent("MoveController", std::make_shared<MoveController>(*m_ball));
+	m_ball->addComponent("MoveController", std::make_shared<MoveController>(*m_ball));*/
 
-	auto plate1Col = std::make_shared<Physics::Collider>(*m_plate1);
+	/*auto plate1Col = std::make_shared<Physics::Collider>(*m_plate1);
 	auto plate2Col = std::make_shared<Physics::Collider>(*m_plate2);
 	auto downWallCol = std::make_shared<Physics::Collider>(*m_downWall);
 	auto upWallCol = std::make_shared<Physics::Collider>(*m_upWall);
 	auto rightWallCol = std::make_shared<Physics::Collider>(*m_rightWall);
 	auto leftWallCol = std::make_shared<Physics::Collider>(*m_leftWall);
-	auto ballCol = std::make_shared<Physics::Collider>(*m_ball);
+	auto ballCol = std::make_shared<Physics::Collider>(*m_ball);*/
 
-	m_plate1->addComponent("collider", plate1Col);
+	/*m_plate1->addComponent("collider", plate1Col);
 	m_plate2->addComponent("collider", plate2Col);
 	m_downWall->addComponent("collider", downWallCol);
 	m_upWall->addComponent("collider", upWallCol);
 	m_rightWall->addComponent("collider", rightWallCol);
 	m_leftWall->addComponent("collider", leftWallCol);
-	m_ball->addComponent("collider", ballCol);
+	m_ball->addComponent("collider", ballCol);*/
 
-	Physics::PhysicsEngine::addCollider(plate1Col);
+	/*Physics::PhysicsEngine::addCollider(plate1Col);
 	Physics::PhysicsEngine::addCollider(plate2Col);
 	Physics::PhysicsEngine::addCollider(upWallCol);
 	Physics::PhysicsEngine::addCollider(downWallCol);
 	Physics::PhysicsEngine::addCollider(rightWallCol);
 	Physics::PhysicsEngine::addCollider(leftWallCol);
-	Physics::PhysicsEngine::addCollider(ballCol);
+	Physics::PhysicsEngine::addCollider(ballCol);*/
 
-	plate1Col->setOnCollisionCallback(onCollisionPlate);
-	plate2Col->setOnCollisionCallback(onCollisionPlate);
-	ballCol->setOnCollisionCallback(onCollisionBall);
+	//plate1Col->setOnCollisionCallback(onCollisionPlate);
+	//plate2Col->setOnCollisionCallback(onCollisionPlate);
+	//ballCol->setOnCollisionCallback(onCollisionBall);
 	//m_text = ResourceManager::getSprite("excPoint");
 
-	m_ball->setMoveOffset(glm::vec2((rand() % 3) - 1, (rand() % 3) - 1));
+	//m_ball->setMoveOffset(glm::vec2((rand() % 3) - 1, (rand() % 3) - 1));
 	return true;
 }

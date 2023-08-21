@@ -64,8 +64,9 @@ protected:
 
 	float m_cam_velocity = 0.01f;
 	float m_cam_rotate_velocity = 0.1f;
-	float m_cam_sensetivity = 1.f;
+	float m_cam_sensetivity = 0.5f;
 	float m_cam_fov = 60.f;
+	float m_cam_sov = 1.f;
 	float m_cam_far_plane = 100.f;
 
 	float m_add_ctrl_speed = 2.f;

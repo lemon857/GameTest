@@ -137,14 +137,14 @@ bool TanksDemoGame::init()
     m_pAnimator->addAnimation("RightMove", std::make_shared<RenderEngine::Animation>(subTextureNames, durations,
         RenderEngine::ECallbackAction(0), RenderEngine::ETypeAnimation(1)));
 
-    auto tankCol = std::make_shared<Physics::Collider>(*m_pTank);
-    auto wallCol = std::make_shared<Physics::Collider>(*m_pBrickWall);
-    auto wallCol2 = std::make_shared<Physics::Collider>(*m_pBrickWall2);
+    //auto tankCol = std::make_shared<Physics::Collider>();
+    //auto wallCol = std::make_shared<Physics::Collider>();
+    //auto wallCol2 = std::make_shared<Physics::Collider>();
 
-    tankCol->setOnCollisionCallback(
+   /* tankCol->setOnCollisionCallback(
         [](IGameObject& targetObj, IGameObject& obj, Physics::EDirection dir)
         {
-            if (obj.getName() == "wall")
+            /*if (obj.getName() == "wall")
             {
                 switch (dir)
                 {
@@ -162,19 +162,19 @@ bool TanksDemoGame::init()
                     break;
                 }
             }
-        });
+        });*/
 
-    m_pTank->addComponent("collider", tankCol);
+    /*m_pTank->addComponent("collider", tankCol);
     m_pTank->addComponent("MoveController", std::make_shared<MoveController>(*m_pTank));
     m_pTank->addComponent("showOutline", std::make_shared<ShowOutline>(*m_pTank, pShapeShaderProgram, glm::vec4(1)));
     m_pTank->addComponent("animator", m_pAnimator);
     m_pBrickWall->addComponent("collider", wallCol);
     m_pBrickWall2->addComponent("collider", wallCol2);
-    m_pBrickWall->addComponent("showOutline", std::make_shared<ShowOutline>(*m_pBrickWall, pShapeShaderProgram, glm::vec4(1)));
+    m_pBrickWall->addComponent("showOutline", std::make_shared<ShowOutline>(*m_pBrickWall, pShapeShaderProgram, glm::vec4(1)));*/
 
-    Physics::PhysicsEngine::addCollider(tankCol);
-    Physics::PhysicsEngine::addCollider(wallCol);
-    Physics::PhysicsEngine::addCollider(wallCol2);
+    //Physics::PhysicsEngine::addCollider(tankCol);
+    //Physics::PhysicsEngine::addCollider(wallCol);
+    //Physics::PhysicsEngine::addCollider(wallCol2);
 
 	return true;
 }

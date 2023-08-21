@@ -14,12 +14,12 @@ Bullet::Bullet(
 	const glm::vec2& size,
 	double liveTime,
 	double velocity)
-	: IGameObject(sprite, name, position, size, glm::vec2(0), velocity)
+	: IGameObject(name)
 	, m_timerLive(this)
 	, m_state(Passive)
 	, m_liveTime(liveTime)
 {
-	m_move = true;
+	//m_move = true;
 }
 
 void Bullet::update(double delta)
@@ -38,7 +38,7 @@ void Bullet::render()
 void Bullet::fire(const glm::vec2& position, Physics::EDirection dir)
 {
 	m_timerLive.setTemplateCallback(deadCallback);
-	m_position = position;
+	/*m_position = position;
 	switch (dir)
 	{
 	case Physics::Up:
@@ -57,14 +57,14 @@ void Bullet::fire(const glm::vec2& position, Physics::EDirection dir)
 		m_pSprite->setSubTexture("bulletRight");
 		m_moveOffset = glm::vec2(1.f, 0.f);
 		break;
-	}
+	}*/
 	m_state = Active;
 	m_timerLive.start(m_liveTime);
 }
 
 void Bullet::dead()
 {
-	m_moveOffset = glm::vec2(0);
+	//m_moveOffset = glm::vec2(0);
 	m_state = Passive;
 }
 

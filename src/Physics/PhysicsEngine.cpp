@@ -38,23 +38,23 @@ namespace Physics
 	{
 		for (auto currentCollider : m_colliders)
 		{
-			glm::vec2 pos = collider->getPosition();
-			glm::vec2 curPos = currentCollider->getPosition();
-			glm::vec2 size = collider->getSize();
-			glm::vec2 curSize = currentCollider->getSize();
+			///*glm::vec2 pos = collider->getPosition();
+			//glm::vec2 curPos = currentCollider->getPosition();
+			//glm::vec2 size = collider->getSize();
+			//glm::vec2 curSize = currentCollider->getSize();*/
 
-			if (pos == curPos && size == curSize) continue;
+			//if (pos == curPos && size == curSize) continue;
 
-			if (curPos.y > pos.y + size.y || curPos.y + curSize.y < pos.y) continue;
+			//if (curPos.y > pos.y + size.y || curPos.y + curSize.y < pos.y) continue;
 
-			if (curPos.x + curSize.x < pos.x || curPos.x > pos.x + size.x) continue;
+			//if (curPos.x + curSize.x < pos.x || curPos.x > pos.x + size.x) continue;
 
-			if (curPos.y <= pos.y + size.y && pos.y + size.y - 1.f < curPos.y && (pos.x <= curPos.x + curSize.x || pos.x + size.x <= curPos.x)) outDir = Up;
-			else if (curPos.y + curSize.y >= pos.y && pos.y + 1.f > curPos.y + curSize.y && (pos.x <= curPos.x + curSize.x || pos.x + size.x <= curPos.x)) outDir = Down;
-			else if (curPos.x + curSize.x >= pos.x && pos.x + size.x > curPos.x + curSize.x && (pos.y <= curPos.y + curSize.y || pos.y + size.y >= curPos.y)) outDir = Left;
-			else if (curPos.x <= pos.x + size.x && pos.x < curPos.x && (pos.y <= curPos.y + curSize.y || pos.y + size.y >= curPos.y)) outDir = Right;
+			//if (curPos.y <= pos.y + size.y && pos.y + size.y - 1.f < curPos.y && (pos.x <= curPos.x + curSize.x || pos.x + size.x <= curPos.x)) outDir = Up;
+			//else if (curPos.y + curSize.y >= pos.y && pos.y + 1.f > curPos.y + curSize.y && (pos.x <= curPos.x + curSize.x || pos.x + size.x <= curPos.x)) outDir = Down;
+			//else if (curPos.x + curSize.x >= pos.x && pos.x + size.x > curPos.x + curSize.x && (pos.y <= curPos.y + curSize.y || pos.y + size.y >= curPos.y)) outDir = Left;
+			//else if (curPos.x <= pos.x + size.x && pos.x < curPos.x && (pos.y <= curPos.y + curSize.y || pos.y + size.y >= curPos.y)) outDir = Right;
 
-			return &currentCollider->getObject();
+			//return &currentCollider->getObject();
 		}
 		return nullptr;
 	}

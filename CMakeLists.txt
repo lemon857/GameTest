@@ -43,7 +43,7 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Physics/Ray.h
 	
 	includes/EngineCore/Renderer3D/GraphicsObject.h
-	includes/EngineCore/Renderer3D/Mesh.h
+	includes/EngineCore/Renderer3D/MeshRenderer.h
 )
 
 set(ENGINE_PRIVATE_SOURCES
@@ -100,7 +100,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/System/Timer.cpp
 		
 	src/Renderer3D/GraphicsObject.cpp
-	src/Renderer3D/Mesh.cpp
+	src/Renderer3D/MeshRenderer.cpp
 )
 
 

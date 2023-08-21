@@ -4,6 +4,11 @@
 #include "EngineCore/Physics/Collider.h"
 #include <memory>
 
+namespace RenderEngine
+{
+	class Sprite;
+}
+
 class BrickWall : public IGameObject
 {
 public:

@@ -7,10 +7,10 @@ Ball::Ball(std::shared_ptr<RenderEngine::ShaderProgram>& program,
 	: PongObject(nullptr, "ball", position, glm::vec2(1), velocity)
 	, m_point(std::move(std::make_shared<RenderEngine::Point>(program, sizePoint)))
 {
-	m_move = true;
+	//m_move = true;
 }
 
 void Ball::render()
 {
-	m_point->render(m_position, 2, glm::vec4(1));
+	//m_point->render(m_position, 2, glm::vec4(1));
 }

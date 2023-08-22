@@ -27,7 +27,7 @@ namespace RenderEngine
 	{
 		glGenBuffers(1, &m_ID);
 		glBindBuffer(GL_ARRAY_BUFFER, m_ID);
-		glBufferData(GL_ARRAY_BUFFER, size, data, is_staticDraw ? GL_STATIC_DRAW : GL_DYNAMIC_DRAW); // for animated SpriteRenderer it's bad
+		glBufferData(GL_ARRAY_BUFFER, size, data, is_staticDraw ? GL_STATIC_DRAW : GL_DYNAMIC_DRAW);
 	}
 	void VertexBuffer::update(const void* data, const unsigned int size) const
 	{

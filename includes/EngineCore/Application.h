@@ -29,7 +29,9 @@ public:
 
 	int start(glm::ivec2& window_size, const char* title);
 
-	virtual bool init() { return true; };
+	virtual bool init();
+
+	virtual bool init_events();
 
 	virtual void on_key_update(const double delta);
 

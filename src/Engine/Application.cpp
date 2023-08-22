@@ -145,118 +145,16 @@ int Application::start(glm::ivec2& window_size, const char* title)
     INIdata data{ window_size, m_window_position, m_maximized_window };
     ResourceManager::loadINIsettings("EngineTest.ini", data, false);
 
-    m_cam = new Camera(glm::vec3(0), glm::vec3(0));
-
-    //m_ray = new Ray();
-
     m_pCloseWindow = false;
     m_pWindow = std::make_unique<Window>(title, m_window_position, window_size, m_maximized_window);
 
-    m_cam->set_viewport_size(static_cast<float>(window_size.x), static_cast<float>(window_size.y));
-
-    m_event_dispather.add_event_listener<EventWindowResize>([&](EventWindowResize& e)
-        {
-            LOG_INFO("[EVENT] Resize: {0}x{1}", e.width, e.height);
-            if (e.width != 0 && e.height != 0)
-            {
-                RenderEngine::Renderer::setViewport(e.width, e.height);
-                m_cam->set_viewport_size(e.width, e.height);
-            }
-        });
-    m_event_dispather.add_event_listener<EventKeyPressed>([](EventKeyPressed& e)
-        {
-            if (e.key_code <= KeyCode::KEY_Z)
-            {
-                if (e.repeated)
-                {
-                    LOG_INFO("[EVENT] Key repeated {0}", static_cast<char>(e.key_code));
-                }
-                else
-                {
-                    LOG_INFO("[EVENT] Key pressed {0}", static_cast<char>(e.key_code));
-                }
-            }
-            Input::pressKey(e.key_code);
-        });
-    m_event_dispather.add_event_listener<EventKeyReleased>([](EventKeyReleased& e)
-        {
-            if (e.key_code <= KeyCode::KEY_Z)  LOG_INFO("[EVENT] Key released {0}", static_cast<char>(e.key_code));
-            Input::releaseKey(e.key_code);
-        });
-    m_event_dispather.add_event_listener<EventMouseMoved>([&](EventMouseMoved& e)
-        {
-            glm::vec3 objcoord = m_cam->get_world_mouse_position(glm::vec2(e.x, e.y), m_pWindow->get_size());
-
-            m_world_mouse_pos_x = objcoord.x;
-            m_world_mouse_pos_y = objcoord.y;
-            m_world_mouse_pos_z = objcoord.z;
-
-            m_mouse_pos_x = e.x;
-            m_mouse_pos_y = e.y;
-            LOG_INFO("[EVENT] Mouse moved to {0}x{1}", e.x, e.y);
-        });
-    m_event_dispather.add_event_listener<EventWindowClose>([&](EventWindowClose& e)
-        {
-            LOG_INFO("[EVENT] Window close");
-            m_pCloseWindow = true;
-        });
-    m_event_dispather.add_event_listener<EventMouseButtonPressed>([&](EventMouseButtonPressed& e)
-        {
-            LOG_INFO("[EVENT] Mouse button pressed at ({0}x{1})", e.x_pos, e.y_pos);
-            Input::pressMouseButton(e.mouse_button);
-            on_mouse_button_event(e.mouse_button, e.x_pos, e.y_pos, true);
-        });
-    m_event_dispather.add_event_listener<EventMouseButtonReleased>([&](EventMouseButtonReleased& e)
-        {
-            LOG_INFO("[EVENT] Mouse button released at ({0}x{1})", e.x_pos, e.y_pos);
-            Input::releaseMouseButton(e.mouse_button);
-            on_mouse_button_event(e.mouse_button, e.x_pos, e.y_pos, false);
-        });
-    m_event_dispather.add_event_listener<EventMaximizeWindow>([&](EventMaximizeWindow& e)
-        {
-            LOG_INFO("[EVENT] Maximized window: {0}", e.isMaximized);
-            m_maximized_window = e.isMaximized;
-        });
-    m_event_dispather.add_event_listener<EventMoveWindow>([&](EventMoveWindow& e)
-        {
-            LOG_INFO("[EVENT] Move window to: {0}x{1}", e.x_pos, e.y_pos);
-            m_window_position = glm::ivec2(e.x_pos, e.y_pos);
-        });
-    m_pWindow->set_event_callback(
-        [&](BaseEvent& e)
-        {
-            m_event_dispather.dispatch(e);
-        });
-
     ResourceManager::loadJSONresources("res/resources.json");
 
-    auto pShapeProgram = ResourceManager::getShaderProgram("shapeShader");
-    auto pSpriteProgram = ResourceManager::getShaderProgram("spriteShader");
+    if (!init_events())
+    {        
+        return -1;
+    }
 
-    m_line = new RenderEngine::Line(pShapeProgram);
-
-    m_cube = new Cube(ResourceManager::getTexture("CubeTexture"), "default", ResourceManager::getShaderProgram("shape3DShader"));
-    m_light_source = new Cube(ResourceManager::getTexture("CubeTexture"), "default", ResourceManager::getShaderProgram("lightSourceShader"));
-    m_sprite = new Sprite(ResourceManager::getTexture("TanksTextureAtlas"), "YellowUp11", ResourceManager::getShaderProgram("spriteShader"));
-
-    m_cube->addComponent<Transform>();
-    m_sprite->addComponent<Transform>();
-    m_light_source->addComponent<Transform>();
-
-    m_sprite->getComponent<Transform>()->set_position(glm::vec3(m_SpriteRenderer_pos[0], m_SpriteRenderer_pos[1], m_SpriteRenderer_pos[2]));
-    m_sprite->getComponent<Transform>()->set_scale(glm::vec3(m_SpriteRenderer_scale[0], m_SpriteRenderer_scale[1], m_SpriteRenderer_scale[2]));
-    m_sprite->getComponent<Transform>()->set_rotation(glm::vec3(m_SpriteRenderer_rot[0], m_SpriteRenderer_rot[1], m_SpriteRenderer_rot[2]));
-
-    m_cube->getComponent<Transform>()->set_position(glm::vec3(m_cube_pos[0], m_cube_pos[1], m_cube_pos[2]));
-    m_cube->getComponent<Transform>()->set_scale(glm::vec3(m_cube_scale[0], m_cube_scale[1], m_cube_scale[2]));
-    m_cube->getComponent<Transform>()->set_rotation(glm::vec3(m_cube_rot[0], m_cube_rot[1], m_cube_rot[2]));
-
-    m_light_source->getComponent<Transform>()->set_position(glm::vec3(m_light_pos[0], m_light_pos[1], m_light_pos[2]));
-    m_light_source->getComponent<Transform>()->set_scale(glm::vec3(0.5f));
-    m_light_source->getComponent<Transform>()->set_rotation(glm::vec3(0.f));
-
-    m_cube->setSubTexture("BrickWall");
-    
     if (!init())
     {
         return -1;
@@ -342,6 +240,115 @@ int Application::start(glm::ivec2& window_size, const char* title)
     return 0;
 }
 
+bool Application::init()
+{
+    m_cam = new Camera(glm::vec3(0), glm::vec3(0));
+
+    m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
+
+    auto pShapeProgram = ResourceManager::getShaderProgram("shapeShader");
+    auto pSpriteProgram = ResourceManager::getShaderProgram("spriteShader");
+
+    m_line = new RenderEngine::Line(pShapeProgram);
+
+    m_cube = new Cube(ResourceManager::getTexture("CubeTexture"), "default", ResourceManager::getShaderProgram("shape3DShader"));
+    m_light_source = new Cube(ResourceManager::getTexture("CubeTexture"), "default", ResourceManager::getShaderProgram("lightSourceShader"));
+    m_sprite = new Sprite(ResourceManager::getTexture("TanksTextureAtlas"), "YellowUp11", ResourceManager::getShaderProgram("spriteShader"));
+
+    m_cube->addComponent<Transform>()->
+        init(glm::vec3(m_cube_pos[0], m_cube_pos[1], m_cube_pos[2]),
+            glm::vec3(m_cube_scale[0], m_cube_scale[1], m_cube_scale[2]),
+            glm::vec3(m_cube_rot[0], m_cube_rot[1], m_cube_rot[2]));
+    m_sprite->addComponent<Transform>()->
+        init(glm::vec3(m_SpriteRenderer_pos[0], m_SpriteRenderer_pos[1], m_SpriteRenderer_pos[2]),
+            glm::vec3(m_SpriteRenderer_scale[0], m_SpriteRenderer_scale[1], m_SpriteRenderer_scale[2]),
+            glm::vec3(m_SpriteRenderer_rot[0], m_SpriteRenderer_rot[1], m_SpriteRenderer_rot[2]));
+    m_light_source->addComponent<Transform>()->init(glm::vec3(m_light_pos[0], m_light_pos[1], m_light_pos[2]), glm::vec3(0.5f), glm::vec3(0.f));
+
+    m_cube->setSubTexture("BrickWall");
+
+
+    return true;
+}
+
+bool Application::init_events()
+{
+    m_event_dispather.add_event_listener<EventWindowResize>([&](EventWindowResize& e)
+        {
+            LOG_INFO("[EVENT] Resize: {0}x{1}", e.width, e.height);
+            if (e.width != 0 && e.height != 0)
+            {
+                RenderEngine::Renderer::setViewport(e.width, e.height);
+                m_cam->set_viewport_size(e.width, e.height);
+            }
+        });
+    m_event_dispather.add_event_listener<EventKeyPressed>([](EventKeyPressed& e)
+        {
+            if (e.key_code <= KeyCode::KEY_Z)
+            {
+                if (e.repeated)
+                {
+                    LOG_INFO("[EVENT] Key repeated {0}", static_cast<char>(e.key_code));
+                }
+                else
+                {
+                    LOG_INFO("[EVENT] Key pressed {0}", static_cast<char>(e.key_code));
+                }
+            }
+            Input::pressKey(e.key_code);
+        });
+    m_event_dispather.add_event_listener<EventKeyReleased>([](EventKeyReleased& e)
+        {
+            if (e.key_code <= KeyCode::KEY_Z)  LOG_INFO("[EVENT] Key released {0}", static_cast<char>(e.key_code));
+            Input::releaseKey(e.key_code);
+        });
+    m_event_dispather.add_event_listener<EventMouseMoved>([&](EventMouseMoved& e)
+        {
+            glm::vec3 objcoord = m_cam->get_world_mouse_position(glm::vec2(e.x, e.y), m_pWindow->get_size());
+
+            m_world_mouse_pos_x = objcoord.x;
+            m_world_mouse_pos_y = objcoord.y;
+            m_world_mouse_pos_z = objcoord.z;
+
+            m_mouse_pos_x = e.x;
+            m_mouse_pos_y = e.y;
+            LOG_INFO("[EVENT] Mouse moved to {0}x{1}", e.x, e.y);
+        });
+    m_event_dispather.add_event_listener<EventWindowClose>([&](EventWindowClose& e)
+        {
+            LOG_INFO("[EVENT] Window close");
+            m_pCloseWindow = true;
+        });
+    m_event_dispather.add_event_listener<EventMouseButtonPressed>([&](EventMouseButtonPressed& e)
+        {
+            LOG_INFO("[EVENT] Mouse button pressed at ({0}x{1})", e.x_pos, e.y_pos);
+            Input::pressMouseButton(e.mouse_button);
+            on_mouse_button_event(e.mouse_button, e.x_pos, e.y_pos, true);
+        });
+    m_event_dispather.add_event_listener<EventMouseButtonReleased>([&](EventMouseButtonReleased& e)
+        {
+            LOG_INFO("[EVENT] Mouse button released at ({0}x{1})", e.x_pos, e.y_pos);
+            Input::releaseMouseButton(e.mouse_button);
+            on_mouse_button_event(e.mouse_button, e.x_pos, e.y_pos, false);
+        });
+    m_event_dispather.add_event_listener<EventMaximizeWindow>([&](EventMaximizeWindow& e)
+        {
+            LOG_INFO("[EVENT] Maximized window: {0}", e.isMaximized);
+            m_maximized_window = e.isMaximized;
+        });
+    m_event_dispather.add_event_listener<EventMoveWindow>([&](EventMoveWindow& e)
+        {
+            LOG_INFO("[EVENT] Move window to: {0}x{1}", e.x_pos, e.y_pos);
+            m_window_position = glm::ivec2(e.x_pos, e.y_pos);
+        });
+    m_pWindow->set_event_callback(
+        [&](BaseEvent& e)
+        {
+            m_event_dispather.dispatch(e);
+        });
+    return true;
+}
+
 void Application::on_key_update(const double delta)
 {
     glm::vec3 movement_delta{ 0,0,0 };
@@ -381,11 +388,11 @@ void Application::on_key_update(const double delta)
 
     else if (Input::isKeyPressed(KeyCode::KEY_UP))
     {
-        rotation_delta.x -= static_cast<float>(addSpeed * m_cam_rotate_velocity * delta);
+        rotation_delta.x += static_cast<float>(addSpeed * m_cam_rotate_velocity * delta);
     }
     else if (Input::isKeyPressed(KeyCode::KEY_DOWN))
     {
-        rotation_delta.x += static_cast<float>(addSpeed * m_cam_rotate_velocity * delta);
+        rotation_delta.x -= static_cast<float>(addSpeed * m_cam_rotate_velocity * delta);
     }
     else if (Input::isKeyPressed(KeyCode::KEY_LEFT))
     {
@@ -397,11 +404,11 @@ void Application::on_key_update(const double delta)
     }
     else if (Input::isKeyPressed(KeyCode::KEY_Q))
     {
-        rotation_delta.z -= static_cast<float>(addSpeed * m_cam_rotate_velocity * delta);
+        rotation_delta.z += static_cast<float>(addSpeed * m_cam_rotate_velocity * delta);
     }
     else if (Input::isKeyPressed(KeyCode::KEY_E))
     {
-        rotation_delta.z += static_cast<float>(addSpeed * m_cam_rotate_velocity * delta);
+        rotation_delta.z -= static_cast<float>(addSpeed * m_cam_rotate_velocity * delta);
     }
 
     if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_RIGHT))

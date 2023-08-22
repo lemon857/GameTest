@@ -152,6 +152,6 @@ void Camera::update_projection_matrix()
 	else
 	{
 		const float aspect = m_viewport_width / m_viewport_height;
-		m_projection_matrix = glm::ortho(-m_size_of_view, m_size_of_view, -m_size_of_view * aspect, m_size_of_view * aspect, m_near_clip_plane, m_far_clip_plane);
+		m_projection_matrix = glm::ortho(-m_size_of_view * aspect, m_size_of_view * aspect, -m_size_of_view * aspect, m_size_of_view * aspect, m_near_clip_plane, m_far_clip_plane);
 	}
 }

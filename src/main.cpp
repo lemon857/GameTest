@@ -21,14 +21,15 @@
 #include "EngineCore/System/Log.h"
 #include "EngineCore/Components/Transform.h"
 
-class MyApp : public Application
+class EditorApplication : public Application
 {
 public:
-    MyApp()
+    EditorApplication()
+        : Application()
     {
 
     }
-    ~MyApp()
+    ~EditorApplication()
     {
 
     }
@@ -42,7 +43,7 @@ public:
         ImGui::Begin("Info");
         ImGui::Text(("Mouse position X: " +  std::to_string(m_mouse_pos_x)).c_str());
         ImGui::Text(("Mouse position Y: " + std::to_string(m_mouse_pos_y)).c_str());
-
+        ImGui::Text("");
         ImGui::Text(("Mouse world position X: " + std::to_string(m_world_mouse_pos_x)).c_str());
         ImGui::Text(("Mouse world position Y: " + std::to_string(m_world_mouse_pos_y)).c_str());
         ImGui::Text(("Mouse world position Z: " + std::to_string(m_world_mouse_pos_z)).c_str());
@@ -50,7 +51,7 @@ public:
         
         ImGui::Begin("Aera settings");
         ImGui::ColorEdit4("Background Color", m_colors);
-        ImGui::ColorPicker3("Light source Color", m_light_color);
+        ImGui::ColorEdit3("Light source Color", m_light_color);
         ImGui::SliderFloat3("Line final position", m_line_pos, -50.f, 50.f);
         ImGui::Checkbox("Draw null intersection", &m_drawNullIntersection);
         ImGui::End();
@@ -150,11 +151,11 @@ int main(int argc, char** argv)
     //g_Game = new SnakeDemoGame(g_WindowSize, glm::vec2(100));
     //g_Game = new PongDemoGame(g_WindowSize);
 
-    Application* myApp = new MyApp();
+    EditorApplication* editorApplication = new EditorApplication();
 
-    myApp->start(g_WindowSize, "Test game");
+    editorApplication->start(g_WindowSize, "Test game");
 
-    delete myApp;
+    delete editorApplication;
 
     return 0;
 }

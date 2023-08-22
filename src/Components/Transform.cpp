@@ -2,10 +2,17 @@
 
 Transform::Transform()
 	: m_position(glm::vec3(0.f))
-	, m_scale(glm::vec3(0.f))
+	, m_scale(glm::vec3(1.f))
 	, m_rotation(glm::vec3(0.f))
 	, IComponent()
 {
+}
+
+void Transform::init(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot)
+{
+	m_position = pos;
+	m_scale = scale;
+	m_rotation = rot;
 }
 
 void Transform::set_position(glm::vec3 pos)

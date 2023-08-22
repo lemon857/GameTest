@@ -235,47 +235,28 @@ int Application::start(glm::ivec2& window_size, const char* title)
 
     m_line = new RenderEngine::Line(pShapeProgram);
 
-    m_cube = new Cube(ResourceManager::getShaderProgram("shape3DShader"), ResourceManager::getTexture("WallAtlas"));
+    m_cube = new Cube(ResourceManager::getTexture("CubeTexture"), "default", ResourceManager::getShaderProgram("shape3DShader"));
+    m_light_source = new Cube(ResourceManager::getTexture("CubeTexture"), "default", ResourceManager::getShaderProgram("lightSourceShader"));
+    m_sprite = new Sprite(ResourceManager::getTexture("TanksTextureAtlas"), "YellowUp11", ResourceManager::getShaderProgram("spriteShader"));
 
     m_cube->addComponent<Transform>();
-          
-    m_cube->getComponent<Transform>()->set_position(glm::vec3(m_SpriteRenderer_pos[0], m_SpriteRenderer_pos[1], m_SpriteRenderer_pos[2]));
-    m_cube->getComponent<Transform>()->set_scale(glm::vec3(m_SpriteRenderer_scale[0], m_SpriteRenderer_scale[1], m_SpriteRenderer_scale[2]));
-    m_cube->getComponent<Transform>()->set_rotation(glm::vec3(m_SpriteRenderer_rot[0], m_SpriteRenderer_rot[1], m_SpriteRenderer_rot[2]));
+    m_sprite->addComponent<Transform>();
+    m_light_source->addComponent<Transform>();
+
+    m_sprite->getComponent<Transform>()->set_position(glm::vec3(m_SpriteRenderer_pos[0], m_SpriteRenderer_pos[1], m_SpriteRenderer_pos[2]));
+    m_sprite->getComponent<Transform>()->set_scale(glm::vec3(m_SpriteRenderer_scale[0], m_SpriteRenderer_scale[1], m_SpriteRenderer_scale[2]));
+    m_sprite->getComponent<Transform>()->set_rotation(glm::vec3(m_SpriteRenderer_rot[0], m_SpriteRenderer_rot[1], m_SpriteRenderer_rot[2]));
+
+    m_cube->getComponent<Transform>()->set_position(glm::vec3(m_cube_pos[0], m_cube_pos[1], m_cube_pos[2]));
+    m_cube->getComponent<Transform>()->set_scale(glm::vec3(m_cube_scale[0], m_cube_scale[1], m_cube_scale[2]));
+    m_cube->getComponent<Transform>()->set_rotation(glm::vec3(m_cube_rot[0], m_cube_rot[1], m_cube_rot[2]));
+
+    m_light_source->getComponent<Transform>()->set_position(glm::vec3(m_light_pos[0], m_light_pos[1], m_light_pos[2]));
+    m_light_source->getComponent<Transform>()->set_scale(glm::vec3(0.5f));
+    m_light_source->getComponent<Transform>()->set_rotation(glm::vec3(0.f));
+
     m_cube->setSubTexture("BrickWall");
-    // --------------------------------------------------------- //
-    m_pTextureAtlas = ResourceManager::getTexture("CubeTexture");
-    m_pShaderProgram_light = ResourceManager::getShaderProgram("lightSourceShader");
-    m_pShaderProgram = ResourceManager::getShaderProgram("shape3DShader");
-
-    m_vertexArray = std::make_shared<RenderEngine::VertexArray>();
-
-    m_vertexCoordsBuffer.init(&vertexCoords, 24 * 3 * sizeof(GLfloat), false);
-    RenderEngine::VertexBufferLayout vertexCoordsLayout;
-    vertexCoordsLayout.addElementLayoutFloat(3, false);
-    m_vertexArray->addBuffer(m_vertexCoordsBuffer, vertexCoordsLayout);
-
-    m_vertexNormalBuffer.init(&normalCoords, 24 * 3 * sizeof(GLfloat), false);
-    RenderEngine::VertexBufferLayout vertexNormalLayout;
-    vertexNormalLayout.addElementLayoutFloat(3, false);
-    m_vertexArray->addBuffer(m_vertexNormalBuffer, vertexNormalLayout);
-
-    m_textureCoordsBuffer.init(&textureCoords, 24 * 2 * sizeof(GLfloat), false);
-    RenderEngine::VertexBufferLayout textureCoordsLayout;
-    textureCoordsLayout.addElementLayoutFloat(2, false);
-    m_vertexArray->addBuffer(m_textureCoordsBuffer, textureCoordsLayout);
-
-    m_indexBuffer.init(&indexes, sizeof(indexes) / sizeof(GLuint));
-
-    m_vertexArray->unbind();
-    m_vertexArray_light = std::make_shared<RenderEngine::VertexArray>();
-
-    m_vertexArray_light->addBuffer(m_vertexCoordsBuffer, vertexCoordsLayout);
-
-    m_vertexArray_light->unbind();
-    m_indexBuffer.unbind();
-    // --------------------------------------------------------- //
-
+    
     if (!init())
     {
         return -1;
@@ -328,78 +309,24 @@ int Application::start(glm::ivec2& window_size, const char* title)
             m_line->render_from_to(glm::vec3(0.f, 50.f, 0.f), glm::vec3(0.f, -50.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
             m_line->render_from_to(glm::vec3(50.f, 0.f, 0.f), glm::vec3(-50.f, 0.f, 0.f), glm::vec3(1.f, 0.f, 0.f));
         }
-
-        // --------------------------------------------------------- //
         
-        // Cube
+        ResourceManager::getShaderProgram("shape3DShader")->use();
+        ResourceManager::getShaderProgram("shape3DShader")->setVec3("light_color", glm::vec3(m_light_color[0], m_light_color[1], m_light_color[2]));
+        ResourceManager::getShaderProgram("shape3DShader")->setVec3("light_position", glm::vec3(m_light_pos[0], m_light_pos[1], m_light_pos[2]));
+        ResourceManager::getShaderProgram("shape3DShader")->setVec3("cam_position", m_cam->get_position());
+        ResourceManager::getShaderProgram("shape3DShader")->setFloat("ambient_factor", m_ambient_factor);
+        ResourceManager::getShaderProgram("shape3DShader")->setFloat("diffuse_factor", m_diffuse_factor);
+        ResourceManager::getShaderProgram("shape3DShader")->setFloat("specular_factor", m_specular_factor);
+        ResourceManager::getShaderProgram("shape3DShader")->setFloat("shininess", m_shininess);
+        ResourceManager::getShaderProgram("shape3DShader")->setInt("isMetalic", m_isMetalic);
 
-        m_pShaderProgram->use();
-        glm::mat4 scaleMat(
-            m_cube_scale[0], 0, 0, 0,
-            0, m_cube_scale[1], 0, 0,
-            0, 0, m_cube_scale[2], 0,
-            0, 0, 0, 1);
+        ResourceManager::getShaderProgram("lightSourceShader")->use();
+        ResourceManager::getShaderProgram("lightSourceShader")->setVec3("light_color", glm::vec3(m_light_color[0], m_light_color[1], m_light_color[2]));
 
-        glm::mat4 translateMat(
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            m_cube_pos[0], m_cube_pos[1], m_cube_pos[2], 1);
-
-        float xRotRadians = glm::radians(m_cube_rot[0]);
-        float yRotRadians = glm::radians(m_cube_rot[1]);
-        float zRotRadians = glm::radians(m_cube_rot[2]);
-
-        glm::mat4 rotateXmat(
-            1, 0, 0, 0,
-            0, cos(xRotRadians), -sin(xRotRadians), 0,
-            0, sin(xRotRadians), cos(xRotRadians), 0,
-            0, 0, 0, 1);
-
-        glm::mat4 rotateYmat(
-            cos(yRotRadians), 0, -sin(yRotRadians), 0,
-            0, 1, 0, 0,
-            sin(yRotRadians), 0, cos(yRotRadians), 0,
-            0, 0, 0, 1);
-
-        glm::mat4 rotateZmat(
-            cos(zRotRadians), -sin(zRotRadians), 0, 0,
-            sin(zRotRadians), cos(zRotRadians), 0, 0,
-            0, 0, 1, 0,
-            0, 0, 0, 1);
-
-        glm::mat4 model =  translateMat * rotateXmat * rotateYmat * rotateZmat * scaleMat;
-
-        m_pShaderProgram->setVec3("light_color", glm::vec3(m_light_color[0], m_light_color[1], m_light_color[2]));
-        m_pShaderProgram->setVec3("light_position", glm::vec3(m_light_pos[0], m_light_pos[1], m_light_pos[2]));
-        m_pShaderProgram->setVec3("cam_position", m_cam->get_position());
-        m_pShaderProgram->setFloat("ambient_factor", m_ambient_factor);
-        m_pShaderProgram->setFloat("diffuse_factor", m_diffuse_factor);
-        m_pShaderProgram->setFloat("specular_factor", m_specular_factor);
-        m_pShaderProgram->setFloat("shininess", m_shininess);
-        m_pShaderProgram->setInt("isMetalic", m_isMetalic);
-        //m_pShaderProgram->setVec4("sourceColor", glm::vec4(1.f));
-        m_pShaderProgram->setMatrix4("modelMat", model);
-
-        RenderEngine::Renderer::bindTexture(*m_pTextureAtlas);
-        RenderEngine::Renderer::drawTriangles(*m_vertexArray, m_indexBuffer);
-
-        // Light source
-
-        glm::mat4 translateMatLight(
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            m_light_pos[0], m_light_pos[1], m_light_pos[2], 1);
-
-        m_pShaderProgram_light->use();
-        m_pShaderProgram_light->setMatrix4("modelMat", translateMatLight);
-        m_pShaderProgram_light->setVec3("light_color", glm::vec3(m_light_color[0], m_light_color[1], m_light_color[2]));
-        RenderEngine::Renderer::drawTriangles(*m_vertexArray_light, m_indexBuffer);
-
-        // --------------------------------------------------------- //
-
+        
         m_cube->update(duration);
+        m_light_source->update(duration);
+        m_sprite->update(duration);
 
         // ------------------------------------------------------------ // 
         on_ui_render();

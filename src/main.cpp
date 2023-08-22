@@ -58,20 +58,32 @@ public:
         ImGui::Begin("Something settings");
         if (ImGui::SliderFloat3("Sprite position", m_SpriteRenderer_pos, -50.f, 50.f))
         {
-            m_cube->getComponent<Transform>()->set_position(glm::vec3(m_SpriteRenderer_pos[0], m_SpriteRenderer_pos[1], m_SpriteRenderer_pos[2]));
+            m_sprite->getComponent<Transform>()->set_position(glm::vec3(m_SpriteRenderer_pos[0], m_SpriteRenderer_pos[1], m_SpriteRenderer_pos[2]));
         }
         if (ImGui::SliderFloat3("Sprite scale", m_SpriteRenderer_scale, -50.f, 50.f))
         {
-            m_cube->getComponent<Transform>()->set_scale(glm::vec3(m_SpriteRenderer_scale[0], m_SpriteRenderer_scale[1], m_SpriteRenderer_scale[2]));
+            m_sprite->getComponent<Transform>()->set_scale(glm::vec3(m_SpriteRenderer_scale[0], m_SpriteRenderer_scale[1], m_SpriteRenderer_scale[2]));
         }
         if (ImGui::SliderFloat3("Sprite rotation", m_SpriteRenderer_rot, 0.f, 360.f))
         {
-            m_cube->getComponent<Transform>()->set_rotation(glm::vec3(m_SpriteRenderer_rot[0], m_SpriteRenderer_rot[1], m_SpriteRenderer_rot[2]));
+            m_sprite->getComponent<Transform>()->set_rotation(glm::vec3(m_SpriteRenderer_rot[0], m_SpriteRenderer_rot[1], m_SpriteRenderer_rot[2]));
         }
-        ImGui::SliderFloat3("Cube position", m_cube_pos, -50.f, 50.f);
-        ImGui::SliderFloat3("Cube scale", m_cube_scale, -50.f, 50.f);
-        ImGui::SliderFloat3("Cube rotation", m_cube_rot, 0.f, 360.f);
-        ImGui::SliderFloat3("Light source position", m_light_pos, -20.f, 20.f);
+        if (ImGui::SliderFloat3("Cube position", m_cube_pos, -50.f, 50.f))
+        {
+            m_cube->getComponent<Transform>()->set_position(glm::vec3(m_cube_pos[0], m_cube_pos[1], m_cube_pos[2]));
+        }
+        if (ImGui::SliderFloat3("Cube scale", m_cube_scale, -50.f, 50.f))
+        {
+            m_cube->getComponent<Transform>()->set_scale(glm::vec3(m_cube_scale[0], m_cube_scale[1], m_cube_scale[2]));
+        }
+        if (ImGui::SliderFloat3("Cube rotation", m_cube_rot, 0.f, 360.f))
+        {
+            m_cube->getComponent<Transform>()->set_rotation(glm::vec3(m_cube_rot[0], m_cube_rot[1], m_cube_rot[2]));
+        }
+        if (ImGui::SliderFloat3("Light source position", m_light_pos, -20.f, 20.f))
+        {
+            m_light_source->getComponent<Transform>()->set_position(glm::vec3(m_light_pos[0], m_light_pos[1], m_light_pos[2]));
+        }
         ImGui::SliderFloat("Ambient factor", &m_ambient_factor, 0.f, 1.f);
         ImGui::SliderFloat("Diffuse factor", &m_diffuse_factor, 0.f, 1.f);
         ImGui::SliderFloat("Specular factor", &m_specular_factor, 0.f, 1.f);

@@ -11,6 +11,7 @@
 #include "EngineCore/Renderer/Line.h"
 #include "EngineCore/Physics/Ray.h"
 #include "EngineCore/Meshes/Cube.h"
+#include "EngineCore/Meshes/Sprite.h"
 
 #include <memory>
 #include <glm/vec2.hpp>
@@ -94,15 +95,7 @@ protected:
 	int m_isMetalic = 0;
 	bool m_drawNullIntersection = false;
 
-	std::shared_ptr<RenderEngine::VertexArray> m_vertexArray;
-	std::shared_ptr<RenderEngine::VertexArray> m_vertexArray_light;
-	RenderEngine::VertexBuffer m_vertexCoordsBuffer;
-	RenderEngine::VertexBuffer m_vertexNormalBuffer;
-	RenderEngine::VertexBuffer m_textureCoordsBuffer;
-	RenderEngine::IndexBuffer m_indexBuffer;
 	Cube* m_cube;
-
-	std::shared_ptr<RenderEngine::Texture2D> m_pTextureAtlas;
-	std::shared_ptr<RenderEngine::ShaderProgram> m_pShaderProgram;
-	std::shared_ptr<RenderEngine::ShaderProgram> m_pShaderProgram_light;
+	Cube* m_light_source;
+	Sprite* m_sprite;
 };

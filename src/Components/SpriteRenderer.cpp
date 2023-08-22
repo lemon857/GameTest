@@ -46,10 +46,10 @@ void SpriteRenderer::init(std::shared_ptr<RenderEngine::Texture2D> pTexture,
 		//| /|
 		//0--3
 		//X --- Y
-		-0.5f,-0.5f, 0.f,
-		-0.5f, 0.5f, 0.f,
-		 0.5f, 0.5f, 0.f,
-		 0.5f, -0.5f, 0.f
+		-1.f,-1.f, 0.f,
+		-1.f, 1.f, 0.f,
+		 1.f, 1.f, 0.f,
+		 1.f, -1.f, 0.f
 	};
 
 	auto aSubTexture = m_pTextureAtlas->getSubTexture(initialSubTexture);

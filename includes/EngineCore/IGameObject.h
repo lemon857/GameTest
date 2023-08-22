@@ -14,11 +14,11 @@ public:
 	std::string get_name() { return m_name; };
 
 	// Возврат nullptr означает уже наличие добавляемого компонента, либо неудачное создание компонента
-	template <class _Ty>
-	_Ty* addComponent()
+	template <class _Ty, class... _Types>
+	_Ty* addComponent(_Types&&... _Args)
 	{
 		if (getComponent<_Ty>() != nullptr) return nullptr;
-		IComponent* component = (IComponent*)(new _Ty());
+		IComponent* component = (IComponent*)(new _Ty(std::forward<_Types>(_Args)...));
 		component->set_target_object(this);
 		m_components.emplace(typeid(_Ty).name(), component);
 		return (_Ty*)component;

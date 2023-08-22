@@ -8,6 +8,7 @@
 #include "EngineCore/Components/SpriteRenderer.h"
 #include "EngineCore/Renderer3D/GraphicsObject.h"
 #include "EngineCore/Components/Transform.h"
+#include "EngineCore/Components/Highlight.h"
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
@@ -216,7 +217,7 @@ int Application::start(glm::ivec2& window_size, const char* title)
         ResourceManager::getShaderProgram("shape3DShader")->setFloat("diffuse_factor", m_diffuse_factor);
         ResourceManager::getShaderProgram("shape3DShader")->setFloat("specular_factor", m_specular_factor);
         ResourceManager::getShaderProgram("shape3DShader")->setFloat("shininess", m_shininess);
-        ResourceManager::getShaderProgram("shape3DShader")->setInt("isMetalic", m_isMetalic);
+        ResourceManager::getShaderProgram("shape3DShader")->setFloat("metalic_factor", m_metalic_factor);
 
         ResourceManager::getShaderProgram("lightSourceShader")->use();
         ResourceManager::getShaderProgram("lightSourceShader")->setVec3("light_color", glm::vec3(m_light_color[0], m_light_color[1], m_light_color[2]));
@@ -255,15 +256,16 @@ bool Application::init()
     m_light_source = new Cube(ResourceManager::getTexture("CubeTexture"), "default", ResourceManager::getShaderProgram("lightSourceShader"));
     m_sprite = new Sprite(ResourceManager::getTexture("TanksTextureAtlas"), "YellowUp11", ResourceManager::getShaderProgram("spriteShader"));
 
-    m_cube->addComponent<Transform>()->
-        init(glm::vec3(m_cube_pos[0], m_cube_pos[1], m_cube_pos[2]),
-            glm::vec3(m_cube_scale[0], m_cube_scale[1], m_cube_scale[2]),
-            glm::vec3(m_cube_rot[0], m_cube_rot[1], m_cube_rot[2]));
-    m_sprite->addComponent<Transform>()->
-        init(glm::vec3(m_SpriteRenderer_pos[0], m_SpriteRenderer_pos[1], m_SpriteRenderer_pos[2]),
-            glm::vec3(m_SpriteRenderer_scale[0], m_SpriteRenderer_scale[1], m_SpriteRenderer_scale[2]),
-            glm::vec3(m_SpriteRenderer_rot[0], m_SpriteRenderer_rot[1], m_SpriteRenderer_rot[2]));
-    m_light_source->addComponent<Transform>()->init(glm::vec3(m_light_pos[0], m_light_pos[1], m_light_pos[2]), glm::vec3(0.5f), glm::vec3(0.f));
+    m_cube->addComponent<Highlight>(pShapeProgram, glm::vec3(1.f));
+    m_sprite->addComponent<Highlight>(pShapeProgram, glm::vec3(1.f));
+
+    m_cube->addComponent<Transform>(glm::vec3(m_cube_pos[0], m_cube_pos[1], m_cube_pos[2]),
+        glm::vec3(m_cube_scale[0], m_cube_scale[1], m_cube_scale[2]),
+        glm::vec3(m_cube_rot[0], m_cube_rot[1], m_cube_rot[2]));
+    m_sprite->addComponent<Transform>(glm::vec3(m_SpriteRenderer_pos[0], m_SpriteRenderer_pos[1], m_SpriteRenderer_pos[2]),
+        glm::vec3(m_SpriteRenderer_scale[0], m_SpriteRenderer_scale[1], m_SpriteRenderer_scale[2]),
+        glm::vec3(m_SpriteRenderer_rot[0], m_SpriteRenderer_rot[1], m_SpriteRenderer_rot[2]));
+    m_light_source->addComponent<Transform>(glm::vec3(m_light_pos[0], m_light_pos[1], m_light_pos[2]), glm::vec3(0.5f), glm::vec3(0.f));
 
     m_cube->setSubTexture("BrickWall");
 

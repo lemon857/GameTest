@@ -16,14 +16,12 @@ namespace RenderEngine
 class MeshRenderer : public IComponent
 {
 public:
-	MeshRenderer();
-	~MeshRenderer();
-
-	void init(
+	MeshRenderer(
 		std::shared_ptr<RenderEngine::VertexArray> vao,
 		std::shared_ptr<RenderEngine::IndexBuffer> ebo,
 		std::shared_ptr<RenderEngine::ShaderProgram> pShaderProgram,
 		std::shared_ptr<RenderEngine::Texture2D> pTexture);
+	~MeshRenderer();
 
 	void update(const double delta) override;
 private:

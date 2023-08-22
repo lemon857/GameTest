@@ -56,7 +56,7 @@ protected:
 	float m_cam_rot[3] = { 0.f, 0.f, 0.f };
 
 	float m_SpriteRenderer_pos[3] = { 0.f, 5.f, 5.f };
-	float m_SpriteRenderer_scale[3] = { 1.f, 1.f, 1.f };
+	float m_SpriteRenderer_scale[3] = { 1.f, 1.f, 0.f };
 	float m_SpriteRenderer_rot[3] = { 0.f, 0.f, 0.f };
 
 	float m_line_pos[3] = { 0.f, 0.f, 0.f };
@@ -80,6 +80,8 @@ protected:
 	float m_ambient_factor = 0.1f;
 	float m_diffuse_factor = 1.f;
 	float m_specular_factor = 1.f;
+	float m_diffuse_specular_factor = 0.5f;
+	float m_metalic_factor = 0.f;
 	float m_shininess = 1.f;
 
 	double m_init_mouse_pos_x = 0;
@@ -94,7 +96,6 @@ protected:
 	
 	bool m_isPerspectiveCam = true;
 	bool m_isInversiveMouseY = false;
-	int m_isMetalic = 0;
 	bool m_drawNullIntersection = false;
 
 	Cube* m_cube;

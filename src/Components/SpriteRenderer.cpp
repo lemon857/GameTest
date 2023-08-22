@@ -11,33 +11,17 @@
 #include <glm/vec3.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-SpriteRenderer::SpriteRenderer()
-	: IComponent()
-{
-
-}
-
-SpriteRenderer::~SpriteRenderer()
-{
-	delete m_indexBuffer;
-	delete m_textureCoordsBuffer;
-	delete m_vertexCoordsBuffer;
-	delete m_vertexArray.get();
-}
-
-void SpriteRenderer::init(std::shared_ptr<RenderEngine::Texture2D> pTexture,
+SpriteRenderer::SpriteRenderer(std::shared_ptr<RenderEngine::Texture2D> pTexture,
 	std::string initialSubTexture,
 	std::shared_ptr<RenderEngine::ShaderProgram> pShaderProgram)
+	: IComponent()
+	, m_vertexArray(std::make_shared<RenderEngine::VertexArray>())
+	, m_pShaderProgram(std::move(pShaderProgram))
+	, m_pTextureAtlas(std::move(pTexture))
+	, m_vertexCoordsBuffer(new RenderEngine::VertexBuffer())
+	, m_textureCoordsBuffer(new RenderEngine::VertexBuffer())
+	, m_indexBuffer(new RenderEngine::IndexBuffer())
 {
-
-	m_pShaderProgram = std::move(pShaderProgram);
-	m_pTextureAtlas = std::move(pTexture);
-
-	m_vertexArray = std::make_shared<RenderEngine::VertexArray>();
-	m_vertexCoordsBuffer = new RenderEngine::VertexBuffer();
-	m_textureCoordsBuffer = new RenderEngine::VertexBuffer();
-	m_indexBuffer = new RenderEngine::IndexBuffer();
-
 	const GLfloat vertexCoords[] = {
 		//2--3  1
 		//| / /	|
@@ -76,6 +60,14 @@ void SpriteRenderer::init(std::shared_ptr<RenderEngine::Texture2D> pTexture,
 
 	m_vertexArray->unbind();
 	m_indexBuffer->unbind();
+}
+
+SpriteRenderer::~SpriteRenderer()
+{
+	delete m_indexBuffer;
+	delete m_textureCoordsBuffer;
+	delete m_vertexCoordsBuffer;
+	delete m_vertexArray.get();
 }
 
 void SpriteRenderer::setSubTexture(std::string subTexture)

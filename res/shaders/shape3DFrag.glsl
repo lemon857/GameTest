@@ -12,7 +12,7 @@ uniform float ambient_factor;
 uniform float diffuse_factor;
 uniform float specular_factor;
 uniform float shininess;
-uniform int isMetalic;
+uniform float metalic_factor;
 
 void main() 
 {	
@@ -30,18 +30,9 @@ void main()
 	vec3 view_dir = normalize(cam_position - frag_position);
 	vec3 reflect_dir = reflect(-light_direction, normal);
 	vec3 specular;
-	if (isMetalic == 1)
-	{
-		specular = specular_factor * vec3(texture(tex, texCoord)) * pow(max(dot(view_dir, reflect_dir), 0.0), shininess);
-	}
-	else if (isMetalic == 2)
-	{
-		specular = specular_factor * ((light_color + vec3(texture(tex, texCoord))) / 2) * pow(max(dot(view_dir, reflect_dir), 0.0), shininess);
-	}
-	else
-	{
-		specular = specular_factor * light_color * pow(max(dot(view_dir, reflect_dir), 0.0), shininess);
-	}
+
+	specular = specular_factor * (((light_color * (1.f - metalic_factor)) + (vec3(texture(tex, texCoord) * metalic_factor))) / 2) * pow(max(dot(view_dir, reflect_dir), 0.0), shininess);
+	
 	frag_color = texture(tex, texCoord) * vec4(ambient + diffuse + specular, 1.f);   
 	if (frag_color == vec4(0.0))
 	{

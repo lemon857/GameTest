@@ -18,13 +18,11 @@ namespace RenderEngine
 class SpriteRenderer : public IComponent
 {
 public:
-	SpriteRenderer();
-
-	~SpriteRenderer();
-
-	void init(std::shared_ptr<RenderEngine::Texture2D> pTexture,
+	SpriteRenderer(std::shared_ptr<RenderEngine::Texture2D> pTexture,
 		std::string initialSubTexture,
 		std::shared_ptr<RenderEngine::ShaderProgram> pShaderProgram);
+
+	~SpriteRenderer();
 
 	void setSubTexture(std::string subTexture);
 

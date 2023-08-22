@@ -88,8 +88,13 @@ public:
         ImGui::SliderFloat("Ambient factor", &m_ambient_factor, 0.f, 1.f);
         ImGui::SliderFloat("Diffuse factor", &m_diffuse_factor, 0.f, 1.f);
         ImGui::SliderFloat("Specular factor", &m_specular_factor, 0.f, 1.f);
+        if (ImGui::SliderFloat("Diffuse / Specular factor", &m_diffuse_specular_factor, 0.f, 1.f))
+        {
+            m_specular_factor = 1.f - m_diffuse_specular_factor;
+            m_diffuse_factor = 1.f - m_specular_factor;
+        }
         ImGui::SliderFloat("Shininess", &m_shininess, 0.f, 100.f);
-        ImGui::SliderInt("Is metalic", &m_isMetalic, 0, 2);
+        ImGui::SliderFloat("Metalic factor", &m_metalic_factor, 0.f, 1.f);
         ImGui::End();
 
         ImGui::Begin("Camera settings");

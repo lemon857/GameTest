@@ -74,7 +74,7 @@ Cube::Cube(std::shared_ptr<RenderEngine::Texture2D> pTexture, std::string subTex
     vertexArray->unbind();
 	indexBuffer->unbind();
 
-    addComponent<MeshRenderer>()->init(vertexArray, indexBuffer, pShader, m_pTexture);
+    addComponent<MeshRenderer>(vertexArray, indexBuffer, pShader, m_pTexture);
 }
 
 Cube::~Cube()

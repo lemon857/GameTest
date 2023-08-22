@@ -13,8 +13,16 @@
 #include <glm/vec3.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-MeshRenderer::MeshRenderer()
+MeshRenderer::MeshRenderer(
+    std::shared_ptr<RenderEngine::VertexArray> vao,
+    std::shared_ptr<RenderEngine::IndexBuffer> ebo,
+    std::shared_ptr<RenderEngine::ShaderProgram> pShaderProgram,
+    std::shared_ptr<RenderEngine::Texture2D> pTexture)
     : IComponent()
+    , m_vertexArray(std::move(vao))
+    , m_indexBuffer(std::move(ebo))
+    , m_pShaderProgram(std::move(pShaderProgram))
+    , m_pTexture(std::move(pTexture))
 {
 }
 
@@ -24,18 +32,6 @@ MeshRenderer::~MeshRenderer()
 	delete m_indexBuffer.get();
     m_vertexArray.reset();
     m_indexBuffer.reset();
-}
-
-void MeshRenderer::init(
-    std::shared_ptr<RenderEngine::VertexArray> vao,
-    std::shared_ptr<RenderEngine::IndexBuffer> ebo,
-    std::shared_ptr<RenderEngine::ShaderProgram> pShaderProgram,
-    std::shared_ptr<RenderEngine::Texture2D> pTexture)
-{
-    m_vertexArray = std::move(vao);
-    m_indexBuffer = std::move(ebo);
-    m_pShaderProgram = std::move(pShaderProgram);
-    m_pTexture = std::move(pTexture);
 }
 
 void MeshRenderer::update(double delta)

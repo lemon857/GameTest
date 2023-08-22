@@ -32,7 +32,6 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Renderer/VertexBufferLayout.h
 	includes/EngineCore/Renderer/Point.h
 	includes/EngineCore/Renderer/Line.h
-	includes/EngineCore/Renderer/ShowOutline.h
 	includes/EngineCore/Renderer/Camera.h
 	includes/EngineCore/Renderer/Animator.h
 	includes/EngineCore/Renderer/Animation.h
@@ -46,6 +45,7 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Components/MeshRenderer.h	
 	includes/EngineCore/Components/Transform.h
 	includes/EngineCore/Components/SpriteRenderer.h
+	includes/EngineCore/Components/Highlight.h
 	
 	includes/EngineCore/Meshes/Cube.h
 	includes/EngineCore/Meshes/Sprite.h
@@ -91,7 +91,6 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Renderer/VertexBufferLayout.cpp
 	src/Renderer/Point.cpp
 	src/Renderer/Line.cpp
-	src/Renderer/ShowOutline.cpp
 	src/Renderer/Camera.cpp	
 	src/Renderer/Animator.cpp
 	src/Renderer/Animation.cpp
@@ -109,6 +108,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Components/MeshRenderer.cpp	
 	src/Components/Transform.cpp
 	src/Components/SpriteRenderer.cpp
+	src/Components/Highlight.cpp
 	
 	src/Meshes/Cube.cpp
 	src/Meshes/Sprite.cpp

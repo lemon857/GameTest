@@ -8,7 +8,6 @@
 #include "EngineCore/Components/SpriteRenderer.h"
 #include "EngineCore/Renderer3D/GraphicsObject.h"
 #include "EngineCore/Components/Transform.h"
-#include "EngineCore/IComponent.h"
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
@@ -236,10 +235,13 @@ int Application::start(glm::ivec2& window_size, const char* title)
 
     m_line = new RenderEngine::Line(pShapeProgram);
 
-    m_test_obj.addComponent<Transform>();
-    m_test_obj.addComponent<SpriteRenderer>();
+    m_cube = new Cube(ResourceManager::getShaderProgram("shape3DShader"), ResourceManager::getTexture("CubeTexture"));
 
-    m_test_obj.getComponent<SpriteRenderer>()->init(ResourceManager::getTexture("TanksTextureAtlas"), "YellowUp11", pSpriteProgram);
+    m_cube->addComponent<Transform>();
+          
+    m_cube->getComponent<Transform>()->set_position(glm::vec3(m_SpriteRenderer_pos[0], m_SpriteRenderer_pos[1], m_SpriteRenderer_pos[2]));
+    m_cube->getComponent<Transform>()->set_scale(glm::vec3(m_SpriteRenderer_scale[0], m_SpriteRenderer_scale[1], m_SpriteRenderer_scale[2]));
+    m_cube->getComponent<Transform>()->set_rotation(glm::vec3(m_SpriteRenderer_rot[0], m_SpriteRenderer_rot[1], m_SpriteRenderer_rot[2]));
 
     // --------------------------------------------------------- //
     m_pTextureAtlas = ResourceManager::getTexture("CubeTexture");
@@ -329,7 +331,7 @@ int Application::start(glm::ivec2& window_size, const char* title)
 
         // --------------------------------------------------------- //
         
-        // Cubes
+        // Cube
 
         m_pShaderProgram->use();
         glm::mat4 scaleMat(
@@ -376,23 +378,11 @@ int Application::start(glm::ivec2& window_size, const char* title)
         m_pShaderProgram->setFloat("specular_factor", m_specular_factor);
         m_pShaderProgram->setFloat("shininess", m_shininess);
         m_pShaderProgram->setInt("isMetalic", m_isMetalic);
-        m_pShaderProgram->setVec4("sourceColor", glm::vec4(1.f));
+        //m_pShaderProgram->setVec4("sourceColor", glm::vec4(1.f));
         m_pShaderProgram->setMatrix4("modelMat", model);
 
         RenderEngine::Renderer::bindTexture(*m_pTextureAtlas);
         RenderEngine::Renderer::drawTriangles(*m_vertexArray, m_indexBuffer);
-
-        glm::mat4 translateMatA(
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            m_cube_pos[0] + 5, m_cube_pos[1], m_cube_pos[2], 1);
-
-        model = translateMatA * scaleMat;
-        m_pShaderProgram->setMatrix4("modelMat", model);
-
-        RenderEngine::Renderer::drawTriangles(*m_vertexArray, m_indexBuffer);
-
 
         // Light source
 
@@ -409,7 +399,7 @@ int Application::start(glm::ivec2& window_size, const char* title)
 
         // --------------------------------------------------------- //
 
-        m_test_obj.update(duration);
+        m_cube->update(duration);
 
         // ------------------------------------------------------------ // 
         on_ui_render();

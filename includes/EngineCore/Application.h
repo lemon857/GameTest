@@ -10,23 +10,10 @@
 #include "EngineCore/Renderer/ShaderProgram.h"
 #include "EngineCore/Renderer/Line.h"
 #include "EngineCore/Physics/Ray.h"
-#include "EngineCore/IGameObject.h"
+#include "EngineCore/Meshes/Cube.h"
 
 #include <memory>
 #include <glm/vec2.hpp>
-
-class TestObj : public IGameObject
-{
-public:
-	TestObj()
-		: IGameObject("test")
-	{};
-	~TestObj()
-	{};
-
-private:
-
-};
 
 class Application
 {
@@ -65,16 +52,16 @@ protected:
 	float m_cam_pos[3] = { -5.f, 0.f, 0.f };
 	float m_cam_rot[3] = { 0.f, 0.f, 0.f };
 
-	float m_SpriteRenderer_pos[3] = { 5.f, -5.f, 0.f };
+	float m_SpriteRenderer_pos[3] = { 0.f, 5.f, 5.f };
 	float m_SpriteRenderer_scale[3] = { 1.f, 1.f, 1.f };
 	float m_SpriteRenderer_rot[3] = { 0.f, 0.f, 0.f };
 
 	float m_line_pos[3] = { 0.f, 0.f, 0.f };
 
-	float m_light_pos[3] = { 12.f, 5.f, 0.f };
+	float m_light_pos[3] = { 0.f, 5.f, 0.f };
 	float m_light_color[3] = { 1.f, 1.f, 1.f };
 
-	float m_cube_pos[3] = { 10.f, 0.f, 0.f };
+	float m_cube_pos[3] = { 0.f, 0.f, 5.f };
 	float m_cube_scale[3] = { 1.f, 1.f, 1.f };
 	float m_cube_rot[3] = { 0.f, 0.f, 0.f };
 
@@ -113,7 +100,7 @@ protected:
 	RenderEngine::VertexBuffer m_vertexNormalBuffer;
 	RenderEngine::VertexBuffer m_textureCoordsBuffer;
 	RenderEngine::IndexBuffer m_indexBuffer;
-	TestObj m_test_obj;
+	Cube* m_cube;
 
 	std::shared_ptr<RenderEngine::Texture2D> m_pTextureAtlas;
 	std::shared_ptr<RenderEngine::ShaderProgram> m_pShaderProgram;

@@ -42,10 +42,12 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Physics/Ray.h
 	
 	includes/EngineCore/Renderer3D/GraphicsObject.h
-	includes/EngineCore/Renderer3D/MeshRenderer.h
 	
+	includes/EngineCore/Components/MeshRenderer.h	
 	includes/EngineCore/Components/Transform.h
 	includes/EngineCore/Components/SpriteRenderer.h
+	
+	includes/EngineCore/Meshes/Cube.h
 )
 
 set(ENGINE_PRIVATE_SOURCES
@@ -101,10 +103,13 @@ set(ENGINE_PRIVATE_SOURCES
 	src/System/Timer.cpp
 		
 	src/Renderer3D/GraphicsObject.cpp
-	src/Renderer3D/MeshRenderer.cpp
 	
+	
+	src/Components/MeshRenderer.cpp	
 	src/Components/Transform.cpp
 	src/Components/SpriteRenderer.cpp
+	
+	src/Meshes/Cube.cpp
 )
 
 

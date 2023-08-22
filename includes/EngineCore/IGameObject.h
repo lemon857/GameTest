@@ -13,6 +13,7 @@ public:
 
 	std::string get_name() { return m_name; };
 
+	// Возврат nullptr означает уже наличие добавляемого компонента, либо неудачное создание компонента
 	template <class _Ty>
 	_Ty* addComponent()
 	{
@@ -42,7 +43,7 @@ protected:
 	};
 	~IGameObject()
 	{
-
+		m_components.clear();
 	};
 
 	void updateComponents(double delta)

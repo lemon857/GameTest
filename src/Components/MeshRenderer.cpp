@@ -41,13 +41,23 @@ void MeshRenderer::init(
 void MeshRenderer::update(double delta)
 {
 	Transform* transform = m_targetObj->getComponent<Transform>();
-	if (transform == nullptr) return;
+    glm::vec3 pos;
+    glm::vec3 rot;
+    glm::vec3 scale;
+    if (transform == nullptr)
+    {
+        scale = glm::vec3(1.f);;
+        pos = glm::vec3(0.f);;
+        rot = glm::vec3(0.f);
+    }
+    else
+    {
+        scale = transform->get_scale();
+        pos = transform->get_position();
+        rot = transform->get_rotation();
+    }
 
     m_pShaderProgram->use();
-
-    glm::vec3 scale = transform->get_scale();
-    glm::vec3 pos = transform->get_position();
-    glm::vec3 rot = transform->get_rotation();
 
     glm::mat4 scaleMat(
         scale[0], 0, 0, 0,

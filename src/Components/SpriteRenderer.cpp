@@ -62,12 +62,12 @@ void SpriteRenderer::init(std::shared_ptr<RenderEngine::Texture2D> pTexture,
 	};
 	const GLuint indexes[] = { 0, 1, 2, 2, 3, 0 };
 
-	m_vertexCoordsBuffer->init(&vertexCoords, 3 * 4 * sizeof(GLfloat));
+	m_vertexCoordsBuffer->init(&vertexCoords, 3 * 4 * sizeof(GLfloat), false);
 	RenderEngine::VertexBufferLayout vertexCoordsLayout;
 	vertexCoordsLayout.addElementLayoutFloat(3, false);
 	m_vertexArray->addBuffer(*m_vertexCoordsBuffer, vertexCoordsLayout);
 
-	m_textureCoordsBuffer->init(&textureCoords, 2 * 4 * sizeof(GLfloat));
+	m_textureCoordsBuffer->init(&textureCoords, 2 * 4 * sizeof(GLfloat), true);
 	RenderEngine::VertexBufferLayout textureCoordsLayout;
 	textureCoordsLayout.addElementLayoutFloat(2, false);
 	m_vertexArray->addBuffer(*m_textureCoordsBuffer, textureCoordsLayout);
@@ -90,17 +90,28 @@ void SpriteRenderer::setSubTexture(std::string subTexture)
 	}; 
 	m_textureCoordsBuffer->update(&textureCoords, 2 * 4 * sizeof(GLfloat));
 }
-
+// Рендер в центре без реагирования на изменения координат означает отсутствие компонента Transform
 void SpriteRenderer::update(const double delta)
 {
 	Transform* transform = m_targetObj->getComponent<Transform>();
-	if (transform == nullptr) return;
+	glm::vec3 pos;
+	glm::vec3 rot;
+	glm::vec3 scale;
+	if (transform == nullptr)
+	{
+		scale = glm::vec3(1.f);;
+		pos = glm::vec3(0.f);;
+		rot = glm::vec3(0.f);
+	}
+	else
+	{
+		scale = transform->get_scale();
+		pos = transform->get_position();
+		rot = transform->get_rotation();
+	}
 
 	m_pShaderProgram->use();
 
-	glm::vec3 scale = transform->get_scale();
-	glm::vec3 pos = transform->get_position();
-	glm::vec3 rot = transform->get_rotation();
 
 	glm::mat4 scaleMat(
 		scale[0], 0, 0, 0,

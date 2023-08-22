@@ -15,7 +15,7 @@ namespace RenderEngine
 		VertexBuffer& operator=(const VertexBuffer&) = delete;
 		VertexBuffer& operator=(VertexBuffer&& vertexBuffer) noexcept;
 
-		void init(const void* data, const unsigned int size);
+		void init(const void* data, const unsigned int size, bool is_staticDraw);
 		void update(const void* data, const unsigned int size) const;
 
 		void bind() const;

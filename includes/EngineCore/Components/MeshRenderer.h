@@ -3,6 +3,7 @@
 #include "EngineCore/IComponent.h"
 
 #include <memory>
+#include <string>
 
 namespace RenderEngine
 {

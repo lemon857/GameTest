@@ -120,50 +120,6 @@
       ]
     }
   ],
-  "sprites": [
-    {
-      "name": "TankSprite",
-      "shader": "spriteShader",
-      "textureAtlas": "TanksTextureAtlas",
-      "initialSubTexture": "YellowUp11"
-    },
-    {
-      "name": "BrickWallSprite",
-      "shader": "spriteShader",
-      "textureAtlas": "WallAtlas",
-      "initialSubTexture": "BrickWall"
-    },
-    {
-      "name": "SnakePart",
-      "shader": "spriteShader",
-      "textureAtlas": "SnakeTextureAtlas",
-      "initialSubTexture": "snake"
-    },
-    {
-      "name": "Apple",
-      "shader": "spriteShader",
-      "textureAtlas": "SnakeTextureAtlas",
-      "initialSubTexture": "apple"
-    },
-    {
-      "name": "SnakeEnd1",
-      "shader": "spriteShader",
-      "textureAtlas": "SnakeTextureAtlas",
-      "initialSubTexture": "badsnake"
-    },
-    {
-      "name": "SnakeEnd2",
-      "shader": "spriteShader",
-      "textureAtlas": "SnakeTextureAtlas",
-      "initialSubTexture": "pressenter"
-    },
-    {
-      "name": "BulletSprite",
-      "shader": "spriteShader",
-      "textureAtlas": "WallAtlas",
-      "initialSubTexture": "bulletUp"
-    }
-  ],
   "objects": [
     {
       "name": "defaultCube",

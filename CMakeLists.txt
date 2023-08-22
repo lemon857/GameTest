@@ -48,6 +48,7 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Components/SpriteRenderer.h
 	
 	includes/EngineCore/Meshes/Cube.h
+	includes/EngineCore/Meshes/Sprite.h
 )
 
 set(ENGINE_PRIVATE_SOURCES
@@ -110,6 +111,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Components/SpriteRenderer.cpp
 	
 	src/Meshes/Cube.cpp
+	src/Meshes/Sprite.cpp
 )
 
 

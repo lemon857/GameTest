@@ -11,6 +11,7 @@ namespace RenderEngine
 {
 	class Texture2D;
 	class ShaderProgram;
+    class VertexBuffer;
 }
 
 class Cube : public IGameObject
@@ -18,13 +19,20 @@ class Cube : public IGameObject
 public:
 	Cube(std::shared_ptr<RenderEngine::ShaderProgram> pShader, std::shared_ptr<RenderEngine::Texture2D> pTexture);
 
+    ~Cube();
+
     Cube(Cube&) = delete;
     Cube(Cube&&) = delete;
 
     Cube& operator=(Cube&) = delete;
     Cube& operator=(Cube&&) = delete;
 
+
+    void setSubTexture(std::string subTexture);
 private:
+    RenderEngine::VertexBuffer* m_textureCoordsBuffer;
+    std::shared_ptr<RenderEngine::Texture2D> m_pTexture;
+
     static constexpr GLfloat m_vertexCoords[] {
         // FRONT
         -1.f, -1.f, -1.f,//1
@@ -58,37 +66,37 @@ private:
           -1.f, -1.f, -1.f //24
     };
 
-    static constexpr GLfloat m_textureCoords[] {
+    static constexpr GLfloat m_textureCoords[]{
         // FRONT
-        0.f, 0.f,
         1.f, 0.f,
         1.f, 1.f,
         0.f, 1.f,
+        0.f, 0.f,
         // BACK
-        0.f, 0.f,
         1.f, 0.f,
         1.f, 1.f,
         0.f, 1.f,
+        0.f, 0.f,
         // RIGHT
-        0.f, 0.f,
         1.f, 0.f,
         1.f, 1.f,
         0.f, 1.f,
+        0.f, 0.f,
         // LEFT
-        0.f, 0.f,
         1.f, 0.f,
         1.f, 1.f,
         0.f, 1.f,
+        0.f, 0.f,
         // TOP
-        0.f, 0.f,
         1.f, 0.f,
         1.f, 1.f,
         0.f, 1.f,
+        0.f, 0.f,
         // BOTTOM
-        0.f, 0.f,
         1.f, 0.f,
         1.f, 1.f,
         0.f, 1.f,
+        0.f, 0.f,
     };
 
     static constexpr GLfloat m_normalCoords[] {

@@ -50,35 +50,35 @@ const GLfloat vertexCoords[] = {
 
 const GLfloat textureCoords[] = {
     // FRONT
-    0.f, 0.f,
     1.f, 0.f,
     1.f, 1.f,
     0.f, 1.f,
+    0.f, 0.f,
     // BACK
-    0.f, 0.f,
     1.f, 0.f,
     1.f, 1.f,
     0.f, 1.f,
+    0.f, 0.f,
     // RIGHT
-    0.f, 0.f,
     1.f, 0.f,
     1.f, 1.f,
     0.f, 1.f,
+    0.f, 0.f,
     // LEFT
-    0.f, 0.f,
     1.f, 0.f,
     1.f, 1.f,
     0.f, 1.f,
+    0.f, 0.f,
     // TOP
-    0.f, 0.f,
     1.f, 0.f,
     1.f, 1.f,
     0.f, 1.f,
+    0.f, 0.f,
     // BOTTOM
-    0.f, 0.f,
     1.f, 0.f,
     1.f, 1.f,
     0.f, 1.f,
+    0.f, 0.f,
 };
 
 const GLfloat normalCoords[] = {
@@ -235,14 +235,14 @@ int Application::start(glm::ivec2& window_size, const char* title)
 
     m_line = new RenderEngine::Line(pShapeProgram);
 
-    m_cube = new Cube(ResourceManager::getShaderProgram("shape3DShader"), ResourceManager::getTexture("CubeTexture"));
+    m_cube = new Cube(ResourceManager::getShaderProgram("shape3DShader"), ResourceManager::getTexture("WallAtlas"));
 
     m_cube->addComponent<Transform>();
           
     m_cube->getComponent<Transform>()->set_position(glm::vec3(m_SpriteRenderer_pos[0], m_SpriteRenderer_pos[1], m_SpriteRenderer_pos[2]));
     m_cube->getComponent<Transform>()->set_scale(glm::vec3(m_SpriteRenderer_scale[0], m_SpriteRenderer_scale[1], m_SpriteRenderer_scale[2]));
     m_cube->getComponent<Transform>()->set_rotation(glm::vec3(m_SpriteRenderer_rot[0], m_SpriteRenderer_rot[1], m_SpriteRenderer_rot[2]));
-
+    m_cube->setSubTexture("BrickWall");
     // --------------------------------------------------------- //
     m_pTextureAtlas = ResourceManager::getTexture("CubeTexture");
     m_pShaderProgram_light = ResourceManager::getShaderProgram("lightSourceShader");
@@ -250,17 +250,17 @@ int Application::start(glm::ivec2& window_size, const char* title)
 
     m_vertexArray = std::make_shared<RenderEngine::VertexArray>();
 
-    m_vertexCoordsBuffer.init(&vertexCoords, 24 * 3 * sizeof(GLfloat));
+    m_vertexCoordsBuffer.init(&vertexCoords, 24 * 3 * sizeof(GLfloat), false);
     RenderEngine::VertexBufferLayout vertexCoordsLayout;
     vertexCoordsLayout.addElementLayoutFloat(3, false);
     m_vertexArray->addBuffer(m_vertexCoordsBuffer, vertexCoordsLayout);
 
-    m_vertexNormalBuffer.init(&normalCoords, 24 * 3 * sizeof(GLfloat));
+    m_vertexNormalBuffer.init(&normalCoords, 24 * 3 * sizeof(GLfloat), false);
     RenderEngine::VertexBufferLayout vertexNormalLayout;
     vertexNormalLayout.addElementLayoutFloat(3, false);
     m_vertexArray->addBuffer(m_vertexNormalBuffer, vertexNormalLayout);
 
-    m_textureCoordsBuffer.init(&textureCoords, 24 * 2 * sizeof(GLfloat));
+    m_textureCoordsBuffer.init(&textureCoords, 24 * 2 * sizeof(GLfloat), false);
     RenderEngine::VertexBufferLayout textureCoordsLayout;
     textureCoordsLayout.addElementLayoutFloat(2, false);
     m_vertexArray->addBuffer(m_textureCoordsBuffer, textureCoordsLayout);

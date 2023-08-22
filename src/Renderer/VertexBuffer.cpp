@@ -23,11 +23,11 @@ namespace RenderEngine
 		m_ID = vertexBuffer.m_ID;
 		vertexBuffer.m_ID = 0;
 	}
-	void VertexBuffer::init(const void* data, const unsigned int size)
+	void VertexBuffer::init(const void* data, const unsigned int size, bool is_staticDraw)
 	{
 		glGenBuffers(1, &m_ID);
 		glBindBuffer(GL_ARRAY_BUFFER, m_ID);
-		glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW); // for animated SpriteRenderer it's bad
+		glBufferData(GL_ARRAY_BUFFER, size, data, is_staticDraw ? GL_STATIC_DRAW : GL_DYNAMIC_DRAW); // for animated SpriteRenderer it's bad
 	}
 	void VertexBuffer::update(const void* data, const unsigned int size) const
 	{

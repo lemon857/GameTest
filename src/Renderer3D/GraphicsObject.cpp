@@ -106,17 +106,17 @@ namespace RenderEngine
 				}
 			}
 
-			m_vbo_vert.init(m_vertex_coords.data(), m_vertex_coords.size() * sizeof(GLfloat));
+			m_vbo_vert.init(m_vertex_coords.data(), m_vertex_coords.size() * sizeof(GLfloat), false);
 			VertexBufferLayout vertexCoordsLayout;
 			vertexCoordsLayout.addElementLayoutFloat(3, false);
 			m_vao.addBuffer(m_vbo_vert, vertexCoordsLayout);
 
-			m_vbo_normal.init(m_normal_coords.data(), m_normal_coords.size() * sizeof(GLfloat));
+			m_vbo_normal.init(m_normal_coords.data(), m_normal_coords.size() * sizeof(GLfloat), false);
 			VertexBufferLayout normalCoordsLayout;
 			normalCoordsLayout.addElementLayoutFloat(3, false);
 			m_vao.addBuffer(m_vbo_normal, normalCoordsLayout);
 
-			m_vbo_texture.init(m_texture_coord.data(), m_texture_coord.size() * sizeof(GLfloat));
+			m_vbo_texture.init(m_texture_coord.data(), m_texture_coord.size() * sizeof(GLfloat), false);
 			VertexBufferLayout textureCoordsLayout;
 			textureCoordsLayout.addElementLayoutFloat(2, false);
 			m_vao.addBuffer(m_vbo_texture, textureCoordsLayout);

@@ -4,38 +4,83 @@
 #include "EngineCore/Renderer/VertexBuffer.h"
 #include "EngineCore/Renderer/VertexBufferLayout.h"
 #include "EngineCore/Renderer/IndexBuffer.h"
+#include "EngineCore/Renderer/Texture2D.h"
 #include "EngineCore/Components/MeshRenderer.h"
 
 static int g_current_ID = 0;
 
 Cube::Cube(std::shared_ptr<RenderEngine::ShaderProgram> pShader, std::shared_ptr<RenderEngine::Texture2D> pTexture)
-	: IGameObject("Cube" + std::to_string(g_current_ID++))
+    : IGameObject("Cube" + std::to_string(g_current_ID++))
+    , m_pTexture(std::move(pTexture))
 {
     std::shared_ptr<RenderEngine::VertexArray> vertexArray = std::make_shared<RenderEngine::VertexArray>();
     std::shared_ptr<RenderEngine::IndexBuffer> indexBuffer = std::make_shared<RenderEngine::IndexBuffer>();
-    RenderEngine::VertexBuffer m_vertexCoordsBuffer;
-    RenderEngine::VertexBuffer m_vertexNormalBuffer;
-    RenderEngine::VertexBuffer m_textureCoordsBuffer;
+    RenderEngine::VertexBuffer vertexCoordsBuffer;
+    RenderEngine::VertexBuffer vertexNormalBuffer;
+    m_textureCoordsBuffer = new RenderEngine::VertexBuffer();
 
-    m_vertexCoordsBuffer.init(&m_vertexCoords, 24 * 3 * sizeof(GLfloat));
+    vertexCoordsBuffer.init(&m_vertexCoords, 24 * 3 * sizeof(GLfloat), false);
     RenderEngine::VertexBufferLayout vertexCoordsLayout;
     vertexCoordsLayout.addElementLayoutFloat(3, false);
-    vertexArray->addBuffer(m_vertexCoordsBuffer, vertexCoordsLayout);
+    vertexArray->addBuffer(vertexCoordsBuffer, vertexCoordsLayout);
 
-    m_vertexNormalBuffer.init(&m_normalCoords, 24 * 3 * sizeof(GLfloat));
+    vertexNormalBuffer.init(&m_normalCoords, 24 * 3 * sizeof(GLfloat), false);
     RenderEngine::VertexBufferLayout vertexNormalLayout;
     vertexNormalLayout.addElementLayoutFloat(3, false);
-    vertexArray->addBuffer(m_vertexNormalBuffer, vertexNormalLayout);
+    vertexArray->addBuffer(vertexNormalBuffer, vertexNormalLayout);
 
-    m_textureCoordsBuffer.init(&m_textureCoords, 24 * 2 * sizeof(GLfloat));
+    m_textureCoordsBuffer->init(&m_textureCoords, 24 * 2 * sizeof(GLfloat), true);
     RenderEngine::VertexBufferLayout textureCoordsLayout;
     textureCoordsLayout.addElementLayoutFloat(2, false);
-    vertexArray->addBuffer(m_textureCoordsBuffer, textureCoordsLayout);
+    vertexArray->addBuffer(*m_textureCoordsBuffer, textureCoordsLayout);
 
     indexBuffer->init(&m_indexes, sizeof(m_indexes) / sizeof(GLuint));
 
     vertexArray->unbind();
 	indexBuffer->unbind();
 
-    addComponent<MeshRenderer>()->init(vertexArray, indexBuffer, pShader, pTexture);
+    addComponent<MeshRenderer>()->init(vertexArray, indexBuffer, pShader, m_pTexture);
+}
+
+Cube::~Cube()
+{
+    delete m_textureCoordsBuffer;
+}
+
+void Cube::setSubTexture(std::string subTexture)
+{
+    auto aSubTexture = m_pTexture->getSubTexture(subTexture);
+    GLfloat textureCoords[]{
+        // FRONT
+        aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
+        aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
+        aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
+        aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
+        // BACK
+        aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
+        aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
+        aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
+        aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
+        // RIGHT
+        aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
+        aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
+        aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
+        aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
+        // LEFT
+        aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
+        aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
+        aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
+        aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
+        // TOP
+        aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
+        aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
+        aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
+        aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
+        // BOTTOM
+        aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
+        aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
+        aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
+        aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
+    };
+    m_textureCoordsBuffer->update(&textureCoords, 24 * 2 * sizeof(GLfloat));
 }

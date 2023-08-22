@@ -18,7 +18,7 @@ namespace RenderEngine
 			0.f, 0.f,
 		};
 
-		m_vertexCoordsBuffer.init(&vertexCoords, 2 * sizeof(GLfloat));
+		m_vertexCoordsBuffer.init(&vertexCoords, 2 * sizeof(GLfloat), false);
 		VertexBufferLayout vertexCoordsLayout;
 		vertexCoordsLayout.addElementLayoutFloat(2, false);
 		m_vertexArray.addBuffer(m_vertexCoordsBuffer, vertexCoordsLayout);

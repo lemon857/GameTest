@@ -163,6 +163,14 @@ int Application::start(glm::ivec2& window_size, const char* title)
 
     auto lastTime = std::chrono::high_resolution_clock::now();
 
+    double curTime = 0;
+
+    int curFpsEs = 0;
+    int fps = 0;
+    int countFpsEs = 5;
+
+    std::vector<int> fpses{ 0, 0, 0, 0, 0 };
+
     while (!m_pCloseWindow)
     {
         auto currentTime = std::chrono::high_resolution_clock::now();
@@ -208,7 +216,7 @@ int Application::start(glm::ivec2& window_size, const char* title)
             m_line->render_from_to(glm::vec3(0.f, 50.f, 0.f), glm::vec3(0.f, -50.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
             m_line->render_from_to(glm::vec3(50.f, 0.f, 0.f), glm::vec3(-50.f, 0.f, 0.f), glm::vec3(1.f, 0.f, 0.f));
         }
-        
+
         ResourceManager::getShaderProgram("shape3DShader")->use();
         ResourceManager::getShaderProgram("shape3DShader")->setVec3("light_color", glm::vec3(m_light_color[0], m_light_color[1], m_light_color[2]));
         ResourceManager::getShaderProgram("shape3DShader")->setVec3("light_position", glm::vec3(m_light_pos[0], m_light_pos[1], m_light_pos[2]));
@@ -222,7 +230,7 @@ int Application::start(glm::ivec2& window_size, const char* title)
         ResourceManager::getShaderProgram("lightSourceShader")->use();
         ResourceManager::getShaderProgram("lightSourceShader")->setVec3("light_color", glm::vec3(m_light_color[0], m_light_color[1], m_light_color[2]));
 
-        
+
         m_cube->update(duration);
         m_light_source->update(duration);
         m_sprite->update(duration);
@@ -230,6 +238,28 @@ int Application::start(glm::ivec2& window_size, const char* title)
         // ------------------------------------------------------------ // 
         on_ui_render();
         // ------------------------------------------------------------ // 
+        
+        fps++;
+        curTime += duration;
+
+        if (curTime >= 1000)
+        {
+            fpses[curFpsEs] = fps;
+            curFpsEs++;
+            if (curFpsEs >= countFpsEs)
+            {
+                int sum = 0;
+                for (int cur : fpses)
+                {
+                    sum += cur;
+                }
+                m_fps = (int)((float)sum / (float)countFpsEs);
+                curFpsEs = 0;
+            }
+            curTime = 0;
+            fps = 0;
+        }
+
         m_pWindow->on_update();
         on_key_update(duration);
     }

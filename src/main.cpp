@@ -47,6 +47,8 @@ public:
         ImGui::Text(("Mouse world position X: " + std::to_string(m_world_mouse_pos_x)).c_str());
         ImGui::Text(("Mouse world position Y: " + std::to_string(m_world_mouse_pos_y)).c_str());
         ImGui::Text(("Mouse world position Z: " + std::to_string(m_world_mouse_pos_z)).c_str());
+        ImGui::Text("");
+        ImGui::Text(("FPS: " + std::to_string(m_fps)).c_str());
         ImGui::End();
         
         ImGui::Begin("Aera settings");

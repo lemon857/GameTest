@@ -89,6 +89,7 @@ protected:
 
 	int m_mouse_pos_x = 0;
 	int m_mouse_pos_y = 0;
+	int m_fps = 0;
 
 	double m_world_mouse_pos_x = 0;
 	double m_world_mouse_pos_y = 0;

@@ -11,11 +11,13 @@ Highlight::Highlight(std::shared_ptr<RenderEngine::ShaderProgram>& program, glm:
 	: IComponent()
 	, m_line(std::make_unique<RenderEngine::Line>(program))
 	, m_color(color)
+	, m_isActive(true)
 {
 }
 
 void Highlight::update(const double delta)
 {
+	if (!m_isActive) return;
 	Transform* transform = m_targetObj->getComponent<Transform>();
 	glm::vec3 pos;
 	glm::vec3 scale;
@@ -46,4 +48,9 @@ void Highlight::update(const double delta)
 
 	m_line->render(pos + glm::vec3(-scale.x, scale.y, scale.z), glm::vec3(0.f, 0.f, -2 * scale.z), m_color);
 	m_line->render(pos + glm::vec3(-scale.x, scale.y, scale.z), glm::vec3(0.f, -2 * scale.y, 0.f), m_color);
+}
+
+void Highlight::set_active(bool isActive)
+{
+	m_isActive = isActive;
 }

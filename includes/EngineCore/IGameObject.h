@@ -35,6 +35,23 @@ public:
 		return nullptr;
 	};
 
+	template <class _Ty>
+	void deleteComponent()
+	{
+		for (auto pos = m_components.begin(); pos != m_components.end();)
+		{
+			if (pos->first == typeid(_Ty).name())
+			{
+				delete pos->second;
+				pos = m_components.erase(pos);
+			}
+			else
+			{
+				++pos;
+			}
+		}
+	};
+
 protected:
 	IGameObject(const std::string name)
 		: m_name(name)

@@ -16,120 +16,8 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-const GLfloat vertexCoords[] = {
-    // FRONT
-    -1.f, -1.f, -1.f,//1
-    -1.f,  1.f, -1.f,//2
-     1.f,  1.f,  -1.f,//3
-     1.f, -1.f,  -1.f,//4
-    // BACK
-    1.f, -1.f, 1.f,//5
-    1.f,  1.f, 1.f,//6
-    -1.f,  1.f,  1.f,//7
-    -1.f, -1.f,  1.f,//8
-    // RIGHT
-    1.f,  -1.f, -1.f,//9
-     1.f,  1.f, -1.f,//10
-     1.f,  1.f,  1.f,//11
-    1.f,  -1.f,  1.f,//12
-    // LEFT
-    -1.f, -1.f, 1.f,//13
-    -1.f,  1.f, 1.f,//14
-    -1.f,  1.f, -1.f,//15
-    -1.f, -1.f, -1.f,//16
-    // TOP
-    -1.f,  1.f,  -1.f,//17
-    -1.f,  1.f,  1.f,//18
-     1.f,  1.f,  1.f,//19
-     1.f,  1.f,  -1.f,//20
-    // BOTTOM
-    1.f, -1.f, -1.f,//21
-    1.f, -1.f, 1.f,//22
-    -1.f, -1.f, 1.f,//23
-    -1.f, -1.f, -1.f //24
-};
+GraphicsObject obj;
 
-const GLfloat textureCoords[] = {
-    // FRONT
-    1.f, 0.f,
-    1.f, 1.f,
-    0.f, 1.f,
-    0.f, 0.f,
-    // BACK
-    1.f, 0.f,
-    1.f, 1.f,
-    0.f, 1.f,
-    0.f, 0.f,
-    // RIGHT
-    1.f, 0.f,
-    1.f, 1.f,
-    0.f, 1.f,
-    0.f, 0.f,
-    // LEFT
-    1.f, 0.f,
-    1.f, 1.f,
-    0.f, 1.f,
-    0.f, 0.f,
-    // TOP
-    1.f, 0.f,
-    1.f, 1.f,
-    0.f, 1.f,
-    0.f, 0.f,
-    // BOTTOM
-    1.f, 0.f,
-    1.f, 1.f,
-    0.f, 1.f,
-    0.f, 0.f,
-};
-
-const GLfloat normalCoords[] = {
-    // FRONT // 4
-    0.f, 0.f, -1.f,
-    0.f, 0.f, -1.f,
-    0.f, 0.f, -1.f,
-    0.f, 0.f, -1.f,
-    // BACK // 3
-    0.f, 0.f, 1.f,
-    0.f, 0.f, 1.f,
-    0.f, 0.f, 1.f,
-    0.f, 0.f, 1.f,
-    // RIGHT // 2
-    1.f,  0.f, 0.f,
-    1.f,  0.f, 0.f,
-    1.f,  0.f, 0.f,
-    1.f,  0.f, 0.f,
-    // LEFT // 1
-    -1.f, 0.f, 0.f,
-    -1.f, 0.f, 0.f,
-    -1.f, 0.f, 0.f,
-    -1.f, 0.f, 0.f,
-    // TOP // 6
-    0.f, 1.f,  0.f,
-    0.f, 1.f,  0.f,
-    0.f, 1.f,  0.f,
-    0.f, 1.f,  0.f,
-     // BOTTOM // 5
-     0.f, -1.f, 0.f,
-     0.f, -1.f, 0.f,
-     0.f, -1.f, 0.f,
-     0.f, -1.f, 0.f
-};
-
-GLuint indexes[]
-{
-    //front
-    0, 1, 2, 2, 3, 0,
-    // back
-    4, 5, 6, 6, 7, 4,
-    // right
-    8, 9, 10, 10, 11, 8,
-    // left
-    12, 13, 14, 14, 15, 12,
-    // top
-    16, 17, 18, 18, 19, 16,
-    // bottom
-    20, 21, 22, 22, 23, 20
-};
 Application::Application()
 {
     LOG_INFO("Starting Application");
@@ -144,12 +32,12 @@ Application::~Application()
 int Application::start(glm::ivec2& window_size, const char* title)
 {
     INIdata data{ window_size, m_window_position, m_maximized_window };
-    ResourceManager::loadINIsettings("EngineTest.ini", data, false);
+    ResourceManager::load_INI_settings("EngineTest.ini", data, false);
 
     m_pCloseWindow = false;
     m_pWindow = std::make_unique<Window>(title, m_window_position, window_size, m_maximized_window);
 
-    ResourceManager::loadJSONresources("res/resources.json");
+    ResourceManager::load_JSON_resources("res/resources.json");
 
     if (!init_events())
     {        
@@ -160,6 +48,8 @@ int Application::start(glm::ivec2& window_size, const char* title)
     {
         return -1;
     }
+       
+    ResourceManager::load_OBJ_file("res/models/finaly.obj", obj);
 
     auto lastTime = std::chrono::high_resolution_clock::now();
 
@@ -167,9 +57,9 @@ int Application::start(glm::ivec2& window_size, const char* title)
 
     int curFpsEs = 0;
     int fps = 0;
-    int countFpsEs = 5;
+    int countFpsEs = 3;
 
-    std::vector<int> fpses{ 0, 0, 0, 0, 0 };
+    std::vector<int> fpses{ 0, 0, 0 };
 
     while (!m_pCloseWindow)
     {
@@ -235,6 +125,20 @@ int Application::start(glm::ivec2& window_size, const char* title)
         m_light_source->update(duration);
         m_sprite->update(duration);
 
+        glm::mat4 translateMat(
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            m_line_pos[0], m_line_pos[1], m_line_pos[2], 1);
+
+        glm::mat4 model = translateMat;
+
+        ResourceManager::getShaderProgram("shape3DShader")->use();
+        ResourceManager::getShaderProgram("shape3DShader")->setMatrix4("modelMat", model);
+
+        RenderEngine::Renderer::bindTexture(*ResourceManager::getTexture("CubeTexture"));
+        RenderEngine::Renderer::drawTriangles(*obj.vertex_array, *obj.index_buffer);
+
         // ------------------------------------------------------------ // 
         on_ui_render();
         // ------------------------------------------------------------ // 
@@ -265,7 +169,7 @@ int Application::start(glm::ivec2& window_size, const char* title)
     }
 
     INIdata endData{ m_pWindow->get_size(), m_window_position, m_maximized_window};
-    ResourceManager::loadINIsettings("EngineTest.ini", endData, true);
+    ResourceManager::load_INI_settings("EngineTest.ini", endData, true);
     m_pWindow = nullptr;
 
     return 0;

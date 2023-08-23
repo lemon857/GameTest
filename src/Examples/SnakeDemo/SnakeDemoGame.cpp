@@ -83,7 +83,7 @@ void SnakeDemoGame::update(const double delta)
 
 bool SnakeDemoGame::init()
 {
-	ResourceManager::loadJSONresources("res/resources.json");
+	ResourceManager::load_JSON_resources("res/resources.json");
 
 	auto pShapeShaderProgram = ResourceManager::getShaderProgram("shapeShader");
 	auto pSpriteRendererShaderProgram = ResourceManager::getShaderProgram("SpriteRendererShader");

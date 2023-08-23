@@ -13,6 +13,8 @@ struct INIdata
 	bool& maximized_window;
 };
 
+struct GraphicsObject;
+
 namespace RenderEngine
 {
 	class ShaderProgram;
@@ -35,13 +37,17 @@ namespace RenderEngine
 		ResourceManager& operator=(const ResourceManager&) = delete;
 		ResourceManager& operator=(const ResourceManager&&) = delete;
 
+		static bool start_with(std::string& line, const char* text);
+
 		static std::string getFileString(const std::string& relativeFilePath);
 
 		static std::string getExeFilePath() { return m_path; };
 
-		static bool loadJSONresources(const std::string& JSONpath);
+		static bool load_JSON_resources(const std::string& JSONrelativePath);
 
-		static bool loadINIsettings(const std::string& INIpath, INIdata& data, const bool isWrite);
+		static bool load_INI_settings(const std::string& INIrelativePath, INIdata& data, const bool isWrite);
+
+		static bool load_OBJ_file(const std::string& OBJrelativePath, GraphicsObject& obj);
 
 		static std::shared_ptr<RenderEngine::ShaderProgram> loadShaders(
 			const std::string& shaderName, 
@@ -72,6 +78,7 @@ namespace RenderEngine
 			const std::string& animatorName,
 			const std::string& SpriteRendererName);*/
 		//static std::shared_ptr<RenderEngine::Animator> getAnimator(const std::string& animatorName);
+		
 
 		static std::shared_ptr<RenderEngine::Texture2D> loadTextureAtlas(
 			std::string textureName,

@@ -4,6 +4,10 @@
 #include "EngineCore/Renderer3D/GraphicsObject.h"
 #include "EngineCore/Renderer/Animation.h"
 #include "EngineCore/Renderer/Animator.h"
+#include "EngineCore/Renderer/VertexArray.h"
+#include "EngineCore/Renderer/VertexBuffer.h"
+#include "EngineCore/Renderer/VertexBufferLayout.h"
+#include "EngineCore/Renderer/IndexBuffer.h"
 #include "EngineCore/System/Log.h"
 
 #include <sstream>
@@ -36,7 +40,7 @@ void ResourceManager::setExecutablePath(const std::string& executablePath)
 	size_t found = executablePath.find_last_of("/\\");
 	m_path = executablePath.substr(0, found);
 }
-bool ResourceManager::loadJSONresources(const std::string & JSONpath)
+bool ResourceManager::load_JSON_resources(const std::string & JSONpath)
 {
 	const std::string JSONstr = getFileString(JSONpath);
 	if (JSONstr.empty())
@@ -148,7 +152,7 @@ bool ResourceManager::loadJSONresources(const std::string & JSONpath)
 	}*/
 	return true;
 }
-bool ResourceManager::loadINIsettings(const std::string& INIpath, INIdata& data, const bool isWrite)
+bool ResourceManager::load_INI_settings(const std::string& INIpath, INIdata& data, const bool isWrite)
 {
 	std::ifstream f;
 	f.open(m_path + "/" + INIpath, std::ios::in | std::ios::binary);
@@ -205,6 +209,146 @@ bool ResourceManager::loadINIsettings(const std::string& INIpath, INIdata& data,
 		return false;
 	}
 }
+bool ResourceManager::load_OBJ_file(const std::string& OBJrelativePath, GraphicsObject& obj)
+{
+	std::ifstream file;
+	file.open(m_path + "/" + OBJrelativePath);
+	if (file.is_open())
+	{
+		std::vector<GLfloat> vertex_coords;
+		std::vector<GLfloat> normal_coords;
+		std::vector<GLfloat> texture_coord;
+		std::vector<GLuint> index_array;
+
+		std::vector<glm::vec3> temp_pos;
+		std::vector<glm::vec3> temp_norms;
+		std::vector<glm::vec2> temp_texs;
+
+		std::vector<GLuint> indices_coords;
+		std::vector<GLuint> indices_norms;
+		std::vector<GLuint> indices_texs;
+
+		std::string line;
+		while (std::getline(file, line))
+		{
+			if (start_with(line, "v "))
+			{
+				float x, y, z;
+				sscanf_s(line.c_str(), "v %f %f %f", &x, &y, &z);
+				temp_pos.push_back(glm::vec3(x, y, z));
+#ifdef DEBUG_CONSOLE
+				LOG_INFO("Vert: {0}x{1}x{2}", x, y, z);
+#endif // DEBUG_CONSOLE
+
+			}
+			else if (start_with(line, "vn "))
+			{
+				GLfloat x, y, z;
+				sscanf_s(line.c_str(), "vn %f %f %f", &x, &y, &z);
+				temp_norms.push_back(glm::vec3(x, y, z));
+#ifdef DEBUG_CONSOLE
+				LOG_INFO("Norms: {0}x{1}x{2}", x, y, z);
+#endif // DEBUG_CONSOLE
+			}
+			else if (start_with(line, "vt "))
+			{
+				GLfloat x, y;
+				sscanf_s(line.c_str(), "vt %f %f", &x, &y);
+				temp_texs.push_back(glm::vec2(x, y));
+#ifdef DEBUG_CONSOLE
+				LOG_INFO("Texs: {0}x{1}", x, y);
+#endif // DEBUG_CONSOLE
+			}
+			// WARNING region (# faces) in .obj file must be lastest
+			else if (start_with(line, "f "))
+			{
+				int indexX, textureX, normalX;
+				int indexY, textureY, normalY;
+				int indexZ, textureZ, normalZ;
+				sscanf_s(line.c_str(), "f %d/%d/%d %d/%d/%d %d/%d/%d",
+					&indexX, &textureX, &normalX, &indexY, &textureY, &normalY, &indexZ, &textureZ, &normalZ);
+
+				indices_coords.push_back(indexX - 1);
+				indices_coords.push_back(indexY - 1);
+				indices_coords.push_back(indexZ - 1);
+
+				indices_norms.push_back(normalX - 1);
+				indices_norms.push_back(normalY - 1);
+				indices_norms.push_back(normalZ - 1);
+
+				indices_texs.push_back(textureX - 1);
+				indices_texs.push_back(textureY - 1);
+				indices_texs.push_back(textureZ - 1);
+
+#ifdef DEBUG_CONSOLE
+				LOG_INFO("Faces: {0}x{1}x{2} {3}x{4}x{5} {6}x{7}x{8}", indexX, textureX, normalX, indexY, textureY, normalY, indexZ, textureZ, normalZ);
+#endif // DEBUG_CONSOLE
+			}
+		}
+
+		for (size_t i = 0; i < indices_coords.size(); i++)
+		{
+			index_array.push_back(i);
+
+			vertex_coords.push_back(temp_pos[indices_coords[i]].x);
+			vertex_coords.push_back(temp_pos[indices_coords[i]].y);
+			vertex_coords.push_back(temp_pos[indices_coords[i]].z);
+
+			normal_coords.push_back(temp_norms[indices_norms[i]].x);
+			normal_coords.push_back(temp_norms[indices_norms[i]].y);
+			normal_coords.push_back(temp_norms[indices_norms[i]].z);
+
+			texture_coord.push_back(temp_texs[indices_texs[i]].x);
+			texture_coord.push_back(temp_texs[indices_texs[i]].y);
+		}
+
+		std::shared_ptr<RenderEngine::VertexArray> vao = std::make_shared<RenderEngine::VertexArray>();
+		std::shared_ptr<RenderEngine::IndexBuffer> ebo = std::make_shared<RenderEngine::IndexBuffer>();
+
+		RenderEngine::VertexBuffer vbo_vert;
+		RenderEngine::VertexBuffer vbo_normal;
+		RenderEngine::VertexBuffer vbo_texture;
+
+		vbo_vert.init(vertex_coords.data(), vertex_coords.size() * sizeof(GLfloat), false);
+		RenderEngine::VertexBufferLayout vertexCoordsLayout;
+		vertexCoordsLayout.addElementLayoutFloat(3, false);
+		vao->addBuffer(vbo_vert, vertexCoordsLayout);
+
+		vbo_normal.init(normal_coords.data(), normal_coords.size() * sizeof(GLfloat), false);
+		RenderEngine::VertexBufferLayout normalCoordsLayout;
+		normalCoordsLayout.addElementLayoutFloat(3, false);
+		vao->addBuffer(vbo_normal, normalCoordsLayout);
+
+		vbo_texture.init(texture_coord.data(), texture_coord.size() * sizeof(GLfloat), false);
+		RenderEngine::VertexBufferLayout textureCoordsLayout;
+		textureCoordsLayout.addElementLayoutFloat(2, false);
+		vao->addBuffer(vbo_texture, textureCoordsLayout);
+
+		ebo->init(index_array.data(), index_array.size() * sizeof(GLuint));
+
+		vao->unbind();
+		ebo->unbind();
+
+		obj.vertex_array = std::move(vao);
+		obj.index_buffer = std::move(ebo);
+
+		file.close();
+		return true;
+	}
+	file.close();
+	return false;
+}
+bool ResourceManager::start_with(std::string& line, const char* text)
+{
+	size_t texLen = strlen(text);
+	if (line.size() < texLen) return false;
+	for (size_t i = 0; i < texLen; i++)
+	{
+		if (line[i] == text[i]) continue;
+		else return false;
+	}
+	return true;
+}
 std::string ResourceManager::getFileString(const std::string& relativeFilePath)
 {
 	std::ifstream f;
@@ -220,6 +364,7 @@ std::string ResourceManager::getFileString(const std::string& relativeFilePath)
 	f.close();
 	return buffer.str();
 }
+
 std::shared_ptr<RenderEngine::ShaderProgram> ResourceManager::loadShaders(const std::string& shaderName, const std::string& vertexPath, const std::string& fragmentPath)
 {
 	std::string vertexString = getFileString(vertexPath);

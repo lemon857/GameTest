@@ -117,7 +117,7 @@ void PongDemoGame::update(const double delta)
 
 bool PongDemoGame::init()
 {
-	ResourceManager::loadJSONresources("res/resources.json");
+	ResourceManager::load_JSON_resources("res/resources.json");
 
 	auto pShapeShader = ResourceManager::getShaderProgram("shapeShader");
 	auto pSpriteRendererShader = ResourceManager::getShaderProgram("SpriteRendererShader");

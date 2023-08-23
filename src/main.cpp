@@ -20,6 +20,7 @@
 #include "EngineCore/Application.h"
 #include "EngineCore/System/Log.h"
 #include "EngineCore/Components/Transform.h"
+#include "EngineCore/Components/Highlight.h"
 
 class EditorApplication : public Application
 {

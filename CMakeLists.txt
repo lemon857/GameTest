@@ -101,9 +101,6 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Physics/Ray.cpp
 	
 	src/System/Timer.cpp
-		
-	src/Renderer3D/GraphicsObject.cpp
-	
 	
 	src/Components/MeshRenderer.cpp	
 	src/Components/Transform.cpp

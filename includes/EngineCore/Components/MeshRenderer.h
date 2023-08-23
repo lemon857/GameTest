@@ -13,12 +13,13 @@ namespace RenderEngine
 	class Texture2D;
 }
 
+struct GraphicsObject;
+
 class MeshRenderer : public IComponent
 {
 public:
 	MeshRenderer(
-		std::shared_ptr<RenderEngine::VertexArray> vao,
-		std::shared_ptr<RenderEngine::IndexBuffer> ebo,
+		std::shared_ptr<GraphicsObject> obj,
 		std::shared_ptr<RenderEngine::ShaderProgram> pShaderProgram,
 		std::shared_ptr<RenderEngine::Texture2D> pTexture);
 	~MeshRenderer();
@@ -27,6 +28,5 @@ public:
 private:
 	std::shared_ptr<RenderEngine::ShaderProgram> m_pShaderProgram;
 	std::shared_ptr<RenderEngine::Texture2D> m_pTexture;
-	std::shared_ptr<RenderEngine::VertexArray> m_vertexArray;
-	std::shared_ptr<RenderEngine::IndexBuffer> m_indexBuffer;
+	std::shared_ptr<GraphicsObject> m_obj;
 };

@@ -12,6 +12,7 @@
 #include "EngineCore/Physics/Ray.h"
 #include "EngineCore/Meshes/Cube.h"
 #include "EngineCore/Meshes/Sprite.h"
+#include "EngineCore/Meshes/ObjModel.h"
 
 #include <memory>
 #include <glm/vec2.hpp>
@@ -102,4 +103,5 @@ protected:
 	Cube* m_cube;
 	Cube* m_light_source;
 	Sprite* m_sprite;
+	ObjModel* m_model;
 };

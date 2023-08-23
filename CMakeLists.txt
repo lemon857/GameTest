@@ -49,6 +49,7 @@ set(ENGINE_PRIVATE_INCLUDES
 	
 	includes/EngineCore/Meshes/Cube.h
 	includes/EngineCore/Meshes/Sprite.h
+	includes/EngineCore/Meshes/ObjModel.h
 )
 
 set(ENGINE_PRIVATE_SOURCES
@@ -109,6 +110,7 @@ set(ENGINE_PRIVATE_SOURCES
 	
 	src/Meshes/Cube.cpp
 	src/Meshes/Sprite.cpp
+	src/Meshes/ObjModel.cpp
 )
 
 

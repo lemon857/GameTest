@@ -9,18 +9,17 @@
 #include "EngineCore/Renderer/ShaderProgram.h"
 #include "EngineCore/Renderer/Renderer.h"
 #include "EngineCore/Renderer/Texture2D.h"
+#include "EngineCore/Renderer3D/GraphicsObject.h"
 
 #include <glm/vec3.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 MeshRenderer::MeshRenderer(
-    std::shared_ptr<RenderEngine::VertexArray> vao,
-    std::shared_ptr<RenderEngine::IndexBuffer> ebo,
+    std::shared_ptr<GraphicsObject> obj,
     std::shared_ptr<RenderEngine::ShaderProgram> pShaderProgram,
     std::shared_ptr<RenderEngine::Texture2D> pTexture)
     : IComponent()
-    , m_vertexArray(std::move(vao))
-    , m_indexBuffer(std::move(ebo))
+    , m_obj(std::move(obj))
     , m_pShaderProgram(std::move(pShaderProgram))
     , m_pTexture(std::move(pTexture))
 {
@@ -28,10 +27,8 @@ MeshRenderer::MeshRenderer(
 
 MeshRenderer::~MeshRenderer()
 {
-	delete m_vertexArray.get();
-	delete m_indexBuffer.get();
-    m_vertexArray.reset();
-    m_indexBuffer.reset();
+	delete m_obj.get();
+    m_obj.reset();
 }
 
 void MeshRenderer::update(double delta)
@@ -94,5 +91,5 @@ void MeshRenderer::update(double delta)
     m_pShaderProgram->setMatrix4("modelMat", model);
 
     RenderEngine::Renderer::bindTexture(*m_pTexture);
-    RenderEngine::Renderer::drawTriangles(*m_vertexArray, *m_indexBuffer);
+    RenderEngine::Renderer::drawTriangles(*m_obj->vertex_array, *m_obj->index_buffer);
 }

@@ -16,8 +16,6 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-GraphicsObject obj;
-
 Application::Application()
 {
     LOG_INFO("Starting Application");
@@ -49,8 +47,6 @@ int Application::start(glm::ivec2& window_size, const char* title)
         return -1;
     }
        
-    ResourceManager::load_OBJ_file("res/models/finaly.obj", obj);
-
     auto lastTime = std::chrono::high_resolution_clock::now();
 
     double curTime = 0;
@@ -124,20 +120,7 @@ int Application::start(glm::ivec2& window_size, const char* title)
         m_cube->update(duration);
         m_light_source->update(duration);
         m_sprite->update(duration);
-
-        glm::mat4 translateMat(
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            m_line_pos[0], m_line_pos[1], m_line_pos[2], 1);
-
-        glm::mat4 model = translateMat;
-
-        ResourceManager::getShaderProgram("shape3DShader")->use();
-        ResourceManager::getShaderProgram("shape3DShader")->setMatrix4("modelMat", model);
-
-        RenderEngine::Renderer::bindTexture(*ResourceManager::getTexture("CubeTexture"));
-        RenderEngine::Renderer::drawTriangles(*obj.vertex_array, *obj.index_buffer);
+        m_model->update(duration);
 
         // ------------------------------------------------------------ // 
         on_ui_render();
@@ -184,6 +167,8 @@ bool Application::init()
     auto pShapeProgram = ResourceManager::getShaderProgram("shapeShader");
     auto pSpriteProgram = ResourceManager::getShaderProgram("spriteShader");
 
+    m_model = new ObjModel(ResourceManager::load_OBJ_file("res/models/monkey.obj"), ResourceManager::getTexture("CubeTexture"), ResourceManager::getShaderProgram("shape3DShader"));
+
     m_line = new RenderEngine::Line(pShapeProgram);
 
     m_cube = new Cube(ResourceManager::getTexture("CubeTexture"), "default", ResourceManager::getShaderProgram("shape3DShader"));
@@ -200,6 +185,9 @@ bool Application::init()
         glm::vec3(m_SpriteRenderer_scale[0], m_SpriteRenderer_scale[1], m_SpriteRenderer_scale[2]),
         glm::vec3(m_SpriteRenderer_rot[0], m_SpriteRenderer_rot[1], m_SpriteRenderer_rot[2]));
     m_light_source->addComponent<Transform>(glm::vec3(m_light_pos[0], m_light_pos[1], m_light_pos[2]), glm::vec3(0.5f), glm::vec3(0.f));
+
+    m_model->addComponent<Transform>(glm::vec3(5.f, 0.f, 0.f), glm::vec3(0.5f), glm::vec3(1.f));
+    m_model->addComponent<Highlight>(pShapeProgram, glm::vec3(1.f));
 
     m_cube->setSubTexture("BrickWall");
 

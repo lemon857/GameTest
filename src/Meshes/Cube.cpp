@@ -6,6 +6,7 @@
 #include "EngineCore/Renderer/IndexBuffer.h"
 #include "EngineCore/Renderer/Texture2D.h"
 #include "EngineCore/Components/MeshRenderer.h"
+#include "EngineCore/Renderer3D/GraphicsObject.h"
 
 static int g_current_cube_ID = 0;
 
@@ -74,7 +75,7 @@ Cube::Cube(std::shared_ptr<RenderEngine::Texture2D> pTexture, std::string subTex
     vertexArray->unbind();
 	indexBuffer->unbind();
 
-    addComponent<MeshRenderer>(vertexArray, indexBuffer, pShader, m_pTexture);
+    addComponent<MeshRenderer>(std::make_shared<GraphicsObject>(vertexArray, indexBuffer), pShader, m_pTexture);
 }
 
 Cube::~Cube()

@@ -209,7 +209,7 @@ bool ResourceManager::load_INI_settings(const std::string& INIpath, INIdata& dat
 		return false;
 	}
 }
-bool ResourceManager::load_OBJ_file(const std::string& OBJrelativePath, GraphicsObject& obj)
+std::shared_ptr<GraphicsObject> ResourceManager::load_OBJ_file(const std::string& OBJrelativePath)
 {
 	std::ifstream file;
 	file.open(m_path + "/" + OBJrelativePath);
@@ -329,14 +329,11 @@ bool ResourceManager::load_OBJ_file(const std::string& OBJrelativePath, Graphics
 		vao->unbind();
 		ebo->unbind();
 
-		obj.vertex_array = std::move(vao);
-		obj.index_buffer = std::move(ebo);
-
 		file.close();
-		return true;
+		return std::make_shared<GraphicsObject>(std::move(vao), std::move(ebo));
 	}
 	file.close();
-	return false;
+	return nullptr;
 }
 bool ResourceManager::start_with(std::string& line, const char* text)
 {

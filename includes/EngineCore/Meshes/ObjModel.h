@@ -7,8 +7,7 @@
 
 namespace RenderEngine
 {
-	class Texture2D;
-	class ShaderProgram;
+	class Material;
 }
 
 struct GraphicsObject;
@@ -16,9 +15,9 @@ struct GraphicsObject;
 class ObjModel : public IGameObject
 {
 public:
-	ObjModel(const std::string relativeFilePath, std::shared_ptr<RenderEngine::Texture2D> pTexture, std::shared_ptr<RenderEngine::ShaderProgram> pShader);
+	ObjModel(const std::string relativeFilePath, std::shared_ptr<RenderEngine::Material> pMaterial);
+
 	void reload();
 private:
-	std::shared_ptr<RenderEngine::Texture2D> m_pTexture;
 	std::string m_path;
 };

@@ -9,15 +9,14 @@
 
 namespace RenderEngine
 {
-	class Texture2D;
-	class ShaderProgram;
+	class Material;
     class VertexBuffer;
 }
 
 class Cube : public IGameObject
 {
 public:
-	Cube(std::shared_ptr<RenderEngine::Texture2D> pTexture, std::string subTextureName, std::shared_ptr<RenderEngine::ShaderProgram> pShader);
+	Cube(std::shared_ptr<RenderEngine::Material> pMaterial, std::string subTextureName);
 
     ~Cube();
 
@@ -31,7 +30,7 @@ public:
     void setSubTexture(std::string subTextureName);
 private:
     RenderEngine::VertexBuffer* m_textureCoordsBuffer;
-    std::shared_ptr<RenderEngine::Texture2D> m_pTexture;
+    std::shared_ptr<RenderEngine::Material> m_pMaterial;
 
     static constexpr GLfloat m_vertexCoords[] {
         // FRONT

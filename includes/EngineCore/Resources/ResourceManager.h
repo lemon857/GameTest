@@ -55,7 +55,7 @@ namespace RenderEngine
 			const std::string& shaderName, 
 			const std::string& vertexPath, 
 			const std::string& fragmentPath,
-			const std::shared_ptr<RenderEngine::ShaderProgramLayout> layout);
+			std::shared_ptr<RenderEngine::ShaderProgramLayout> layout);
 		static std::shared_ptr<RenderEngine::ShaderProgram> getShaderProgram(
 			const std::string& shaderName);
 
@@ -63,6 +63,12 @@ namespace RenderEngine
 			const std::string& textureName, 
 			const std::string& texturePath);
 		static std::shared_ptr<RenderEngine::Texture2D> getTexture(const std::string& textureName);
+
+		static std::shared_ptr<RenderEngine::Material>  loadMaterial(
+			const std::string& materialName,
+			const std::string& textureName,
+			const std::string& shaderName);
+		static std::shared_ptr<RenderEngine::Material> getMaterial(const std::string& materialName);
 
 		/*static std::shared_ptr<RenderEngine::SpriteRenderer>  loadSpriteRenderer(
 			const std::string& SpriteRendererName, 
@@ -101,6 +107,10 @@ namespace RenderEngine
 
 		typedef std::map<const std::string, std::shared_ptr<RenderEngine::Material>> MaterialsMap;
 		static MaterialsMap m_materials;
+
+		typedef std::map<const std::string, std::shared_ptr<GraphicsObject>> CacheOBJMap;
+		static CacheOBJMap m_obj_files;
+
 		//typedef std::map<const std::string, std::shared_ptr<RenderEngine::SpriteRenderer>> SpriteRenderersMap;
 		//static SpriteRenderersMap m_SpriteRenderers;
 

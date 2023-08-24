@@ -7,15 +7,15 @@
       "layout": [
         {
           "name": "modelMat",
-          "typeInt": "5",
-          "minVal": "0",
-          "maxVal": "0"
+          "typeInt": 5,
+          "minVal": 0,
+          "maxVal": 0
         },
         {
           "name": "view_projectionMat",
-          "typeInt": "6",
-          "minVal": "0",
-          "maxVal": "0"
+          "typeInt": 6,
+          "minVal": 0,
+          "maxVal": 0
         }
       ]
     },
@@ -26,21 +26,21 @@
       "layout": [
         {
           "name": "modelMat",
-          "typeInt": "5",
-          "minVal": "0",
-          "maxVal": "0"
+          "typeInt": 5,
+          "minVal": 0,
+          "maxVal": 0
         },
         {
           "name": "view_projectionMat",
-          "typeInt": "6",
-          "minVal": "0",
-          "maxVal": "0"
+          "typeInt": 6,
+          "minVal": 0,
+          "maxVal": 0
         },
         {
           "name": "sourceColor",
-          "typeInt": "3",
-          "minVal": "0",
-          "maxVal": "256"
+          "typeInt": 3,
+          "minVal": 0,
+          "maxVal": 256
         }
       ]
     },
@@ -51,70 +51,81 @@
       "layout": [
         {
           "name": "modelMat",
-          "typeInt": "5",
-          "minVal": "0",
-          "maxVal": "0"
+          "typeInt": 5,
+          "minVal": 0,
+          "maxVal": 0
         },
         {
           "name": "view_projectionMat",
-          "typeInt": "6",
-          "minVal": "0",
-          "maxVal": "0"
+          "typeInt": 6,
+          "minVal": 0,
+          "maxVal": 0
         },
         {
           "name": "light_color",
-          "typeInt": "2",
-          "minVal": "0",
-          "maxVal": "256"
+          "typeInt": 2,
+          "minVal": 0,
+          "maxVal": 256
         },
         {
           "name": "light_position",
-          "typeInt": "2",
-          "minVal": "0",
-          "maxVal": "0"
+          "typeInt": 2,
+          "minVal": 0,
+          "maxVal": 0
         },
         {
           "name": "cam_position",
-          "typeInt": "2",
-          "minVal": "0",
-          "maxVal": "0"
+          "typeInt": 2,
+          "minVal": 0,
+          "maxVal": 0
         },
         {
           "name": "ambient_factor",
-          "typeInt": "1",
-          "minVal": "0",
-          "maxVal": "1"
+          "typeInt": 1,
+          "minVal": 0,
+          "maxVal": 1
         },
         {
           "name": "diffuse_factor",
-          "typeInt": "1",
-          "minVal": "0",
-          "maxVal": "1"
+          "typeInt": 1,
+          "minVal": 0,
+          "maxVal": 1
         },
         {
           "name": "specular_factor",
-          "typeInt": "1",
-          "minVal": "0",
-          "maxVal": "1"
+          "typeInt": 1,
+          "minVal": 0,
+          "maxVal": 1
         },
         {
           "name": "shininess",
-          "typeInt": "1",
-          "minVal": "0",
-          "maxVal": "1"
+          "typeInt": 1,
+          "minVal": 0,
+          "maxVal": 1
         },
         {
           "name": "metalic_factor",
-          "typeInt": "1",
-          "minVal": "0",
-          "maxVal": "1"
+          "typeInt": 1,
+          "minVal": 0,
+          "maxVal": 1
         }
       ]
     }
   ],
   "textureAtlases": [
     {
-      "name": "DefaultTextureAtlas",
+      "name": "DefaultTexture",
+      "filePath": "res/textures/default_texture.png",
+      "width": 128,
+      "height": 64,
+      "subTexture_w": 16,
+      "subTexture_h": 16,
+      "subTextures": [
+        "default"
+      ]
+    },
+    {
+      "name": "SpritesTextureAtlas",
       "filePath": "res/textures/map_16x16.png",
       "width": 128,
       "height": 64,
@@ -224,7 +235,14 @@
   ],
   "materials": [
     {
-
+      "name": "default",
+      "nameShader": "colorShader",
+      "nameTexture": "DefaultTexture"
+    },
+    {
+      "name": "shape3D",
+      "nameShader": "shape3DShader",
+      "nameTexture": "CubeTexture"
     }
   ],
   "objects": [

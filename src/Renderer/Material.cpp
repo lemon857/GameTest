@@ -18,4 +18,29 @@ namespace RenderEngine
 		m_pShaderProgram->use();
 		if (m_pTexture != nullptr) Renderer::bindTexture(*m_pTexture);
 	}
+	std::vector<std::string> Material::get_shader_prop_names(ETypeData type)
+	{
+		std::vector<std::string> names;
+
+		auto elements = m_pShaderProgram->get_layout()->getLayoutElements();
+
+		for (const auto& curElement : elements)
+		{
+			if (curElement.type == type) names.push_back(curElement.name);
+		}
+
+		return names;
+	}
+	void Material::set_model_matrix(glm::mat4& model)
+	{
+		m_pShaderProgram->setMatrix4(get_shader_prop_names(ModelMat4)[0], model);
+	}
+	void Material::set_view_projection_matrix(glm::mat4& vp)
+	{
+		m_pShaderProgram->setMatrix4(get_shader_prop_names(VPMat4)[0], vp);
+	}
+	std::shared_ptr<Texture2D> Material::get_texture_ptr()
+	{
+		return m_pTexture;
+	}
 }

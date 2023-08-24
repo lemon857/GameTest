@@ -118,6 +118,9 @@ int Application::start(glm::ivec2& window_size, const char* title)
         m_light_source->update(duration);
         m_sprite->update(duration);
         m_model->update(duration);
+        m_model1->update(duration);
+        m_model2->update(duration);
+        m_model3->update(duration);
 
         // ------------------------------------------------------------ // 
         on_ui_render();
@@ -164,12 +167,15 @@ bool Application::init()
     auto pShapeProgram = ResourceManager::getShaderProgram("colorShader");
     auto pSpriteProgram = ResourceManager::getShaderProgram("spriteShader");
 
-    m_model = new ObjModel("res/models/monkey.obj", ResourceManager::getTexture("CottageTexture"), ResourceManager::getShaderProgram("shape3DShader"));
+    m_model = new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("shape3D"));
+    m_model1 = new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("shape3D"));
+    m_model2 = new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("shape3D"));
+    m_model3 = new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("shape3D"));
 
     m_line = new RenderEngine::Line(pShapeProgram);
 
-    m_cube = new Cube(ResourceManager::getTexture("CubeTexture"), "default", ResourceManager::getShaderProgram("shape3DShader"));
-    m_light_source = new Cube(nullptr, "default", pShapeProgram);
+    m_cube = new Cube(ResourceManager::getMaterial("shape3D"), "default");
+    m_light_source = new Cube(ResourceManager::getMaterial("default"), "default");
     m_sprite = new Sprite(ResourceManager::getTexture("TanksTextureAtlas"), "YellowUp11", pSpriteProgram);
 
     m_cube->addComponent<Highlight>(pShapeProgram, glm::vec3(1.f));
@@ -183,7 +189,10 @@ bool Application::init()
         glm::vec3(m_SpriteRenderer_rot[0], m_SpriteRenderer_rot[1], m_SpriteRenderer_rot[2]));
     m_light_source->addComponent<Transform>(glm::vec3(m_light_pos[0], m_light_pos[1], m_light_pos[2]), glm::vec3(0.1f), glm::vec3(0.f));
 
-    m_model->addComponent<Transform>(glm::vec3(5.f, 0.f, 0.f), glm::vec3(0.5f), glm::vec3(1.f));
+    m_model->addComponent<Transform>(glm::vec3(3.f, 0.f, 0.f), glm::vec3(0.5f), glm::vec3(1.f));
+    m_model1->addComponent<Transform>(glm::vec3(0.f, -3.f, 0.f), glm::vec3(0.5f), glm::vec3(1.f));
+    m_model2->addComponent<Transform>(glm::vec3(-3.f, 0.f, 0.f), glm::vec3(0.5f), glm::vec3(1.f));
+    m_model3->addComponent<Transform>(glm::vec3(0.f, 3.f, 0.f), glm::vec3(0.5f), glm::vec3(1.f));
     m_model->addComponent<Highlight>(pShapeProgram, glm::vec3(1.f));
 
     m_cube->setSubTexture("BrickWall");

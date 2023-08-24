@@ -6,9 +6,8 @@
 #include "EngineCore/Renderer/VertexBuffer.h"
 #include "EngineCore/Renderer/VertexBufferLayout.h"
 #include "EngineCore/Renderer/IndexBuffer.h"
-#include "EngineCore/Renderer/ShaderProgram.h"
+#include "EngineCore/Renderer/Material.h"
 #include "EngineCore/Renderer/Renderer.h"
-#include "EngineCore/Renderer/Texture2D.h"
 #include "EngineCore/Renderer3D/GraphicsObject.h"
 
 #include <glm/vec3.hpp>
@@ -16,12 +15,10 @@
 
 MeshRenderer::MeshRenderer(
     std::shared_ptr<GraphicsObject> obj,
-    std::shared_ptr<RenderEngine::ShaderProgram> pShaderProgram,
-    std::shared_ptr<RenderEngine::Texture2D> pTexture)
+    std::shared_ptr<RenderEngine::Material> pMaterial)
     : IComponent()
     , m_obj(std::move(obj))
-    , m_pShaderProgram(std::move(pShaderProgram))
-    , m_pTexture(std::move(pTexture))
+    , m_pMaterial(std::move(pMaterial))
 {
 }
 
@@ -49,8 +46,6 @@ void MeshRenderer::update(double delta)
         pos = transform->get_position();
         rot = transform->get_rotation();
     }
-
-    m_pShaderProgram->use();
 
     glm::mat4 scaleMat(
         scale[0], 0, 0, 0,
@@ -88,9 +83,9 @@ void MeshRenderer::update(double delta)
 
     glm::mat4 model = translateMat * rotateXmat * rotateYmat * rotateZmat * scaleMat;
 
-    m_pShaderProgram->setMatrix4("modelMat", model);
+    m_pMaterial->use();
+    m_pMaterial->set_model_matrix(model);
 
-    if (m_pTexture != nullptr) RenderEngine::Renderer::bindTexture(*m_pTexture);
     RenderEngine::Renderer::drawTriangles(*m_obj->vertex_array, *m_obj->index_buffer);
 }
 

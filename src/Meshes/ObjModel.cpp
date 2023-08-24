@@ -7,13 +7,12 @@
 
 static int g_current_obj_ID = 0;
 
-ObjModel::ObjModel(const std::string relativeFilePath, std::shared_ptr<RenderEngine::Texture2D> pTexture, std::shared_ptr<RenderEngine::ShaderProgram> pShader)
+ObjModel::ObjModel(const std::string relativeFilePath, std::shared_ptr<RenderEngine::Material> pMaterial)
 	: IGameObject("ObjModel" + std::to_string(g_current_obj_ID++))
-	, m_pTexture(std::move(pTexture))
 	, m_path(relativeFilePath)
 {
 	std::shared_ptr<GraphicsObject> obj = ResourceManager::load_OBJ_file(relativeFilePath);
-	addComponent<MeshRenderer>(std::move(obj), std::move(pShader), m_pTexture);
+	addComponent<MeshRenderer>(std::move(obj), std::move(pMaterial));
 }
 
 void ObjModel::reload()

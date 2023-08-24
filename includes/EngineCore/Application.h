@@ -104,4 +104,7 @@ protected:
 	Cube* m_light_source;
 	Sprite* m_sprite;
 	ObjModel* m_model;
+	ObjModel* m_model1;
+	ObjModel* m_model2;
+	ObjModel* m_model3;
 };

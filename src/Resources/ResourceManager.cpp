@@ -1,6 +1,7 @@
 #include "EngineCore/Resources/ResourceManager.h";
 #include "EngineCore/Renderer/ShaderProgram.h"
 #include "EngineCore/Renderer/Texture2D.h"
+#include "EngineCore/Renderer/Material.h"
 #include "EngineCore/Renderer3D/GraphicsObject.h"
 #include "EngineCore/Renderer/Animation.h"
 #include "EngineCore/Renderer/Animator.h"
@@ -25,6 +26,7 @@
 ResourceManager::ShaderProgramsMap ResourceManager::m_ShaderPrograms;
 ResourceManager::TexturesMap ResourceManager::m_textures;
 ResourceManager::MaterialsMap ResourceManager::m_materials;
+ResourceManager::CacheOBJMap ResourceManager::m_obj_files;
 //ResourceManager::SpriteRenderersMap ResourceManager::m_SpriteRenderers;
 //ResourceManager::GraphObjMap ResourceManager::m_graph_objs;
 //ResourceManager::AnimatorsMap ResourceManager::m_animators;
@@ -35,6 +37,8 @@ void ResourceManager::unloadAllResources()
 {
 	m_ShaderPrograms.clear();
 	m_textures.clear();
+	m_materials.clear();
+	m_obj_files.clear();
 	//m_SpriteRenderers.clear();
 }
 void ResourceManager::setExecutablePath(const std::string& executablePath)
@@ -104,6 +108,18 @@ bool ResourceManager::load_JSON_resources(const std::string & JSONpath)
 			}
 
 			loadTextureAtlas(name, subTextures, path, width, height, subTextureWidth, subTextureHeight);
+		}
+	}
+	auto materialsIt = doc.FindMember("materials");
+	if (materialsIt != doc.MemberEnd())
+	{
+		for (const auto& currentMaterial : materialsIt->value.GetArray())
+		{
+			const std::string name = currentMaterial["name"].GetString();
+			const std::string shaderName = currentMaterial["nameShader"].GetString();
+			const std::string textureName = currentMaterial["nameTexture"].GetString();
+
+			loadMaterial(name, textureName, shaderName);
 		}
 	}
 	/*auto SpriteRenderersIt = doc.FindMember("SpriteRenderers");
@@ -226,6 +242,11 @@ bool ResourceManager::load_INI_settings(const std::string& INIpath, INIdata& dat
 }
 std::shared_ptr<GraphicsObject> ResourceManager::load_OBJ_file(const std::string& OBJrelativePath)
 {
+	CacheOBJMap::const_iterator it = m_obj_files.find(OBJrelativePath);
+	if (it != m_obj_files.end())
+	{
+		return it->second;
+	}
 	std::ifstream file;
 	file.open(m_path + "/" + OBJrelativePath);
 	if (file.is_open())
@@ -348,7 +369,11 @@ std::shared_ptr<GraphicsObject> ResourceManager::load_OBJ_file(const std::string
 		ebo->unbind();
 
 		file.close();
-		return std::make_shared<GraphicsObject>(std::move(vao), std::move(ebo));
+
+		std::shared_ptr<GraphicsObject> newOBJ =
+		m_obj_files.emplace(OBJrelativePath, std::make_shared<GraphicsObject>(std::move(vao), std::move(ebo))).first->second;
+
+		return newOBJ;
 	}
 	file.close();
 	return nullptr;
@@ -381,7 +406,7 @@ std::string ResourceManager::getFileString(const std::string& relativeFilePath)
 }
 
 std::shared_ptr<RenderEngine::ShaderProgram> ResourceManager::loadShaders(const std::string& shaderName, const std::string& vertexPath, const std::string& fragmentPath,
-	const std::shared_ptr<RenderEngine::ShaderProgramLayout> layout)
+	std::shared_ptr<RenderEngine::ShaderProgramLayout> layout)
 {
 	std::string vertexString = getFileString(vertexPath);
 	if (vertexString.empty()) 
@@ -445,6 +470,32 @@ std::shared_ptr<RenderEngine::Texture2D> ResourceManager::getTexture(const std::
 		return it->second;
 	}
 	LOG_ERROR("Can't find texture: {0}", textureName);
+	return nullptr;
+}
+std::shared_ptr<RenderEngine::Material> ResourceManager::loadMaterial(const std::string& materialName, const std::string& textureName, const std::string& shaderName)
+{
+	auto shader = getShaderProgram(shaderName);
+	auto texture = getTexture(textureName);
+
+	if (shader == nullptr)
+	{
+		LOG_ERROR("Can't find shader program {0} for material {1}", shaderName, materialName);
+		return nullptr;
+	}
+
+	std::shared_ptr<RenderEngine::Material> newMaterial =
+	m_materials.emplace(materialName, std::make_shared<RenderEngine::Material>(shader, texture)).first->second;
+
+	return newMaterial;
+}
+std::shared_ptr<RenderEngine::Material> ResourceManager::getMaterial(const std::string& materialName)
+{
+	MaterialsMap::const_iterator it = m_materials.find(materialName);
+	if (it != m_materials.end())
+	{
+		return it->second;
+	}
+	LOG_ERROR("Can't find material: {0}", materialName);
 	return nullptr;
 }
 //std::shared_ptr<RenderEngine::SpriteRenderer>  ResourceManager::loadSpriteRenderer(const std::string& SpriteRendererName, const std::string& textureName,

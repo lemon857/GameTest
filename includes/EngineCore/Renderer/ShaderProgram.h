@@ -22,6 +22,7 @@ namespace RenderEngine
 		bool isCompiled() const;
 		// Использование шейдера
 		void use() const;
+
 		void setInt(const std::string& name, const GLint& value);
 		void setFloat(const std::string& name, const GLfloat& value);
 		void setMatrix4(const std::string& name, const glm::mat4& matrix);

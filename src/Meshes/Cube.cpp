@@ -5,14 +5,15 @@
 #include "EngineCore/Renderer/VertexBufferLayout.h"
 #include "EngineCore/Renderer/IndexBuffer.h"
 #include "EngineCore/Renderer/Texture2D.h"
+#include "EngineCore/Renderer/Material.h"
 #include "EngineCore/Components/MeshRenderer.h"
 #include "EngineCore/Renderer3D/GraphicsObject.h"
 
 static int g_current_cube_ID = 0;
 
-Cube::Cube(std::shared_ptr<RenderEngine::Texture2D> pTexture, std::string subTextureName, std::shared_ptr<RenderEngine::ShaderProgram> pShader)
+Cube::Cube(std::shared_ptr<RenderEngine::Material> pMaterial, std::string subTextureName)
     : IGameObject("Cube" + std::to_string(g_current_cube_ID++))
-    , m_pTexture(std::move(pTexture))
+    , m_pMaterial(std::move(pMaterial))
 {
     std::shared_ptr<RenderEngine::VertexArray> vertexArray = std::make_shared<RenderEngine::VertexArray>();
     std::shared_ptr<RenderEngine::IndexBuffer> indexBuffer = std::make_shared<RenderEngine::IndexBuffer>();
@@ -20,9 +21,9 @@ Cube::Cube(std::shared_ptr<RenderEngine::Texture2D> pTexture, std::string subTex
     RenderEngine::VertexBuffer vertexNormalBuffer;
     m_textureCoordsBuffer = new RenderEngine::VertexBuffer();
     GLfloat* textureCoords;
-    if (m_pTexture != nullptr)
+    if (m_pMaterial->get_texture_ptr() != nullptr)
     {
-        auto aSubTexture = m_pTexture->getSubTexture(subTextureName);
+        auto aSubTexture = m_pMaterial->get_texture_ptr()->getSubTexture(subTextureName);
         GLfloat textures[]{
             // FRONT
             aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
@@ -67,7 +68,7 @@ Cube::Cube(std::shared_ptr<RenderEngine::Texture2D> pTexture, std::string subTex
     vertexNormalLayout.addElementLayoutFloat(3, false);
     vertexArray->addBuffer(vertexNormalBuffer, vertexNormalLayout);
 
-    if (m_pTexture != nullptr)
+    if (m_pMaterial->get_texture_ptr() != nullptr)
     {
         m_textureCoordsBuffer->init(textureCoords, 24 * 2 * sizeof(GLfloat), true);
         RenderEngine::VertexBufferLayout textureCoordsLayout;
@@ -80,7 +81,7 @@ Cube::Cube(std::shared_ptr<RenderEngine::Texture2D> pTexture, std::string subTex
     vertexArray->unbind();
 	indexBuffer->unbind();
 
-    addComponent<MeshRenderer>(std::make_shared<GraphicsObject>(vertexArray, indexBuffer), pShader, m_pTexture);
+    addComponent<MeshRenderer>(std::make_shared<GraphicsObject>(vertexArray, indexBuffer), m_pMaterial);
 }
 
 Cube::~Cube()
@@ -90,8 +91,8 @@ Cube::~Cube()
 
 void Cube::setSubTexture(std::string subTextureName)
 {
-    if (m_pTexture == nullptr) return;
-    auto aSubTexture = m_pTexture->getSubTexture(subTextureName);
+    if (m_pMaterial->get_texture_ptr() == nullptr) return;
+    auto aSubTexture = m_pMaterial->get_texture_ptr()->getSubTexture(subTextureName);
     GLfloat textureCoords[]{
         // FRONT
         aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,

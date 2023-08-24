@@ -93,7 +93,7 @@ bool SnakeDemoGame::init()
 	//m_cam->addShaderProgram(pSpriteRendererShaderProgram);
 	//m_cam->addShaderProgram(pShapeShaderProgram);
 
-	m_pLine = std::make_shared<RenderEngine::Line>(pShapeShaderProgram);
+	//m_pLine = std::make_shared<RenderEngine::Line>(pShapeShaderProgram);
 
 	/*m_pSpriteRenderer = ResourceManager::getSpriteRenderer("SnakePart");
 	m_pSpriteRendererApple = ResourceManager::getSpriteRenderer("Apple");

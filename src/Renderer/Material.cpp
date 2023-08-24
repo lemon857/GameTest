@@ -39,6 +39,10 @@ namespace RenderEngine
 	{
 		m_pShaderProgram->setMatrix4(get_shader_prop_names(VPMat4)[0], vp);
 	}
+	void Material::set_first_vec4(glm::vec4& value)
+	{
+		m_pShaderProgram->setVec4(get_shader_prop_names(Vec4)[0], value);
+	}
 	std::shared_ptr<Texture2D> Material::get_texture_ptr()
 	{
 		return m_pTexture;

@@ -24,6 +24,8 @@ namespace RenderEngine
 		void set_model_matrix(glm::mat4& model);
 		void set_view_projection_matrix(glm::mat4& vp);
 
+		void set_first_vec4(glm::vec4& value);
+
 		std::shared_ptr<Texture2D> get_texture_ptr();
 
 	private:

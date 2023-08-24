@@ -95,8 +95,6 @@ int Application::start(glm::ivec2& window_size, const char* title)
         ResourceManager::getShaderProgram("spriteShader")->use();
         ResourceManager::getShaderProgram("spriteShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
 
-        m_line->render(glm::vec3(0.f), glm::vec3(m_line_pos[0], m_line_pos[1], m_line_pos[2]), glm::vec3(1.f));
-
         //m_line->render_from_to(m_cam->get_position() - glm::vec3(1.f), glm::vec3(m_world_mouse_pos_x, m_world_mouse_pos_y, m_world_mouse_pos_z), glm::vec3(1.f));
 
         //m_line->render_from_to(glm::vec3(0.f), glm::vec3(m_world_mouse_pos_x, m_world_mouse_pos_y, m_world_mouse_pos_z), glm::vec3(1.f));
@@ -110,7 +108,7 @@ int Application::start(glm::ivec2& window_size, const char* title)
 
         ResourceManager::getShaderProgram("shape3DShader")->use();
         ResourceManager::getShaderProgram("shape3DShader")->setVec3("light_color", glm::vec3(m_light_color[0], m_light_color[1], m_light_color[2]));
-        ResourceManager::getShaderProgram("shape3DShader")->setVec3("light_position", glm::vec3(m_light_pos[0], m_light_pos[1], m_light_pos[2]));
+        ResourceManager::getShaderProgram("shape3DShader")->setVec3("light_position", m_light_source->getComponent<Transform>()->get_position());
         ResourceManager::getShaderProgram("shape3DShader")->setVec3("cam_position", m_cam->get_position());
         ResourceManager::getShaderProgram("shape3DShader")->setFloat("ambient_factor", m_ambient_factor);
         ResourceManager::getShaderProgram("shape3DShader")->setFloat("diffuse_factor", m_diffuse_factor);
@@ -121,13 +119,10 @@ int Application::start(glm::ivec2& window_size, const char* title)
         ResourceManager::getShaderProgram("colorShader")->use();
         ResourceManager::getShaderProgram("colorShader")->setVec3("sourceColor", glm::vec3(m_light_color[0], m_light_color[1], m_light_color[2]));
 
-        m_cube->update(duration);
-        m_light_source->update(duration);
-        m_sprite->update(duration);
-        m_model->update(duration);
-        m_model1->update(duration);
-        m_model2->update(duration);
-        m_model3->update(duration);
+        for (const auto& curObj : m_objs)
+        {
+            curObj->update(duration);
+        }
 
         // ------------------------------------------------------------ // 
         on_ui_render();
@@ -174,35 +169,35 @@ bool Application::init()
     auto pShapeProgram = ResourceManager::getShaderProgram("colorShader");
     auto pSpriteProgram = ResourceManager::getShaderProgram("spriteShader");
 
-    m_model = new ObjModel("res/models/cottage_blender.obj", ResourceManager::getMaterial("shape3D"));
+    m_model = new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("shape3D"));
     m_model1 = new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("shape3D"));
-    m_model2 = new ObjModel("res/models/cottage_blender.obj", ResourceManager::getMaterial("shape3D"));
+    m_model2 = new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("shape3D"));
     m_model3 = new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("shape3D"));
-    m_line = new RenderEngine::Line(pShapeProgram);
+
+    m_line = new RenderEngine::Line(ResourceManager::getMaterial("default"));
 
     m_cube = new Cube(ResourceManager::getMaterial("shape3D"), "default");
     m_light_source = new Cube(ResourceManager::getMaterial("default"), "default");
     m_sprite = new Sprite(ResourceManager::getTexture("TanksTextureAtlas"), "YellowUp11", pSpriteProgram);
 
-    m_cube->addComponent<Highlight>(pShapeProgram, glm::vec3(1.f));
-    m_sprite->addComponent<Highlight>(pShapeProgram, glm::vec3(1.f));
-
-    m_cube->addComponent<Transform>(glm::vec3(m_cube_pos[0], m_cube_pos[1], m_cube_pos[2]),
-        glm::vec3(m_cube_scale[0], m_cube_scale[1], m_cube_scale[2]),
-        glm::vec3(m_cube_rot[0], m_cube_rot[1], m_cube_rot[2]));
-    m_sprite->addComponent<Transform>(glm::vec3(m_SpriteRenderer_pos[0], m_SpriteRenderer_pos[1], m_SpriteRenderer_pos[2]),
-        glm::vec3(m_SpriteRenderer_scale[0], m_SpriteRenderer_scale[1], m_SpriteRenderer_scale[2]),
-        glm::vec3(m_SpriteRenderer_rot[0], m_SpriteRenderer_rot[1], m_SpriteRenderer_rot[2]));
-    m_light_source->addComponent<Transform>(glm::vec3(m_light_pos[0], m_light_pos[1], m_light_pos[2]), glm::vec3(0.1f), glm::vec3(0.f));
+    m_cube->addComponent<Transform>();
+    m_sprite->addComponent<Transform>(glm::vec3(3.f, 3.f, 0.f), glm::vec3(1.f, 1.f, 0.f), glm::vec3(1.f));
+    m_light_source->addComponent<Transform>(glm::vec3(0.f, 5.f, 0.f), glm::vec3(0.1f), glm::vec3(0.f));
 
     m_model->addComponent<Transform>(glm::vec3(3.f, 0.f, 0.f), glm::vec3(0.5f), glm::vec3(1.f));
     m_model1->addComponent<Transform>(glm::vec3(0.f, -3.f, 0.f), glm::vec3(0.5f), glm::vec3(1.f));
     m_model2->addComponent<Transform>(glm::vec3(-3.f, 0.f, 0.f), glm::vec3(0.5f), glm::vec3(1.f));
     m_model3->addComponent<Transform>(glm::vec3(0.f, 3.f, 0.f), glm::vec3(0.5f), glm::vec3(1.f));
-    m_model->addComponent<Highlight>(pShapeProgram, glm::vec3(1.f));
 
     m_cube->setSubTexture("BrickWall");
 
+    m_objs.push_back(m_cube);
+    m_objs.push_back(m_model);
+    m_objs.push_back(m_model1);
+    m_objs.push_back(m_model2);
+    m_objs.push_back(m_model3);
+    m_objs.push_back(m_light_source);
+    m_objs.push_back(m_sprite);
 
     return true;
 }

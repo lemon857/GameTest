@@ -1,4 +1,5 @@
-#include "EngineCore/UImodule.h"
+#include "EngineCore/UI/UImodule.h"
+#include "EngineCore/UI/UIlayout.h"
 
 #include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
@@ -44,6 +45,11 @@ void UImodule::on_window_update_draw()
         ImGui::RenderPlatformWindowsDefault();
         glfwMakeContextCurrent(backup_current_context);
     }
+}
+
+void UImodule::on_ui_layout_draw(UIlayout* layout)
+{
+
 }
 
 void UImodule::show_example_app_dock_space(bool* p_open)

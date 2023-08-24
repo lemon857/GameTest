@@ -1,6 +1,6 @@
 #include "EngineCore/Renderer/Line.h";
 
-#include "EngineCore/Renderer/ShaderProgram.h"
+#include "EngineCore/Renderer/Material.h"
 #include "EngineCore/Renderer/VertexBufferLayout.h"
 #include "EngineCore/Renderer/Renderer.h"
 
@@ -9,8 +9,8 @@
 
 namespace RenderEngine
 {
-	Line::Line(std::shared_ptr<ShaderProgram> pShaderProgram, float size)
-		: m_pShaderProgram(std::move(pShaderProgram))
+	Line::Line(std::shared_ptr<Material> pMaterial, float size)
+		: m_pMaterial(std::move(pMaterial))
 		, m_size(size)
 	{
 
@@ -28,7 +28,7 @@ namespace RenderEngine
 	}
 	void Line::render(const glm::vec3& position, const glm::vec3& dir, glm::vec3& color) const
 	{
-		m_pShaderProgram->use();
+		m_pMaterial->use();
 
 		glm::mat4 scaleMat(
 			dir.x, 0, 0, 0,
@@ -44,16 +44,16 @@ namespace RenderEngine
 
 		glm::mat4 model = translateMat * scaleMat;
 
-		m_pShaderProgram->setMatrix4("modelMat", model);
-		m_pShaderProgram->setVec4("sourceColor", glm::vec4(color, 1.f));
+		m_pMaterial->set_model_matrix(model);
+		m_pMaterial->set_first_vec4(glm::vec4(color, 1.f));
 
-		Renderer::drawLine(m_vertexArray, *m_pShaderProgram, m_size);
+		Renderer::drawLine(m_vertexArray, m_size);
 	}
 	void Line::render_from_to(const glm::vec3& position, const glm::vec3& to, glm::vec3& color) const
 	{
 		glm::vec3 dir = to - position;
 
-		m_pShaderProgram->use();
+		m_pMaterial->use();
 
 		glm::mat4 scaleMat(
 			dir.x, 0, 0, 0,
@@ -69,9 +69,9 @@ namespace RenderEngine
 
 		glm::mat4 model = translateMat * scaleMat;
 
-		m_pShaderProgram->setMatrix4("modelMat", model);
-		m_pShaderProgram->setVec4("sourceColor", glm::vec4(color, 1.f));
+		m_pMaterial->set_model_matrix(model);
+		m_pMaterial->set_first_vec4(glm::vec4(color, 1.f));
 
-		Renderer::drawLine(m_vertexArray, *m_pShaderProgram, m_size);
+		Renderer::drawLine(m_vertexArray, m_size);
 	}
 }

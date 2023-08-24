@@ -27,9 +27,8 @@ namespace RenderEngine
 		glPointSize(size);
 		glDrawArrays(GL_POINTS, 0, 1);
 	}
-	void Renderer::drawLine(const VertexArray& vertexArray, const ShaderProgram& shader, const GLfloat size)
+	void Renderer::drawLine(const VertexArray& vertexArray, const GLfloat size)
 	{
-		shader.use();
 		vertexArray.bind();
 		glLineWidth(size);
 		glDrawArrays(GL_LINES, 0, 2);

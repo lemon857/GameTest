@@ -1,15 +1,15 @@
 #include "EngineCore/Components/Highlight.h"
 
 #include "EngineCore/IGameObject.h"
-#include "EngineCore/Renderer/ShaderProgram.h"
+#include "EngineCore/Renderer/Material.h"
 #include "EngineCore/Renderer/Line.h"
 #include "EngineCore/Components/Transform.h"
 
 #include <iostream>
 
-Highlight::Highlight(std::shared_ptr<RenderEngine::ShaderProgram>& program, glm::vec3& color)
+Highlight::Highlight(std::shared_ptr<RenderEngine::Material> material, glm::vec3 color)
 	: IComponent()
-	, m_line(std::make_unique<RenderEngine::Line>(program))
+	, m_line(std::make_unique<RenderEngine::Line>(material))
 	, m_color(color)
 	, m_isActive(true)
 {
@@ -53,4 +53,14 @@ void Highlight::update(const double delta)
 void Highlight::set_active(bool isActive)
 {
 	m_isActive = isActive;
+}
+
+bool Highlight::get_active()
+{
+	return m_isActive;
+}
+
+void Highlight::set_color(glm::vec3 color)
+{
+	m_color = color;
 }

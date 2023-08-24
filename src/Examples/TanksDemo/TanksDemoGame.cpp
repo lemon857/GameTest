@@ -85,7 +85,7 @@ bool TanksDemoGame::init()
         return false;
     }
 
-    m_line = std::make_shared<RenderEngine::Line>(pShapeShaderProgram);
+    //m_line = std::make_shared<RenderEngine::Line>(pShapeShaderProgram);
 
     //auto pTankSpriteRenderer = ResourceManager::getSpriteRenderer("TankSpriteRenderer");
     //auto pBulletSpriteRenderer = ResourceManager::getSpriteRenderer("BulletSpriteRenderer");

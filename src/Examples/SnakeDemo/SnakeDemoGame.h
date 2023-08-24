@@ -38,7 +38,7 @@ private:
 
 	bool m_flag = false;
 
-	std::shared_ptr<RenderEngine::Line> m_pLine;
+	//std::shared_ptr<RenderEngine::Line> m_pLine;
 	//std::shared_ptr<RenderEngine::SpriteRenderer> m_pSpriteRenderer;
 	//std::shared_ptr<RenderEngine::SpriteRenderer> m_pSpriteRendererApple;
 	//std::shared_ptr<RenderEngine::SpriteRenderer> m_pSpriteRendererEnd1;

@@ -7,7 +7,7 @@
 class Transform : public IComponent
 {
 public:
-	Transform(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot);
+	Transform(glm::vec3 pos = glm::vec3(0.f), glm::vec3 scale = glm::vec3(1.f), glm::vec3 rot = glm::vec3(0.f));
 
 	void set_position(glm::vec3 pos);
 	void set_scale(glm::vec3 scale);

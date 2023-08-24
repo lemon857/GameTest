@@ -8,17 +8,21 @@
 namespace RenderEngine
 {
 	class Line;
-	class ShaderProgram;
+	class Material;
 }
 
 class Highlight : public IComponent
 {
 public:
-	Highlight(std::shared_ptr<RenderEngine::ShaderProgram>& program, glm::vec3& color);
+	Highlight(std::shared_ptr<RenderEngine::Material> material, glm::vec3 color = glm::vec3(1.f));
 
 	void update(const double delta) override;
 
 	void set_active(bool isActive);
+
+	void set_color(glm::vec3 color);
+
+	bool get_active();
 
 private:
 	bool m_isActive;

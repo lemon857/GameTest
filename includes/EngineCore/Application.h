@@ -56,18 +56,12 @@ protected:
 	float m_cam_pos[3] = { -5.f, 0.f, 0.f };
 	float m_cam_rot[3] = { 0.f, 0.f, 0.f };
 
-	float m_SpriteRenderer_pos[3] = { 0.f, 5.f, 5.f };
-	float m_SpriteRenderer_scale[3] = { 1.f, 1.f, 0.f };
-	float m_SpriteRenderer_rot[3] = { 0.f, 0.f, 0.f };
+	float m_prop_pos[3] = { 0.f, 0.f, 0.f };
+	float m_prop_scale[3] = { 1.f, 1.f, 1.f };
+	float m_prop_rot[3] = { 0.f, 0.f, 0.f };
 
-	float m_line_pos[3] = { 0.f, 0.f, 0.f };
-
-	float m_light_pos[3] = { 0.f, 5.f, 0.f };
+	float m_prop_color[3] = { 0.f, 0.f, 0.f };
 	float m_light_color[3] = { 1.f, 1.f, 1.f };
-
-	float m_cube_pos[3] = { 0.f, 0.f, 5.f };
-	float m_cube_scale[3] = { 1.f, 1.f, 1.f };
-	float m_cube_rot[3] = { 0.f, 0.f, 0.f };
 
 	float m_cam_velocity = 0.01f;
 	float m_cam_rotate_velocity = 0.1f;
@@ -100,6 +94,8 @@ protected:
 	bool m_isInversiveMouseY = false;
 	bool m_drawNullIntersection = false;
 
+	bool m_isActiveHighlight = false;
+
 	Cube* m_cube;
 	Cube* m_light_source;
 	Sprite* m_sprite;
@@ -107,4 +103,6 @@ protected:
 	ObjModel* m_model1;
 	ObjModel* m_model2;
 	ObjModel* m_model3;
+
+	std::vector<IGameObject*> m_objs;
 };

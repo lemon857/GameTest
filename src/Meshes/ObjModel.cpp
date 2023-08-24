@@ -17,6 +17,6 @@ ObjModel::ObjModel(const std::string relativeFilePath, std::shared_ptr<RenderEng
 
 void ObjModel::reload()
 {
-	std::shared_ptr<GraphicsObject> obj = ResourceManager::load_OBJ_file(m_path);
+	std::shared_ptr<GraphicsObject> obj = ResourceManager::load_OBJ_file(m_path, true);
 	getComponent<MeshRenderer>()->update_object(obj);
 }

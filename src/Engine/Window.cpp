@@ -3,7 +3,6 @@
 #include "EngineCore/UImodule.h"
 #include "EngineCore/System/Log.h"
 #include "EngineCore/Renderer/Renderer.h"
-#include "EngineCore/Physics/PhysicsEngine.h"
 #include "EngineCore/Components/SpriteRenderer.h"
 #include "EngineCore/Renderer/Camera.h"
 #include "EngineCore/Resources/ResourceManager.h"
@@ -188,8 +187,6 @@ int Window::init()
 
     RenderEngine::Renderer::setClearColor(0, 0, 0, 1);
     RenderEngine::Renderer::setDepthTest(true);
-
-    Physics::PhysicsEngine::init();
 
 	return 0;
 }

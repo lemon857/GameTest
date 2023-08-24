@@ -174,9 +174,9 @@ bool Application::init()
     auto pShapeProgram = ResourceManager::getShaderProgram("colorShader");
     auto pSpriteProgram = ResourceManager::getShaderProgram("spriteShader");
 
-    m_model = new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("shape3D"));
+    m_model = new ObjModel("res/models/cottage_blender.obj", ResourceManager::getMaterial("shape3D"));
     m_model1 = new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("shape3D"));
-    m_model2 = new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("shape3D"));
+    m_model2 = new ObjModel("res/models/cottage_blender.obj", ResourceManager::getMaterial("shape3D"));
     m_model3 = new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("shape3D"));
     m_line = new RenderEngine::Line(pShapeProgram);
 

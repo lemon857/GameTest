@@ -49,7 +49,7 @@ namespace RenderEngine
 
 		static bool load_INI_settings(const std::string& INIrelativePath, INIdata& data, const bool isWrite);
 
-		static std::shared_ptr<GraphicsObject> load_OBJ_file(const std::string& OBJrelativePath);
+		static std::shared_ptr<GraphicsObject> load_OBJ_file(const std::string& OBJrelativePath, bool is_reload = false);
 
 		static std::shared_ptr<RenderEngine::ShaderProgram> loadShaders(
 			const std::string& shaderName, 

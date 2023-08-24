@@ -16,6 +16,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/System/Log.h
 	includes/EngineCore/System/Timer.h
 	includes/EngineCore/System/TemplateTimer.h
+	includes/EngineCore/System/Stopwatch.h
 )
 
 set(ENGINE_PRIVATE_INCLUDES
@@ -107,6 +108,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Physics/Ray.cpp
 	
 	src/System/Timer.cpp
+	src/System/Stopwatch.cpp
 	
 	src/Components/MeshRenderer.cpp	
 	src/Components/Transform.cpp

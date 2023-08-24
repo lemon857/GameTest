@@ -3,6 +3,7 @@
 #include "EngineCore/Input.h"
 
 #include "EngineCore/System/Log.h"
+#include "EngineCore/System/Stopwatch.h"
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Renderer/Renderer.h"
 #include "EngineCore/Components/SpriteRenderer.h"
@@ -15,6 +16,8 @@
 #include <chrono>
 
 #include <glm/gtc/matrix_transform.hpp>
+
+Stopwatch watch;
 
 Application::Application()
 {
@@ -29,6 +32,8 @@ Application::~Application()
 
 int Application::start(glm::ivec2& window_size, const char* title)
 {
+    watch.start();
+
     INIdata data{ window_size, m_window_position, m_maximized_window };
     ResourceManager::load_INI_settings("EngineTest.ini", data, false);
 
@@ -46,7 +51,9 @@ int Application::start(glm::ivec2& window_size, const char* title)
     {
         return -1;
     }
-       
+
+    LOG_INFO("Time for init: {0}", watch.stop());
+
     auto lastTime = std::chrono::high_resolution_clock::now();
 
     double curTime = 0;
@@ -171,7 +178,6 @@ bool Application::init()
     m_model1 = new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("shape3D"));
     m_model2 = new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("shape3D"));
     m_model3 = new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("shape3D"));
-
     m_line = new RenderEngine::Line(pShapeProgram);
 
     m_cube = new Cube(ResourceManager::getMaterial("shape3D"), "default");

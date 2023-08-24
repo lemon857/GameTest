@@ -19,42 +19,44 @@ Cube::Cube(std::shared_ptr<RenderEngine::Texture2D> pTexture, std::string subTex
     RenderEngine::VertexBuffer vertexCoordsBuffer;
     RenderEngine::VertexBuffer vertexNormalBuffer;
     m_textureCoordsBuffer = new RenderEngine::VertexBuffer();
-
-
-    auto aSubTexture = m_pTexture->getSubTexture(subTextureName);
-    GLfloat textureCoords[]{
-        // FRONT
-        aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
-        aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
-        aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
-        aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
-        // BACK
-        aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
-        aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
-        aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
-        aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
-        // RIGHT
-        aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
-        aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
-        aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
-        aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
-        // LEFT
-        aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
-        aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
-        aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
-        aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
-        // TOP
-        aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
-        aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
-        aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
-        aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
-        // BOTTOM
-        aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
-        aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
-        aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
-        aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
-    };
-
+    GLfloat* textureCoords;
+    if (m_pTexture != nullptr)
+    {
+        auto aSubTexture = m_pTexture->getSubTexture(subTextureName);
+        GLfloat textures[]{
+            // FRONT
+            aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
+            aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
+            aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
+            aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
+            // BACK
+            aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
+            aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
+            aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
+            aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
+            // RIGHT
+            aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
+            aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
+            aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
+            aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
+            // LEFT
+            aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
+            aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
+            aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
+            aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
+            // TOP
+            aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
+            aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
+            aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
+            aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
+            // BOTTOM
+            aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
+            aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
+            aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
+            aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
+        };
+        textureCoords = textures;
+    }
     vertexCoordsBuffer.init(&m_vertexCoords, 24 * 3 * sizeof(GLfloat), false);
     RenderEngine::VertexBufferLayout vertexCoordsLayout;
     vertexCoordsLayout.addElementLayoutFloat(3, false);
@@ -65,10 +67,13 @@ Cube::Cube(std::shared_ptr<RenderEngine::Texture2D> pTexture, std::string subTex
     vertexNormalLayout.addElementLayoutFloat(3, false);
     vertexArray->addBuffer(vertexNormalBuffer, vertexNormalLayout);
 
-    m_textureCoordsBuffer->init(&textureCoords, 24 * 2 * sizeof(GLfloat), true);
-    RenderEngine::VertexBufferLayout textureCoordsLayout;
-    textureCoordsLayout.addElementLayoutFloat(2, false);
-    vertexArray->addBuffer(*m_textureCoordsBuffer, textureCoordsLayout);
+    if (m_pTexture != nullptr)
+    {
+        m_textureCoordsBuffer->init(textureCoords, 24 * 2 * sizeof(GLfloat), true);
+        RenderEngine::VertexBufferLayout textureCoordsLayout;
+        textureCoordsLayout.addElementLayoutFloat(2, false);
+        vertexArray->addBuffer(*m_textureCoordsBuffer, textureCoordsLayout);
+    }
 
     indexBuffer->init(&m_indexes, sizeof(m_indexes) / sizeof(GLuint));
 
@@ -85,6 +90,7 @@ Cube::~Cube()
 
 void Cube::setSubTexture(std::string subTextureName)
 {
+    if (m_pTexture == nullptr) return;
     auto aSubTexture = m_pTexture->getSubTexture(subTextureName);
     GLfloat textureCoords[]{
         // FRONT

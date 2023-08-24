@@ -3,22 +3,113 @@
     {
       "name": "spriteShader",
       "filePath_v": "res/shaders/spriteVert.glsl",
-      "filePath_f": "res/shaders/spriteFrag.glsl"
+      "filePath_f": "res/shaders/spriteFrag.glsl",
+      "layout": [
+        {
+          "name": "modelMat",
+          "typeInt": "5",
+          "minVal": "0",
+          "maxVal": "0"
+        },
+        {
+          "name": "view_projectionMat",
+          "typeInt": "6",
+          "minVal": "0",
+          "maxVal": "0"
+        }
+      ]
     },
     {
-      "name": "shapeShader",
-      "filePath_v": "res/shaders/shapeVert.glsl",
-      "filePath_f": "res/shaders/shapeFrag.glsl"
+      "name": "colorShader",
+      "filePath_v": "res/shaders/colorVert.glsl",
+      "filePath_f": "res/shaders/colorFrag.glsl",
+      "layout": [
+        {
+          "name": "modelMat",
+          "typeInt": "5",
+          "minVal": "0",
+          "maxVal": "0"
+        },
+        {
+          "name": "view_projectionMat",
+          "typeInt": "6",
+          "minVal": "0",
+          "maxVal": "0"
+        },
+        {
+          "name": "sourceColor",
+          "typeInt": "3",
+          "minVal": "0",
+          "maxVal": "256"
+        }
+      ]
     },
     {
       "name": "shape3DShader",
       "filePath_v": "res/shaders/shape3DVert.glsl",
-      "filePath_f": "res/shaders/shape3DFrag.glsl"
-    },
-    {
-      "name": "lightSourceShader",
-      "filePath_v": "res/shaders/lightCubeVert.glsl",
-      "filePath_f": "res/shaders/lightCubeFrag.glsl"
+      "filePath_f": "res/shaders/shape3DFrag.glsl",
+      "layout": [
+        {
+          "name": "modelMat",
+          "typeInt": "5",
+          "minVal": "0",
+          "maxVal": "0"
+        },
+        {
+          "name": "view_projectionMat",
+          "typeInt": "6",
+          "minVal": "0",
+          "maxVal": "0"
+        },
+        {
+          "name": "light_color",
+          "typeInt": "2",
+          "minVal": "0",
+          "maxVal": "256"
+        },
+        {
+          "name": "light_position",
+          "typeInt": "2",
+          "minVal": "0",
+          "maxVal": "0"
+        },
+        {
+          "name": "cam_position",
+          "typeInt": "2",
+          "minVal": "0",
+          "maxVal": "0"
+        },
+        {
+          "name": "ambient_factor",
+          "typeInt": "1",
+          "minVal": "0",
+          "maxVal": "1"
+        },
+        {
+          "name": "diffuse_factor",
+          "typeInt": "1",
+          "minVal": "0",
+          "maxVal": "1"
+        },
+        {
+          "name": "specular_factor",
+          "typeInt": "1",
+          "minVal": "0",
+          "maxVal": "1"
+        },
+        {
+          "name": "shininess",
+          "typeInt": "1",
+          "minVal": "0",
+          "maxVal": "1"
+        },
+        {
+          "name": "metalic_factor",
+          "typeInt": "1",
+          "minVal": "0",
+          "maxVal": "1"
+        }
+      ]
     }
   ],
   "textureAtlases": [
@@ -118,6 +209,22 @@
       "subTextures": [
         "default"
       ]
+    },
+    {
+      "name": "CottageTexture",
+      "filePath": "res/textures/cottage_diffuse.png",
+      "width": 2048,
+      "height": 2048,
+      "subTexture_w": 2048,
+      "subTexture_h": 2048,
+      "subTextures": [
+        "default"
+      ]
+    }
+  ],
+  "materials": [
+    {
+
     }
   ],
   "objects": [

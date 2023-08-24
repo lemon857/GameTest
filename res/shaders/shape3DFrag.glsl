@@ -2,9 +2,11 @@
 in vec2 texCoord;
 in vec3 frag_normal;
 in vec3 frag_position;
+
 out vec4 frag_color;
 
 uniform sampler2D tex;
+
 uniform vec3 light_color;
 uniform vec3 light_position;
 uniform vec3 cam_position;

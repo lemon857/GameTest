@@ -18,10 +18,12 @@ struct GraphicsObject;
 namespace RenderEngine
 {
 	class ShaderProgram;
+	class ShaderProgramLayout;
 	class Texture2D;
 	//class SpriteRenderer;
 	class Animator;
 	class GraphicsObject;
+	class Material;
 }
 
 	class ResourceManager {
@@ -52,7 +54,8 @@ namespace RenderEngine
 		static std::shared_ptr<RenderEngine::ShaderProgram> loadShaders(
 			const std::string& shaderName, 
 			const std::string& vertexPath, 
-			const std::string& fragmentPath);
+			const std::string& fragmentPath,
+			const std::shared_ptr<RenderEngine::ShaderProgramLayout> layout);
 		static std::shared_ptr<RenderEngine::ShaderProgram> getShaderProgram(
 			const std::string& shaderName);
 
@@ -96,6 +99,8 @@ namespace RenderEngine
 		typedef std::map<const std::string, std::shared_ptr<RenderEngine::Texture2D>> TexturesMap;
 		static TexturesMap m_textures;
 
+		typedef std::map<const std::string, std::shared_ptr<RenderEngine::Material>> MaterialsMap;
+		static MaterialsMap m_materials;
 		//typedef std::map<const std::string, std::shared_ptr<RenderEngine::SpriteRenderer>> SpriteRenderersMap;
 		//static SpriteRenderersMap m_SpriteRenderers;
 

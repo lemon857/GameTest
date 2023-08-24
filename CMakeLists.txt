@@ -35,10 +35,13 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Renderer/Camera.h
 	includes/EngineCore/Renderer/Animator.h
 	includes/EngineCore/Renderer/Animation.h
+	includes/EngineCore/Renderer/Material.h
+	includes/EngineCore/Renderer/ShaderProgramLayout.h
+	
 	includes/EngineCore/Physics/PhysicsEngine.h
 	includes/EngineCore/Physics/Collider.h
 	includes/EngineCore/Physics/MoveController.h		
-	includes/EngineCore/Physics/Ray.h
+	includes/EngineCore/Physics/Ray.h	
 	
 	includes/EngineCore/Renderer3D/GraphicsObject.h
 	
@@ -95,6 +98,8 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Renderer/Camera.cpp	
 	src/Renderer/Animator.cpp
 	src/Renderer/Animation.cpp
+	src/Renderer/Material.cpp
+	src/Renderer/ShaderProgramLayout.cpp
 	
 	src/Physics/PhysicsEngine.cpp
 	src/Physics/Collider.cpp

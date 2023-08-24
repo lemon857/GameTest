@@ -66,7 +66,7 @@ int Window::init()
 
     m_pWindow = glfwCreateWindow(m_data.window_size.x, m_data.window_size.y,
         m_data.title.c_str(), nullptr, nullptr);
-
+   
     if (!m_pWindow)
     {
         LOG_CRIT("Generate window failed");

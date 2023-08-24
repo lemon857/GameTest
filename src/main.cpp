@@ -1,4 +1,3 @@
-//#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 
@@ -97,7 +96,11 @@ public:
             m_diffuse_factor = 1.f - m_specular_factor;
         }
         ImGui::SliderFloat("Shininess", &m_shininess, 0.f, 100.f);
-        ImGui::SliderFloat("Metalic factor", &m_metalic_factor, 0.f, 1.f);
+        ImGui::SliderFloat("Metalic factor", &m_metalic_factor, 0.f, 1.f); 
+        if (ImGui::Button("Reload model"))
+        {
+            m_model->reload();
+        }
         ImGui::End();
 
         ImGui::Begin("Camera settings");

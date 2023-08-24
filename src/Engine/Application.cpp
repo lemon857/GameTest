@@ -81,14 +81,12 @@ int Application::start(glm::ivec2& window_size, const char* title)
         m_cam_rot[1] = rot.y;
         m_cam_rot[2] = rot.z;
 
-        ResourceManager::getShaderProgram("shapeShader")->use();
-        ResourceManager::getShaderProgram("shapeShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+        ResourceManager::getShaderProgram("colorShader")->use();
+        ResourceManager::getShaderProgram("colorShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
         ResourceManager::getShaderProgram("shape3DShader")->use();
         ResourceManager::getShaderProgram("shape3DShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
         ResourceManager::getShaderProgram("spriteShader")->use();
         ResourceManager::getShaderProgram("spriteShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
-        ResourceManager::getShaderProgram("lightSourceShader")->use();
-        ResourceManager::getShaderProgram("lightSourceShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
 
         m_line->render(glm::vec3(0.f), glm::vec3(m_line_pos[0], m_line_pos[1], m_line_pos[2]), glm::vec3(1.f));
 
@@ -113,9 +111,8 @@ int Application::start(glm::ivec2& window_size, const char* title)
         ResourceManager::getShaderProgram("shape3DShader")->setFloat("shininess", m_shininess);
         ResourceManager::getShaderProgram("shape3DShader")->setFloat("metalic_factor", m_metalic_factor);
 
-        ResourceManager::getShaderProgram("lightSourceShader")->use();
-        ResourceManager::getShaderProgram("lightSourceShader")->setVec3("light_color", glm::vec3(m_light_color[0], m_light_color[1], m_light_color[2]));
-
+        ResourceManager::getShaderProgram("colorShader")->use();
+        ResourceManager::getShaderProgram("colorShader")->setVec3("sourceColor", glm::vec3(m_light_color[0], m_light_color[1], m_light_color[2]));
 
         m_cube->update(duration);
         m_light_source->update(duration);
@@ -164,16 +161,16 @@ bool Application::init()
 
     m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
 
-    auto pShapeProgram = ResourceManager::getShaderProgram("shapeShader");
+    auto pShapeProgram = ResourceManager::getShaderProgram("colorShader");
     auto pSpriteProgram = ResourceManager::getShaderProgram("spriteShader");
 
-    m_model = new ObjModel(ResourceManager::load_OBJ_file("res/models/monkey.obj"), ResourceManager::getTexture("CubeTexture"), ResourceManager::getShaderProgram("shape3DShader"));
+    m_model = new ObjModel("res/models/monkey.obj", ResourceManager::getTexture("CottageTexture"), ResourceManager::getShaderProgram("shape3DShader"));
 
     m_line = new RenderEngine::Line(pShapeProgram);
 
     m_cube = new Cube(ResourceManager::getTexture("CubeTexture"), "default", ResourceManager::getShaderProgram("shape3DShader"));
-    m_light_source = new Cube(ResourceManager::getTexture("CubeTexture"), "default", ResourceManager::getShaderProgram("lightSourceShader"));
-    m_sprite = new Sprite(ResourceManager::getTexture("TanksTextureAtlas"), "YellowUp11", ResourceManager::getShaderProgram("spriteShader"));
+    m_light_source = new Cube(nullptr, "default", pShapeProgram);
+    m_sprite = new Sprite(ResourceManager::getTexture("TanksTextureAtlas"), "YellowUp11", pSpriteProgram);
 
     m_cube->addComponent<Highlight>(pShapeProgram, glm::vec3(1.f));
     m_sprite->addComponent<Highlight>(pShapeProgram, glm::vec3(1.f));
@@ -184,7 +181,7 @@ bool Application::init()
     m_sprite->addComponent<Transform>(glm::vec3(m_SpriteRenderer_pos[0], m_SpriteRenderer_pos[1], m_SpriteRenderer_pos[2]),
         glm::vec3(m_SpriteRenderer_scale[0], m_SpriteRenderer_scale[1], m_SpriteRenderer_scale[2]),
         glm::vec3(m_SpriteRenderer_rot[0], m_SpriteRenderer_rot[1], m_SpriteRenderer_rot[2]));
-    m_light_source->addComponent<Transform>(glm::vec3(m_light_pos[0], m_light_pos[1], m_light_pos[2]), glm::vec3(0.5f), glm::vec3(0.f));
+    m_light_source->addComponent<Transform>(glm::vec3(m_light_pos[0], m_light_pos[1], m_light_pos[2]), glm::vec3(0.1f), glm::vec3(0.f));
 
     m_model->addComponent<Transform>(glm::vec3(5.f, 0.f, 0.f), glm::vec3(0.5f), glm::vec3(1.f));
     m_model->addComponent<Highlight>(pShapeProgram, glm::vec3(1.f));

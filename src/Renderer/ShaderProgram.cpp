@@ -1,13 +1,15 @@
 #include "EngineCore/Renderer/ShaderProgram.h"
+#include "EngineCore/Renderer/ShaderProgramLayout.h"
 #include "EngineCore/System/Log.h"
 #include <glm/gtc/type_ptr.hpp>
 
 namespace RenderEngine 
 {
-	ShaderProgram::ShaderProgram(const std::string& vertexShader, const std::string& fragmentShader)
+	ShaderProgram::ShaderProgram(const std::string& vertexShader, const std::string& fragmentShader, std::shared_ptr<RenderEngine::ShaderProgramLayout> layout)
+		: m_layout(std::move(layout))
 	{
 		GLuint vertexShaderID;
-		if (!createShader(vertexShader, GL_VERTEX_SHADER, vertexShaderID)) 
+		if (!createShader(vertexShader, GL_VERTEX_SHADER, vertexShaderID))
 		{
 			LOG_ERROR("VERTEX SHADER ERROR COMPILE");
 			return;
@@ -32,14 +34,14 @@ namespace RenderEngine
 			glGetProgramInfoLog(m_ID, 1024, nullptr, infoLog);
 			LOG_ERROR("PROGRAM: Link: {0}", infoLog);
 		}
-		else 
+		else
 		{
 			m_isCompiled = true;
 		}
 		glDeleteShader(vertexShaderID);
 		glDeleteShader(fragmentShaderID);
 	}
-	ShaderProgram::~ShaderProgram() 
+	ShaderProgram::~ShaderProgram()
 	{
 		glDeleteProgram(m_ID);
 		m_cacheUniformMap.clear();
@@ -138,6 +140,10 @@ namespace RenderEngine
 		location = glGetUniformLocation(m_ID, name.c_str());
 		addLocation(name, location);
 		glUniform3f(location, vec.x, vec.y, vec.z);
+	}
+	std::shared_ptr<RenderEngine::ShaderProgramLayout> ShaderProgram::get_layout()
+	{
+		return m_layout;
 	}
 	bool ShaderProgram::isCompiled() const {
 		return m_isCompiled;

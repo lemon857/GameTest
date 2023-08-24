@@ -16,7 +16,9 @@ struct GraphicsObject;
 class ObjModel : public IGameObject
 {
 public:
-	ObjModel(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<RenderEngine::Texture2D> pTexture, std::shared_ptr<RenderEngine::ShaderProgram> pShader);
+	ObjModel(const std::string relativeFilePath, std::shared_ptr<RenderEngine::Texture2D> pTexture, std::shared_ptr<RenderEngine::ShaderProgram> pShader);
+	void reload();
 private:
 	std::shared_ptr<RenderEngine::Texture2D> m_pTexture;
+	std::string m_path;
 };

@@ -90,6 +90,11 @@ void MeshRenderer::update(double delta)
 
     m_pShaderProgram->setMatrix4("modelMat", model);
 
-    RenderEngine::Renderer::bindTexture(*m_pTexture);
+    if (m_pTexture != nullptr) RenderEngine::Renderer::bindTexture(*m_pTexture);
     RenderEngine::Renderer::drawTriangles(*m_obj->vertex_array, *m_obj->index_buffer);
+}
+
+void MeshRenderer::update_object(std::shared_ptr<GraphicsObject> obj)
+{
+    m_obj = std::move(obj);
 }

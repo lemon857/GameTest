@@ -8,6 +8,7 @@
 #include "EngineCore/Renderer/VertexBuffer.h"
 #include "EngineCore/Renderer/VertexBufferLayout.h"
 #include "EngineCore/Renderer/IndexBuffer.h"
+#include "EngineCore/Renderer/ShaderProgramLayout.h"
 #include "EngineCore/System/Log.h"
 
 #include <sstream>
@@ -23,6 +24,7 @@
 
 ResourceManager::ShaderProgramsMap ResourceManager::m_ShaderPrograms;
 ResourceManager::TexturesMap ResourceManager::m_textures;
+ResourceManager::MaterialsMap ResourceManager::m_materials;
 //ResourceManager::SpriteRenderersMap ResourceManager::m_SpriteRenderers;
 //ResourceManager::GraphObjMap ResourceManager::m_graph_objs;
 //ResourceManager::AnimatorsMap ResourceManager::m_animators;
@@ -64,7 +66,20 @@ bool ResourceManager::load_JSON_resources(const std::string & JSONpath)
 			const std::string name = currentShader["name"].GetString();
 			const std::string vertShader = currentShader["filePath_v"].GetString();
 			const std::string fragShader = currentShader["filePath_f"].GetString();
-			loadShaders(name, vertShader, fragShader);
+			const auto layoutArray = currentShader["layout"].GetArray();
+
+			std::shared_ptr<RenderEngine::ShaderProgramLayout> layout = std::make_shared<RenderEngine::ShaderProgramLayout>();
+						
+			for (const auto& currentLayoutElement : layoutArray)
+			{
+				const std::string name = currentLayoutElement["name"].GetString();
+				const int type = currentLayoutElement["typeInt"].GetInt();
+				const double min = currentLayoutElement["minVal"].GetDouble();
+				const double max = currentLayoutElement["maxVal"].GetDouble();
+				layout->addElementLayout(name, (ETypeData)type, min, max);
+			}
+
+			loadShaders(name, vertShader, fragShader, layout);
 		}
 	}
 	auto atlasesIt = doc.FindMember("textureAtlases");
@@ -228,14 +243,17 @@ std::shared_ptr<GraphicsObject> ResourceManager::load_OBJ_file(const std::string
 		std::vector<GLuint> indices_norms;
 		std::vector<GLuint> indices_texs;
 
+		bool need_normalize_vertex_pos = false;
+
 		std::string line;
 		while (std::getline(file, line))
 		{
 			if (start_with(line, "v "))
 			{
-				float x, y, z;
+				GLfloat x, y, z;
 				sscanf_s(line.c_str(), "v %f %f %f", &x, &y, &z);
 				temp_pos.push_back(glm::vec3(x, y, z));
+				if (!need_normalize_vertex_pos && (x > 1.f || x < -1.f)) need_normalize_vertex_pos = true;
 #ifdef DEBUG_CONSOLE
 				LOG_INFO("Vert: {0}x{1}x{2}", x, y, z);
 #endif // DEBUG_CONSOLE
@@ -309,17 +327,17 @@ std::shared_ptr<GraphicsObject> ResourceManager::load_OBJ_file(const std::string
 		RenderEngine::VertexBuffer vbo_normal;
 		RenderEngine::VertexBuffer vbo_texture;
 
-		vbo_vert.init(vertex_coords.data(), vertex_coords.size() * sizeof(GLfloat), false);
+		vbo_vert.init(vertex_coords.data(), vertex_coords.size() * sizeof(GLfloat), true);
 		RenderEngine::VertexBufferLayout vertexCoordsLayout;
 		vertexCoordsLayout.addElementLayoutFloat(3, false);
 		vao->addBuffer(vbo_vert, vertexCoordsLayout);
 
-		vbo_normal.init(normal_coords.data(), normal_coords.size() * sizeof(GLfloat), false);
+		vbo_normal.init(normal_coords.data(), normal_coords.size() * sizeof(GLfloat), true);
 		RenderEngine::VertexBufferLayout normalCoordsLayout;
 		normalCoordsLayout.addElementLayoutFloat(3, false);
 		vao->addBuffer(vbo_normal, normalCoordsLayout);
 
-		vbo_texture.init(texture_coord.data(), texture_coord.size() * sizeof(GLfloat), false);
+		vbo_texture.init(texture_coord.data(), texture_coord.size() * sizeof(GLfloat), true);
 		RenderEngine::VertexBufferLayout textureCoordsLayout;
 		textureCoordsLayout.addElementLayoutFloat(2, false);
 		vao->addBuffer(vbo_texture, textureCoordsLayout);
@@ -362,7 +380,8 @@ std::string ResourceManager::getFileString(const std::string& relativeFilePath)
 	return buffer.str();
 }
 
-std::shared_ptr<RenderEngine::ShaderProgram> ResourceManager::loadShaders(const std::string& shaderName, const std::string& vertexPath, const std::string& fragmentPath)
+std::shared_ptr<RenderEngine::ShaderProgram> ResourceManager::loadShaders(const std::string& shaderName, const std::string& vertexPath, const std::string& fragmentPath,
+	const std::shared_ptr<RenderEngine::ShaderProgramLayout> layout)
 {
 	std::string vertexString = getFileString(vertexPath);
 	if (vertexString.empty()) 
@@ -377,7 +396,8 @@ std::shared_ptr<RenderEngine::ShaderProgram> ResourceManager::loadShaders(const 
 		return nullptr;
 	}
 
-	std::shared_ptr<RenderEngine::ShaderProgram>& newShader = m_ShaderPrograms.emplace(shaderName, std::make_shared<RenderEngine::ShaderProgram>(vertexString, fragmentString)).first->second;
+	std::shared_ptr<RenderEngine::ShaderProgram>& newShader = 
+		m_ShaderPrograms.emplace(shaderName, std::make_shared<RenderEngine::ShaderProgram>(vertexString, fragmentString, std::move(layout))).first->second;
 	if (newShader->isCompiled())
 	{
 		return newShader;

@@ -9,6 +9,8 @@ enum ETypeData
 	Float,
 	Vec3,
 	Vec4,
+	Col3,
+	Col4,
 	Mat4,
 	ModelMat4,
 	VPMat4

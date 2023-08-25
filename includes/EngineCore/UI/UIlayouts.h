@@ -3,17 +3,24 @@
 #include <imgui/imgui.h>
 
 #include <functional>
+#include <memory>
+#include <vector>
+#include <map>
+#include <string>
 
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
+namespace RenderEngine
+{
+	class ShaderProgramLayout;
+}
+
 class IUIlayout
 {
 public:
-	IUIlayout()
-	{
-	};
-
+	IUIlayout(){};
+	virtual void on_draw_ui(){};
 
 private:
 
@@ -31,13 +38,13 @@ public:
 
 	UIlayoutTransform() {};
 
-	void on_draw_ui();
+	void on_draw_ui() override;
 
-	void set_on_chanege_callback(std::function<void(float*, ETypeChanegedProp)> on_chanege);
+	void set_callback(std::function<void(const float*, ETypeChanegedProp)> on_chanege);
 
 	void set_props(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot);
 private:
-	std::function<void(float*, ETypeChanegedProp)> m_on_chanege;
+	std::function<void(const float*, ETypeChanegedProp)> m_on_chanege;
 
 	float m_prop_pos[3] = { 0.f, 0.f, 0.f };
 	float m_prop_scale[3] = { 1.f, 1.f, 1.f };
@@ -50,16 +57,60 @@ public:
 
 	UIlayoutHighlight() {};
 
-	void on_draw_ui();
+	void on_draw_ui() override;
 
-	void set_on_chanege_callback(std::function<void(float*, bool)> on_chanege);
+	void set_callback(std::function<void(const float*, bool)> on_chanege);
 
 	void set_color(glm::vec3 color);
 
 	void activate() { m_is_active = true; };
 private:
-	std::function<void(float*, bool)> m_on_chanege;
+	std::function<void(const float*, bool)> m_on_chanege;
 
 	float m_color[3] = { 0.f, 0.f, 0.f };
 	bool m_is_active = false;
+};
+
+class UIlayoutShaderProgram : IUIlayout
+{
+public:
+	enum EUITypeData
+	{
+		Int = 0,
+		Float,
+		Vec3,
+		Vec4,
+		Col3,
+		Col4,
+	};
+	UIlayoutShaderProgram();
+
+	void on_draw_ui() override;
+
+	void set_shader_layout(std::shared_ptr<RenderEngine::ShaderProgramLayout> shaderLayout);
+
+	void set_callback(std::function<void(std::string nameProp, const void* data, EUITypeData type)> on_chanege);
+private:
+	float* get_data(std::string name);
+
+	std::shared_ptr<RenderEngine::ShaderProgramLayout> m_shaderLayout;
+	std::function<void(std::string nameProp, const void* data, EUITypeData type)> m_on_chanege;
+	
+	std::map<std::string, float*> m_data_map;
+};
+
+class UIlayoutMaterial : IUIlayout
+{
+public:
+	UIlayoutMaterial();
+
+	void on_draw_ui() override;
+
+	void set_callback(std::function<void(std::string nameTexture, std::string nameShaderProgram)> on_chanege);
+private:
+	std::function<void(std::string nameTexture, std::string nameShaderProgram)> m_on_chanege;
+	std::string m_nameTexture;
+	std::string m_nameShaderProgram;
+	int item_current_shader = 0;
+	int item_current_texture = 0;
 };

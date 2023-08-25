@@ -510,6 +510,28 @@ std::shared_ptr<RenderEngine::Material> ResourceManager::getMaterial(const std::
 	LOG_ERROR("Can't find material: {0}", materialName);
 	return nullptr;
 }
+std::vector<std::string> ResourceManager::getNamesShaderProgram()
+{
+	std::vector<std::string> data;
+
+	for (const auto& curShader : m_ShaderPrograms)
+	{
+		data.push_back(curShader.first);
+	}
+
+	return data;
+}
+std::vector<std::string> ResourceManager::getNamesTextures2D()
+{
+	std::vector<std::string> data;
+
+	for (const auto& curTexture : m_textures)
+	{
+		data.push_back(curTexture.first);
+	}
+
+	return data;
+}
 //std::shared_ptr<RenderEngine::SpriteRenderer>  ResourceManager::loadSpriteRenderer(const std::string& SpriteRendererName, const std::string& textureName,
 //	const std::string& shaderName, const std::string& subTextureName)
 //{

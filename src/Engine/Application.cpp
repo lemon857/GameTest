@@ -111,7 +111,7 @@ int Application::start(glm::ivec2& window_size, const char* title)
         ResourceManager::getShaderProgram("shape3DShader")->use();
         ResourceManager::getShaderProgram("shape3DShader")->setVec3("light_color", glm::vec3(m_light_color[0], m_light_color[1], m_light_color[2]));
         ResourceManager::getShaderProgram("shape3DShader")->setVec3("light_position", glm::vec3(0.f, 6.f, 0.f));
-        ResourceManager::getShaderProgram("shape3DShader")->setVec3("cam_position", m_cam->get_position());
+        ResourceManager::getShaderProgram("shape3DShader")->setVec3("cam_position", m_cam->get_position());/*
         ResourceManager::getShaderProgram("shape3DShader")->setFloat("ambient_factor", m_ambient_factor);
         ResourceManager::getShaderProgram("shape3DShader")->setFloat("diffuse_factor", m_diffuse_factor);
         ResourceManager::getShaderProgram("shape3DShader")->setFloat("specular_factor", m_specular_factor);
@@ -119,7 +119,7 @@ int Application::start(glm::ivec2& window_size, const char* title)
         ResourceManager::getShaderProgram("shape3DShader")->setFloat("metalic_factor", m_metalic_factor);
 
         ResourceManager::getShaderProgram("colorShader")->use();
-        ResourceManager::getShaderProgram("colorShader")->setVec3("sourceColor", glm::vec3(m_light_color[0], m_light_color[1], m_light_color[2]));
+        ResourceManager::getShaderProgram("colorShader")->setVec3("sourceColor", glm::vec3(m_light_color[0], m_light_color[1], m_light_color[2]));*/
 
         for (const auto& curObj : m_objs)
         {

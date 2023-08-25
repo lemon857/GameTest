@@ -33,6 +33,8 @@ int component_current = 0;
 
 UIlayoutTransform transformLayout;
 UIlayoutHighlight highlightLayout;
+UIlayoutShaderProgram shaderLayout;
+UIlayoutMaterial materialLayout;
 
 class EditorApplication : public Application
 {
@@ -40,8 +42,8 @@ public:
     EditorApplication()
         : Application()
     {
-        transformLayout.set_on_chanege_callback(
-            [&](float* data, UIlayoutTransform::ETypeChanegedProp prop)
+        transformLayout.set_callback(
+            [&](const float* data, UIlayoutTransform::ETypeChanegedProp prop)
             {
                 switch (prop)
                 {
@@ -56,11 +58,39 @@ public:
                     break;
                 }
             });
-        highlightLayout.set_on_chanege_callback(
-            [&](float* data, bool isActive)
+        highlightLayout.set_callback(
+            [&](const float* data, bool isActive)
             {
                 m_objs[item_current]->getComponent<Highlight>()->set_active(isActive);
                 m_objs[item_current]->getComponent<Highlight>()->set_color(glm::vec3(data[0], data[1], data[2]));
+            });
+        shaderLayout.set_callback(
+            [&](std::string name, const void* data, UIlayoutShaderProgram::EUITypeData type)
+            {
+                switch (type)
+                {
+                case UIlayoutShaderProgram::Float:
+                    m_objs[item_current]->getComponent<MeshRenderer>();
+                    ResourceManager::getShaderProgram("shape3DShader")->use();
+                    ResourceManager::getShaderProgram("shape3DShader")->setFloat(name, *(float*)data);
+                    break;
+                case UIlayoutShaderProgram::Vec3:
+                    ResourceManager::getShaderProgram("shape3DShader")->use();
+                    ResourceManager::getShaderProgram("shape3DShader")->setVec3(name, glm::vec3(((float*)data)[0], ((float*)data)[1], ((float*)data)[2]));
+                    break;
+                case UIlayoutShaderProgram::Vec4:
+                    ResourceManager::getShaderProgram("shape3DShader")->use();
+                    ResourceManager::getShaderProgram("shape3DShader")->setVec4(name, glm::vec4(((float*)data)[0], ((float*)data)[1], ((float*)data)[2], ((float*)data)[3]));
+                    break;
+                case UIlayoutShaderProgram::Col3:
+                    ResourceManager::getShaderProgram("shape3DShader")->use();
+                    ResourceManager::getShaderProgram("shape3DShader")->setVec3(name, glm::vec3(((float*)data)[0], ((float*)data)[1], ((float*)data)[2]));
+                    break;
+                case UIlayoutShaderProgram::Col4:
+                    ResourceManager::getShaderProgram("shape3DShader")->use();
+                    ResourceManager::getShaderProgram("shape3DShader")->setVec4(name, glm::vec4(((float*)data)[0], ((float*)data)[1], ((float*)data)[2], ((float*)data)[3]));
+                    break;
+                }
             });
     }
     ~EditorApplication()
@@ -128,9 +158,7 @@ public:
                     switch (component_current)
                     {
                     case 0:
-                        if (m_objs[item_current]->getComponent<Transform>() == nullptr)
-                            m_objs[item_current]->addComponent<Transform>();
-                        transformLayout.set_props(glm::vec3(0.f), glm::vec3(1.f), glm::vec3(0.f));
+                        if (m_objs[item_current]->addComponent<Transform>() != nullptr)  transformLayout.set_props(glm::vec3(0.f), glm::vec3(1.f), glm::vec3(0.f));
                         break;
                     case 1:
                         //if (m_objs[item_current]->getComponent<SpriteRenderer>() == nullptr)
@@ -141,9 +169,7 @@ public:
                         //    m_objs[item_current]->addComponent<MeshRenderer>();
                         break;
                     case 3:
-                        if (m_objs[item_current]->getComponent<Highlight>() == nullptr)
-                            m_objs[item_current]->addComponent<Highlight>(ResourceManager::getMaterial("default"));
-                        highlightLayout.activate();
+                        if (m_objs[item_current]->addComponent<Highlight>(ResourceManager::getMaterial("default")) == nullptr) highlightLayout.activate();
                         break;
                     }
                 }
@@ -187,6 +213,11 @@ public:
         {
             highlightLayout.on_draw_ui();
         }
+        if (m_objs[item_current]->getComponent<MeshRenderer>() != nullptr)
+        {
+            shaderLayout.on_draw_ui();
+            materialLayout.on_draw_ui();
+        }/*
         ImGui::SliderFloat("Ambient factor", &m_ambient_factor, 0.f, 1.f);
         ImGui::SliderFloat("Diffuse factor", &m_diffuse_factor, 0.f, 1.f);
         ImGui::SliderFloat("Specular factor", &m_specular_factor, 0.f, 1.f);
@@ -196,7 +227,7 @@ public:
             m_diffuse_factor = 1.f - m_specular_factor;
         }
         ImGui::SliderFloat("Shininess", &m_shininess, 0.f, 100.f);
-        ImGui::SliderFloat("Metalic factor", &m_metalic_factor, 0.f, 1.f);
+        ImGui::SliderFloat("Metalic factor", &m_metalic_factor, 0.f, 1.f);*/
         ImGui::End();
 
         ImGui::Begin("Camera settings");
@@ -225,6 +256,7 @@ public:
         if (ImGui::Checkbox("Perspective camera", &m_isPerspectiveCam))
         {
             m_cam->set_projection_mode(m_isPerspectiveCam ? Camera::ProjectionMode::Perspective : Camera::ProjectionMode::Orthographic);
+            shaderLayout.set_shader_layout(ResourceManager::getShaderProgram("shape3DShader")->get_layout());
         }
         ImGui::Checkbox("Inversive mouse", &m_isInversiveMouseY);
         if (ImGui::Button("Reset position"))

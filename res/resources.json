@@ -7,13 +7,13 @@
       "layout": [
         {
           "name": "modelMat",
-          "typeInt": 5,
+          "typeInt": 7,
           "minVal": 0,
           "maxVal": 0
         },
         {
           "name": "view_projectionMat",
-          "typeInt": 6,
+          "typeInt": 8,
           "minVal": 0,
           "maxVal": 0
         }
@@ -26,21 +26,21 @@
       "layout": [
         {
           "name": "modelMat",
-          "typeInt": 5,
+          "typeInt": 7,
           "minVal": 0,
           "maxVal": 0
         },
         {
           "name": "view_projectionMat",
-          "typeInt": 6,
+          "typeInt": 8,
           "minVal": 0,
           "maxVal": 0
         },
         {
           "name": "sourceColor",
-          "typeInt": 3,
+          "typeInt": 5,
           "minVal": 0,
-          "maxVal": 256
+          "maxVal": 1
         }
       ]
     },
@@ -51,13 +51,13 @@
       "layout": [
         {
           "name": "modelMat",
-          "typeInt": 5,
+          "typeInt": 7,
           "minVal": 0,
           "maxVal": 0
         },
         {
           "name": "view_projectionMat",
-          "typeInt": 6,
+          "typeInt": 8,
           "minVal": 0,
           "maxVal": 0
         },
@@ -65,7 +65,7 @@
           "name": "light_color",
           "typeInt": 2,
           "minVal": 0,
-          "maxVal": 256
+          "maxVal": 1
         },
         {
           "name": "light_position",

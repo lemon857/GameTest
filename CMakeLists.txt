@@ -13,7 +13,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/Input.h
 	
 	includes/EngineCore/UI/UImodule.h
-	includes/EngineCore/UI/UIlayout.h
+	includes/EngineCore/UI/UIlayouts.h
 		   
 	includes/EngineCore/System/Log.h
 	includes/EngineCore/System/Timer.h
@@ -112,7 +112,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/System/Stopwatch.cpp
 		
 	src/UI/UImodule.cpp	
-	src/UI/UIlayout.cpp	
+	src/UI/UIlayouts.cpp	
 	
 	src/Components/MeshRenderer.cpp	
 	src/Components/Transform.cpp

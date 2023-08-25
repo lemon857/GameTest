@@ -60,6 +60,11 @@ bool Highlight::get_active()
 	return m_isActive;
 }
 
+glm::vec3 Highlight::get_color()
+{
+	return m_color;
+}
+
 void Highlight::set_color(glm::vec3 color)
 {
 	m_color = color;

@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <chrono>
+#include <array>
 
 #include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
@@ -10,6 +11,7 @@
 
 #include "EngineCore/Window.h"
 #include "EngineCore/UI/UImodule.h"
+#include "EngineCore/UI/UIlayouts.h"
 
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Renderer/Renderer.h"
@@ -23,12 +25,14 @@
 #include "EngineCore/Components/SpriteRenderer.h"
 #include "EngineCore/Components/MeshRenderer.h"
 
-const char* items[] = { "cube", "model", "model2", "model3", "model4", "lightSource", "sprite" };
-
 const char* components[] = { "transform", "spriteRenderer", "meshRenderer", "highlight" };
+const char* items[] = { "transform", "spriteRenderer", "meshRenderer", "highlight" };
 
 int item_current = 0;
 int component_current = 0;
+
+UIlayoutTransform transformLayout;
+UIlayoutHighlight highlightLayout;
 
 class EditorApplication : public Application
 {
@@ -36,7 +40,28 @@ public:
     EditorApplication()
         : Application()
     {
-
+        transformLayout.set_on_chanege_callback(
+            [&](float* data, UIlayoutTransform::ETypeChanegedProp prop)
+            {
+                switch (prop)
+                {
+                case UIlayoutTransform::position:
+                    m_objs[item_current]->getComponent<Transform>()->set_position(glm::vec3(data[0], data[1], data[2]));
+                    break;
+                case UIlayoutTransform::scale:
+                    m_objs[item_current]->getComponent<Transform>()->set_scale(glm::vec3(data[0], data[1], data[2]));
+                    break;
+                case UIlayoutTransform::rotation:
+                    m_objs[item_current]->getComponent<Transform>()->set_rotation(glm::vec3(data[0], data[1], data[2]));
+                    break;
+                }
+            });
+        highlightLayout.set_on_chanege_callback(
+            [&](float* data, bool isActive)
+            {
+                m_objs[item_current]->getComponent<Highlight>()->set_active(isActive);
+                m_objs[item_current]->getComponent<Highlight>()->set_color(glm::vec3(data[0], data[1], data[2]));
+            });
     }
     ~EditorApplication()
     {
@@ -66,136 +91,101 @@ public:
         ImGui::ColorEdit4("Background Color", m_colors);
         ImGui::ColorEdit3("Light source Color", m_light_color);
         ImGui::Checkbox("Draw null intersection", &m_drawNullIntersection);
-        if (ImGui::Combo("components", &component_current, components, IM_ARRAYSIZE(components)))
-        {
+        ImGui::End();
 
-        }
-        if (ImGui::Button("Add component"))
+        ImGui::Begin("Object manager");
+        if (ImGui::Button("Add cube"))
         {
-            switch (component_current)
-            {
-            case 0:
-                if (m_objs[item_current]->getComponent<Transform>() == nullptr)
-                    m_objs[item_current]->addComponent<Transform>();
-                break;
-            case 1:
-                //if (m_objs[item_current]->getComponent<SpriteRenderer>() == nullptr)
-                //    m_objs[item_current]->addComponent<SpriteRenderer>();
-                break;
-            case 2:
-                //if (m_objs[item_current]->getComponent<MeshRenderer>() == nullptr)
-                //    m_objs[item_current]->addComponent<MeshRenderer>();
-                break;
-            case 3:
-                if (m_objs[item_current]->getComponent<Highlight>() == nullptr)
-                    m_objs[item_current]->addComponent<Highlight>(ResourceManager::getMaterial("default"));
-                break;
-            }
+            add_object<Cube>(ResourceManager::getMaterial("default"), "default");
         }
-        if (ImGui::Button("Delete component"))
+        for (int n = 0; n < m_objs.size(); n++)
         {
-            switch (component_current)
+            char buf[32];
+            sprintf(buf, m_objs[n]->get_name().c_str());
+            if (ImGui::Selectable(buf, item_current == n))
             {
-            case 0:
+                item_current = n;
                 if (m_objs[item_current]->getComponent<Transform>() != nullptr)
-                    m_objs[item_current]->deleteComponent<Transform>();
-                break;
-            case 1:
-                if (m_objs[item_current]->getComponent<SpriteRenderer>() != nullptr)
-                    m_objs[item_current]->deleteComponent<SpriteRenderer>();
-                break;
-            case 2:
-                if (m_objs[item_current]->getComponent<MeshRenderer>() != nullptr)
-                    m_objs[item_current]->deleteComponent<MeshRenderer>();
-                break;
-            case 3:
+                {
+                    glm::vec3 pos = m_objs[item_current]->getComponent<Transform>()->get_position();
+                    glm::vec3 scale = m_objs[item_current]->getComponent<Transform>()->get_scale();
+                    glm::vec3 rot = m_objs[item_current]->getComponent<Transform>()->get_rotation();
+
+                    transformLayout.set_props(pos, scale, rot);
+                }
                 if (m_objs[item_current]->getComponent<Highlight>() != nullptr)
-                    m_objs[item_current]->deleteComponent<Highlight>();
-                break;
+                {
+                    highlightLayout.set_color(m_objs[item_current]->getComponent<Highlight>()->get_color());
+                }              
             }
+            if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
+            {
+                item_current = n;
+                ImGui::Text("This a prop for \"%s\"!", m_objs[n]->get_name().c_str());
+                ImGui::Combo("components", &component_current, components, IM_ARRAYSIZE(components));
+                if (ImGui::Button("Add component"))
+                {
+                    switch (component_current)
+                    {
+                    case 0:
+                        if (m_objs[item_current]->getComponent<Transform>() == nullptr)
+                            m_objs[item_current]->addComponent<Transform>();
+                        transformLayout.set_props(glm::vec3(0.f), glm::vec3(1.f), glm::vec3(0.f));
+                        break;
+                    case 1:
+                        //if (m_objs[item_current]->getComponent<SpriteRenderer>() == nullptr)
+                        //    m_objs[item_current]->addComponent<SpriteRenderer>();
+                        break;
+                    case 2:
+                        //if (m_objs[item_current]->getComponent<MeshRenderer>() == nullptr)
+                        //    m_objs[item_current]->addComponent<MeshRenderer>();
+                        break;
+                    case 3:
+                        if (m_objs[item_current]->getComponent<Highlight>() == nullptr)
+                            m_objs[item_current]->addComponent<Highlight>(ResourceManager::getMaterial("default"));
+                        highlightLayout.activate();
+                        break;
+                    }
+                }
+                if (ImGui::Button("Delete component"))
+                {
+                    switch (component_current)
+                    {
+                    case 0:
+                        if (m_objs[item_current]->getComponent<Transform>() != nullptr)
+                            m_objs[item_current]->deleteComponent<Transform>();
+                        break;
+                    case 1:
+                        if (m_objs[item_current]->getComponent<SpriteRenderer>() != nullptr)
+                            m_objs[item_current]->deleteComponent<SpriteRenderer>();
+                        break;
+                    case 2:
+                        if (m_objs[item_current]->getComponent<MeshRenderer>() != nullptr)
+                            m_objs[item_current]->deleteComponent<MeshRenderer>();
+                        break;
+                    case 3:
+                        if (m_objs[item_current]->getComponent<Highlight>() != nullptr)
+                            m_objs[item_current]->deleteComponent<Highlight>();
+                        break;
+                    }
+                }
+                if (ImGui::Button("Close"))
+                    ImGui::CloseCurrentPopup();
+                ImGui::EndPopup();
+            }
+            if (ImGui::IsItemHovered())
+                ImGui::SetTooltip("Right-click to open prop");
         }
         ImGui::End();
 
-        ImGui::Begin("Something settings");
-        if (ImGui::Combo("objs", &item_current, items, IM_ARRAYSIZE(items)))
-        {
-            if (m_objs[item_current]->getComponent<Transform>() != nullptr)
-            {
-                glm::vec3 pos = m_objs[item_current]->getComponent<Transform>()->get_position();
-                glm::vec3 scale = m_objs[item_current]->getComponent<Transform>()->get_scale();
-                glm::vec3 rot = m_objs[item_current]->getComponent<Transform>()->get_rotation();
-
-                m_prop_pos[0] = pos.x;
-                m_prop_pos[1] = pos.y;
-                m_prop_pos[2] = pos.z;
-
-                m_prop_scale[0] = scale.x;
-                m_prop_scale[1] = scale.y;
-                m_prop_scale[2] = scale.z;
-
-                m_prop_rot[0] = rot.x;
-                m_prop_rot[1] = rot.y;
-                m_prop_rot[2] = rot.z;
-            }
-            if (m_objs[item_current]->getComponent<Highlight>() != nullptr)
-            {
-                m_isActiveHighlight = m_objs[item_current]->getComponent<Highlight>()->get_active();
-            }
-        }
+        ImGui::Begin("Object settings");        
         if (m_objs[item_current]->getComponent<Transform>() != nullptr)
         {
-            if (ImGui::TreeNode("Transform"))
-            {
-                if (ImGui::DragFloat3("position", m_prop_pos, 0.1f, 1.f))
-                {
-                    m_objs[item_current]->getComponent<Transform>()->set_position(glm::vec3(m_prop_pos[0], m_prop_pos[1], m_prop_pos[2]));
-                }
-                if (ImGui::DragFloat3("scale", m_prop_scale, 0.1f, 1.f))
-                {
-                    m_objs[item_current]->getComponent<Transform>()->set_scale(glm::vec3(m_prop_scale[0], m_prop_scale[1], m_prop_scale[2]));
-                }
-                if (ImGui::DragFloat3("rotation", m_prop_rot, 0.1f, 1.f))
-                {
-                    m_objs[item_current]->getComponent<Transform>()->set_rotation(glm::vec3(m_prop_rot[0], m_prop_rot[1], m_prop_rot[2]));
-                }
-                if (ImGui::Button("Reset position"))
-                {
-                    m_objs[item_current]->getComponent<Transform>()->set_position(glm::vec3(0.f));
-                    m_prop_pos[0] = 0.f;
-                    m_prop_pos[1] = 0.f;
-                    m_prop_pos[2] = 0.f;
-                }
-                if (ImGui::Button("Reset scale"))
-                {
-                    m_objs[item_current]->getComponent<Transform>()->set_scale(glm::vec3(1.f));
-                    m_prop_scale[0] = 1.f;
-                    m_prop_scale[1] = 1.f;
-                    m_prop_scale[2] = 1.f;
-                }
-                if (ImGui::Button("Reset rotation"))
-                {
-                    m_objs[item_current]->getComponent<Transform>()->set_rotation(glm::vec3(0.f));
-                    m_prop_rot[0] = 0.f;
-                    m_prop_rot[1] = 0.f;
-                    m_prop_rot[2] = 0.f;
-                }
-                ImGui::TreePop();
-            }
+            transformLayout.on_draw_ui();
         }
         if (m_objs[item_current]->getComponent<Highlight>() != nullptr)
         {
-            if (ImGui::TreeNode("Highlight"))
-            {
-                if (ImGui::ColorPicker3("Color", m_prop_color))
-                {
-                    m_objs[item_current]->getComponent<Highlight>()->set_color(glm::vec3(m_prop_color[0], m_prop_color[1], m_prop_color[2]));
-                }
-                if (ImGui::Checkbox("Active highlight", &m_isActiveHighlight))
-                {
-                    m_objs[item_current]->getComponent<Highlight>()->set_active(m_isActiveHighlight);
-                }
-                ImGui::TreePop();
-            }
+            highlightLayout.on_draw_ui();
         }
         ImGui::SliderFloat("Ambient factor", &m_ambient_factor, 0.f, 1.f);
         ImGui::SliderFloat("Diffuse factor", &m_diffuse_factor, 0.f, 1.f);
@@ -206,11 +196,7 @@ public:
             m_diffuse_factor = 1.f - m_specular_factor;
         }
         ImGui::SliderFloat("Shininess", &m_shininess, 0.f, 100.f);
-        ImGui::SliderFloat("Metalic factor", &m_metalic_factor, 0.f, 1.f); 
-        if (ImGui::Button("Reload model"))
-        {
-            m_model->reload();
-        }
+        ImGui::SliderFloat("Metalic factor", &m_metalic_factor, 0.f, 1.f);
         ImGui::End();
 
         ImGui::Begin("Camera settings");

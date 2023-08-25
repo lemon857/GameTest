@@ -19,6 +19,8 @@
 
 Stopwatch watch;
 
+
+
 Application::Application()
 {
     LOG_INFO("Starting Application");
@@ -108,7 +110,7 @@ int Application::start(glm::ivec2& window_size, const char* title)
 
         ResourceManager::getShaderProgram("shape3DShader")->use();
         ResourceManager::getShaderProgram("shape3DShader")->setVec3("light_color", glm::vec3(m_light_color[0], m_light_color[1], m_light_color[2]));
-        ResourceManager::getShaderProgram("shape3DShader")->setVec3("light_position", m_light_source->getComponent<Transform>()->get_position());
+        ResourceManager::getShaderProgram("shape3DShader")->setVec3("light_position", glm::vec3(0.f, 6.f, 0.f));
         ResourceManager::getShaderProgram("shape3DShader")->setVec3("cam_position", m_cam->get_position());
         ResourceManager::getShaderProgram("shape3DShader")->setFloat("ambient_factor", m_ambient_factor);
         ResourceManager::getShaderProgram("shape3DShader")->setFloat("diffuse_factor", m_diffuse_factor);
@@ -169,35 +171,12 @@ bool Application::init()
     auto pShapeProgram = ResourceManager::getShaderProgram("colorShader");
     auto pSpriteProgram = ResourceManager::getShaderProgram("spriteShader");
 
-    m_model = new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("shape3D"));
-    m_model1 = new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("shape3D"));
-    m_model2 = new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("shape3D"));
-    m_model3 = new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("shape3D"));
+    add_object<ObjModel>("res/models/monkey.obj", ResourceManager::getMaterial("shape3D"));
+    add_object<Cube>(ResourceManager::getMaterial("shape3D"), "default");
+    add_object<Cube>(ResourceManager::getMaterial("default"), "default"); 
+    add_object<Sprite>(ResourceManager::getTexture("TanksTextureAtlas"), "YellowUp11", pSpriteProgram);
 
     m_line = new RenderEngine::Line(ResourceManager::getMaterial("default"));
-
-    m_cube = new Cube(ResourceManager::getMaterial("shape3D"), "default");
-    m_light_source = new Cube(ResourceManager::getMaterial("default"), "default");
-    m_sprite = new Sprite(ResourceManager::getTexture("TanksTextureAtlas"), "YellowUp11", pSpriteProgram);
-
-    m_cube->addComponent<Transform>();
-    m_sprite->addComponent<Transform>(glm::vec3(3.f, 3.f, 0.f), glm::vec3(1.f, 1.f, 0.f), glm::vec3(1.f));
-    m_light_source->addComponent<Transform>(glm::vec3(0.f, 5.f, 0.f), glm::vec3(0.1f), glm::vec3(0.f));
-
-    m_model->addComponent<Transform>(glm::vec3(3.f, 0.f, 0.f), glm::vec3(0.5f), glm::vec3(1.f));
-    m_model1->addComponent<Transform>(glm::vec3(0.f, -3.f, 0.f), glm::vec3(0.5f), glm::vec3(1.f));
-    m_model2->addComponent<Transform>(glm::vec3(-3.f, 0.f, 0.f), glm::vec3(0.5f), glm::vec3(1.f));
-    m_model3->addComponent<Transform>(glm::vec3(0.f, 3.f, 0.f), glm::vec3(0.5f), glm::vec3(1.f));
-
-    m_cube->setSubTexture("BrickWall");
-
-    m_objs.push_back(m_cube);
-    m_objs.push_back(m_model);
-    m_objs.push_back(m_model1);
-    m_objs.push_back(m_model2);
-    m_objs.push_back(m_model3);
-    m_objs.push_back(m_light_source);
-    m_objs.push_back(m_sprite);
 
     return true;
 }
@@ -360,4 +339,13 @@ void Application::on_mouse_button_event(const MouseButton button, const double p
 {
     m_init_mouse_pos_x = pos_x;
     m_init_mouse_pos_y = pos_y;
+}
+
+template<class _Ty, class ..._Types>
+inline void Application::add_object(_Types && ..._Args)
+{
+    IGameObject* obj = (IGameObject*)(new _Ty(std::forward<_Types>(_Args)...));
+    m_items_str.push_back(obj->get_name());
+    m_objs.push_back(std::move(obj));
+    if (!m_items) delete m_items;
 }

@@ -24,6 +24,8 @@ public:
 
 	bool get_active();
 
+	glm::vec3 get_color();
+
 private:
 	bool m_isActive;
 	std::unique_ptr<RenderEngine::Line> m_line;

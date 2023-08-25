@@ -39,6 +39,9 @@ public:
 	virtual void on_mouse_button_event(const MouseButton button, const double pos_x, const double pos_y, const bool isPressed);
 
 	virtual void on_ui_render() {};
+	// TEMP
+	template <class _Ty, class... _Types>
+	void add_object(_Types&&... _Args);
 protected:
 	EventDispatcher m_event_dispather;
 	std::unique_ptr<class Window> m_pWindow;
@@ -56,11 +59,6 @@ protected:
 	float m_cam_pos[3] = { -5.f, 0.f, 0.f };
 	float m_cam_rot[3] = { 0.f, 0.f, 0.f };
 
-	float m_prop_pos[3] = { 0.f, 0.f, 0.f };
-	float m_prop_scale[3] = { 1.f, 1.f, 1.f };
-	float m_prop_rot[3] = { 0.f, 0.f, 0.f };
-
-	float m_prop_color[3] = { 0.f, 0.f, 0.f };
 	float m_light_color[3] = { 1.f, 1.f, 1.f };
 
 	float m_cam_velocity = 0.01f;
@@ -94,15 +92,9 @@ protected:
 	bool m_isInversiveMouseY = false;
 	bool m_drawNullIntersection = false;
 
-	bool m_isActiveHighlight = false;
+	char* m_items;
 
-	Cube* m_cube;
-	Cube* m_light_source;
-	Sprite* m_sprite;
-	ObjModel* m_model;
-	ObjModel* m_model1;
-	ObjModel* m_model2;
-	ObjModel* m_model3;
+	std::vector<std::string> m_items_str;
 
 	std::vector<IGameObject*> m_objs;
 };

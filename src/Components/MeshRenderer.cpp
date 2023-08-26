@@ -24,12 +24,14 @@ MeshRenderer::MeshRenderer(
 
 MeshRenderer::~MeshRenderer()
 {
+    if (m_obj == nullptr) return;
 	delete m_obj.get();
     m_obj.reset();
 }
 
 void MeshRenderer::update(double delta)
 {
+    if (m_obj == nullptr) return;
 	Transform* transform = m_targetObj->getComponent<Transform>();
     glm::vec3 pos;
     glm::vec3 rot;
@@ -92,4 +94,9 @@ void MeshRenderer::update(double delta)
 void MeshRenderer::update_object(std::shared_ptr<GraphicsObject> obj)
 {
     m_obj = std::move(obj);
+}
+
+std::shared_ptr<RenderEngine::Material> MeshRenderer::get_material_ptr()
+{
+    return m_pMaterial;
 }

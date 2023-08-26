@@ -231,6 +231,17 @@
       "subTextures": [
         "default"
       ]
+    },
+    {
+      "name": "MonkeyTexture",
+      "filePath": "res/textures/monkey.png",
+      "width": 512,
+      "height": 512,
+      "subTexture_w": 512,
+      "subTexture_h": 512,
+      "subTextures": [
+        "default"
+      ]
     }
   ],
   "materials": [
@@ -240,21 +251,14 @@
       "nameTexture": "DefaultTexture"
     },
     {
-      "name": "shape3D",
+      "name": "cube",
       "nameShader": "shape3DShader",
       "nameTexture": "CubeTexture"
-    }
-  ],
-  "objects": [
-    {
-      "name": "defaultCube",
-      "shader": "shape3DShader",
-      "source": "res/models/test.obj"
     },
     {
-      "name": "pyramind",
-      "shader": "shape3DShader",
-      "source": "res/models/finaly.obj"
+      "name": "monkey",
+      "nameShader": "shape3DShader",
+      "nameTexture": "MonkeyTexture"
     }
-  ]
+  ]  
 }

@@ -14,6 +14,7 @@
 namespace RenderEngine
 {
 	class ShaderProgramLayout;
+	class Material;
 }
 
 class IUIlayout
@@ -106,9 +107,11 @@ public:
 
 	void on_draw_ui() override;
 
-	void set_callback(std::function<void(std::string nameTexture, std::string nameShaderProgram)> on_chanege);
+	void set_callback(std::function<void(const std::string nameTexture, const std::string nameShaderProgram)> on_chanege);
+
+	void set_material(std::shared_ptr<RenderEngine::Material> pMaterial);
 private:
-	std::function<void(std::string nameTexture, std::string nameShaderProgram)> m_on_chanege;
+	std::function<void(const std::string nameTexture, const std::string nameShaderProgram)> m_on_chanege;
 	std::string m_nameTexture;
 	std::string m_nameShaderProgram;
 	int item_current_shader = 0;

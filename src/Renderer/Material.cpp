@@ -31,6 +31,7 @@ namespace RenderEngine
 
 		return names;
 	}
+
 	void Material::set_model_matrix(glm::mat4& model)
 	{
 		m_pShaderProgram->setMatrix4(get_shader_prop_names(ModelMat4)[0], model);
@@ -46,5 +47,14 @@ namespace RenderEngine
 	std::shared_ptr<Texture2D> Material::get_texture_ptr()
 	{
 		return m_pTexture;
+	}
+	std::shared_ptr<ShaderProgram> Material::get_shader_ptr()
+	{
+		return m_pShaderProgram;
+	}
+	void Material::set_shader_and_texture(std::shared_ptr<ShaderProgram> pShaderProgram, std::shared_ptr<Texture2D> pTexture)
+	{
+		m_pTexture = std::move(pTexture);
+		m_pShaderProgram = std::move(pShaderProgram);
 	}
 }

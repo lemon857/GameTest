@@ -70,8 +70,11 @@ namespace RenderEngine
 			const std::string& shaderName);
 		static std::shared_ptr<RenderEngine::Material> getMaterial(const std::string& materialName);
 
-		static std::vector<std::string> getNamesShaderProgram();
+		static std::vector<std::string> getNamesShadersProgram();
 		static std::vector<std::string> getNamesTextures2D();
+
+		static std::string getNameShaderProgram(std::shared_ptr<RenderEngine::ShaderProgram> pShader);
+		static std::string getNameTexture2D(std::shared_ptr<RenderEngine::Texture2D> pTexture);
 
 		/*static std::shared_ptr<RenderEngine::SpriteRenderer>  loadSpriteRenderer(
 			const std::string& SpriteRendererName, 

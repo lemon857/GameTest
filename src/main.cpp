@@ -15,6 +15,7 @@
 
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Renderer/Renderer.h"
+#include "EngineCore/Renderer/Material.h"
 #include "EngineCore/Physics/Collider.h"
 
 #include "EngineCore/Physics/PhysicsEngine.h"
@@ -67,30 +68,41 @@ public:
         shaderLayout.set_callback(
             [&](std::string name, const void* data, UIlayoutShaderProgram::EUITypeData type)
             {
+                MeshRenderer* mesh = m_objs[item_current]->getComponent<MeshRenderer>();
+                std::shared_ptr<RenderEngine::ShaderProgram> shader = mesh->get_material_ptr()->get_shader_ptr();
                 switch (type)
                 {
                 case UIlayoutShaderProgram::Float:
-                    m_objs[item_current]->getComponent<MeshRenderer>();
-                    ResourceManager::getShaderProgram("shape3DShader")->use();
-                    ResourceManager::getShaderProgram("shape3DShader")->setFloat(name, *(float*)data);
+                    shader->use();
+                    shader->setFloat(name, *(float*)data);
                     break;
                 case UIlayoutShaderProgram::Vec3:
-                    ResourceManager::getShaderProgram("shape3DShader")->use();
-                    ResourceManager::getShaderProgram("shape3DShader")->setVec3(name, glm::vec3(((float*)data)[0], ((float*)data)[1], ((float*)data)[2]));
+                    shader->use();
+                    shader->setVec3(name, glm::vec3(((float*)data)[0], ((float*)data)[1], ((float*)data)[2]));
                     break;
                 case UIlayoutShaderProgram::Vec4:
-                    ResourceManager::getShaderProgram("shape3DShader")->use();
-                    ResourceManager::getShaderProgram("shape3DShader")->setVec4(name, glm::vec4(((float*)data)[0], ((float*)data)[1], ((float*)data)[2], ((float*)data)[3]));
+                    shader->use();
+                    shader->setVec4(name, glm::vec4(((float*)data)[0], ((float*)data)[1], ((float*)data)[2], ((float*)data)[3]));
                     break;
                 case UIlayoutShaderProgram::Col3:
-                    ResourceManager::getShaderProgram("shape3DShader")->use();
-                    ResourceManager::getShaderProgram("shape3DShader")->setVec3(name, glm::vec3(((float*)data)[0], ((float*)data)[1], ((float*)data)[2]));
+                    shader->use();
+                    shader->setVec3(name, glm::vec3(((float*)data)[0], ((float*)data)[1], ((float*)data)[2]));
                     break;
                 case UIlayoutShaderProgram::Col4:
-                    ResourceManager::getShaderProgram("shape3DShader")->use();
-                    ResourceManager::getShaderProgram("shape3DShader")->setVec4(name, glm::vec4(((float*)data)[0], ((float*)data)[1], ((float*)data)[2], ((float*)data)[3]));
+                    shader->use();
+                    shader->setVec4(name, glm::vec4(((float*)data)[0], ((float*)data)[1], ((float*)data)[2], ((float*)data)[3]));
                     break;
                 }
+            });
+        materialLayout.set_callback(
+            [&](const std::string textureName, const std::string shaderName)
+            {
+                MeshRenderer* mesh = m_objs[item_current]->getComponent<MeshRenderer>();
+                std::shared_ptr<RenderEngine::Material> mat = mesh->get_material_ptr();
+
+                auto shader = ResourceManager::getShaderProgram(shaderName);
+                mat->set_shader_and_texture(shader, ResourceManager::getTexture(textureName));
+                shaderLayout.set_shader_layout(shader->get_layout());
             });
     }
     ~EditorApplication()
@@ -146,7 +158,12 @@ public:
                 if (m_objs[item_current]->getComponent<Highlight>() != nullptr)
                 {
                     highlightLayout.set_color(m_objs[item_current]->getComponent<Highlight>()->get_color());
-                }              
+                }          
+                if (m_objs[item_current]->getComponent<MeshRenderer>() != nullptr)
+                {
+                    shaderLayout.set_shader_layout(m_objs[item_current]->getComponent<MeshRenderer>()->get_material_ptr()->get_shader_ptr()->get_layout());
+                    materialLayout.set_material(m_objs[item_current]->getComponent<MeshRenderer>()->get_material_ptr());
+                }
             }
             if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
             {
@@ -165,8 +182,7 @@ public:
                         //    m_objs[item_current]->addComponent<SpriteRenderer>();
                         break;
                     case 2:
-                        //if (m_objs[item_current]->getComponent<MeshRenderer>() == nullptr)
-                        //    m_objs[item_current]->addComponent<MeshRenderer>();
+                        if (m_objs[item_current]->addComponent<MeshRenderer>(nullptr, ResourceManager::getMaterial("default")) == nullptr)
                         break;
                     case 3:
                         if (m_objs[item_current]->addComponent<Highlight>(ResourceManager::getMaterial("default")) == nullptr) highlightLayout.activate();

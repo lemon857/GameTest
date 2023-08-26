@@ -27,6 +27,9 @@ namespace RenderEngine
 		void set_first_vec4(glm::vec4& value);
 
 		std::shared_ptr<Texture2D> get_texture_ptr();
+		std::shared_ptr<ShaderProgram> get_shader_ptr();
+
+		void set_shader_and_texture(std::shared_ptr<ShaderProgram> pShaderProgram, std::shared_ptr<Texture2D> pTexture);
 
 	private:
 		std::shared_ptr<ShaderProgram> m_pShaderProgram;

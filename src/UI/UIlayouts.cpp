@@ -1,6 +1,7 @@
 #include "EngineCore/UI/UIlayouts.h"
 
 #include "EngineCore/Renderer/ShaderProgramLayout.h"
+#include "EngineCore/Renderer/Material.h"
 
 #include "EngineCore/Resources/ResourceManager.h"
 
@@ -181,7 +182,7 @@ UIlayoutMaterial::UIlayoutMaterial()
 
 void UIlayoutMaterial::on_draw_ui()
 {
-    std::vector<std::string> shaderNames = ResourceManager::getNamesShaderProgram();
+    std::vector<std::string> shaderNames = ResourceManager::getNamesShadersProgram();
     std::vector<std::string> textureNames = ResourceManager::getNamesTextures2D();
 
     ImGui::Text("MaterialSettings");
@@ -202,6 +203,7 @@ void UIlayoutMaterial::on_draw_ui()
             {
                 item_current_shader = i;
                 m_nameShaderProgram = shaderNames[i];
+                m_on_chanege(m_nameTexture, m_nameShaderProgram);
             }
         }
         ImGui::EndPopup();
@@ -218,13 +220,40 @@ void UIlayoutMaterial::on_draw_ui()
             {
                 item_current_shader = i;
                 m_nameTexture = textureNames[i];
+                m_on_chanege(m_nameTexture, m_nameShaderProgram);
             }
         }
         ImGui::EndPopup();
     }    
 }
 
-void UIlayoutMaterial::set_callback(std::function<void(std::string nameTexture, std::string nameShaderProgram)> on_chanege)
+void UIlayoutMaterial::set_callback(std::function<void(const std::string nameTexture, const std::string nameShaderProgram)> on_chanege)
 {
     m_on_chanege = on_chanege;
+}
+
+void UIlayoutMaterial::set_material(std::shared_ptr<RenderEngine::Material> pMaterial)
+{
+    m_nameShaderProgram = ResourceManager::getNameShaderProgram(pMaterial->get_shader_ptr());
+    m_nameTexture = ResourceManager::getNameTexture2D(pMaterial->get_texture_ptr());
+
+    std::vector<std::string> shaderNames = ResourceManager::getNamesShadersProgram();
+    std::vector<std::string> textureNames = ResourceManager::getNamesTextures2D();
+
+    for (size_t i = 0; i < shaderNames.size(); i++)
+    {
+        if (shaderNames[i] == m_nameShaderProgram)
+        {
+            item_current_shader = i;
+            break;
+        }
+    }
+    for (size_t i = 0; i < textureNames.size(); i++)
+    {
+        if (textureNames[i] == m_nameTexture)
+        {
+            item_current_texture = i;
+            break;
+        }
+    }
 }

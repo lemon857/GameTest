@@ -5,5 +5,5 @@ uniform vec4 sourceColor;
 
 void main() 
 {
-   frag_color = sourceColor;
+   gl_FragColor = sourceColor;
 }

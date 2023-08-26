@@ -6,8 +6,8 @@ uniform sampler2D tex;
 
 void main() 
 {
-   frag_color = texture(tex, texCoord);   
-   if (frag_color == vec4(0.0))
+   gl_FragColor = texture(tex, texCoord);   
+   if (gl_FragColor == vec4(0.0))
    {
 		discard;
    }

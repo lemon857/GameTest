@@ -171,8 +171,8 @@ bool Application::init()
     auto pShapeProgram = ResourceManager::getShaderProgram("colorShader");
     auto pSpriteProgram = ResourceManager::getShaderProgram("spriteShader");
 
-    add_object<ObjModel>("res/models/monkey.obj", ResourceManager::getMaterial("shape3D"));
-    add_object<Cube>(ResourceManager::getMaterial("shape3D"), "default");
+    add_object<ObjModel>("res/models/monkey.obj", ResourceManager::getMaterial("monkey"));
+    add_object<Cube>(ResourceManager::getMaterial("cube"), "default");
     add_object<Cube>(ResourceManager::getMaterial("default"), "default"); 
     add_object<Sprite>(ResourceManager::getTexture("TanksTextureAtlas"), "YellowUp11", pSpriteProgram);
 

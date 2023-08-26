@@ -35,8 +35,8 @@ void main()
 
 	specular = specular_factor * (((light_color * (1.f - metalic_factor)) + (vec3(texture(tex, texCoord) * metalic_factor))) / 2) * pow(max(dot(view_dir, reflect_dir), 0.0), shininess);
 	
-	frag_color = texture(tex, texCoord) * vec4(ambient + diffuse + specular, 1.f);   
-	if (frag_color == vec4(0.0))
+	gl_FragColor = texture(tex, texCoord) * vec4(ambient + diffuse + specular, 1.f);   
+	if (gl_FragColor == vec4(0.0))
 	{
 		discard;
 	}

@@ -16,6 +16,7 @@ enum class EventType
     MouseButtonPressed,
     MouseButtonReleased,
     MouseMoved,
+    MouseScrolled,
 
     MaximizeWindow,
     MoveWindow,
@@ -216,4 +217,23 @@ struct EventMoveWindow : public BaseEvent
     int y_pos;
 
     static const EventType type = EventType::MoveWindow;
+};
+
+struct EventMouseScrolled : public BaseEvent
+{
+    EventMouseScrolled(const float x, const float y)
+        : x_offset(x)
+        , y_offset(y)
+    {
+    }
+
+    virtual EventType get_type() const override
+    {
+        return type;
+    }
+
+    float x_offset;
+    float y_offset;
+
+    static const EventType type = EventType::MouseScrolled;
 };

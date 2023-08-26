@@ -32,6 +32,8 @@ const char* items[] = { "transform", "spriteRenderer", "meshRenderer", "highligh
 int item_current = 0;
 int component_current = 0;
 
+float test = 0;
+
 UIlayoutTransform transformLayout;
 UIlayoutHighlight highlightLayout;
 UIlayoutShaderProgram shaderLayout;
@@ -161,8 +163,8 @@ public:
                 }          
                 if (m_objs[item_current]->getComponent<MeshRenderer>() != nullptr)
                 {
-                    shaderLayout.set_shader_layout(m_objs[item_current]->getComponent<MeshRenderer>()->get_material_ptr()->get_shader_ptr()->get_layout());
-                    materialLayout.set_material(m_objs[item_current]->getComponent<MeshRenderer>()->get_material_ptr());
+                    //shaderLayout.set_shader_layout(m_objs[item_current]->getComponent<MeshRenderer>()->get_material_ptr()->get_shader_ptr()->get_layout());
+                    //materialLayout.set_material(m_objs[item_current]->getComponent<MeshRenderer>()->get_material_ptr());
                 }
             }
             if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
@@ -223,6 +225,10 @@ public:
         ImGui::Begin("Object settings");        
         if (m_objs[item_current]->getComponent<Transform>() != nullptr)
         {
+            transformLayout.set_props(
+                m_objs[item_current]->getComponent<Transform>()->get_position(),
+                m_objs[item_current]->getComponent<Transform>()->get_scale(), 
+                m_objs[item_current]->getComponent<Transform>()->get_rotation());
             transformLayout.on_draw_ui();
         }
         if (m_objs[item_current]->getComponent<Highlight>() != nullptr)
@@ -267,12 +273,13 @@ public:
         {
             m_cam->set_far_clip_plane(m_cam_far_plane);
         }
+        ImGui::SliderFloat("Distance", &m_distance, 1.f, 50.f);
         ImGui::SliderFloat("Sensetivity", &m_cam_sensetivity, 0.001f, 1.f);
         ImGui::SliderFloat("Addition speed", &m_add_ctrl_speed, 1.f, 4.f);
         if (ImGui::Checkbox("Perspective camera", &m_isPerspectiveCam))
         {
             m_cam->set_projection_mode(m_isPerspectiveCam ? Camera::ProjectionMode::Perspective : Camera::ProjectionMode::Orthographic);
-            shaderLayout.set_shader_layout(ResourceManager::getShaderProgram("shape3DShader")->get_layout());
+            //shaderLayout.set_shader_layout(ResourceManager::getShaderProgram("shape3DShader")->get_layout());
         }
         ImGui::Checkbox("Inversive mouse", &m_isInversiveMouseY);
         if (ImGui::Button("Reset position"))
@@ -308,7 +315,7 @@ int main(int argc, char** argv)
 
     EditorApplication* editorApplication = new EditorApplication();
 
-    editorApplication->start(g_WindowSize, "Test game");
+    editorApplication->start(g_WindowSize, "Engine editor");
 
     delete editorApplication;
 

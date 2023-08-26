@@ -158,6 +158,14 @@ int Window::init()
             EventMouseMoved e(x, y);
             data.event_callback(e);
         });
+    glfwSetScrollCallback(m_pWindow,
+        [](GLFWwindow* pWindow, double x, double y)
+        {
+            WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(pWindow));
+
+            EventMouseScrolled e(x, y);
+            data.event_callback(e);
+        });
 
     glfwSetWindowCloseCallback(m_pWindow,
         [](GLFWwindow* pWindow)

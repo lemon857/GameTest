@@ -110,7 +110,7 @@ int Application::start(glm::ivec2& window_size, const char* title)
 
         ResourceManager::getShaderProgram("shape3DShader")->use();
         ResourceManager::getShaderProgram("shape3DShader")->setVec3("light_color", glm::vec3(m_light_color[0], m_light_color[1], m_light_color[2]));
-        ResourceManager::getShaderProgram("shape3DShader")->setVec3("light_position", glm::vec3(0.f, 6.f, 0.f));
+        //ResourceManager::getShaderProgram("shape3DShader")->setVec3("light_position", glm::vec3(0.f, 6.f, 0.f));
         ResourceManager::getShaderProgram("shape3DShader")->setVec3("cam_position", m_cam->get_position());/*
         ResourceManager::getShaderProgram("shape3DShader")->setFloat("ambient_factor", m_ambient_factor);
         ResourceManager::getShaderProgram("shape3DShader")->setFloat("diffuse_factor", m_diffuse_factor);
@@ -120,6 +120,20 @@ int Application::start(glm::ivec2& window_size, const char* title)
 
         ResourceManager::getShaderProgram("colorShader")->use();
         ResourceManager::getShaderProgram("colorShader")->setVec3("sourceColor", glm::vec3(m_light_color[0], m_light_color[1], m_light_color[2]));*/
+
+        glm::mat4 translateMat(
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            pos[0], pos[1], pos[2], 1);
+
+        glm::vec3 posfin = glm::vec3(translateMat * glm::vec4(glm::vec3(m_world_mouse_pos_x, m_world_mouse_pos_y, m_world_mouse_pos_z) * m_distance, 1.f));
+
+        if (m_objs[0]->getComponent<Transform>() != nullptr && m_moveObject)
+        {
+            m_objs[0]->getComponent<Transform>()->
+                set_position(posfin);
+        }
 
         for (const auto& curObj : m_objs)
         {
@@ -173,11 +187,11 @@ bool Application::init()
 
     add_object<ObjModel>("res/models/monkey.obj", ResourceManager::getMaterial("monkey"));
     add_object<Cube>(ResourceManager::getMaterial("cube"), "default");
-    add_object<Cube>(ResourceManager::getMaterial("default"), "default"); 
-    add_object<Sprite>(ResourceManager::getTexture("TanksTextureAtlas"), "YellowUp11", pSpriteProgram);
+    //add_object<Cube>(ResourceManager::getMaterial("default"), "default"); 
+    //add_object<Sprite>(ResourceManager::getTexture("TanksTextureAtlas"), "YellowUp11", pSpriteProgram);
 
     m_line = new RenderEngine::Line(ResourceManager::getMaterial("default"));
-
+    
     return true;
 }
 
@@ -215,14 +229,28 @@ bool Application::init_events()
     m_event_dispather.add_event_listener<EventMouseMoved>([&](EventMouseMoved& e)
         {
             glm::vec3 objcoord = m_cam->get_world_mouse_position(glm::vec2(e.x, e.y), m_pWindow->get_size());
+                 
+            glm::vec3 pos;
 
-            m_world_mouse_pos_x = objcoord.x;
-            m_world_mouse_pos_y = objcoord.y;
-            m_world_mouse_pos_z = objcoord.z;
+            pos.x = objcoord.x - m_cam->get_position().x;
+            pos.y = objcoord.y - m_cam->get_position().y;
+            pos.z = objcoord.z - m_cam->get_position().z;
+
+            pos = glm::normalize(pos);
+
+            m_world_mouse_pos_x = pos.x;
+            m_world_mouse_pos_y = pos.y;
+            m_world_mouse_pos_z = pos.z;
 
             m_mouse_pos_x = e.x;
             m_mouse_pos_y = e.y;
             LOG_INFO("[EVENT] Mouse moved to {0}x{1}", e.x, e.y);
+        });
+    m_event_dispather.add_event_listener<EventMouseScrolled>(
+        [&](EventMouseScrolled& e)
+        {
+            if (m_distance + e.y_offset > 0) m_distance += e.y_offset;
+            LOG_INFO("[EVENT] Scroll: {0}x{1}", e.x_offset, e.y_offset);
         });
     m_event_dispather.add_event_listener<EventWindowClose>([&](EventWindowClose& e)
         {
@@ -265,6 +293,11 @@ void Application::on_key_update(const double delta)
     glm::vec3 rotation_delta{ 0,0,0 };
 
     double addSpeed = 1;
+
+    if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT))
+    {
+        m_moveObject = !m_moveObject;
+    }
 
     if (Input::isKeyPressed(KeyCode::KEY_LEFT_CONTROL))
     {

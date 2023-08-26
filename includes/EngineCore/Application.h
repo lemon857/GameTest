@@ -77,6 +77,8 @@ protected:
 	float m_metalic_factor = 0.f;
 	float m_shininess = 1.f;
 
+	float m_distance = 10.f;
+
 	double m_init_mouse_pos_x = 0;
 	double m_init_mouse_pos_y = 0;
 
@@ -91,6 +93,7 @@ protected:
 	bool m_isPerspectiveCam = true;
 	bool m_isInversiveMouseY = false;
 	bool m_drawNullIntersection = false;
+	bool m_moveObject = false;
 
 	char* m_items;
 

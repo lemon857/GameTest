@@ -5,19 +5,18 @@
 #include "EngineCore/Renderer/VertexBuffer.h"
 #include "EngineCore/Renderer/VertexBufferLayout.h"
 #include "EngineCore/Renderer/IndexBuffer.h"
+#include "EngineCore/Renderer/Material.h"
 #include "EngineCore/Components/Transform.h"
 #include "EngineCore/IGameObject.h"
 
 #include <glm/vec3.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-SpriteRenderer::SpriteRenderer(std::shared_ptr<RenderEngine::Texture2D> pTexture,
-	std::string initialSubTexture,
-	std::shared_ptr<RenderEngine::ShaderProgram> pShaderProgram)
+SpriteRenderer::SpriteRenderer(std::shared_ptr<RenderEngine::Material> pMaterial,
+	std::string initialSubTexture)
 	: IComponent()
 	, m_vertexArray(std::make_shared<RenderEngine::VertexArray>())
-	, m_pShaderProgram(std::move(pShaderProgram))
-	, m_pTextureAtlas(std::move(pTexture))
+	, m_pMaterial(std::move(pMaterial))
 	, m_vertexCoordsBuffer(new RenderEngine::VertexBuffer())
 	, m_textureCoordsBuffer(new RenderEngine::VertexBuffer())
 	, m_indexBuffer(new RenderEngine::IndexBuffer())
@@ -36,7 +35,7 @@ SpriteRenderer::SpriteRenderer(std::shared_ptr<RenderEngine::Texture2D> pTexture
 		 1.f, -1.f, 0.f
 	};
 
-	auto aSubTexture = m_pTextureAtlas->getSubTexture(initialSubTexture);
+	auto aSubTexture = m_pMaterial->get_texture_ptr()->getSubTexture(initialSubTexture);
 	const GLfloat textureCoords[] = {
 		//U --- V
 		aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
@@ -72,7 +71,7 @@ SpriteRenderer::~SpriteRenderer()
 
 void SpriteRenderer::setSubTexture(std::string subTexture)
 {
-	auto aSubTexture = m_pTextureAtlas->getSubTexture(subTexture);
+	auto aSubTexture = m_pMaterial->get_texture_ptr()->getSubTexture(subTexture);
 	const GLfloat textureCoords[] = {
 		//U --- V
 		aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
@@ -82,7 +81,7 @@ void SpriteRenderer::setSubTexture(std::string subTexture)
 	}; 
 	m_textureCoordsBuffer->update(&textureCoords, 2 * 4 * sizeof(GLfloat));
 }
-// Рендер в центре без реагирования на изменения координат означает отсутствие компонента Transform
+
 void SpriteRenderer::update(const double delta)
 {
 	Transform* transform = m_targetObj->getComponent<Transform>();
@@ -101,9 +100,6 @@ void SpriteRenderer::update(const double delta)
 		pos = transform->get_position();
 		rot = transform->get_rotation();
 	}
-
-	m_pShaderProgram->use();
-
 
 	glm::mat4 scaleMat(
 		scale[0], 0, 0, 0,
@@ -141,8 +137,13 @@ void SpriteRenderer::update(const double delta)
 
 	glm::mat4 model = translateMat * rotateXmat * rotateYmat * rotateZmat * scaleMat;
 
-	m_pShaderProgram->setMatrix4("modelMat", model);
+	m_pMaterial->use();
+	m_pMaterial->set_model_matrix(model);
 
-	RenderEngine::Renderer::bindTexture(*m_pTextureAtlas);
 	RenderEngine::Renderer::drawTriangles(*m_vertexArray, *m_indexBuffer);
+}
+
+std::shared_ptr<RenderEngine::Material> SpriteRenderer::get_material_ptr()
+{
+	return m_pMaterial;
 }

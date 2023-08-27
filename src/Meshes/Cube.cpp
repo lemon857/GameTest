@@ -11,7 +11,7 @@
 
 static int g_current_cube_ID = 0;
 
-Cube::Cube(std::shared_ptr<RenderEngine::Material> pMaterial, std::string subTextureName)
+Cube::Cube(std::shared_ptr<RenderEngine::Material> pMaterial)
     : IGameObject("Cube" + std::to_string(g_current_cube_ID++))
     , m_pMaterial(std::move(pMaterial))
 {
@@ -19,45 +19,8 @@ Cube::Cube(std::shared_ptr<RenderEngine::Material> pMaterial, std::string subTex
     std::shared_ptr<RenderEngine::IndexBuffer> indexBuffer = std::make_shared<RenderEngine::IndexBuffer>();
     RenderEngine::VertexBuffer vertexCoordsBuffer;
     RenderEngine::VertexBuffer vertexNormalBuffer;
-    m_textureCoordsBuffer = new RenderEngine::VertexBuffer();
-    GLfloat* textureCoords;
-    if (m_pMaterial->get_texture_ptr() != nullptr)
-    {
-        auto aSubTexture = m_pMaterial->get_texture_ptr()->getSubTexture(subTextureName);
-        GLfloat textures[]{
-            // FRONT
-            aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
-            aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
-            aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
-            aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
-            // BACK
-            aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
-            aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
-            aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
-            aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
-            // RIGHT
-            aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
-            aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
-            aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
-            aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
-            // LEFT
-            aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
-            aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
-            aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
-            aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
-            // TOP
-            aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
-            aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
-            aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
-            aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
-            // BOTTOM
-            aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
-            aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
-            aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
-            aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
-        };
-        textureCoords = textures;
-    }
+    RenderEngine::VertexBuffer textureCoordsBuffer;
+
     vertexCoordsBuffer.init(&m_vertexCoords, 24 * 3 * sizeof(GLfloat), false);
     RenderEngine::VertexBufferLayout vertexCoordsLayout;
     vertexCoordsLayout.addElementLayoutFloat(3, false);
@@ -68,13 +31,10 @@ Cube::Cube(std::shared_ptr<RenderEngine::Material> pMaterial, std::string subTex
     vertexNormalLayout.addElementLayoutFloat(3, false);
     vertexArray->addBuffer(vertexNormalBuffer, vertexNormalLayout);
 
-    if (m_pMaterial->get_texture_ptr() != nullptr)
-    {
-        m_textureCoordsBuffer->init(textureCoords, 24 * 2 * sizeof(GLfloat), true);
-        RenderEngine::VertexBufferLayout textureCoordsLayout;
-        textureCoordsLayout.addElementLayoutFloat(2, false);
-        vertexArray->addBuffer(*m_textureCoordsBuffer, textureCoordsLayout);
-    }
+    textureCoordsBuffer.init(m_textureCoords, 24 * 2 * sizeof(GLfloat), true);
+    RenderEngine::VertexBufferLayout textureCoordsLayout;
+    textureCoordsLayout.addElementLayoutFloat(2, false);
+    vertexArray->addBuffer(textureCoordsBuffer, textureCoordsLayout);
 
     indexBuffer->init(&m_indexes, sizeof(m_indexes) / sizeof(GLuint));
 
@@ -82,48 +42,4 @@ Cube::Cube(std::shared_ptr<RenderEngine::Material> pMaterial, std::string subTex
 	indexBuffer->unbind();
 
     addComponent<MeshRenderer>(std::make_shared<GraphicsObject>(vertexArray, indexBuffer), m_pMaterial);
-}
-
-Cube::~Cube()
-{
-    delete m_textureCoordsBuffer;
-}
-
-void Cube::setSubTexture(std::string subTextureName)
-{
-    if (m_pMaterial->get_texture_ptr() == nullptr) return;
-    auto aSubTexture = m_pMaterial->get_texture_ptr()->getSubTexture(subTextureName);
-    GLfloat textureCoords[]{
-        // FRONT
-        aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
-        aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
-        aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
-        aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
-        // BACK
-        aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
-        aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
-        aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
-        aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
-        // RIGHT
-        aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
-        aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
-        aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
-        aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
-        // LEFT
-        aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
-        aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
-        aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
-        aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
-        // TOP
-        aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
-        aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
-        aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
-        aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
-        // BOTTOM
-        aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
-        aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
-        aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
-        aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
-    };
-    m_textureCoordsBuffer->update(&textureCoords, 24 * 2 * sizeof(GLfloat));
 }

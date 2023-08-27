@@ -41,7 +41,13 @@ public:
 	virtual void on_ui_render() {};
 	// TEMP
 	template <class _Ty, class... _Types>
-	void add_object(_Types&&... _Args);
+	void add_object(_Types&&... _Args)
+	{
+		IGameObject* obj = (IGameObject*)(new _Ty(std::forward<_Types>(_Args)...));
+		m_items_str.push_back(obj->get_name());
+		m_objs.push_back(std::move(obj));
+		if (!m_items) delete m_items;
+	}
 protected:
 	EventDispatcher m_event_dispather;
 	std::unique_ptr<class Window> m_pWindow;
@@ -55,11 +61,15 @@ protected:
 
 	RenderEngine::Line* m_line;
 
+	RenderEngine::Line* m_line_transform;
+
 	float m_colors[4] = { 0.33f, 0.33f, 0.33f, 0.f };
 	float m_cam_pos[3] = { -5.f, 0.f, 0.f };
 	float m_cam_rot[3] = { 0.f, 0.f, 0.f };
 
 	float m_light_color[3] = { 1.f, 1.f, 1.f };
+
+	int item_current = 0;
 
 	float m_cam_velocity = 0.01f;
 	float m_cam_rotate_velocity = 0.1f;

@@ -11,6 +11,12 @@ struct GLFWwindow;
 
 namespace RenderEngine
 {
+	struct PixelInfo {
+		GLuint ObjectID = 0;
+		GLuint DrawID = 0;
+		GLuint PrimID = 0;
+	};
+
 	class Renderer
 	{
 	public:
@@ -27,5 +33,6 @@ namespace RenderEngine
 		static std::string getRendererStr();
 		static std::string getVersionStr();
 		static float get_depth_pixel(float pix_x, float pix_y, float window_height);
+		static int get_info_pixel(float pix_x, float pix_y, float window_height);
 	};
 }

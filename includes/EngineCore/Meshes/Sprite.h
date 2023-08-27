@@ -6,14 +6,13 @@
 
 namespace RenderEngine
 {
-	class Texture2D;
-	class ShaderProgram;
+	class Material;
 }
 
 class Sprite : public IGameObject
 {
 public:
-	Sprite(std::shared_ptr<RenderEngine::Texture2D> pTexture, std::string initSubTexture, std::shared_ptr<RenderEngine::ShaderProgram> pShader);
+	Sprite(std::shared_ptr<RenderEngine::Material> pMaterial, std::string initSubTexture);
 
 	void setSubTexture(std::string subTexture);
 private:

@@ -16,20 +16,16 @@ namespace RenderEngine
 class Cube : public IGameObject
 {
 public:
-	Cube(std::shared_ptr<RenderEngine::Material> pMaterial, std::string subTextureName);
+	Cube(std::shared_ptr<RenderEngine::Material> pMaterial);
 
-    ~Cube();
+    ~Cube() = default;
 
     Cube(Cube&) = delete;
     Cube(Cube&&) = delete;
 
     Cube& operator=(Cube&) = delete;
     Cube& operator=(Cube&&) = delete;
-
-
-    void setSubTexture(std::string subTextureName);
 private:
-    RenderEngine::VertexBuffer* m_textureCoordsBuffer;
     std::shared_ptr<RenderEngine::Material> m_pMaterial;
 
     static constexpr GLfloat m_vertexCoords[] {
@@ -96,6 +92,39 @@ private:
         0.f, -1.f, 0.f,
         0.f, -1.f, 0.f,
         0.f, -1.f, 0.f
+    };
+
+    static constexpr GLfloat m_textureCoords[]{
+        // FRONT
+        1.f, 0.f,
+        1.f, 1.f,
+        0.f, 1.f,
+        0.f, 0.f,
+        // BACK
+        1.f, 0.f,
+        1.f, 1.f,
+        0.f, 1.f,
+        0.f, 0.f,
+        // RIGHT
+        1.f, 0.f,
+        1.f, 1.f,
+        0.f, 1.f,
+        0.f, 0.f,
+        // LEFT
+        1.f, 0.f,
+        1.f, 1.f,
+        0.f, 1.f,
+        0.f, 0.f,
+        // TOP
+        1.f, 0.f,
+        1.f, 1.f,
+        0.f, 1.f,
+        0.f, 0.f,
+        // BOTTOM
+        1.f, 0.f,
+        1.f, 1.f,
+        0.f, 1.f,
+        0.f, 0.f,
     };
 
     static constexpr GLuint m_indexes[] {

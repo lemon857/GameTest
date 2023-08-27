@@ -75,4 +75,17 @@ namespace RenderEngine
 		glReadPixels(pix_x, window_height - pix_y - 1, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
 		return depth;
 	}
+	int Renderer::get_info_pixel(float pix_x, float pix_y, float window_height)
+	{
+		glFlush();
+		glFinish();
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		unsigned char data[4];
+		glReadPixels(pix_x, window_height - pix_y - 1, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, data); 
+		int pickedID =
+			data[0] +
+			data[1] * 256 +
+			data[2] * 256 * 256;
+		return pickedID;
+	}
 }

@@ -97,10 +97,6 @@ int Application::start(glm::ivec2& window_size, const char* title)
         ResourceManager::getShaderProgram("spriteShader")->use();
         ResourceManager::getShaderProgram("spriteShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
 
-        //m_line->render_from_to(m_cam->get_position() - glm::vec3(1.f), glm::vec3(m_world_mouse_pos_x, m_world_mouse_pos_y, m_world_mouse_pos_z), glm::vec3(1.f));
-
-        //m_line->render_from_to(glm::vec3(0.f), glm::vec3(m_world_mouse_pos_x, m_world_mouse_pos_y, m_world_mouse_pos_z), glm::vec3(1.f));
-
         if (m_drawNullIntersection)
         {
             m_line->render_from_to(glm::vec3(0.f, 0.f, 50.f), glm::vec3(0.f, 0.f, -50.f), glm::vec3(0.f, 0.f, 1.f));
@@ -121,18 +117,24 @@ int Application::start(glm::ivec2& window_size, const char* title)
         ResourceManager::getShaderProgram("colorShader")->use();
         ResourceManager::getShaderProgram("colorShader")->setVec3("sourceColor", glm::vec3(m_light_color[0], m_light_color[1], m_light_color[2]));*/
 
-        glm::mat4 translateMat(
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            pos[0], pos[1], pos[2], 1);
 
-        glm::vec3 posfin = glm::vec3(translateMat * glm::vec4(glm::vec3(m_world_mouse_pos_x, m_world_mouse_pos_y, m_world_mouse_pos_z) * m_distance, 1.f));
-
-        if (m_objs[0]->getComponent<Transform>() != nullptr && m_moveObject)
+        if (m_objs[item_current]->getComponent<Transform>() != nullptr)
         {
-            m_objs[0]->getComponent<Transform>()->
-                set_position(posfin);
+
+            if (m_moveObject)
+            {
+                glm::mat4 translateMat(
+                    1, 0, 0, 0,
+                    0, 1, 0, 0,
+                    0, 0, 1, 0,
+                    pos[0], pos[1], pos[2], 1);
+
+                glm::vec3 posfin = glm::vec3(translateMat * glm::vec4(glm::vec3(m_world_mouse_pos_x, m_world_mouse_pos_y, m_world_mouse_pos_z) * m_distance, 1.f));
+                m_objs[item_current]->getComponent<Transform>()->set_position(posfin);
+            }
+            m_line->render(m_objs[item_current]->getComponent<Transform>()->get_position(), glm::vec3(5.f, 0.f, 0.f), glm::vec3(1.f, 0.f, 0.f));
+            m_line->render(m_objs[item_current]->getComponent<Transform>()->get_position(), glm::vec3(0.f, 0.f, 5.f), glm::vec3(0.f, 0.f, 1.f));
+            m_line->render(m_objs[item_current]->getComponent<Transform>()->get_position(), glm::vec3(0.f, 5.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
         }
 
         for (const auto& curObj : m_objs)
@@ -143,7 +145,7 @@ int Application::start(glm::ivec2& window_size, const char* title)
         // ------------------------------------------------------------ // 
         on_ui_render();
         // ------------------------------------------------------------ // 
-        
+
         fps++;
         curTime += duration;
 
@@ -182,16 +184,14 @@ bool Application::init()
 
     m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
 
-    auto pShapeProgram = ResourceManager::getShaderProgram("colorShader");
-    auto pSpriteProgram = ResourceManager::getShaderProgram("spriteShader");
-
     add_object<ObjModel>("res/models/monkey.obj", ResourceManager::getMaterial("monkey"));
-    add_object<Cube>(ResourceManager::getMaterial("cube"), "default");
-    //add_object<Cube>(ResourceManager::getMaterial("default"), "default"); 
-    //add_object<Sprite>(ResourceManager::getTexture("TanksTextureAtlas"), "YellowUp11", pSpriteProgram);
+    add_object<Cube>(ResourceManager::getMaterial("cube"));
+    //add_object<Cube>(ResourceManager::getMaterial("default")); 
+    add_object<Sprite>(ResourceManager::getMaterial("cube"), "YellowUp11");
 
     m_line = new RenderEngine::Line(ResourceManager::getMaterial("default"));
-    
+    m_line_transform = new RenderEngine::Line(ResourceManager::getMaterial("default"), 10);
+
     return true;
 }
 
@@ -296,7 +296,9 @@ void Application::on_key_update(const double delta)
 
     if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT))
     {
-        m_moveObject = !m_moveObject;
+        //m_moveObject = !m_moveObject;
+        int info = RenderEngine::Renderer::get_info_pixel(m_mouse_pos_x, m_mouse_pos_y, m_pWindow->get_size().y);
+        LOG_INFO("ObjectID: {0}", info);
     }
 
     if (Input::isKeyPressed(KeyCode::KEY_LEFT_CONTROL))
@@ -354,7 +356,7 @@ void Application::on_key_update(const double delta)
         rotation_delta.z -= static_cast<float>(addSpeed * m_cam_rotate_velocity * delta);
     }
 
-    if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_RIGHT))
+    if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_MIDDLE))
     {
        glm::vec2 pos = m_pWindow->get_current_cursor_position();
        rotation_delta.y = m_isInversiveMouseY 
@@ -372,13 +374,4 @@ void Application::on_mouse_button_event(const MouseButton button, const double p
 {
     m_init_mouse_pos_x = pos_x;
     m_init_mouse_pos_y = pos_y;
-}
-
-template<class _Ty, class ..._Types>
-inline void Application::add_object(_Types && ..._Args)
-{
-    IGameObject* obj = (IGameObject*)(new _Ty(std::forward<_Types>(_Args)...));
-    m_items_str.push_back(obj->get_name());
-    m_objs.push_back(std::move(obj));
-    if (!m_items) delete m_items;
 }

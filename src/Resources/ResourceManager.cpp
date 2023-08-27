@@ -15,6 +15,7 @@
 #include <sstream>
 #include <fstream>
 #include <iostream>
+#include <filesystem>
 
 #include <rapidjson/document.h>
 #include <rapidjson/error/en.h>
@@ -530,6 +531,48 @@ std::vector<std::string> ResourceManager::getNamesTextures2D()
 		data.push_back(curTexture.first);
 	}
 
+	return data;
+}
+std::vector<std::string> ResourceManager::getNamesMaterials()
+{
+	std::vector<std::string> data;
+
+	for (const auto& curMaterial : m_materials)
+	{
+		data.push_back(curMaterial.first);
+	}
+
+	return data;
+}
+std::vector<std::string> ResourceManager::getNamesObjs()
+{
+	std::vector<std::string> data;
+
+	for (const auto& curObj : m_obj_files)
+	{
+		data.push_back(curObj.first);
+	}
+
+	return data;
+}
+std::vector<std::string> ResourceManager::getNamesFilesInDirectory(std::string relativeFilePath)
+{
+	std::vector<std::string> data;
+	std::filesystem::path path;
+
+	std::string tempStr;
+	std::string temp2Str;
+	std::string param = m_path + "/";
+
+	for (auto& p : std::filesystem::directory_iterator(m_path + "/" + relativeFilePath))
+	{
+		path = p;
+		tempStr = path.std::filesystem::path::generic_string();
+
+		temp2Str = tempStr.substr(param.size());
+
+		data.push_back(temp2Str);
+	}
 	return data;
 }
 std::string ResourceManager::getNameShaderProgram(std::shared_ptr<RenderEngine::ShaderProgram> pShader)

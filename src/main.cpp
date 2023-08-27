@@ -27,10 +27,13 @@
 #include "EngineCore/Components/MeshRenderer.h"
 
 const char* components[] = { "transform", "spriteRenderer", "meshRenderer", "highlight" };
-const char* items[] = { "transform", "spriteRenderer", "meshRenderer", "highlight" };
+const char* objstypes[] = { "cube", "sprite", "objmodel" };
 
-int item_current = 0;
 int component_current = 0;
+int objstype_current = 0;
+int material_current = 0;
+int obj_current = 0;
+int file_current = 0;
 
 float test = 0;
 
@@ -70,8 +73,19 @@ public:
         shaderLayout.set_callback(
             [&](std::string name, const void* data, UIlayoutShaderProgram::EUITypeData type)
             {
-                MeshRenderer* mesh = m_objs[item_current]->getComponent<MeshRenderer>();
-                std::shared_ptr<RenderEngine::ShaderProgram> shader = mesh->get_material_ptr()->get_shader_ptr();
+                std::shared_ptr<RenderEngine::ShaderProgram> shader;
+                if (m_objs[item_current]->getComponent<MeshRenderer>() != nullptr)
+                {
+                    MeshRenderer* mesh = m_objs[item_current]->getComponent<MeshRenderer>();
+                    shader = mesh->get_material_ptr()->get_shader_ptr();
+                }
+                else if (m_objs[item_current]->getComponent<SpriteRenderer>() != nullptr)
+                {
+                    SpriteRenderer* sprite = m_objs[item_current]->getComponent<SpriteRenderer>();
+                    shader = sprite->get_material_ptr()->get_shader_ptr();
+                }
+                else return;
+
                 switch (type)
                 {
                 case UIlayoutShaderProgram::Float:
@@ -99,8 +113,18 @@ public:
         materialLayout.set_callback(
             [&](const std::string textureName, const std::string shaderName)
             {
-                MeshRenderer* mesh = m_objs[item_current]->getComponent<MeshRenderer>();
-                std::shared_ptr<RenderEngine::Material> mat = mesh->get_material_ptr();
+                std::shared_ptr<RenderEngine::Material> mat;
+                if (m_objs[item_current]->getComponent<MeshRenderer>() != nullptr)
+                {
+                    MeshRenderer* mesh = m_objs[item_current]->getComponent<MeshRenderer>();
+                    mat = mesh->get_material_ptr();
+                }
+                else if (m_objs[item_current]->getComponent<SpriteRenderer>() != nullptr)
+                {
+                    SpriteRenderer* sprite = m_objs[item_current]->getComponent<SpriteRenderer>();
+                    mat = sprite->get_material_ptr();
+                }
+                else return;
 
                 auto shader = ResourceManager::getShaderProgram(shaderName);
                 mat->set_shader_and_texture(shader, ResourceManager::getTexture(textureName));
@@ -135,13 +159,102 @@ public:
         ImGui::ColorEdit4("Background Color", m_colors);
         ImGui::ColorEdit3("Light source Color", m_light_color);
         ImGui::Checkbox("Draw null intersection", &m_drawNullIntersection);
+        if (ImGui::Button("Load new object file"))
+            ImGui::OpenPopup("Load new file");
+        if (ImGui::BeginPopupModal("Load new file"))
+        {
+            std::vector<std::string> files = ResourceManager::getNamesFilesInDirectory("res/models/");
+            if (ImGui::BeginListBox("Models folder"))
+            {
+                for (int i = 0; i < files.size(); i++)
+                {
+                    if (ImGui::Selectable(files[i].c_str(), i == file_current))
+                    {
+                        file_current = i;
+                    }
+                }
+                ImGui::EndListBox();
+            }
+            if (ImGui::Button("Load model"))
+            {
+                ResourceManager::load_OBJ_file(files[file_current]);
+                ImGui::CloseCurrentPopup();
+            }
+            if (ImGui::Button("Cancel")) { ImGui::CloseCurrentPopup(); }
+            ImGui::EndPopup();
+        }
         ImGui::End();
 
         ImGui::Begin("Object manager");
-        if (ImGui::Button("Add cube"))
+        if (ImGui::Button("Add object"))
+            ImGui::OpenPopup("Add object window");
+
+        if (ImGui::BeginPopupModal("Add object window"))
         {
-            add_object<Cube>(ResourceManager::getMaterial("default"), "default");
-        }
+            std::vector<std::string> matNames = ResourceManager::getNamesMaterials();
+            ImGui::Combo("Types", &objstype_current, objstypes, IM_ARRAYSIZE(objstypes)); 
+            ImGui::Text("Materials");
+            ImGui::Separator();
+            if (ImGui::BeginListBox("Materials"))
+            {
+                for (int i = 0; i < matNames.size(); i++)
+                {
+                    char buf[32];
+                    sprintf(buf, matNames[i].c_str());
+                    if (ImGui::Selectable(buf, material_current == i))
+                    {
+                        material_current = i;
+                    }
+                }
+                ImGui::EndListBox();
+            }
+            if (ImGui::Button("Create"))
+            {
+                switch (objstype_current)
+                {
+                case 0:
+                    add_object<Cube>(ResourceManager::getMaterial(matNames[material_current]));
+                    ImGui::CloseCurrentPopup();
+                    break;
+                case 1:
+                    add_object<Sprite>(ResourceManager::getMaterial(matNames[material_current]), "default");
+                    ImGui::CloseCurrentPopup();
+                    break;
+                case 2:
+                    ImGui::OpenPopup("Add object window -- ObjModel settings");
+                    break;
+                }
+            }
+
+            bool unused_open = true;
+            if (ImGui::BeginPopupModal("Add object window -- ObjModel settings", &unused_open))
+            {
+                std::vector<std::string> objs = ResourceManager::getNamesObjs();
+
+                if (ImGui::BeginListBox("Loaded objects"))
+                {
+                    for (int i = 0; i < objs.size(); i++)
+                    {
+                        if (ImGui::Selectable(objs[i].c_str(), i == obj_current))
+                        {
+                            obj_current = i;
+                        }
+                    }
+                    ImGui::EndListBox();
+                }
+                if (ImGui::Button("Create ObjModel"))
+                {
+                    add_object<ObjModel>(objs[obj_current], ResourceManager::getMaterial(matNames[material_current]));
+                    ImGui::CloseCurrentPopup();
+                }
+
+                ImGui::EndPopup();
+            }
+
+            if (ImGui::Button("Cancel")) { ImGui::CloseCurrentPopup(); }
+            ImGui::EndPopup();
+        }        
+
         for (int n = 0; n < m_objs.size(); n++)
         {
             char buf[32];
@@ -163,8 +276,8 @@ public:
                 }          
                 if (m_objs[item_current]->getComponent<MeshRenderer>() != nullptr)
                 {
-                    //shaderLayout.set_shader_layout(m_objs[item_current]->getComponent<MeshRenderer>()->get_material_ptr()->get_shader_ptr()->get_layout());
-                    //materialLayout.set_material(m_objs[item_current]->getComponent<MeshRenderer>()->get_material_ptr());
+                    shaderLayout.set_shader_layout(m_objs[item_current]->getComponent<MeshRenderer>()->get_material_ptr()->get_shader_ptr()->get_layout());
+                    materialLayout.set_material(m_objs[item_current]->getComponent<MeshRenderer>()->get_material_ptr());
                 }
             }
             if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
@@ -180,8 +293,7 @@ public:
                         if (m_objs[item_current]->addComponent<Transform>() != nullptr)  transformLayout.set_props(glm::vec3(0.f), glm::vec3(1.f), glm::vec3(0.f));
                         break;
                     case 1:
-                        //if (m_objs[item_current]->getComponent<SpriteRenderer>() == nullptr)
-                        //    m_objs[item_current]->addComponent<SpriteRenderer>();
+                        if (m_objs[item_current]->addComponent<SpriteRenderer>(ResourceManager::getMaterial("default"), "default") == nullptr)
                         break;
                     case 2:
                         if (m_objs[item_current]->addComponent<MeshRenderer>(nullptr, ResourceManager::getMaterial("default")) == nullptr)
@@ -235,7 +347,7 @@ public:
         {
             highlightLayout.on_draw_ui();
         }
-        if (m_objs[item_current]->getComponent<MeshRenderer>() != nullptr)
+        if (m_objs[item_current]->getComponent<MeshRenderer>() != nullptr || m_objs[item_current]->getComponent<SpriteRenderer>() != nullptr)
         {
             shaderLayout.on_draw_ui();
             materialLayout.on_draw_ui();

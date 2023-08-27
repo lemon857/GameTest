@@ -19,6 +19,7 @@ namespace RenderEngine
 			m_mode = GL_RGB;
 			break;
 		}
+
 		const GLsizei mip_levels = static_cast<GLsizei>(log2(std::max(width, height))) + 1;
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_ID);
 		glActiveTexture(GL_TEXTURE0);
@@ -30,7 +31,7 @@ namespace RenderEngine
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
-		
+
 		glGenerateTextureMipmap(GL_TEXTURE_2D);
 
 		glBindTexture(GL_TEXTURE_2D, 0);

@@ -4,10 +4,10 @@
 
 static int g_current_sprite_ID = 0;
 
-Sprite::Sprite(std::shared_ptr<RenderEngine::Texture2D> pTexture, std::string initSubTexture, std::shared_ptr<RenderEngine::ShaderProgram> pShader)
+Sprite::Sprite(std::shared_ptr<RenderEngine::Material> pMaterial, std::string initSubTexture)
 	: IGameObject("Sprite" + std::to_string(g_current_sprite_ID++))
 {
-	addComponent<SpriteRenderer>(pTexture, initSubTexture, pShader);
+	addComponent<SpriteRenderer>(pMaterial, initSubTexture);
 }
 
 void Sprite::setSubTexture(std::string subTexture)

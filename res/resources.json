@@ -38,7 +38,7 @@
         },
         {
           "name": "sourceColor",
-          "typeInt": 5,
+          "typeInt": 3,
           "minVal": 0,
           "maxVal": 1
         }
@@ -254,6 +254,11 @@
       "name": "cube",
       "nameShader": "shape3DShader",
       "nameTexture": "CubeTexture"
+    },
+    {
+      "name": "sprite",
+      "nameShader": "spriteShader",
+      "nameTexture": "SpritesTextureAtlas"
     },
     {
       "name": "monkey",

@@ -110,7 +110,7 @@ void UIlayoutShaderProgram::on_draw_ui()
                 m_on_chanege(curElements.name, get_data(curElements.name), Vec3);
             break;
         case Vec4:
-            if (ImGui::DragFloat4(curElements.name.c_str(), get_data(curElements.name), curElements.min, curElements.max))
+            if (ImGui::SliderFloat4(curElements.name.c_str(), get_data(curElements.name), curElements.min, curElements.max))
                 m_on_chanege(curElements.name, get_data(curElements.name), Vec4);
             break;
         case Col3:

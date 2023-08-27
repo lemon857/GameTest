@@ -72,6 +72,9 @@ namespace RenderEngine
 
 		static std::vector<std::string> getNamesShadersProgram();
 		static std::vector<std::string> getNamesTextures2D();
+		static std::vector<std::string> getNamesMaterials();
+		static std::vector<std::string> getNamesObjs();
+		static std::vector<std::string> getNamesFilesInDirectory(std::string relativeFilePath);
 
 		static std::string getNameShaderProgram(std::shared_ptr<RenderEngine::ShaderProgram> pShader);
 		static std::string getNameTexture2D(std::shared_ptr<RenderEngine::Texture2D> pTexture);

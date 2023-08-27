@@ -7,8 +7,7 @@
 
 namespace RenderEngine
 {
-	class Texture2D;
-	class ShaderProgram;
+	class Material;
 	class VertexBuffer;
 	class VertexArray;
 	class IndexBuffer;
@@ -18,18 +17,18 @@ namespace RenderEngine
 class SpriteRenderer : public IComponent
 {
 public:
-	SpriteRenderer(std::shared_ptr<RenderEngine::Texture2D> pTexture,
-		std::string initialSubTexture,
-		std::shared_ptr<RenderEngine::ShaderProgram> pShaderProgram);
+	SpriteRenderer(std::shared_ptr<RenderEngine::Material> pMaterial,
+		std::string initialSubTexture);
 
 	~SpriteRenderer();
 
 	void setSubTexture(std::string subTexture);
 
 	void update(const double delta) override;
+
+	std::shared_ptr<RenderEngine::Material> get_material_ptr();
 private:
-	std::shared_ptr<RenderEngine::Texture2D> m_pTextureAtlas;
-	std::shared_ptr<RenderEngine::ShaderProgram> m_pShaderProgram;
+	std::shared_ptr<RenderEngine::Material> m_pMaterial;
 
 	std::shared_ptr<RenderEngine::VertexArray> m_vertexArray;
 	RenderEngine::VertexBuffer* m_vertexCoordsBuffer;

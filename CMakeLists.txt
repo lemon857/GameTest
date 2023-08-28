@@ -19,6 +19,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/System/Timer.h
 	includes/EngineCore/System/TemplateTimer.h
 	includes/EngineCore/System/Stopwatch.h
+	includes/EngineCore/System/List.h
 )
 
 set(ENGINE_PRIVATE_INCLUDES

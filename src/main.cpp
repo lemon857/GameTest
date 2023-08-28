@@ -186,6 +186,7 @@ public:
         ImGui::End();
 
         ImGui::Begin("Object manager");
+        ImGui::Text("Count: %i", m_objs.size());
         if (ImGui::Button("Add object"))
             ImGui::OpenPopup("Add object window");
 
@@ -279,6 +280,11 @@ public:
                     shaderLayout.set_shader_layout(m_objs[item_current]->getComponent<MeshRenderer>()->get_material_ptr()->get_shader_ptr()->get_layout());
                     materialLayout.set_material(m_objs[item_current]->getComponent<MeshRenderer>()->get_material_ptr());
                 }
+                if (m_objs[item_current]->getComponent<SpriteRenderer>() != nullptr)
+                {
+                    shaderLayout.set_shader_layout(m_objs[item_current]->getComponent<SpriteRenderer>()->get_material_ptr()->get_shader_ptr()->get_layout());
+                    materialLayout.set_material(m_objs[item_current]->getComponent<SpriteRenderer>()->get_material_ptr());
+                }
             }
             if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
             {
@@ -325,6 +331,11 @@ public:
                         break;
                     }
                 }
+                if (ImGui::Button("Delete this object"))
+                {
+                    item_current = item_current == n ? ((item_current + 1) < m_objs.size() ? (item_current + 1) : ((item_current - 1) > 0) ? (item_current - 1) : 0) : item_current;
+                    m_objs.remove(m_objs[item_current]);
+                }
                 if (ImGui::Button("Close"))
                     ImGui::CloseCurrentPopup();
                 ImGui::EndPopup();
@@ -351,7 +362,8 @@ public:
         {
             shaderLayout.on_draw_ui();
             materialLayout.on_draw_ui();
-        }/*
+        }
+        /*
         ImGui::SliderFloat("Ambient factor", &m_ambient_factor, 0.f, 1.f);
         ImGui::SliderFloat("Diffuse factor", &m_diffuse_factor, 0.f, 1.f);
         ImGui::SliderFloat("Specular factor", &m_specular_factor, 0.f, 1.f);
@@ -391,7 +403,6 @@ public:
         if (ImGui::Checkbox("Perspective camera", &m_isPerspectiveCam))
         {
             m_cam->set_projection_mode(m_isPerspectiveCam ? Camera::ProjectionMode::Perspective : Camera::ProjectionMode::Orthographic);
-            //shaderLayout.set_shader_layout(ResourceManager::getShaderProgram("shape3DShader")->get_layout());
         }
         ImGui::Checkbox("Inversive mouse", &m_isInversiveMouseY);
         if (ImGui::Button("Reset position"))

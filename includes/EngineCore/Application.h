@@ -13,9 +13,11 @@
 #include "EngineCore/Meshes/Cube.h"
 #include "EngineCore/Meshes/Sprite.h"
 #include "EngineCore/Meshes/ObjModel.h"
+#include "EngineCore/System/List.h"
 
 #include <memory>
 #include <glm/vec2.hpp>
+#include <list>
 
 class Application
 {
@@ -109,5 +111,5 @@ protected:
 
 	std::vector<std::string> m_items_str;
 
-	std::vector<IGameObject*> m_objs;
+	linked_list<IGameObject*> m_objs;
 };

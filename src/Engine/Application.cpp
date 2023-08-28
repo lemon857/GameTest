@@ -19,8 +19,6 @@
 
 Stopwatch watch;
 
-
-
 Application::Application()
 {
     LOG_INFO("Starting Application");
@@ -71,7 +69,6 @@ int Application::start(glm::ivec2& window_size, const char* title)
         auto currentTime = std::chrono::high_resolution_clock::now();
         double duration = std::chrono::duration<double, std::milli>(currentTime - lastTime).count();
         lastTime = currentTime;
-
 
         RenderEngine::Renderer::setClearColor(m_colors[0], m_colors[1], m_colors[2], m_colors[3]);
 
@@ -137,9 +134,9 @@ int Application::start(glm::ivec2& window_size, const char* title)
             m_line->render(m_objs[item_current]->getComponent<Transform>()->get_position(), glm::vec3(0.f, 5.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
         }
 
-        for (const auto& curObj : m_objs)
+        for (size_t i = 0; i < m_objs.size(); i++)
         {
-            curObj->update(duration);
+            m_objs[i]->update(duration);
         }
 
         // ------------------------------------------------------------ // 
@@ -185,9 +182,9 @@ bool Application::init()
     m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
 
     add_object<ObjModel>("res/models/monkey.obj", ResourceManager::getMaterial("monkey"));
-    add_object<Cube>(ResourceManager::getMaterial("cube"));
+    //add_object<Cube>(ResourceManager::getMaterial("cube"));
     //add_object<Cube>(ResourceManager::getMaterial("default")); 
-    add_object<Sprite>(ResourceManager::getMaterial("cube"), "YellowUp11");
+    //add_object<Sprite>(ResourceManager::getMaterial("cube"), "YellowUp11");
 
     m_line = new RenderEngine::Line(ResourceManager::getMaterial("default"));
     m_line_transform = new RenderEngine::Line(ResourceManager::getMaterial("default"), 10);

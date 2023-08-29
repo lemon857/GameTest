@@ -244,10 +244,12 @@ bool ResourceManager::load_INI_settings(const std::string& INIpath, INIdata& dat
 std::shared_ptr<GraphicsObject> ResourceManager::load_OBJ_file(const std::string& OBJrelativePath, bool is_reload)
 {
 	CacheOBJMap::iterator it = m_obj_files.find(OBJrelativePath);
-	if (it != m_obj_files.end() && !is_reload)
+		
+	if (it != m_obj_files.end())
 	{
-		return it->second;
+		if (!is_reload) return it->second;
 	}
+	
 	std::ifstream file;
 	file.open(m_path + "/" + OBJrelativePath);
 	if (file.is_open())
@@ -371,7 +373,6 @@ std::shared_ptr<GraphicsObject> ResourceManager::load_OBJ_file(const std::string
 
 		file.close();
 
-
 		if (is_reload)
 		{
 			it->second = std::make_shared<GraphicsObject>(std::move(vao), std::move(ebo));
@@ -382,7 +383,7 @@ std::shared_ptr<GraphicsObject> ResourceManager::load_OBJ_file(const std::string
 		else
 		{
 			std::shared_ptr<GraphicsObject> newOBJ =
-			m_obj_files.emplace(OBJrelativePath, std::make_shared<GraphicsObject>(std::move(vao), std::move(ebo))).first->second;
+				m_obj_files.emplace(OBJrelativePath, std::make_shared<GraphicsObject>(std::move(vao), std::move(ebo))).first->second;
 
 			LOG_INFO("Success load obj file: {0}", OBJrelativePath);
 			return newOBJ;

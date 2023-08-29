@@ -126,7 +126,7 @@ int Application::start(glm::ivec2& window_size, const char* title)
                     0, 0, 1, 0,
                     pos[0], pos[1], pos[2], 1);
 
-                glm::vec3 posfin = glm::vec3(translateMat * glm::vec4(glm::vec3(m_world_mouse_pos_x, m_world_mouse_pos_y, m_world_mouse_pos_z) * m_distance, 1.f));
+                glm::vec3 posfin = glm::vec3(translateMat * glm::vec4(glm::vec3(m_world_mouse_dir_x, m_world_mouse_dir_y, m_world_mouse_dir_z) * m_distance, 1.f));
                 m_objs[item_current]->getComponent<Transform>()->set_position(posfin);
             }
             m_line->render(m_objs[item_current]->getComponent<Transform>()->get_position(), glm::vec3(5.f, 0.f, 0.f), glm::vec3(1.f, 0.f, 0.f));
@@ -235,9 +235,9 @@ bool Application::init_events()
 
             pos = glm::normalize(pos);
 
-            m_world_mouse_pos_x = pos.x;
-            m_world_mouse_pos_y = pos.y;
-            m_world_mouse_pos_z = pos.z;
+            m_world_mouse_dir_x = pos.x;
+            m_world_mouse_dir_y = pos.y;
+            m_world_mouse_dir_z = pos.z;
 
             m_mouse_pos_x = e.x;
             m_mouse_pos_y = e.y;

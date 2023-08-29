@@ -15,6 +15,8 @@ void UImodule::on_window_create(GLFWwindow* pWindow)
     io.ConfigFlags |= ImGuiConfigFlags_::ImGuiConfigFlags_DockingEnable;
     io.ConfigFlags |= ImGuiConfigFlags_::ImGuiConfigFlags_ViewportsEnable;
 
+    io.ConfigDockingWithShift = true;
+
     ImGui_ImplOpenGL3_Init(); // WARNING --- USE OPEN GL 
     ImGui_ImplGlfw_InitForOpenGL(pWindow, true);
 }

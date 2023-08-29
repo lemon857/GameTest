@@ -35,6 +35,11 @@ int material_current = 0;
 int obj_current = 0;
 int file_current = 0;
 
+bool isReloadObjFile = false;
+bool isSelectedObjFile = false;
+
+std::string selectedObj = "";
+
 float test = 0;
 
 UIlayoutTransform transformLayout;
@@ -148,9 +153,9 @@ public:
         ImGui::Text(("Mouse position X: " +  std::to_string(m_mouse_pos_x)).c_str());
         ImGui::Text(("Mouse position Y: " + std::to_string(m_mouse_pos_y)).c_str());
         ImGui::Text("");
-        ImGui::Text(("Mouse world position X: " + std::to_string(m_world_mouse_pos_x)).c_str());
-        ImGui::Text(("Mouse world position Y: " + std::to_string(m_world_mouse_pos_y)).c_str());
-        ImGui::Text(("Mouse world position Z: " + std::to_string(m_world_mouse_pos_z)).c_str());
+        ImGui::Text(("Mouse world direction X: " + std::to_string(m_world_mouse_dir_x)).c_str());
+        ImGui::Text(("Mouse world direction Y: " + std::to_string(m_world_mouse_dir_y)).c_str());
+        ImGui::Text(("Mouse world direction Z: " + std::to_string(m_world_mouse_dir_z)).c_str());
         ImGui::Text("");
         ImGui::Text(("FPS: " + std::to_string(m_fps)).c_str());
         ImGui::End();
@@ -164,6 +169,7 @@ public:
         if (ImGui::BeginPopupModal("Load new file"))
         {
             std::vector<std::string> files = ResourceManager::getNamesFilesInDirectory("res/models/");
+            ImGui::Checkbox("Is reload", &isReloadObjFile);
             if (ImGui::BeginListBox("Models folder"))
             {
                 for (int i = 0; i < files.size(); i++)
@@ -177,7 +183,7 @@ public:
             }
             if (ImGui::Button("Load model"))
             {
-                ResourceManager::load_OBJ_file(files[file_current]);
+                ResourceManager::load_OBJ_file(files[file_current], isReloadObjFile);
                 ImGui::CloseCurrentPopup();
             }
             if (ImGui::Button("Cancel")) { ImGui::CloseCurrentPopup(); }
@@ -222,7 +228,16 @@ public:
                     ImGui::CloseCurrentPopup();
                     break;
                 case 2:
-                    ImGui::OpenPopup("Add object window -- ObjModel settings");
+                    if (!isSelectedObjFile)
+                    {
+                        ImGui::OpenPopup("Add object window -- ObjModel settings");
+                    }
+                    else
+                    {
+                        add_object<ObjModel>(selectedObj, ResourceManager::getMaterial(matNames[material_current]));
+                        ImGui::CloseCurrentPopup();
+                        isSelectedObjFile = false;
+                    }
                     break;
                 }
             }
@@ -243,9 +258,10 @@ public:
                     }
                     ImGui::EndListBox();
                 }
-                if (ImGui::Button("Create ObjModel"))
+                if (ImGui::Button("Select ObjModel"))
                 {
-                    add_object<ObjModel>(objs[obj_current], ResourceManager::getMaterial(matNames[material_current]));
+                    selectedObj = objs[obj_current];
+                    isSelectedObjFile = true;
                     ImGui::CloseCurrentPopup();
                 }
 
@@ -423,22 +439,48 @@ public:
 
         UImodule::on_window_update_draw();
     }
+    bool init() override
+    {
+        ImGuiStyle& style = ImGui::GetStyle();
+
+        style.Colors[ImGuiCol_FrameBg] = ImVec4(0.33f, 0.33f, 0.33f, 1.f);
+        style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(0.11f, 0.11f, 0.11f, 1.f);
+        style.Colors[ImGuiCol_FrameBgActive] = ImVec4(0.44f, 0.44f, 0.44f, 1.f);
+
+        style.Colors[ImGuiCol_Button] = ImVec4(0.4f, 0.4f, 0.4f, 1.f);
+        style.Colors[ImGuiCol_ButtonHovered] = ImVec4(0.14f, 0.14f, 0.14f, 1.f);
+        style.Colors[ImGuiCol_ButtonActive] = ImVec4(0.45f, 0.45f, 0.45f, 1.f);
+
+        style.Colors[ImGuiCol_Tab] = ImVec4(0.5f, 0.5f, 0.5f, 1.f);
+        style.Colors[ImGuiCol_TabActive] = ImVec4(0.4f, 0.4f, 0.4f, 1.f);
+        style.Colors[ImGuiCol_TabHovered] = ImVec4(0.33f, 0.33f, 0.33f, 1.f);
+
+        style.Colors[ImGuiCol_TitleBgActive] = ImVec4(0.282f, 0.282f, 0.282f, 1.f);
+
+        style.Colors[ImGuiCol_TabUnfocused] = ImVec4(0.18f, 0.18f, 0.18f, 1.f);
+        style.Colors[ImGuiCol_TabUnfocusedActive] = ImVec4(0.228f, 0.228f, 0.228f, 1.f);
+
+        style.Colors[ImGuiCol_CheckMark] = ImVec4(0.7f, 0.7f, 0.7f, 1.f);
+
+        style.Colors[ImGuiCol_Header] = ImVec4(0.38f, 0.38f, 0.38f, 1.f);
+        style.Colors[ImGuiCol_HeaderHovered] = ImVec4(0.5f, 0.5f, 0.5f, 1.f);
+        style.Colors[ImGuiCol_HeaderActive] = ImVec4(0.4f, 0.4f, 0.4f, 1.f);
+
+        Application::init();
+        return true;
+    }
 private:
 };
 
 int main(int argc, char** argv)
 {
-    glm::ivec2 g_WindowSize(800, 600);
+    glm::ivec2 windowSize(800, 600);
 
-    //IGame* g_Game;
     ResourceManager::setExecutablePath(argv[0]);
-    //g_Game = new TanksDemoGame(g_WindowSize);
-    //g_Game = new SnakeDemoGame(g_WindowSize, glm::vec2(100));
-    //g_Game = new PongDemoGame(g_WindowSize);
 
     EditorApplication* editorApplication = new EditorApplication();
 
-    editorApplication->start(g_WindowSize, "Engine editor");
+    editorApplication->start(windowSize, "Engine editor");
 
     delete editorApplication;
 

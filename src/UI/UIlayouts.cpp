@@ -7,7 +7,7 @@
 
 void UIlayoutTransform::on_draw_ui()
 {
-    if (ImGui::TreeNode("Transform"))
+    if (ImGui::CollapsingHeader("Transform"))
     {
         if (ImGui::DragFloat3("position", m_prop_pos, 0.1f, 1.f))
             m_on_chanege(m_prop_pos, position);
@@ -36,7 +36,6 @@ void UIlayoutTransform::on_draw_ui()
             m_prop_rot[2] = 0.f;
             m_on_chanege(m_prop_rot, rotation);
         }
-        ImGui::TreePop();
     }
 }
 
@@ -60,7 +59,7 @@ void UIlayoutTransform::set_props(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot)
 
 void UIlayoutHighlight::on_draw_ui()
 {
-    if (ImGui::TreeNode("Highlight"))
+    if (ImGui::CollapsingHeader("Highlight"))
     {
         if (ImGui::ColorEdit3("Color", m_color))
         {
@@ -70,7 +69,6 @@ void UIlayoutHighlight::on_draw_ui()
         {
             m_on_chanege(m_color, m_is_active);
         }
-        ImGui::TreePop();
     }
 }
 

@@ -117,3 +117,21 @@ private:
 	int item_current_shader = 0;
 	int item_current_texture = 0;
 };
+
+class UIlayoutMeshRenderer : IUIlayout
+{
+public:
+	UIlayoutMeshRenderer();
+
+	void on_draw_ui() override;
+
+	void set_callback(std::function<void(const std::string nameMaterial)> on_chanege);
+
+	void set_prop(std::shared_ptr<UIlayoutMaterial> materialUI, std::shared_ptr<UIlayoutShaderProgram> shaderUI);
+
+private:
+	std::function<void(const std::string nameMaterial)> m_on_chanege;
+
+	std::shared_ptr<UIlayoutMaterial> m_materialUI;
+	std::shared_ptr<UIlayoutShaderProgram> m_shaderUI;
+};

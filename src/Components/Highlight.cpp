@@ -11,7 +11,7 @@ Highlight::Highlight(std::shared_ptr<RenderEngine::Material> material, glm::vec3
 	: IComponent()
 	, m_line(std::make_unique<RenderEngine::Line>(material))
 	, m_color(color)
-	, m_isActive(true)
+	, m_isActive(false)
 {
 }
 

@@ -13,6 +13,7 @@
 #include "EngineCore/Meshes/Cube.h"
 #include "EngineCore/Meshes/Sprite.h"
 #include "EngineCore/Meshes/ObjModel.h"
+#include "EngineCore/Meshes/EmptyObject.h"
 #include "EngineCore/System/List.h"
 
 #include <memory>
@@ -106,6 +107,7 @@ protected:
 	bool m_isInversiveMouseY = false;
 	bool m_drawNullIntersection = false;
 	bool m_moveObject = false;
+	bool m_isUIhovered = false;
 
 	char* m_items;
 

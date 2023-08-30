@@ -286,6 +286,7 @@ bool Application::init_events()
 
 void Application::on_key_update(const double delta)
 {
+    if (m_isUIhovered) return;
     glm::vec3 movement_delta{ 0,0,0 };
     glm::vec3 rotation_delta{ 0,0,0 };
 

@@ -27,7 +27,7 @@
 #include "EngineCore/Components/MeshRenderer.h"
 
 const char* components[] = { "transform", "spriteRenderer", "meshRenderer", "highlight" };
-const char* objstypes[] = { "cube", "sprite", "objmodel" };
+const char* objstypes[] = { "empty object", "cube", "sprite", "objmodel"};
 
 int component_current = 0;
 int objstype_current = 0;
@@ -40,12 +40,15 @@ bool isSelectedObjFile = false;
 
 std::string selectedObj = "";
 
+char bufName[64];
+
 float test = 0;
 
 UIlayoutTransform transformLayout;
 UIlayoutHighlight highlightLayout;
-UIlayoutShaderProgram shaderLayout;
-UIlayoutMaterial materialLayout;
+std::shared_ptr<UIlayoutShaderProgram> shaderLayout;
+std::shared_ptr<UIlayoutMaterial> materialLayout;
+UIlayoutMeshRenderer meshrendererLayout;
 
 class EditorApplication : public Application
 {
@@ -53,6 +56,10 @@ public:
     EditorApplication()
         : Application()
     {
+        shaderLayout = std::make_shared<UIlayoutShaderProgram>();
+        materialLayout = std::make_shared<UIlayoutMaterial>();
+        meshrendererLayout.set_prop(materialLayout, shaderLayout);
+
         transformLayout.set_callback(
             [&](const float* data, UIlayoutTransform::ETypeChanegedProp prop)
             {
@@ -75,7 +82,7 @@ public:
                 m_objs[item_current]->getComponent<Highlight>()->set_active(isActive);
                 m_objs[item_current]->getComponent<Highlight>()->set_color(glm::vec3(data[0], data[1], data[2]));
             });
-        shaderLayout.set_callback(
+        shaderLayout->set_callback(
             [&](std::string name, const void* data, UIlayoutShaderProgram::EUITypeData type)
             {
                 std::shared_ptr<RenderEngine::ShaderProgram> shader;
@@ -115,7 +122,7 @@ public:
                     break;
                 }
             });
-        materialLayout.set_callback(
+        materialLayout->set_callback(
             [&](const std::string textureName, const std::string shaderName)
             {
                 std::shared_ptr<RenderEngine::Material> mat;
@@ -133,8 +140,9 @@ public:
 
                 auto shader = ResourceManager::getShaderProgram(shaderName);
                 mat->set_shader_and_texture(shader, ResourceManager::getTexture(textureName));
-                shaderLayout.set_shader_layout(shader->get_layout());
+                shaderLayout->set_shader_layout(shader->get_layout());
             });
+
     }
     ~EditorApplication()
     {
@@ -220,14 +228,18 @@ public:
                 switch (objstype_current)
                 {
                 case 0:
-                    add_object<Cube>(ResourceManager::getMaterial(matNames[material_current]));
+                    add_object<EmptyObject>();
                     ImGui::CloseCurrentPopup();
                     break;
                 case 1:
-                    add_object<Sprite>(ResourceManager::getMaterial(matNames[material_current]), "default");
+                    add_object<Cube>(ResourceManager::getMaterial(matNames[material_current]));
                     ImGui::CloseCurrentPopup();
                     break;
                 case 2:
+                    add_object<Sprite>(ResourceManager::getMaterial(matNames[material_current]), "default");
+                    ImGui::CloseCurrentPopup();
+                    break;
+                case 3:
                     if (!isSelectedObjFile)
                     {
                         ImGui::OpenPopup("Add object window -- ObjModel settings");
@@ -293,13 +305,13 @@ public:
                 }          
                 if (m_objs[item_current]->getComponent<MeshRenderer>() != nullptr)
                 {
-                    shaderLayout.set_shader_layout(m_objs[item_current]->getComponent<MeshRenderer>()->get_material_ptr()->get_shader_ptr()->get_layout());
-                    materialLayout.set_material(m_objs[item_current]->getComponent<MeshRenderer>()->get_material_ptr());
+                    shaderLayout->set_shader_layout(m_objs[item_current]->getComponent<MeshRenderer>()->get_material_ptr()->get_shader_ptr()->get_layout());
+                    materialLayout->set_material(m_objs[item_current]->getComponent<MeshRenderer>()->get_material_ptr());
                 }
                 if (m_objs[item_current]->getComponent<SpriteRenderer>() != nullptr)
                 {
-                    shaderLayout.set_shader_layout(m_objs[item_current]->getComponent<SpriteRenderer>()->get_material_ptr()->get_shader_ptr()->get_layout());
-                    materialLayout.set_material(m_objs[item_current]->getComponent<SpriteRenderer>()->get_material_ptr());
+                    //shaderLayout->set_shader_layout(m_objs[item_current]->getComponent<SpriteRenderer>()->get_material_ptr()->get_shader_ptr()->get_layout());
+                    //materialLayout->set_material(m_objs[item_current]->getComponent<SpriteRenderer>()->get_material_ptr());
                 }
             }
             if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
@@ -318,10 +330,21 @@ public:
                         if (m_objs[item_current]->addComponent<SpriteRenderer>(ResourceManager::getMaterial("default"), "default") == nullptr)
                         break;
                     case 2:
-                        if (m_objs[item_current]->addComponent<MeshRenderer>(nullptr, ResourceManager::getMaterial("default")) == nullptr)
+                        if (!isSelectedObjFile)
+                            ImGui::OpenPopup("Add component window -- MeshRenderer settings");
+                        else {
+                            if (m_objs[item_current]->addComponent<MeshRenderer>(ResourceManager::load_OBJ_file(selectedObj), ResourceManager::getMaterial("default")) == nullptr)
+                            {
+                                shaderLayout->set_shader_layout(m_objs[item_current]->getComponent<MeshRenderer>()->get_material_ptr()->get_shader_ptr()->get_layout());
+                                materialLayout->set_material(m_objs[item_current]->getComponent<MeshRenderer>()->get_material_ptr());
+                            }
+                        }
                         break;
                     case 3:
-                        if (m_objs[item_current]->addComponent<Highlight>(ResourceManager::getMaterial("default")) == nullptr) highlightLayout.activate();
+                        if (m_objs[item_current]->addComponent<Highlight>(ResourceManager::getMaterial("default")) == nullptr)
+                        {
+
+                        }
                         break;
                     }
                 }
@@ -347,6 +370,10 @@ public:
                         break;
                     }
                 }
+                if (ImGui::Button("Rename"))
+                {
+                    ImGui::OpenPopup("Rename object");
+                }
                 if (ImGui::Button("Delete this object"))
                 {
                     item_current = item_current == n ? ((item_current + 1) < m_objs.size() ? (item_current + 1) : ((item_current - 1) > 0) ? (item_current - 1) : 0) : item_current;
@@ -354,6 +381,43 @@ public:
                 }
                 if (ImGui::Button("Close"))
                     ImGui::CloseCurrentPopup();
+
+                if (ImGui::BeginPopupModal("Add component window -- MeshRenderer settings"))
+                {
+                    std::vector<std::string> objs = ResourceManager::getNamesObjs();
+
+                    if (ImGui::BeginListBox("Loaded objects"))
+                    {
+                        for (int i = 0; i < objs.size(); i++)
+                        {
+                            if (ImGui::Selectable(objs[i].c_str(), i == obj_current))
+                            {
+                                obj_current = i;
+                            }
+                        }
+                        ImGui::EndListBox();
+                    }
+                    if (ImGui::Button("Select ObjModel"))
+                    {
+                        selectedObj = objs[obj_current];
+                        isSelectedObjFile = true;
+                        ImGui::CloseCurrentPopup();
+                    }
+
+                    ImGui::EndPopup();
+                }
+                if (ImGui::BeginPopupModal("Rename object"))
+                {
+                    ImGui::InputText("Name", bufName, 64);
+                    if (ImGui::Button("Submit"))
+                    {
+                        m_objs[item_current]->set_name(std::string(bufName));
+                        ImGui::CloseCurrentPopup();
+                    }
+
+                    ImGui::EndPopup();
+                }
+
                 ImGui::EndPopup();
             }
             if (ImGui::IsItemHovered())
@@ -374,10 +438,9 @@ public:
         {
             highlightLayout.on_draw_ui();
         }
-        if (m_objs[item_current]->getComponent<MeshRenderer>() != nullptr || m_objs[item_current]->getComponent<SpriteRenderer>() != nullptr)
+        if (m_objs[item_current]->getComponent<MeshRenderer>() != nullptr)
         {
-            shaderLayout.on_draw_ui();
-            materialLayout.on_draw_ui();
+            meshrendererLayout.on_draw_ui();
         }
         /*
         ImGui::SliderFloat("Ambient factor", &m_ambient_factor, 0.f, 1.f);
@@ -438,6 +501,8 @@ public:
         ImGui::End();
 
         UImodule::on_window_update_draw();
+
+        m_isUIhovered = ImGui::IsAnyItemHovered() || ImGui::IsAnyItemFocused() || ImGui::IsAnyItemActive();          
     }
     bool init() override
     {

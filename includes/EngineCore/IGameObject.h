@@ -13,6 +13,8 @@ public:
 
 	std::string get_name() { return m_name; };
 
+	void set_name(const std::string name) { m_name = name; };
+
 	// Возврат nullptr означает уже наличие добавляемого компонента, либо неудачное создание компонента
 	template <class _Ty, class... _Types>
 	_Ty* addComponent(_Types&&... _Args)

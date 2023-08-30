@@ -255,3 +255,27 @@ void UIlayoutMaterial::set_material(std::shared_ptr<RenderEngine::Material> pMat
         }
     }
 }
+
+UIlayoutMeshRenderer::UIlayoutMeshRenderer()
+{
+}
+
+void UIlayoutMeshRenderer::on_draw_ui()
+{
+    if (ImGui::CollapsingHeader("Mesh renderer"))
+    {
+        m_shaderUI->on_draw_ui();
+        m_materialUI->on_draw_ui();
+    }
+}
+
+void UIlayoutMeshRenderer::set_callback(std::function<void(const std::string nameMaterial)> on_chanege)
+{
+    m_on_chanege = on_chanege;
+}
+
+void UIlayoutMeshRenderer::set_prop(std::shared_ptr<UIlayoutMaterial> materialUI, std::shared_ptr<UIlayoutShaderProgram> shaderUI)
+{
+    m_materialUI = std::move(materialUI);
+    m_shaderUI = std::move(shaderUI);
+}

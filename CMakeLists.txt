@@ -57,6 +57,7 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Meshes/Cube.h
 	includes/EngineCore/Meshes/Sprite.h
 	includes/EngineCore/Meshes/ObjModel.h
+	includes/EngineCore/Meshes/EmptyObject.h
 )
 
 set(ENGINE_PRIVATE_SOURCES

@@ -1,5 +1,7 @@
 #include "EngineCore/Renderer/Material.h"
 
+#include "EngineCore/System/ShadersSettings.h"
+
 #include "EngineCore/Renderer/ShaderProgram.h"
 #include "EngineCore/Renderer/Texture2D.h"
 #include "EngineCore/Renderer/Renderer.h"
@@ -100,15 +102,11 @@ namespace RenderEngine
 
 	void Material::set_model_matrix(glm::mat4& model)
 	{
-		m_pShaderProgram->setMatrix4(get_shader_prop_names(ModelMat4)[0], model);
+		m_pShaderProgram->setMatrix4(MODEL_MATRIX_NAME, model);
 	}
 	void Material::set_view_projection_matrix(glm::mat4& vp)
 	{
-		m_pShaderProgram->setMatrix4(get_shader_prop_names(VPMat4)[0], vp);
-	}
-	void Material::set_first_vec4(glm::vec4& value)
-	{
-		m_pShaderProgram->setVec4(get_shader_prop_names(Vec4)[0], value);
+		m_pShaderProgram->setMatrix4(VIEW_PROJECTION_MATRIX_NAME, vp);
 	}
 	std::shared_ptr<Texture2D> Material::get_texture_ptr()
 	{

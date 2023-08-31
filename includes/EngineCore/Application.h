@@ -1,5 +1,4 @@
 #pragma	once
-
 #include "EngineCore/Event.h"
 #include "EngineCore/Renderer/Camera.h"
 #include "EngineCore/Renderer/VertexArray.h"
@@ -49,7 +48,6 @@ public:
 		IGameObject* obj = (IGameObject*)(new _Ty(std::forward<_Types>(_Args)...));
 		m_items_str.push_back(obj->get_name());
 		m_objs.push_back(std::move(obj));
-		if (!m_items) delete m_items;
 	}
 protected:
 	EventDispatcher m_event_dispather;
@@ -108,8 +106,6 @@ protected:
 	bool m_drawNullIntersection = false;
 	bool m_moveObject = false;
 	bool m_isUIhovered = false;
-
-	char* m_items;
 
 	std::vector<std::string> m_items_str;
 

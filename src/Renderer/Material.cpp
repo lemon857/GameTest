@@ -10,12 +10,78 @@ namespace RenderEngine
 		: m_pShaderProgram(std::move(pShaderProgram))
 		, m_pTexture(std::move(pTexture))
 	{
+		m_shader_layout_elemrnts = m_pShaderProgram->get_layout()->getLayoutElements();
+		for (const auto& curElements : m_shader_layout_elemrnts)
+		{
+			if (curElements.type > 5) continue;
+			switch (curElements.type)
+			{
+			case Int:
+				m_shader_data_map.emplace(curElements.name, new int[1] {0});
+				break;
+			case Float:
+				m_shader_data_map.emplace(curElements.name, new float[1] {0});
+				break;
+			case Vec3:
+				m_shader_data_map.emplace(curElements.name, new float[3] {0, 0, 0});
+				break;
+			case Vec4:
+				m_shader_data_map.emplace(curElements.name, new float[4] {0, 0, 0, 0});
+				break;
+			case Col3:
+				m_shader_data_map.emplace(curElements.name, new float[3] {0, 0, 0});
+				break;
+			case Col4:
+				m_shader_data_map.emplace(curElements.name, new float[4] {0, 0, 0, 0});
+				break;
+			}
+		}
+	}
 
+	Material::~Material()
+	{
+		if (!m_shader_data_map.empty())
+		{
+			for (auto cuElement : m_shader_data_map)
+			{
+				delete[] cuElement.second;
+			}
+			m_shader_data_map.clear();
+		}
 	}
 
 	void Material::use()
 	{
 		m_pShaderProgram->use();
+
+		void* data;
+
+		for (const auto& curElements : m_shader_layout_elemrnts)
+		{
+			data = get_data(curElements.name);
+			switch (curElements.type)
+			{
+			case Int:
+				m_pShaderProgram->setInt(curElements.name, ((int*)data)[0]);
+				break;
+			case Float:
+				m_pShaderProgram->setFloat(curElements.name, ((float*)data)[0]);
+				break;
+			case Vec3:
+				m_pShaderProgram->setVec3(curElements.name, glm::vec3(((float*)data)[0], ((float*)data)[1], ((float*)data)[2]));
+				break;
+			case Vec4:
+				m_pShaderProgram->setVec4(curElements.name, glm::vec4(((float*)data)[0], ((float*)data)[1], ((float*)data)[2], ((float*)data)[3]));
+				break;
+			case Col3:
+				m_pShaderProgram->setVec3(curElements.name, glm::vec3(((float*)data)[0], ((float*)data)[1], ((float*)data)[2]));
+				break;
+			case Col4:
+				m_pShaderProgram->setVec4(curElements.name, glm::vec4(((float*)data)[0], ((float*)data)[1], ((float*)data)[2], ((float*)data)[3]));
+				break;
+			}
+		}
+
 		if (m_pTexture != nullptr) Renderer::bindTexture(*m_pTexture);
 	}
 	std::vector<std::string> Material::get_shader_prop_names(ETypeData type)
@@ -52,9 +118,57 @@ namespace RenderEngine
 	{
 		return m_pShaderProgram;
 	}
-	void Material::set_shader_and_texture(std::shared_ptr<ShaderProgram> pShaderProgram, std::shared_ptr<Texture2D> pTexture)
+	void Material::set_texture(std::shared_ptr<Texture2D> pTexture)
 	{
 		m_pTexture = std::move(pTexture);
+	}
+	void Material::set_shader(std::shared_ptr<ShaderProgram> pShaderProgram)
+	{
 		m_pShaderProgram = std::move(pShaderProgram);
+
+		if (!m_shader_data_map.empty())
+		{
+			for (auto& cuElement : m_shader_data_map)
+			{
+				delete[] cuElement.second;
+			}
+			m_shader_data_map.clear();
+		}
+		m_shader_layout_elemrnts = m_pShaderProgram->get_layout()->getLayoutElements();
+		for (const auto& curElements : m_shader_layout_elemrnts)
+		{
+			if (curElements.type > 5) continue;
+			switch (curElements.type)
+			{
+			case Int:
+				m_shader_data_map.emplace(curElements.name, new int[1] {0});
+				break;
+			case Float:
+				m_shader_data_map.emplace(curElements.name, new float[1] {0});
+				break;
+			case Vec3:
+				m_shader_data_map.emplace(curElements.name, new float[3] {0, 0, 0});
+				break;
+			case Vec4:
+				m_shader_data_map.emplace(curElements.name, new float[4] {0, 0, 0, 0});
+				break;
+			case Col3:
+				m_shader_data_map.emplace(curElements.name, new float[3] {0, 0, 0});
+				break;
+			case Col4:
+				m_shader_data_map.emplace(curElements.name, new float[4] {0, 0, 0, 0});
+				break;
+			}
+		}
+	}
+
+	void* Material::get_data(std::string name)
+	{
+		std::map<std::string, void*>::const_iterator it = m_shader_data_map.find(name);
+		if (it != m_shader_data_map.end())
+		{
+			return it->second;
+		}
+		return nullptr;
 	}
 }

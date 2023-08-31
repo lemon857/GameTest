@@ -46,7 +46,6 @@ float test = 0;
 
 UIlayoutTransform transformLayout;
 UIlayoutHighlight highlightLayout;
-std::shared_ptr<UIlayoutShaderProgram> shaderLayout;
 std::shared_ptr<UIlayoutMaterial> materialLayout;
 UIlayoutMeshRenderer meshrendererLayout;
 
@@ -56,9 +55,8 @@ public:
     EditorApplication()
         : Application()
     {
-        shaderLayout = std::make_shared<UIlayoutShaderProgram>();
         materialLayout = std::make_shared<UIlayoutMaterial>();
-        meshrendererLayout.set_prop(materialLayout, shaderLayout);
+        meshrendererLayout.set_prop(materialLayout);
 
         transformLayout.set_callback(
             [&](const float* data, UIlayoutTransform::ETypeChanegedProp prop)
@@ -82,46 +80,6 @@ public:
                 m_objs[item_current]->getComponent<Highlight>()->set_active(isActive);
                 m_objs[item_current]->getComponent<Highlight>()->set_color(glm::vec3(data[0], data[1], data[2]));
             });
-        shaderLayout->set_callback(
-            [&](std::string name, const void* data, UIlayoutShaderProgram::EUITypeData type)
-            {
-                std::shared_ptr<RenderEngine::ShaderProgram> shader;
-                if (m_objs[item_current]->getComponent<MeshRenderer>() != nullptr)
-                {
-                    MeshRenderer* mesh = m_objs[item_current]->getComponent<MeshRenderer>();
-                    shader = mesh->get_material_ptr()->get_shader_ptr();
-                }
-                else if (m_objs[item_current]->getComponent<SpriteRenderer>() != nullptr)
-                {
-                    SpriteRenderer* sprite = m_objs[item_current]->getComponent<SpriteRenderer>();
-                    shader = sprite->get_material_ptr()->get_shader_ptr();
-                }
-                else return;
-
-                switch (type)
-                {
-                case UIlayoutShaderProgram::Float:
-                    shader->use();
-                    shader->setFloat(name, *(float*)data);
-                    break;
-                case UIlayoutShaderProgram::Vec3:
-                    shader->use();
-                    shader->setVec3(name, glm::vec3(((float*)data)[0], ((float*)data)[1], ((float*)data)[2]));
-                    break;
-                case UIlayoutShaderProgram::Vec4:
-                    shader->use();
-                    shader->setVec4(name, glm::vec4(((float*)data)[0], ((float*)data)[1], ((float*)data)[2], ((float*)data)[3]));
-                    break;
-                case UIlayoutShaderProgram::Col3:
-                    shader->use();
-                    shader->setVec3(name, glm::vec3(((float*)data)[0], ((float*)data)[1], ((float*)data)[2]));
-                    break;
-                case UIlayoutShaderProgram::Col4:
-                    shader->use();
-                    shader->setVec4(name, glm::vec4(((float*)data)[0], ((float*)data)[1], ((float*)data)[2], ((float*)data)[3]));
-                    break;
-                }
-            });
         materialLayout->set_callback(
             [&](const std::string textureName, const std::string shaderName)
             {
@@ -137,12 +95,10 @@ public:
                     mat = sprite->get_material_ptr();
                 }
                 else return;
-
-                auto shader = ResourceManager::getShaderProgram(shaderName);
-                mat->set_shader_and_texture(shader, ResourceManager::getTexture(textureName));
-                shaderLayout->set_shader_layout(shader->get_layout());
+                
+                mat->set_shader(ResourceManager::getShaderProgram(shaderName));
+                mat->set_texture(ResourceManager::getTexture(textureName));
             });
-
     }
     ~EditorApplication()
     {
@@ -200,6 +156,7 @@ public:
         ImGui::End();
 
         ImGui::Begin("Object manager");
+        if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) item_current = -1;
         ImGui::Text("Count: %i", m_objs.size());
         if (ImGui::Button("Add object"))
             ImGui::OpenPopup("Add object window");
@@ -305,7 +262,6 @@ public:
                 }          
                 if (m_objs[item_current]->getComponent<MeshRenderer>() != nullptr)
                 {
-                    shaderLayout->set_shader_layout(m_objs[item_current]->getComponent<MeshRenderer>()->get_material_ptr()->get_shader_ptr()->get_layout());
                     materialLayout->set_material(m_objs[item_current]->getComponent<MeshRenderer>()->get_material_ptr());
                 }
                 if (m_objs[item_current]->getComponent<SpriteRenderer>() != nullptr)
@@ -335,7 +291,6 @@ public:
                         else {
                             if (m_objs[item_current]->addComponent<MeshRenderer>(ResourceManager::load_OBJ_file(selectedObj), ResourceManager::getMaterial("default")) == nullptr)
                             {
-                                shaderLayout->set_shader_layout(m_objs[item_current]->getComponent<MeshRenderer>()->get_material_ptr()->get_shader_ptr()->get_layout());
                                 materialLayout->set_material(m_objs[item_current]->getComponent<MeshRenderer>()->get_material_ptr());
                             }
                         }
@@ -376,7 +331,8 @@ public:
                 }
                 if (ImGui::Button("Delete this object"))
                 {
-                    item_current = item_current == n ? ((item_current + 1) < m_objs.size() ? (item_current + 1) : ((item_current - 1) > 0) ? (item_current - 1) : 0) : item_current;
+                    item_current = item_current == n ? ((item_current + 1) < m_objs.size() ? (item_current + 1) : ((item_current - 1) > 0) ? (item_current - 1) : -1) : item_current;
+
                     m_objs.remove(m_objs[item_current]);
                 }
                 if (ImGui::Button("Close"))
@@ -426,7 +382,7 @@ public:
         ImGui::End();
 
         ImGui::Begin("Object settings");        
-        if (m_objs[item_current]->getComponent<Transform>() != nullptr)
+        if (m_objs[item_current]->getComponent<Transform>() != nullptr && item_current >= 0)
         {
             transformLayout.set_props(
                 m_objs[item_current]->getComponent<Transform>()->get_position(),
@@ -434,25 +390,14 @@ public:
                 m_objs[item_current]->getComponent<Transform>()->get_rotation());
             transformLayout.on_draw_ui();
         }
-        if (m_objs[item_current]->getComponent<Highlight>() != nullptr)
+        if (m_objs[item_current]->getComponent<Highlight>() != nullptr && item_current >= 0)
         {
             highlightLayout.on_draw_ui();
         }
-        if (m_objs[item_current]->getComponent<MeshRenderer>() != nullptr)
+        if (m_objs[item_current]->getComponent<MeshRenderer>() != nullptr && item_current >= 0)
         {
             meshrendererLayout.on_draw_ui();
         }
-        /*
-        ImGui::SliderFloat("Ambient factor", &m_ambient_factor, 0.f, 1.f);
-        ImGui::SliderFloat("Diffuse factor", &m_diffuse_factor, 0.f, 1.f);
-        ImGui::SliderFloat("Specular factor", &m_specular_factor, 0.f, 1.f);
-        if (ImGui::SliderFloat("Diffuse / Specular factor", &m_diffuse_specular_factor, 0.f, 1.f))
-        {
-            m_specular_factor = 1.f - m_diffuse_specular_factor;
-            m_diffuse_factor = 1.f - m_specular_factor;
-        }
-        ImGui::SliderFloat("Shininess", &m_shininess, 0.f, 100.f);
-        ImGui::SliderFloat("Metalic factor", &m_metalic_factor, 0.f, 1.f);*/
         ImGui::End();
 
         ImGui::Begin("Camera settings");

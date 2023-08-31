@@ -72,34 +72,6 @@ private:
 	bool m_is_active = false;
 };
 
-class UIlayoutShaderProgram : IUIlayout
-{
-public:
-	enum EUITypeData
-	{
-		Int = 0,
-		Float,
-		Vec3,
-		Vec4,
-		Col3,
-		Col4,
-	};
-	UIlayoutShaderProgram();
-
-	void on_draw_ui() override;
-
-	void set_shader_layout(std::shared_ptr<RenderEngine::ShaderProgramLayout> shaderLayout);
-
-	void set_callback(std::function<void(std::string nameProp, const void* data, EUITypeData type)> on_chanege);
-private:
-	float* get_data(std::string name);
-
-	std::shared_ptr<RenderEngine::ShaderProgramLayout> m_shaderLayout;
-	std::function<void(std::string nameProp, const void* data, EUITypeData type)> m_on_chanege;
-	
-	std::map<std::string, float*> m_data_map;
-};
-
 class UIlayoutMaterial : IUIlayout
 {
 public:
@@ -116,6 +88,8 @@ private:
 	std::string m_nameShaderProgram;
 	int item_current_shader = 0;
 	int item_current_texture = 0;
+
+	std::shared_ptr<RenderEngine::Material> m_pMat;
 };
 
 class UIlayoutMeshRenderer : IUIlayout
@@ -127,11 +101,12 @@ public:
 
 	void set_callback(std::function<void(const std::string nameMaterial)> on_chanege);
 
-	void set_prop(std::shared_ptr<UIlayoutMaterial> materialUI, std::shared_ptr<UIlayoutShaderProgram> shaderUI);
+	void set_prop(std::shared_ptr<UIlayoutMaterial> materialUI);
 
 private:
 	std::function<void(const std::string nameMaterial)> m_on_chanege;
 
 	std::shared_ptr<UIlayoutMaterial> m_materialUI;
-	std::shared_ptr<UIlayoutShaderProgram> m_shaderUI;
+
+	int m_current_material;
 };

@@ -72,7 +72,7 @@ protected:
 
 	float m_light_color[3] = { 1.f, 1.f, 1.f };
 
-	int item_current = 0;
+	int item_current = -1;
 
 	float m_cam_velocity = 0.01f;
 	float m_cam_rotate_velocity = 0.1f;

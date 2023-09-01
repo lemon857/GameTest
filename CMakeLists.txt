@@ -60,7 +60,8 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Meshes/Sprite.h
 	includes/EngineCore/Meshes/ObjModel.h
 	includes/EngineCore/Meshes/EmptyObject.h
-	
+	includes/EngineCore/Meshes/Plane.h	
+  
 	includes/EngineCore/Light/DirectionalLight.h
 )
 
@@ -128,6 +129,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Meshes/Cube.cpp
 	src/Meshes/Sprite.cpp
 	src/Meshes/ObjModel.cpp
+	src/Meshes/Plane.cpp
 		
 	src/Light/DirectionalLight.cpp
 )

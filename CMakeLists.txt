@@ -63,6 +63,7 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Meshes/Plane.h	
   
 	includes/EngineCore/Light/DirectionalLight.h
+	includes/EngineCore/Light/PointerLight.h
 )
 
 set(ENGINE_PRIVATE_SOURCES
@@ -132,6 +133,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Meshes/Plane.cpp
 		
 	src/Light/DirectionalLight.cpp
+	src/Light/PointerLight.cpp
 )
 
 

@@ -32,13 +32,15 @@ public:
 
 	int start(glm::ivec2& window_size, const char* title);
 
-	virtual bool init();
+	virtual bool init() { return true; };
 
-	virtual bool init_events();
+	bool _init();
 
-	virtual void on_key_update(const double delta);
+	bool init_events();
 
-	virtual void on_mouse_button_event(const MouseButton button, const double pos_x, const double pos_y, const bool isPressed);
+	void on_key_update(const double delta);
+
+	void on_mouse_button_event(const MouseButton button, const double pos_x, const double pos_y, const bool isPressed);
 
 	virtual void on_ui_render() {};
 	// TEMP

@@ -158,7 +158,7 @@ public:
         ImGui::End();
 
         ImGui::Begin("Object manager");
-        if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) item_current = -1;
+        if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && !ImGui::IsAnyItemHovered()) item_current = -1;
         ImGui::Text("Count: %i", m_objs.size());
         if (ImGui::Button("Add object"))
             ImGui::OpenPopup("Add object window");
@@ -337,9 +337,12 @@ public:
                 }
                 if (ImGui::Button("Delete this object"))
                 {
-                    item_current = item_current == n ? ((item_current + 1) < m_objs.size() ? (item_current + 1) : ((item_current - 1) > 0) ? (item_current - 1) : -1) : item_current;
-
                     m_objs.remove(m_objs[item_current]);
+
+                    if (item_current < m_objs.size() - 1)
+                    {
+                        item_current = m_objs.size() - 1;
+                    }
                 }
                 if (ImGui::Button("Close"))
                     ImGui::CloseCurrentPopup();
@@ -482,7 +485,6 @@ public:
         style.Colors[ImGuiCol_HeaderHovered] = ImVec4(0.5f, 0.5f, 0.5f, 1.f);
         style.Colors[ImGuiCol_HeaderActive] = ImVec4(0.4f, 0.4f, 0.4f, 1.f);
 
-        Application::init();
         return true;
     }
 private:

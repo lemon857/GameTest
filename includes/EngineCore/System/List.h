@@ -74,6 +74,7 @@ public:
 		if (is_empty()) return;
 		if (m_first == m_last) {
 			remove_first();
+			m_size--;
 			return;
 		}
 		ListNode* p = m_first;
@@ -87,6 +88,7 @@ public:
 		if (is_empty()) return;
 		if (m_first->value == _val) {
 			remove_first();
+			m_size--;
 			return;
 		}
 		else if (m_last->value == _val) {

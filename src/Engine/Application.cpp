@@ -11,6 +11,7 @@
 #include "EngineCore/Components/Transform.h"
 #include "EngineCore/Components/Highlight.h"
 #include "EngineCore/Light/DirectionalLight.h"
+#include "EngineCore/Light/PointerLight.h"
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
@@ -47,7 +48,10 @@ int Application::start(glm::ivec2& window_size, const char* title)
     {        
         return -1;
     }
-
+    if (!_init())
+    {
+        return -1;
+    }
     if (!init())
     {
         return -1;
@@ -90,8 +94,9 @@ int Application::start(glm::ivec2& window_size, const char* title)
 
         ResourceManager::getShaderProgram("colorShader")->use();
         ResourceManager::getShaderProgram("colorShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
-        ResourceManager::getShaderProgram("shape3DShader")->use();
-        ResourceManager::getShaderProgram("shape3DShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+        ResourceManager::getShaderProgram("default3DShader")->use();
+        ResourceManager::getShaderProgram("default3DShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+        ResourceManager::getShaderProgram("default3DShader")->setVec3("cam_position", m_cam->get_position());
         ResourceManager::getShaderProgram("spriteShader")->use();
         ResourceManager::getShaderProgram("spriteShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
 
@@ -162,7 +167,7 @@ int Application::start(glm::ivec2& window_size, const char* title)
     return 0;
 }
 
-bool Application::init()
+bool Application::_init()
 {
     m_cam = new Camera(glm::vec3(0), glm::vec3(0));
 
@@ -170,10 +175,11 @@ bool Application::init()
 
     std::vector<std::string> names;
 
-    names.push_back("shape3DShader");
+    names.push_back("default3DShader");
 
     add_object<ObjModel>("res/models/monkey.obj", ResourceManager::getMaterial("monkey"));
     add_object<DirectionalLight>(names);
+    add_object<PointerLight>(names, 1.1f);
     //add_object<Cube>(ResourceManager::getMaterial("cube"));
     //add_object<Cube>(ResourceManager::getMaterial("default")); 
     //add_object<Sprite>(ResourceManager::getMaterial("cube"), "YellowUp11");

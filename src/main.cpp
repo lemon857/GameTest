@@ -26,8 +26,10 @@
 #include "EngineCore/Components/SpriteRenderer.h"
 #include "EngineCore/Components/MeshRenderer.h"
 
+#include "EngineCore/Meshes/Plane.h"
+
 const char* components[] = { "transform", "spriteRenderer", "meshRenderer", "highlight" };
-const char* objstypes[] = { "empty object", "cube", "sprite", "objmodel"};
+const char* objstypes[] = { "empty object", "cube", "sprite", "objmodel", "plane" };
 
 int component_current = 0;
 int objstype_current = 0;
@@ -207,6 +209,10 @@ public:
                         ImGui::CloseCurrentPopup();
                         isSelectedObjFile = false;
                     }
+                    break;
+                case 4:
+                    add_object<Plane>(ResourceManager::getMaterial(matNames[material_current]));
+                    ImGui::CloseCurrentPopup();
                     break;
                 }
             }

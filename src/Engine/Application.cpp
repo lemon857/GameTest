@@ -1,7 +1,6 @@
 #include "EngineCore/Application.h"
 #include "EngineCore/Window.h"
 #include "EngineCore/Input.h"
-
 #include "EngineCore/System/Log.h"
 #include "EngineCore/System/Stopwatch.h"
 #include "EngineCore/Resources/ResourceManager.h"
@@ -11,6 +10,7 @@
 #include "EngineCore/Renderer3D/GraphicsObject.h"
 #include "EngineCore/Components/Transform.h"
 #include "EngineCore/Components/Highlight.h"
+#include "EngineCore/Light/DirectionalLight.h"
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
@@ -102,18 +102,6 @@ int Application::start(glm::ivec2& window_size, const char* title)
             m_line->render_from_to(glm::vec3(50.f, 0.f, 0.f), glm::vec3(-50.f, 0.f, 0.f), glm::vec3(1.f, 0.f, 0.f));
         }
 
-        //ResourceManager::getShaderProgram("shape3DShader")->setVec3("light_position", glm::vec3(0.f, 6.f, 0.f));
-        /*
-        ResourceManager::getShaderProgram("shape3DShader")->setFloat("ambient_factor", m_ambient_factor);
-        ResourceManager::getShaderProgram("shape3DShader")->setFloat("diffuse_factor", m_diffuse_factor);
-        ResourceManager::getShaderProgram("shape3DShader")->setFloat("specular_factor", m_specular_factor);
-        ResourceManager::getShaderProgram("shape3DShader")->setFloat("shininess", m_shininess);
-        ResourceManager::getShaderProgram("shape3DShader")->setFloat("metalic_factor", m_metalic_factor);
-
-        ResourceManager::getShaderProgram("colorShader")->use();
-        ResourceManager::getShaderProgram("colorShader")->setVec3("sourceColor", glm::vec3(m_light_color[0], m_light_color[1], m_light_color[2]));*/
-
-
         if (m_objs[item_current]->getComponent<Transform>() != nullptr)
         {
 
@@ -180,7 +168,12 @@ bool Application::init()
 
     m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
 
+    std::vector<std::string> names;
+
+    names.push_back("shape3DShader");
+
     add_object<ObjModel>("res/models/monkey.obj", ResourceManager::getMaterial("monkey"));
+    add_object<DirectionalLight>(names);
     //add_object<Cube>(ResourceManager::getMaterial("cube"));
     //add_object<Cube>(ResourceManager::getMaterial("default")); 
     //add_object<Sprite>(ResourceManager::getMaterial("cube"), "YellowUp11");

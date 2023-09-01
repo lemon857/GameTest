@@ -49,6 +49,8 @@ set(ENGINE_PRIVATE_INCLUDES
 	
 	includes/EngineCore/Renderer3D/GraphicsObject.h
 	
+	includes/EngineCore/System/ShadersSettings.h
+	
 	includes/EngineCore/Components/MeshRenderer.h	
 	includes/EngineCore/Components/Transform.h
 	includes/EngineCore/Components/SpriteRenderer.h
@@ -58,7 +60,9 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Meshes/Sprite.h
 	includes/EngineCore/Meshes/ObjModel.h
 	includes/EngineCore/Meshes/EmptyObject.h
-	includes/EngineCore/Meshes/Plane.h
+	includes/EngineCore/Meshes/Plane.h	
+  
+	includes/EngineCore/Light/DirectionalLight.h
 )
 
 set(ENGINE_PRIVATE_SOURCES
@@ -126,6 +130,8 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Meshes/Sprite.cpp
 	src/Meshes/ObjModel.cpp
 	src/Meshes/Plane.cpp
+		
+	src/Light/DirectionalLight.cpp
 )
 
 

@@ -1,5 +1,6 @@
 #include "EngineCore/Renderer/Line.h";
 
+#include "EngineCore/System/ShadersSettings.h"
 #include "EngineCore/Renderer/Material.h"
 #include "EngineCore/Renderer/VertexBufferLayout.h"
 #include "EngineCore/Renderer/Renderer.h"
@@ -45,7 +46,7 @@ namespace RenderEngine
 		glm::mat4 model = translateMat * scaleMat;
 
 		m_pMaterial->set_model_matrix(model);
-		m_pMaterial->set_first_vec4(glm::vec4(color, 1.f));
+		m_pMaterial->get_shader_ptr()->setVec4(COLOR_PROP_NAME, glm::vec4(color, 1.f));
 
 		Renderer::drawLine(m_vertexArray, m_size);
 	}
@@ -70,7 +71,7 @@ namespace RenderEngine
 		glm::mat4 model = translateMat * scaleMat;
 
 		m_pMaterial->set_model_matrix(model);
-		m_pMaterial->set_first_vec4(glm::vec4(color, 1.f));
+		m_pMaterial->get_shader_ptr()->setVec4(COLOR_PROP_NAME, glm::vec4(color, 1.f));
 
 		Renderer::drawLine(m_vertexArray, m_size);
 	}

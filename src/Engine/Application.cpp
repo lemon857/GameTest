@@ -56,6 +56,9 @@ int Application::start(glm::ivec2& window_size, const char* title)
     {
         return -1;
     }
+   
+    LOG_INFO("Renderer: {0}", RenderEngine::Renderer::getRendererStr());
+    LOG_INFO("OpenGL version: {0}", RenderEngine::Renderer::getVersionStr());
 
     LOG_INFO("Time for init: {0}", watch.stop());
 
@@ -177,7 +180,7 @@ bool Application::_init()
 
     names.push_back("default3DShader");
 
-    add_object<ObjModel>("res/models/monkey.obj", ResourceManager::getMaterial("monkey"));
+    //add_object<ObjModel>("res/models/monkey.obj", ResourceManager::getMaterial("monkey"));
     add_object<DirectionalLight>(names);
     add_object<PointerLight>(names, 1.1f);
     //add_object<Cube>(ResourceManager::getMaterial("cube"));

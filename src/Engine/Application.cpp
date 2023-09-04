@@ -48,11 +48,11 @@ int Application::start(glm::ivec2& window_size, const char* title)
     {        
         return -1;
     }
-    if (!_init())
+    if (!init())
     {
         return -1;
     }
-    if (!init())
+    if (!_init())
     {
         return -1;
     }
@@ -180,10 +180,10 @@ bool Application::_init()
 
     names.push_back("default3DShader");
 
-    //add_object<ObjModel>("res/models/monkey.obj", ResourceManager::getMaterial("monkey"));
+    //add_object<ObjModel>("res/models/finaly.obj", ResourceManager::getMaterial("monkey"));
     add_object<DirectionalLight>(names);
     add_object<PointerLight>(names, 1.1f);
-    //add_object<Cube>(ResourceManager::getMaterial("cube"));
+    add_object<Cube>(ResourceManager::getMaterial("cube"));
     //add_object<Cube>(ResourceManager::getMaterial("default")); 
     //add_object<Sprite>(ResourceManager::getMaterial("cube"), "YellowUp11");
 

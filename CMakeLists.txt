@@ -2,6 +2,22 @@ cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 
 set(PROJECT_NAME EngineTest)
 
+set(EDITOR_BUILD)
+
+set(ENGINE_PUBLIC_INCLUDES_EDITOR	
+	includes/EngineCore/Editor/EditorApplication.h	
+
+	includes/EngineCore/Editor/UI/UImodule.h
+	includes/EngineCore/Editor/UI/UIlayouts.h		   
+)
+
+set(ENGINE_PUBLIC_SRC_EDITOR			
+	src/Editor/EditorApplication.cpp	
+	
+	src/Editor/UI/UImodule.cpp	
+	src/Editor/UI/UIlayouts.cpp
+)
+
 set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/Engine.h
 	includes/EngineCore/Application.h
@@ -11,9 +27,6 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/Event.h
 	includes/EngineCore/Keys.h
 	includes/EngineCore/Input.h
-	
-	includes/EngineCore/UI/UImodule.h
-	includes/EngineCore/UI/UIlayouts.h
 		   
 	includes/EngineCore/System/Log.h
 	includes/EngineCore/System/Timer.h
@@ -117,10 +130,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Physics/Ray.cpp
 	
 	src/System/Timer.cpp
-	src/System/Stopwatch.cpp
-		
-	src/UI/UImodule.cpp	
-	src/UI/UIlayouts.cpp	
+	src/System/Stopwatch.cpp	
 	
 	src/Components/MeshRenderer.cpp	
 	src/Components/Transform.cpp
@@ -139,12 +149,25 @@ set(ENGINE_PRIVATE_SOURCES
 
 project(${PROJECT_NAME})
 
-add_executable(${PROJECT_NAME}
-	src/main.cpp
-	${ENGINE_PRIVATE_SOURCES}
-	${ENGINE_PUBLIC_INCLUDES}
-	${ENGINE_PRIVATE_INCLUDES}
-)
+
+#if (DEFINED EDITOR_BUILD)
+	add_executable(${PROJECT_NAME}
+		src/main.cpp
+		${ENGINE_PRIVATE_SOURCES}
+		${ENGINE_PUBLIC_INCLUDES}
+		${ENGINE_PRIVATE_INCLUDES}
+		
+		${ENGINE_PUBLIC_INCLUDES_EDITOR}
+		${ENGINE_PUBLIC_SRC_EDITOR}
+	)
+#else()
+#	add_executable(${PROJECT_NAME}
+#		src/main.cpp
+#		${ENGINE_PRIVATE_SOURCES}
+#		${ENGINE_PUBLIC_INCLUDES}
+#		${ENGINE_PRIVATE_INCLUDES}
+#		)
+#endif()
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 

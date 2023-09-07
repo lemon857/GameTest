@@ -1,6 +1,6 @@
 #include "EngineCore/Window.h"
 
-#include "EngineCore/UI/UImodule.h"
+#include "EngineCore/Editor/UI/UImodule.h"
 #include "EngineCore/System/Log.h"
 #include "EngineCore/Renderer/Renderer.h"
 #include "EngineCore/Components/SpriteRenderer.h"

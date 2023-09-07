@@ -1,5 +1,5 @@
-#include "EngineCore/UI/UImodule.h"
-#include "EngineCore/UI/UIlayouts.h"
+#include "EngineCore/Editor/UI/UImodule.h"
+#include "EngineCore/Editor/UI/UIlayouts.h"
 
 #include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_opengl3.h>

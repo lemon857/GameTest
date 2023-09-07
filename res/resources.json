@@ -21,9 +21,9 @@
       ]
     },
     {
-      "name": "shape3DShader",
-      "filePath_v": "res/shaders/shape3DVert.glsl",
-      "filePath_f": "res/shaders/shape3DFrag.glsl",
+      "name": "default3DShader",
+      "filePath_v": "res/shaders/default3DVert.glsl",
+      "filePath_f": "res/shaders/default3DFrag.glsl",
       "layout": [
         {
           "name": "ambient_factor",
@@ -51,12 +51,6 @@
         },
         {
           "name": "metalic_factor",
-          "typeInt": 1,
-          "minVal": 0,
-          "maxVal": 1
-        },
-        {
-          "name": "strength_light",
           "typeInt": 1,
           "minVal": 0,
           "maxVal": 1
@@ -204,7 +198,7 @@
     },
     {
       "name": "cube",
-      "nameShader": "shape3DShader",
+      "nameShader": "default3DShader",
       "nameTexture": "CubeTexture"
     },
     {
@@ -214,7 +208,7 @@
     },
     {
       "name": "monkey",
-      "nameShader": "shape3DShader",
+      "nameShader": "default3DShader",
       "nameTexture": "MonkeyTexture"
     }
   ]  

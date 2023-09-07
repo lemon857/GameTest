@@ -30,6 +30,8 @@ public:
 	Application& operator=(const Application&) = delete;
 	Application& operator=(Application&&) = delete;
 
+	void PickingPhase();
+
 	int start(glm::ivec2& window_size, const char* title);
 
 	virtual bool init() { return true; };

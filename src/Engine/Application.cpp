@@ -2,6 +2,7 @@
 #include "EngineCore/Window.h"
 #include "EngineCore/Input.h"
 #include "EngineCore/System/Log.h"
+#include "EngineCore/System/ShadersSettings.h"
 #include "EngineCore/System/Stopwatch.h"
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Renderer/Renderer.h"
@@ -9,6 +10,7 @@
 #include "EngineCore/Components/SpriteRenderer.h"
 #include "EngineCore/Renderer3D/GraphicsObject.h"
 #include "EngineCore/Components/Transform.h"
+#include "EngineCore/Components/MeshRenderer.h"
 #include "EngineCore/Components/Highlight.h"
 #include "EngineCore/Light/DirectionalLight.h"
 #include "EngineCore/Light/PointerLight.h"
@@ -20,6 +22,135 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 Stopwatch watch;
+
+class TexturePicking
+{
+public:
+
+    struct PixelInfo {
+        unsigned int ObjectID = 0;
+        unsigned int DrawID = 0;
+        unsigned int PrimID = 0;
+    };
+
+    TexturePicking();
+    ~TexturePicking();
+
+    void init(unsigned int WindowWidth, unsigned int WindowHeight);
+
+    void bind();
+
+    void unbind();
+
+    PixelInfo ReadPixel(unsigned int x, unsigned int y);
+private:
+    GLuint m_fbo = 0;
+    GLuint m_pickingTexture = 0;
+    GLuint m_depthTexture = 0;
+};
+
+TexturePicking::TexturePicking()
+    : m_fbo(0)
+{
+}
+
+TexturePicking::~TexturePicking()
+{
+    if (m_fbo != 0) {
+        glDeleteFramebuffers(1, &m_fbo);
+    }
+
+    if (m_pickingTexture != 0) {
+        glDeleteTextures(1, &m_pickingTexture);
+    }
+
+    if (m_depthTexture != 0) {
+        glDeleteTextures(1, &m_depthTexture);
+    }
+}
+void TexturePicking::init(unsigned int WindowWidth, unsigned int WindowHeight)
+{
+    // Create the FBO
+    glGenFramebuffers(1, &m_fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+
+    // Create the texture object for the primitive information buffer
+    glGenTextures(1, &m_pickingTexture);
+    glBindTexture(GL_TEXTURE_2D, m_pickingTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32UI, WindowWidth, WindowHeight, 0, GL_RGB_INTEGER, GL_UNSIGNED_INT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_pickingTexture, 0);
+
+    // Create the texture object for the depth buffer
+    glGenTextures(1, &m_depthTexture);
+    glBindTexture(GL_TEXTURE_2D, m_depthTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, WindowWidth, WindowHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthTexture, 0);
+
+    // Verify that the FBO is correct
+    GLenum Status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+
+    if (Status != GL_FRAMEBUFFER_COMPLETE) {
+        LOG_INFO("FB error, status: 0x{0}", Status);
+    }
+
+    // Restore the default framebuffer
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+void TexturePicking::bind()
+{
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
+}
+void TexturePicking::unbind()
+{
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+}
+TexturePicking::PixelInfo TexturePicking::ReadPixel(unsigned int x, unsigned int y)
+{
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fbo);
+
+    glReadBuffer(GL_COLOR_ATTACHMENT0);
+
+    PixelInfo Pixel;
+    glReadPixels(x, y, 1, 1, GL_RGB_INTEGER, GL_UNSIGNED_INT, &Pixel);
+
+    glReadBuffer(GL_NONE);
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+
+    return Pixel;
+}
+
+TexturePicking m_pickingTexture;
+
+void Application::PickingPhase()
+{
+    m_pickingTexture.bind();
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    ResourceManager::getShaderProgram("default3DShader")->use();
+    ResourceManager::getShaderProgram("default3DShader")->setVec3("cam_position", m_cam->get_position());
+
+    ResourceManager::getShaderProgram("colorShader")->use();
+    ResourceManager::getShaderProgram("colorShader")->setMatrix4(VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+
+    for (size_t i = 0; i < m_objs.size(); i++)
+    {
+        MeshRenderer* mesh = m_objs[i]->getComponent<MeshRenderer>();
+        if (mesh != nullptr)
+        {
+            std::shared_ptr<RenderEngine::ShaderProgram> shader = mesh->get_material_ptr()->get_shader_ptr();
+            shader->use();
+            shader->setMatrix4(VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+        }
+        m_objs[i]->update(100);
+    }
+
+    m_pickingTexture.unbind();
+}
 
 Application::Application()
 {
@@ -48,18 +179,18 @@ int Application::start(glm::ivec2& window_size, const char* title)
     {        
         return -1;
     }
-    if (!init())
+    if (!_init())
     {
         return -1;
     }
-    if (!_init())
+    if (!init())
     {
         return -1;
     }
    
     LOG_INFO("Renderer: {0}", RenderEngine::Renderer::getRendererStr());
     LOG_INFO("OpenGL version: {0}", RenderEngine::Renderer::getVersionStr());
-
+    
     LOG_INFO("Time for init: {0}", watch.stop());
 
     auto lastTime = std::chrono::high_resolution_clock::now();
@@ -77,6 +208,15 @@ int Application::start(glm::ivec2& window_size, const char* title)
         auto currentTime = std::chrono::high_resolution_clock::now();
         double duration = std::chrono::duration<double, std::milli>(currentTime - lastTime).count();
         lastTime = currentTime;
+
+        if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT))
+        {
+            PickingPhase();
+            TexturePicking::PixelInfo Pixel = m_pickingTexture.ReadPixel(m_mouse_pos_x, m_pWindow->get_size().y - m_mouse_pos_y - 1);
+            //m_moveObject = !m_moveObject;
+            //int info = RenderEngine::Renderer::get_info_pixel(m_mouse_pos_x, m_mouse_pos_y, m_pWindow->get_size().y);
+            LOG_INFO("ObjectID: {0}", Pixel.ObjectID);
+        }
 
         RenderEngine::Renderer::setClearColor(m_colors[0], m_colors[1], m_colors[2], m_colors[3]);
 
@@ -96,12 +236,10 @@ int Application::start(glm::ivec2& window_size, const char* title)
         m_cam_rot[2] = rot.z;
 
         ResourceManager::getShaderProgram("colorShader")->use();
-        ResourceManager::getShaderProgram("colorShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+        ResourceManager::getShaderProgram("colorShader")->setMatrix4(VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+
         ResourceManager::getShaderProgram("default3DShader")->use();
-        ResourceManager::getShaderProgram("default3DShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
         ResourceManager::getShaderProgram("default3DShader")->setVec3("cam_position", m_cam->get_position());
-        ResourceManager::getShaderProgram("spriteShader")->use();
-        ResourceManager::getShaderProgram("spriteShader")->setMatrix4("view_projectionMat", m_cam->get_projection_matrix() * m_cam->get_view_matrix());
 
         if (m_drawNullIntersection)
         {
@@ -131,6 +269,13 @@ int Application::start(glm::ivec2& window_size, const char* title)
 
         for (size_t i = 0; i < m_objs.size(); i++)
         {
+            MeshRenderer* mesh = m_objs[i]->getComponent<MeshRenderer>();
+            if (mesh != nullptr)
+            {
+                std::shared_ptr<RenderEngine::ShaderProgram> shader = mesh->get_material_ptr()->get_shader_ptr();
+                shader->use();
+                shader->setMatrix4(VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+            }
             m_objs[i]->update(duration);
         }
 
@@ -180,10 +325,10 @@ bool Application::_init()
 
     names.push_back("default3DShader");
 
-    //add_object<ObjModel>("res/models/finaly.obj", ResourceManager::getMaterial("monkey"));
+    add_object<ObjModel>("res/models/monkey.obj", ResourceManager::getMaterial("monkey"));
     add_object<DirectionalLight>(names);
     add_object<PointerLight>(names, 1.1f);
-    add_object<Cube>(ResourceManager::getMaterial("cube"));
+    //add_object<Cube>(ResourceManager::getMaterial("cube"));
     //add_object<Cube>(ResourceManager::getMaterial("default")); 
     //add_object<Sprite>(ResourceManager::getMaterial("cube"), "YellowUp11");
 
@@ -292,13 +437,6 @@ void Application::on_key_update(const double delta)
     glm::vec3 rotation_delta{ 0,0,0 };
 
     double addSpeed = 1;
-
-    if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT))
-    {
-        //m_moveObject = !m_moveObject;
-        int info = RenderEngine::Renderer::get_info_pixel(m_mouse_pos_x, m_mouse_pos_y, m_pWindow->get_size().y);
-        LOG_INFO("ObjectID: {0}", info);
-    }
 
     if (Input::isKeyPressed(KeyCode::KEY_LEFT_CONTROL))
     {

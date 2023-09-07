@@ -13,6 +13,8 @@ struct INIdata
 	bool& maximized_window;
 };
 
+class Scene;
+
 struct GraphicsObject;
 
 namespace RenderEngine
@@ -48,6 +50,10 @@ namespace RenderEngine
 		static bool load_JSON_resources(const std::string& JSONrelativePath);
 
 		static bool load_INI_settings(const std::string& INIrelativePath, INIdata& data, const bool isWrite);
+
+		static bool load_scene(std::string relativePath, Scene& scene);
+
+		static bool save_scene(std::string relativePath, const Scene& scene);
 
 		static std::shared_ptr<GraphicsObject> load_OBJ_file(const std::string& OBJrelativePath, bool is_reload = false);
 

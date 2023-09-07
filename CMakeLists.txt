@@ -40,6 +40,8 @@ set(ENGINE_PRIVATE_INCLUDES
 	
 	includes/EngineCore/Resources/ResourceManager.h
 	includes/EngineCore/Resources/stb_image.h
+	includes/EngineCore/Resources/Scene.h
+	
 	includes/EngineCore/Renderer/ShaderProgram.h
 	includes/EngineCore/Renderer/Texture2D.h
 	includes/EngineCore/Renderer/VertexBuffer.h
@@ -108,6 +110,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Examples/PongDemo/Ball.cpp
 	
 	src/Resources/ResourceManager.cpp
+	src/Resources/Scene.cpp
 	
 	src/Renderer/ShaderProgram.cpp
 	src/Renderer/Texture2D.cpp

@@ -48,34 +48,34 @@ EditorApplication::EditorApplication()
             switch (prop)
             {
             case UIlayoutTransform::position:
-                m_objs[item_current]->getComponent<Transform>()->set_position(glm::vec3(data[0], data[1], data[2]));
+                m_scene.get_list()[item_current]->object->getComponent<Transform>()->set_position(glm::vec3(data[0], data[1], data[2]));
                 break;
             case UIlayoutTransform::scale:
-                m_objs[item_current]->getComponent<Transform>()->set_scale(glm::vec3(data[0], data[1], data[2]));
+                m_scene.get_list()[item_current]->object->getComponent<Transform>()->set_scale(glm::vec3(data[0], data[1], data[2]));
                 break;
             case UIlayoutTransform::rotation:
-                m_objs[item_current]->getComponent<Transform>()->set_rotation(glm::vec3(data[0], data[1], data[2]));
+                m_scene.get_list()[item_current]->object->getComponent<Transform>()->set_rotation(glm::vec3(data[0], data[1], data[2]));
                 break;
             }
         });
     highlightLayout.set_callback(
         [&](const float* data, bool isActive)
         {
-            m_objs[item_current]->getComponent<Highlight>()->set_active(isActive);
-            m_objs[item_current]->getComponent<Highlight>()->set_color(glm::vec3(data[0], data[1], data[2]));
+            m_scene.get_list()[item_current]->object->getComponent<Highlight>()->set_active(isActive);
+            m_scene.get_list()[item_current]->object->getComponent<Highlight>()->set_color(glm::vec3(data[0], data[1], data[2]));
         });
     materialLayout->set_callback(
         [&](const std::string textureName, const std::string shaderName)
         {
             std::shared_ptr<RenderEngine::Material> mat;
-            if (m_objs[item_current]->getComponent<MeshRenderer>() != nullptr)
+            if (m_scene.get_list()[item_current]->object->getComponent<MeshRenderer>() != nullptr)
             {
-                MeshRenderer* mesh = m_objs[item_current]->getComponent<MeshRenderer>();
+                MeshRenderer* mesh = m_scene.get_list()[item_current]->object->getComponent<MeshRenderer>();
                 mat = mesh->get_material_ptr();
             }
-            else if (m_objs[item_current]->getComponent<SpriteRenderer>() != nullptr)
+            else if (m_scene.get_list()[item_current]->object->getComponent<SpriteRenderer>() != nullptr)
             {
-                SpriteRenderer* sprite = m_objs[item_current]->getComponent<SpriteRenderer>();
+                SpriteRenderer* sprite = m_scene.get_list()[item_current]->object->getComponent<SpriteRenderer>();
                 mat = sprite->get_material_ptr();
             }
             else return;
@@ -137,11 +137,19 @@ void EditorApplication::on_ui_render()
         if (ImGui::Button("Cancel")) { ImGui::CloseCurrentPopup(); }
         ImGui::EndPopup();
     }
+    if (ImGui::Button("Save this scene"))
+    {
+        ResourceManager::save_scene("res/scenes/my_scene.scene", m_scene);
+    } 
+    if (ImGui::Button("Load this scene"))
+    {
+        ResourceManager::load_scene("res/scenes/my_scene.scene", m_scene);
+    }
     ImGui::End();
 
     ImGui::Begin("Object manager");
     if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && !ImGui::IsAnyItemHovered()) item_current = -1;
-    ImGui::Text("Count: %i", m_objs.size());
+    ImGui::Text("Count: %i", m_scene.get_list().size());
     if (ImGui::Button("Add object"))
         ImGui::OpenPopup("Add object window");
 
@@ -169,15 +177,15 @@ void EditorApplication::on_ui_render()
             switch (objstype_current)
             {
             case 0:
-                add_object<EmptyObject>();
+                m_scene.add_object<EmptyObject>();
                 ImGui::CloseCurrentPopup();
                 break;
             case 1:
-                add_object<Cube>(ResourceManager::getMaterial(matNames[material_current]));
+                m_scene.add_object<Cube>(ResourceManager::getMaterial(matNames[material_current]));
                 ImGui::CloseCurrentPopup();
                 break;
             case 2:
-                add_object<Sprite>(ResourceManager::getMaterial(matNames[material_current]), "default");
+                m_scene.add_object<Sprite>(ResourceManager::getMaterial(matNames[material_current]), "default");
                 ImGui::CloseCurrentPopup();
                 break;
             case 3:
@@ -187,13 +195,13 @@ void EditorApplication::on_ui_render()
                 }
                 else
                 {
-                    add_object<ObjModel>(selectedObj, ResourceManager::getMaterial(matNames[material_current]));
+                    m_scene.add_object<ObjModel>(selectedObj, ResourceManager::getMaterial(matNames[material_current]));
                     ImGui::CloseCurrentPopup();
                     isSelectedObjFile = false;
                 }
                 break;
             case 4:
-                add_object<Plane>(ResourceManager::getMaterial(matNames[material_current]));
+                m_scene.add_object<Plane>(ResourceManager::getMaterial(matNames[material_current]));
                 ImGui::CloseCurrentPopup();
                 break;
             }
@@ -229,30 +237,30 @@ void EditorApplication::on_ui_render()
         ImGui::EndPopup();
     }
 
-    for (int n = 0; n < m_objs.size(); n++)
+    for (int n = 0; n < m_scene.get_list().size(); n++)
     {
         char buf[32];
-        sprintf(buf, m_objs[n]->get_name().c_str());
+        sprintf(buf, m_scene.get_list()[n]->object->get_name().c_str());
         if (ImGui::Selectable(buf, item_current == n))
         {
             item_current = n;
-            if (m_objs[item_current]->getComponent<Transform>() != nullptr)
+            if (m_scene.get_list()[item_current]->object->getComponent<Transform>() != nullptr)
             {
-                glm::vec3 pos = m_objs[item_current]->getComponent<Transform>()->get_position();
-                glm::vec3 scale = m_objs[item_current]->getComponent<Transform>()->get_scale();
-                glm::vec3 rot = m_objs[item_current]->getComponent<Transform>()->get_rotation();
+                glm::vec3 pos = m_scene.get_list()[item_current]->object->getComponent<Transform>()->get_position();
+                glm::vec3 scale = m_scene.get_list()[item_current]->object->getComponent<Transform>()->get_scale();
+                glm::vec3 rot = m_scene.get_list()[item_current]->object->getComponent<Transform>()->get_rotation();
 
                 transformLayout.set_props(pos, scale, rot);
             }
-            if (m_objs[item_current]->getComponent<Highlight>() != nullptr)
+            if (m_scene.get_list()[item_current]->object->getComponent<Highlight>() != nullptr)
             {
-                highlightLayout.set_color(m_objs[item_current]->getComponent<Highlight>()->get_color());
+                highlightLayout.set_color(m_scene.get_list()[item_current]->object->getComponent<Highlight>()->get_color());
             }
-            if (m_objs[item_current]->getComponent<MeshRenderer>() != nullptr)
+            if (m_scene.get_list()[item_current]->object->getComponent<MeshRenderer>() != nullptr)
             {
-                materialLayout->set_material(m_objs[item_current]->getComponent<MeshRenderer>()->get_material_ptr());
+                materialLayout->set_material(m_scene.get_list()[item_current]->object->getComponent<MeshRenderer>()->get_material_ptr());
             }
-            if (m_objs[item_current]->getComponent<SpriteRenderer>() != nullptr)
+            if (m_scene.get_list()[item_current]->object->getComponent<SpriteRenderer>() != nullptr)
             {
                 //shaderLayout->set_shader_layout(m_objs[item_current]->getComponent<SpriteRenderer>()->get_material_ptr()->get_shader_ptr()->get_layout());
                 //materialLayout->set_material(m_objs[item_current]->getComponent<SpriteRenderer>()->get_material_ptr());
@@ -261,30 +269,30 @@ void EditorApplication::on_ui_render()
         if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
         {
             item_current = n;
-            ImGui::Text("This a prop for \"%s\"!", m_objs[n]->get_name().c_str());
+            ImGui::Text("This a prop for \"%s\"!", m_scene.get_list()[n]->object->get_name().c_str());
             ImGui::Combo("components", &component_current, components, IM_ARRAYSIZE(components));
             if (ImGui::Button("Add component"))
             {
                 switch (component_current)
                 {
                 case 0:
-                    if (m_objs[item_current]->addComponent<Transform>() != nullptr)  transformLayout.set_props(glm::vec3(0.f), glm::vec3(1.f), glm::vec3(0.f));
+                    if (m_scene.get_list()[item_current]->object->addComponent<Transform>() != nullptr)  transformLayout.set_props(glm::vec3(0.f), glm::vec3(1.f), glm::vec3(0.f));
                     break;
                 case 1:
-                    if (m_objs[item_current]->addComponent<SpriteRenderer>(ResourceManager::getMaterial("default"), "default") == nullptr)
+                    if (m_scene.get_list()[item_current]->object->addComponent<SpriteRenderer>(ResourceManager::getMaterial("default"), "default") == nullptr)
                         break;
                 case 2:
                     if (!isSelectedObjFile)
                         ImGui::OpenPopup("Add component window -- MeshRenderer settings");
                     else {
-                        if (m_objs[item_current]->addComponent<MeshRenderer>(ResourceManager::load_OBJ_file(selectedObj), ResourceManager::getMaterial("default")) == nullptr)
+                        if (m_scene.get_list()[item_current]->object->addComponent<MeshRenderer>(ResourceManager::load_OBJ_file(selectedObj), ResourceManager::getMaterial("default")) == nullptr)
                         {
-                            materialLayout->set_material(m_objs[item_current]->getComponent<MeshRenderer>()->get_material_ptr());
+                            materialLayout->set_material(m_scene.get_list()[item_current]->object->getComponent<MeshRenderer>()->get_material_ptr());
                         }
                     }
                     break;
                 case 3:
-                    if (m_objs[item_current]->addComponent<Highlight>(ResourceManager::getMaterial("default")) == nullptr)
+                    if (m_scene.get_list()[item_current]->object->addComponent<Highlight>(ResourceManager::getMaterial("default")) == nullptr)
                     {
 
                     }
@@ -296,20 +304,20 @@ void EditorApplication::on_ui_render()
                 switch (component_current)
                 {
                 case 0:
-                    if (m_objs[item_current]->getComponent<Transform>() != nullptr)
-                        m_objs[item_current]->deleteComponent<Transform>();
+                    if (m_scene.get_list()[item_current]->object->getComponent<Transform>() != nullptr)
+                        m_scene.get_list()[item_current]->object->deleteComponent<Transform>();
                     break;
                 case 1:
-                    if (m_objs[item_current]->getComponent<SpriteRenderer>() != nullptr)
-                        m_objs[item_current]->deleteComponent<SpriteRenderer>();
+                    if (m_scene.get_list()[item_current]->object->getComponent<SpriteRenderer>() != nullptr)
+                        m_scene.get_list()[item_current]->object->deleteComponent<SpriteRenderer>();
                     break;
                 case 2:
-                    if (m_objs[item_current]->getComponent<MeshRenderer>() != nullptr)
-                        m_objs[item_current]->deleteComponent<MeshRenderer>();
+                    if (m_scene.get_list()[item_current]->object->getComponent<MeshRenderer>() != nullptr)
+                        m_scene.get_list()[item_current]->object->deleteComponent<MeshRenderer>();
                     break;
                 case 3:
-                    if (m_objs[item_current]->getComponent<Highlight>() != nullptr)
-                        m_objs[item_current]->deleteComponent<Highlight>();
+                    if (m_scene.get_list()[item_current]->object->getComponent<Highlight>() != nullptr)
+                        m_scene.get_list()[item_current]->object->deleteComponent<Highlight>();
                     break;
                 }
             }
@@ -319,11 +327,11 @@ void EditorApplication::on_ui_render()
             }
             if (ImGui::Button("Delete this object"))
             {
-                m_objs.remove(m_objs[item_current]);
+                m_scene.get_list().remove(m_scene.get_list()[item_current]);
 
-                if (item_current < m_objs.size() - 1)
+                if (item_current < m_scene.get_list().size() - 1)
                 {
-                    item_current = m_objs.size() - 1;
+                    item_current = m_scene.get_list().size() - 1;
                 }
             }
             if (ImGui::Button("Close"))
@@ -358,7 +366,7 @@ void EditorApplication::on_ui_render()
                 ImGui::InputText("Name", bufName, 64);
                 if (ImGui::Button("Submit"))
                 {
-                    m_objs[item_current]->set_name(std::string(bufName));
+                    m_scene.get_list()[item_current]->object->set_name(std::string(bufName));
                     ImGui::CloseCurrentPopup();
                 }
 
@@ -373,19 +381,19 @@ void EditorApplication::on_ui_render()
     ImGui::End();
 
     ImGui::Begin("Object settings");
-    if (m_objs[item_current]->getComponent<Transform>() != nullptr && item_current >= 0)
+    if (m_scene.get_list()[item_current]->object->getComponent<Transform>() != nullptr && item_current >= 0)
     {
         transformLayout.set_props(
-            m_objs[item_current]->getComponent<Transform>()->get_position(),
-            m_objs[item_current]->getComponent<Transform>()->get_scale(),
-            m_objs[item_current]->getComponent<Transform>()->get_rotation());
+            m_scene.get_list()[item_current]->object->getComponent<Transform>()->get_position(),
+            m_scene.get_list()[item_current]->object->getComponent<Transform>()->get_scale(),
+            m_scene.get_list()[item_current]->object->getComponent<Transform>()->get_rotation());
         transformLayout.on_draw_ui();
     }
-    if (m_objs[item_current]->getComponent<Highlight>() != nullptr && item_current >= 0)
+    if (m_scene.get_list()[item_current]->object->getComponent<Highlight>() != nullptr && item_current >= 0)
     {
         highlightLayout.on_draw_ui();
     }
-    if (m_objs[item_current]->getComponent<MeshRenderer>() != nullptr && item_current >= 0)
+    if (m_scene.get_list()[item_current]->object->getComponent<MeshRenderer>() != nullptr && item_current >= 0)
     {
         meshrendererLayout.on_draw_ui();
     }
@@ -450,9 +458,9 @@ bool EditorApplication::init()
 
     names.push_back("default3DShader");
 
-    add_object<ObjModel>("res/models/monkey.obj", ResourceManager::getMaterial("monkey"));
-    add_object<DirectionalLight>(names);
-    add_object<PointerLight>(names, 1.1f);
+    m_scene.add_object<ObjModel>("res/models/monkey.obj", ResourceManager::getMaterial("monkey"));
+    m_scene.add_object<DirectionalLight>(names);
+    m_scene.add_object<PointerLight>(names, 1.1f);
     //add_object<Cube>(ResourceManager::getMaterial("cube"));
     //add_object<Cube>(ResourceManager::getMaterial("default")); 
     //add_object<Sprite>(ResourceManager::getMaterial("cube"), "YellowUp11");
@@ -595,7 +603,7 @@ void EditorApplication::on_update(const double delta)
         m_line->render_from_to(glm::vec3(50.f, 0.f, 0.f), glm::vec3(-50.f, 0.f, 0.f), glm::vec3(1.f, 0.f, 0.f));
     }
 
-    if (m_objs[item_current]->getComponent<Transform>() != nullptr)
+    if (m_scene.get_list()[item_current]->object->getComponent<Transform>() != nullptr)
     {
 
         if (m_moveObject)
@@ -607,23 +615,23 @@ void EditorApplication::on_update(const double delta)
                 pos[0], pos[1], pos[2], 1);
 
             glm::vec3 posfin = glm::vec3(translateMat * glm::vec4(glm::vec3(m_world_mouse_dir_x, m_world_mouse_dir_y, m_world_mouse_dir_z) * m_distance, 1.f));
-            m_objs[item_current]->getComponent<Transform>()->set_position(posfin);
+            m_scene.get_list()[item_current]->object->getComponent<Transform>()->set_position(posfin);
         }
-        m_line->render(m_objs[item_current]->getComponent<Transform>()->get_position(), glm::vec3(5.f, 0.f, 0.f), glm::vec3(1.f, 0.f, 0.f));
-        m_line->render(m_objs[item_current]->getComponent<Transform>()->get_position(), glm::vec3(0.f, 0.f, 5.f), glm::vec3(0.f, 0.f, 1.f));
-        m_line->render(m_objs[item_current]->getComponent<Transform>()->get_position(), glm::vec3(0.f, 5.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
+        m_line->render(m_scene.get_list()[item_current]->object->getComponent<Transform>()->get_position(), glm::vec3(5.f, 0.f, 0.f), glm::vec3(1.f, 0.f, 0.f));
+        m_line->render(m_scene.get_list()[item_current]->object->getComponent<Transform>()->get_position(), glm::vec3(0.f, 0.f, 5.f), glm::vec3(0.f, 0.f, 1.f));
+        m_line->render(m_scene.get_list()[item_current]->object->getComponent<Transform>()->get_position(), glm::vec3(0.f, 5.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
     }
 
-    for (size_t i = 0; i < m_objs.size(); i++)
+    for (size_t i = 0; i < m_scene.get_list().size(); i++)
     {
-        MeshRenderer* mesh = m_objs[i]->getComponent<MeshRenderer>();
+        MeshRenderer* mesh = m_scene.get_list()[i]->object->getComponent<MeshRenderer>();
         if (mesh != nullptr)
         {
             std::shared_ptr<RenderEngine::ShaderProgram> shader = mesh->get_material_ptr()->get_shader_ptr();
             shader->use();
             shader->setMatrix4(VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
         }
-        m_objs[i]->update(delta);
+        m_scene.get_list()[i]->object->update(delta);
     }
 
     fps++;
@@ -701,7 +709,7 @@ bool EditorApplication::init_events()
     m_event_dispather.add_event_listener<EventMouseScrolled>(
         [&](EventMouseScrolled& e)
         {
-            //if (m_distance + e.y_offset > 0) m_distance += e.y_offset;
+            if (m_distance + e.y_offset > 0) m_distance += e.y_offset;
             LOG_INFO("[EVENT] Scroll: {0}x{1}", e.x_offset, e.y_offset);
         });
     m_event_dispather.add_event_listener<EventWindowClose>([&](EventWindowClose& e)

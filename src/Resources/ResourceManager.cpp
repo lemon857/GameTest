@@ -11,6 +11,7 @@
 #include "EngineCore/Renderer/IndexBuffer.h"
 #include "EngineCore/Renderer/ShaderProgramLayout.h"
 #include "EngineCore/System/Log.h"
+#include "EngineCore/Resources/Scene.h"
 
 #include <sstream>
 #include <fstream>
@@ -240,6 +241,60 @@ bool ResourceManager::load_INI_settings(const std::string& INIpath, INIdata& dat
 		writeStream.close();
 		return false;
 	}
+}
+bool ResourceManager::load_scene(std::string relativePath, Scene& scene)
+{
+	std::ifstream fin;
+
+	linked_list<ObjectsPart*> objs;
+
+	fin.open(m_path + "/" + relativePath, std::ifstream::app);
+	if (!fin.is_open())
+	{
+		LOG_ERROR("File {0} doesn't open for read", relativePath);
+		return false;
+	}
+	else
+	{
+		LOG_INFO("Complete load scene in {0}", relativePath);
+		fin.read((char*)&objs, sizeof(objs));
+	}
+
+	fin.close();
+
+	for (size_t i = 0; i < scene.get_readonly_list().size(); i++)
+	{
+		scene.get_list().push_back(objs[i]);
+	}
+
+	return true;
+}
+bool ResourceManager::save_scene(std::string relativePath, const Scene& scene)
+{
+	std::ofstream fout;
+
+	linked_list<ObjectsPart> objs;
+	
+	for (size_t i = 0; i < scene.get_readonly_list().size(); i++)
+	{
+		objs.push_back(*scene.get_readonly_list()[i]);
+	}
+
+	fout.open(m_path + "/" + relativePath, std::ofstream::app);
+
+	if (!fout.is_open())
+	{
+		LOG_ERROR("File {0} doesn't open for write", relativePath);
+		return false;
+	}
+	else
+	{
+		LOG_INFO("Complete save scene in {0}", relativePath);
+		fout.write((char*)&objs, sizeof(objs));
+	}
+
+	fout.close();
+	return true;
 }
 std::shared_ptr<GraphicsObject> ResourceManager::load_OBJ_file(const std::string& OBJrelativePath, bool is_reload)
 {

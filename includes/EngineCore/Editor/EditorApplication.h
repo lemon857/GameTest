@@ -9,6 +9,8 @@
 #include "EngineCore/Editor/UI/UImodule.h"
 #include "EngineCore/Editor/UI/UIlayouts.h"
 
+#include "EngineCore/Resources/Scene.h"
+
 class EditorApplication : public Application
 {
 public:
@@ -21,6 +23,8 @@ public:
     void on_update(const double delta) override;
     bool init_events() override;
 private:
+    Scene m_scene;
+
     Camera* m_cam;
 
     Ray* m_ray;

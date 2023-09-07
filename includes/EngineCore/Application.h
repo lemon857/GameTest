@@ -11,7 +11,7 @@ class Application
 {
 public:
 	Application();
-	virtual  ~Application();
+	virtual ~Application();
 
 	Application(const Application&) = delete;
 	Application(Application&&) = delete;
@@ -29,22 +29,10 @@ public:
 	virtual void on_key_update(const double delta) {};
 
 	virtual void on_ui_render() {};
-	// TEMP
-	template <class _Ty, class... _Types>
-	void add_object(_Types&&... _Args)
-	{
-		IGameObject* obj = (IGameObject*)(new _Ty(std::forward<_Types>(_Args)...));
-		m_items_str.push_back(obj->get_name());
-		m_objs.push_back(std::move(obj));
-	}
 protected:
 	EventDispatcher m_event_dispather;
 	std::unique_ptr<class Window> m_pWindow;
 	bool m_pCloseWindow = true;
 	bool m_maximized_window = false;
 	glm::ivec2& m_window_position = glm::ivec2(100);
-
-	std::vector<std::string> m_items_str;
-
-	linked_list<IGameObject*> m_objs;
 };

@@ -139,7 +139,9 @@ void EditorApplication::on_ui_render()
     }
     if (ImGui::Button("Save this scene"))
     {
-        ResourceManager::save_scene("res/scenes/my_scene.scene", m_scene);
+        const auto a = m_scene.get_list().data();
+        LOG_INFO(a[0]->object->get_name());
+        //ResourceManager::save_scene("res/scenes/my_scene.scene", m_scene);
     } 
     if (ImGui::Button("Load this scene"))
     {
@@ -241,8 +243,10 @@ void EditorApplication::on_ui_render()
     {
         char buf[32];
         sprintf(buf, m_scene.get_list()[n]->object->get_name().c_str());
-        if (ImGui::Selectable(buf, item_current == n))
+        ImGui::Selectable(buf, item_current == n);
+        if (ImGui::IsItemClicked())
         {
+            sprintf(bufName, m_scene.get_list()[n]->object->get_name().c_str());
             item_current = n;
             if (m_scene.get_list()[item_current]->object->getComponent<Transform>() != nullptr)
             {
@@ -363,7 +367,7 @@ void EditorApplication::on_ui_render()
             }
             if (ImGui::BeginPopupModal("Rename object"))
             {
-                ImGui::InputText("Name", bufName, 64);
+                ImGui::InputText("Name", bufName, 32);
                 if (ImGui::Button("Submit"))
                 {
                     m_scene.get_list()[item_current]->object->set_name(std::string(bufName));

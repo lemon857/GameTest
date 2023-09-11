@@ -123,6 +123,19 @@ public:
 	{
 		return m_size;
 	}
+	// This function create new array, take care and don't forget delete this array
+	_Ty* data()
+	{
+		if (is_empty()) return nullptr;
+		_Ty* p = new _Ty[m_size];
+		ListNode* pData = m_first;
+		for (int i = 0; i < m_size; i++) {
+			p[i] = pData->value;
+			pData = pData->m_next;
+		}
+		return p;
+	}
+
 private:
 	ListNode* m_first;
 	ListNode* m_last;

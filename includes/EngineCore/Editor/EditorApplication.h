@@ -86,8 +86,8 @@ private:
     bool isSelectedObjFile = false;
 
     std::string selectedObj = "";
-
-    char bufName[64];
+    
+    char bufName[32];
 
     float test = 0;
 

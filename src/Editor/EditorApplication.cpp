@@ -86,7 +86,8 @@ EditorApplication::EditorApplication()
 }
 EditorApplication::~EditorApplication()
 {
-
+    delete m_cam;
+    delete m_ray;
 }
 void EditorApplication::on_ui_render()
 {
@@ -139,13 +140,11 @@ void EditorApplication::on_ui_render()
     }
     if (ImGui::Button("Save this scene"))
     {
-        const auto a = m_scene.get_list().data();
-        LOG_INFO(a[0]->object->get_name());
         //ResourceManager::save_scene("res/scenes/my_scene.scene", m_scene);
     } 
     if (ImGui::Button("Load this scene"))
     {
-        ResourceManager::load_scene("res/scenes/my_scene.scene", m_scene);
+        //ResourceManager::load_scene("res/scenes/my_scene.scene", m_scene);
     }
     ImGui::End();
 
@@ -385,19 +384,20 @@ void EditorApplication::on_ui_render()
     ImGui::End();
 
     ImGui::Begin("Object settings");
-    if (m_scene.get_list()[item_current]->object->getComponent<Transform>() != nullptr && item_current >= 0)
+    auto obj = m_scene.get_list()[item_current]->object;
+    if (obj->getComponent<Transform>() != nullptr && item_current >= 0)
     {
         transformLayout.set_props(
-            m_scene.get_list()[item_current]->object->getComponent<Transform>()->get_position(),
-            m_scene.get_list()[item_current]->object->getComponent<Transform>()->get_scale(),
-            m_scene.get_list()[item_current]->object->getComponent<Transform>()->get_rotation());
+            obj->getComponent<Transform>()->get_position(),
+            obj->getComponent<Transform>()->get_scale(),
+            obj->getComponent<Transform>()->get_rotation());
         transformLayout.on_draw_ui();
     }
-    if (m_scene.get_list()[item_current]->object->getComponent<Highlight>() != nullptr && item_current >= 0)
+    if (obj->getComponent<Highlight>() != nullptr && item_current >= 0)
     {
         highlightLayout.on_draw_ui();
     }
-    if (m_scene.get_list()[item_current]->object->getComponent<MeshRenderer>() != nullptr && item_current >= 0)
+    if (obj->getComponent<MeshRenderer>() != nullptr && item_current >= 0)
     {
         meshrendererLayout.on_draw_ui();
     }
@@ -468,6 +468,8 @@ bool EditorApplication::init()
     //add_object<Cube>(ResourceManager::getMaterial("cube"));
     //add_object<Cube>(ResourceManager::getMaterial("default")); 
     //add_object<Sprite>(ResourceManager::getMaterial("cube"), "YellowUp11");
+
+    ((float*)ResourceManager::getMaterial("monkey")->get_data("ambient_factor"))[0] = 0.33f;
 
     m_line = new RenderEngine::Line(ResourceManager::getMaterial("default"));
     m_line_transform = new RenderEngine::Line(ResourceManager::getMaterial("default"), 10);
@@ -599,6 +601,7 @@ void EditorApplication::on_update(const double delta)
 
     ResourceManager::getShaderProgram("default3DShader")->use();
     ResourceManager::getShaderProgram("default3DShader")->setVec3("cam_position", m_cam->get_position());
+    ResourceManager::getShaderProgram("default3DShader")->setFloat("ambient_factor", 0.33f);
 
     if (m_drawNullIntersection)
     {

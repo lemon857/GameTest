@@ -32,7 +32,9 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/System/Timer.h
 	includes/EngineCore/System/TemplateTimer.h
 	includes/EngineCore/System/Stopwatch.h
-	includes/EngineCore/System/List.h
+	includes/EngineCore/System/List.h	
+	
+	includes/Games/GameApplication.h
 )
 
 set(ENGINE_PRIVATE_INCLUDES
@@ -87,27 +89,29 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Engine/Application.cpp
 	src/Engine/Input.cpp
 	
-	src/Examples/TanksDemo/TanksDemoGame.cpp
-	src/Examples/TanksDemo/TanksDemoGame.h
-	src/Examples/TanksDemo/Tank.cpp
-	src/Examples/TanksDemo/Tank.h
-	src/Examples/TanksDemo/BrickWall.h
-	src/Examples/TanksDemo/BrickWall.cpp
-	src/Examples/TanksDemo/Bullet.h
-	src/Examples/TanksDemo/Bullet.cpp
+	#src/Examples/TanksDemo/TanksDemoGame.cpp
+	#src/Examples/TanksDemo/TanksDemoGame.h
+	#src/Examples/TanksDemo/Tank.cpp
+	#src/Examples/TanksDemo/Tank.h
+	#src/Examples/TanksDemo/BrickWall.h
+	#src/Examples/TanksDemo/BrickWall.cpp
+	#src/Examples/TanksDemo/Bullet.h
+	#src/Examples/TanksDemo/Bullet.cpp
+	#
+	#src/Examples/SnakeDemo/SnakeDemoGame.cpp
+	#src/Examples/SnakeDemo/SnakeDemoGame.h
+	#src/Examples/SnakeDemo/SnakePart.h
+	#src/Examples/SnakeDemo/SnakePart.cpp
+	#src/Examples/SnakeDemo/SnakePart.h
+	#
+	#src/Examples/PongDemo/PongDemoGame.h
+	#src/Examples/PongDemo/PongDemoGame.cpp
+	#src/Examples/PongDemo/PongObject.h
+	#src/Examples/PongDemo/PongObject.cpp
+	#src/Examples/PongDemo/Ball.h
+	#src/Examples/PongDemo/Ball.cpp
 	
-	src/Examples/SnakeDemo/SnakeDemoGame.cpp
-	src/Examples/SnakeDemo/SnakeDemoGame.h
-	src/Examples/SnakeDemo/SnakePart.h
-	src/Examples/SnakeDemo/SnakePart.cpp
-	src/Examples/SnakeDemo/SnakePart.h
-	
-	src/Examples/PongDemo/PongDemoGame.h
-	src/Examples/PongDemo/PongDemoGame.cpp
-	src/Examples/PongDemo/PongObject.h
-	src/Examples/PongDemo/PongObject.cpp
-	src/Examples/PongDemo/Ball.h
-	src/Examples/PongDemo/Ball.cpp
+	src/Examples/GameApplication.cpp
 	
 	src/Resources/ResourceManager.cpp
 	src/Resources/Scene.cpp

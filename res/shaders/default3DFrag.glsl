@@ -24,7 +24,7 @@ uniform float strength_light;
 void main() 
 {	
 	// ambient
-	vec3 ambient = ambient_factor * light_color;
+	vec3 ambient = ambient_factor * directional_light_color;
 	
 	// diffuse
 	vec3 normal = normalize(frag_normal);

@@ -273,12 +273,7 @@ bool ResourceManager::save_scene(std::string relativePath, const Scene& scene)
 {
 	std::ofstream fout;
 
-	linked_list<ObjectsPart> objs;
 	
-	for (size_t i = 0; i < scene.get_readonly_list().size(); i++)
-	{
-		objs.push_back(*scene.get_readonly_list()[i]);
-	}
 
 	fout.open(m_path + "/" + relativePath, std::ofstream::app);
 
@@ -290,7 +285,7 @@ bool ResourceManager::save_scene(std::string relativePath, const Scene& scene)
 	else
 	{
 		LOG_INFO("Complete save scene in {0}", relativePath);
-		fout.write((char*)&objs, sizeof(objs));
+		//fout.write((char*)&objs, sizeof(objs));
 	}
 
 	fout.close();

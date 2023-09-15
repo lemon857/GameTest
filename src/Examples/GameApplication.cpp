@@ -22,8 +22,7 @@
 #include "EngineCore/Meshes/EmptyObject.h"
 #include "EngineCore/Meshes/Plane.h"
 
-#include "EngineCore/Editor/UI/UImodule.h"
-#include <imgui/imgui.h>
+int count = 0;
 
 GameApp::GameApp()
 	: Application()
@@ -41,15 +40,55 @@ bool GameApp::init()
 
 	m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
 
+    m_grid_line = new RenderEngine::Line(ResourceManager::getMaterial("default"));
+
 	std::vector<std::string> names;
 
 	names.push_back("default3DShader");
 
     //m_scene.add_object<ObjModel>("res/models/monkey.obj", ResourceManager::getMaterial("cube"));
-	m_scene.add_object<Plane>(ResourceManager::getMaterial("cube"), glm::vec3(0.f), glm::vec3(10.f));
+	m_scene.add_object<Plane>(ResourceManager::getMaterial("cube"), glm::vec3(0.f), glm::vec3(10.f, 1.f, 10.f));
     m_scene.add_object<DirectionalLight>(names);
+    m_scene.add_object<Cube>(ResourceManager::getMaterial("cube"));
 
     ((float*)ResourceManager::getMaterial("cube")->get_data("ambient_factor"))[0] = 0.4f;
+
+    int colls = 10, rows = 10;
+
+    const auto& transform = m_scene.at(0)->getComponent<Transform>();
+
+    glm::vec3 size = glm::vec3(transform->get_scale().x / colls * 2, transform->get_scale().y, transform->get_scale().z / rows * 2);
+
+    glm::vec3 startPos = transform->get_position() - transform->get_scale() + glm::vec3(1.f);
+
+    glm::vec3 startPosLinesGrid = transform->get_position() - transform->get_scale() + glm::vec3(0.f, 1.5f, 0.f);
+
+    for (int i = 0; i < colls; i++)
+    {
+        for (int j = 0; j < rows; j++)
+        {
+            parts.push_back(startPos + glm::vec3((float)i * size.x, 0, (float)j * size.z));
+            if (i == 0)
+            {
+                m_lines_grid_start_colls.push_back(startPosLinesGrid + glm::vec3((float)i * size.x, 0, (float)j * size.z));
+            }
+            if (j == 0)
+            {
+                m_lines_grid_start_rows.push_back(startPosLinesGrid + glm::vec3((float)i * size.x, 0, (float)j * size.z));
+            }
+            if (i == colls - 1)
+            {
+                m_lines_grid_end_colls.push_back(startPosLinesGrid + glm::vec3((float)(i + 1) * size.x, 0, (float)j * size.z));
+            }
+            if (j == rows - 1)
+            {
+                m_lines_grid_end_rows.push_back(startPosLinesGrid + glm::vec3((float)i * size.x, 0, (float)(j + 1) * size.z));
+            }
+        }
+    }
+
+    m_scene.at(2)->addComponent<Transform>();
+    m_scene.at(2)->addComponent<Highlight>(ResourceManager::getMaterial("default"), true);
 
 	return true;
 }
@@ -112,6 +151,8 @@ void GameApp::on_update(const double delta)
     ResourceManager::getShaderProgram("default3DShader")->use();
     ResourceManager::getShaderProgram("default3DShader")->setVec3("cam_position", m_cam->get_position());
 
+    m_scene.at(2)->getComponent<Transform>()->set_position(parts[count]);
+
     for (size_t i = 0; i < m_scene.get_list().size(); i++)
     {
         MeshRenderer* mesh = m_scene.get_list()[i]->object->getComponent<MeshRenderer>();
@@ -124,7 +165,14 @@ void GameApp::on_update(const double delta)
         m_scene.get_list()[i]->object->update(delta);
     }
 
-    //m_scene.get_list()[0]->object->getComponent<Transform>();
+    for (int i = 0; i < m_lines_grid_start_colls.size(); i++)
+    {
+        m_grid_line->render_from_to(m_lines_grid_start_colls[i], m_lines_grid_end_colls[i], glm::vec3(1.f));
+    }
+    for (int i = 0; i < m_lines_grid_start_rows.size(); i++)
+    {
+        m_grid_line->render_from_to(m_lines_grid_start_rows[i], m_lines_grid_end_rows[i], glm::vec3(1.f));
+    }
 }
 // инициализация эвентов
 bool GameApp::init_events()
@@ -153,7 +201,7 @@ bool GameApp::init_events()
             }
             Input::pressKey(e.key_code);
         });
-    m_event_dispather.add_event_listener<EventKeyReleased>([](EventKeyReleased& e)
+    m_event_dispather.add_event_listener<EventKeyReleased>([&](EventKeyReleased& e)
         {
             if (e.key_code <= KeyCode::KEY_Z)  LOG_INFO("[EVENT] Key released {0}", static_cast<char>(e.key_code));
             Input::releaseKey(e.key_code);
@@ -171,6 +219,7 @@ bool GameApp::init_events()
     m_event_dispather.add_event_listener<EventMouseScrolled>(
         [&](EventMouseScrolled& e)
         {
+            if (count + e.y_offset >= 0) count += e.y_offset;
             LOG_INFO("[EVENT] Scroll: {0}x{1}", e.x_offset, e.y_offset);
         });
     m_event_dispather.add_event_listener<EventWindowClose>([&](EventWindowClose& e)

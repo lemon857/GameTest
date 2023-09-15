@@ -383,23 +383,26 @@ void EditorApplication::on_ui_render()
     }
     ImGui::End();
 
-    ImGui::Begin("Object settings");
-    auto obj = m_scene.get_list()[item_current]->object;
-    if (obj->getComponent<Transform>() != nullptr && item_current >= 0)
+    ImGui::Begin("Object settings"); 
+    if (item_current != -1)
     {
-        transformLayout.set_props(
-            obj->getComponent<Transform>()->get_position(),
-            obj->getComponent<Transform>()->get_scale(),
-            obj->getComponent<Transform>()->get_rotation());
-        transformLayout.on_draw_ui();
-    }
-    if (obj->getComponent<Highlight>() != nullptr && item_current >= 0)
-    {
-        highlightLayout.on_draw_ui();
-    }
-    if (obj->getComponent<MeshRenderer>() != nullptr && item_current >= 0)
-    {
-        meshrendererLayout.on_draw_ui();
+        auto obj = m_scene.at(item_current);
+        if (obj->getComponent<Transform>() != nullptr && item_current >= 0)
+        {
+            transformLayout.set_props(
+                obj->getComponent<Transform>()->get_position(),
+                obj->getComponent<Transform>()->get_scale(),
+                obj->getComponent<Transform>()->get_rotation());
+            transformLayout.on_draw_ui();
+        }
+        if (obj->getComponent<Highlight>() != nullptr && item_current >= 0)
+        {
+            highlightLayout.on_draw_ui();
+        }
+        if (obj->getComponent<MeshRenderer>() != nullptr && item_current >= 0)
+        {
+            meshrendererLayout.on_draw_ui();
+        }
     }
     ImGui::End();
 
@@ -469,7 +472,7 @@ bool EditorApplication::init()
     //add_object<Cube>(ResourceManager::getMaterial("default")); 
     //add_object<Sprite>(ResourceManager::getMaterial("cube"), "YellowUp11");
 
-    ((float*)ResourceManager::getMaterial("monkey")->get_data("ambient_factor"))[0] = 0.33f;
+    //((float*)ResourceManager::getMaterial("monkey")->get_data("ambient_factor"))[0] = 0.33f;
 
     m_line = new RenderEngine::Line(ResourceManager::getMaterial("default"));
     m_line_transform = new RenderEngine::Line(ResourceManager::getMaterial("default"), 10);
@@ -610,7 +613,9 @@ void EditorApplication::on_update(const double delta)
         m_line->render_from_to(glm::vec3(50.f, 0.f, 0.f), glm::vec3(-50.f, 0.f, 0.f), glm::vec3(1.f, 0.f, 0.f));
     }
 
-    if (m_scene.get_list()[item_current]->object->getComponent<Transform>() != nullptr)
+    if (item_current != -1)
+    {
+        if (m_scene.at(item_current)->getComponent<Transform>() != nullptr)
     {
 
         if (m_moveObject)
@@ -622,11 +627,12 @@ void EditorApplication::on_update(const double delta)
                 pos[0], pos[1], pos[2], 1);
 
             glm::vec3 posfin = glm::vec3(translateMat * glm::vec4(glm::vec3(m_world_mouse_dir_x, m_world_mouse_dir_y, m_world_mouse_dir_z) * m_distance, 1.f));
-            m_scene.get_list()[item_current]->object->getComponent<Transform>()->set_position(posfin);
+            m_scene.at(item_current)->getComponent<Transform>()->set_position(posfin);
         }
-        m_line->render(m_scene.get_list()[item_current]->object->getComponent<Transform>()->get_position(), glm::vec3(5.f, 0.f, 0.f), glm::vec3(1.f, 0.f, 0.f));
-        m_line->render(m_scene.get_list()[item_current]->object->getComponent<Transform>()->get_position(), glm::vec3(0.f, 0.f, 5.f), glm::vec3(0.f, 0.f, 1.f));
-        m_line->render(m_scene.get_list()[item_current]->object->getComponent<Transform>()->get_position(), glm::vec3(0.f, 5.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
+        m_line->render(m_scene.at(item_current)->getComponent<Transform>()->get_position(), glm::vec3(5.f, 0.f, 0.f), glm::vec3(1.f, 0.f, 0.f));
+        m_line->render(m_scene.at(item_current)->getComponent<Transform>()->get_position(), glm::vec3(0.f, 0.f, 5.f), glm::vec3(0.f, 0.f, 1.f));
+        m_line->render(m_scene.at(item_current)->getComponent<Transform>()->get_position(), glm::vec3(0.f, 5.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
+    }
     }
 
     for (size_t i = 0; i < m_scene.get_list().size(); i++)
@@ -638,7 +644,7 @@ void EditorApplication::on_update(const double delta)
             shader->use();
             shader->setMatrix4(VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
         }
-        m_scene.get_list()[i]->object->update(delta);
+        m_scene.at(i)->update(delta);
     }
 
     fps++;

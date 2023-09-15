@@ -27,6 +27,8 @@ public:
 
 	linked_list<ObjectsPart*>& get_list() { return m_objs; };
 
+	IGameObject* at(const size_t index) { return m_objs[index]->object; }
+
 	std::vector<std::string> get_items_str() { return m_items_str; };
 
 	template <class _Ty, class... _Types>

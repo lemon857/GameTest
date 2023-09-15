@@ -7,11 +7,11 @@
 
 #include <iostream>
 
-Highlight::Highlight(std::shared_ptr<RenderEngine::Material> material, glm::vec3 color)
+Highlight::Highlight(std::shared_ptr<RenderEngine::Material> material, bool isActive, glm::vec3 color)
 	: IComponent()
 	, m_line(std::make_unique<RenderEngine::Line>(material))
 	, m_color(color)
-	, m_isActive(false)
+	, m_isActive(isActive)
 {
 }
 

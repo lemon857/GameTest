@@ -109,10 +109,10 @@ public:
 		m_size--;
 	}
 
-	_Ty operator[] (const int index) {
+	_Ty operator[] (const size_t index) {
 		if (is_empty()) return nullptr;
 		ListNode* p = m_first;
-		for (int i = 0; i < index; i++) {
+		for (size_t i = 0; i < index; i++) {
 			p = p->m_next;
 			if (!p) return nullptr;
 		}

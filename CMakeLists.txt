@@ -78,6 +78,7 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Meshes/ObjModel.h
 	includes/EngineCore/Meshes/EmptyObject.h
 	includes/EngineCore/Meshes/Plane.h	
+	includes/EngineCore/Meshes/Grid.h	
   
 	includes/EngineCore/Light/DirectionalLight.h
 	includes/EngineCore/Light/PointerLight.h
@@ -148,6 +149,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Meshes/Sprite.cpp
 	src/Meshes/ObjModel.cpp
 	src/Meshes/Plane.cpp
+	src/Meshes/Grid.cpp
 		
 	src/Light/DirectionalLight.cpp
 	src/Light/PointerLight.cpp

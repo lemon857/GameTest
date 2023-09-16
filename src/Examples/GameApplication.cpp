@@ -21,6 +21,7 @@
 #include "EngineCore/Meshes/ObjModel.h"
 #include "EngineCore/Meshes/EmptyObject.h"
 #include "EngineCore/Meshes/Plane.h"
+#include "EngineCore/Meshes/Grid.h" 
 
 int count = 0;
 
@@ -49,43 +50,11 @@ bool GameApp::init()
     //m_scene.add_object<ObjModel>("res/models/monkey.obj", ResourceManager::getMaterial("cube"));
 	m_scene.add_object<Plane>(ResourceManager::getMaterial("cube"), glm::vec3(0.f), glm::vec3(10.f, 1.f, 10.f));
     m_scene.add_object<DirectionalLight>(names);
-    m_scene.add_object<Cube>(ResourceManager::getMaterial("cube"));
+    m_scene.add_object<Cube>(ResourceManager::getMaterial("monkey"));
+    m_scene.add_object<Grid>(glm::vec3(0.f, 0.5f, 0.f), glm::vec2(1.f), 10, 10, glm::vec3(1.f), ResourceManager::getMaterial("default"));
 
-    ((float*)ResourceManager::getMaterial("cube")->get_data("ambient_factor"))[0] = 0.4f;
-
-    int colls = 10, rows = 10;
-
-    const auto& transform = m_scene.at(0)->getComponent<Transform>();
-
-    glm::vec3 size = glm::vec3(transform->get_scale().x / colls * 2, transform->get_scale().y, transform->get_scale().z / rows * 2);
-
-    glm::vec3 startPos = transform->get_position() - transform->get_scale() + glm::vec3(1.f);
-
-    glm::vec3 startPosLinesGrid = transform->get_position() - transform->get_scale() + glm::vec3(0.f, 1.5f, 0.f);
-
-    for (int i = 0; i < colls; i++)
-    {
-        for (int j = 0; j < rows; j++)
-        {
-            parts.push_back(startPos + glm::vec3((float)i * size.x, 0, (float)j * size.z));
-            if (i == 0)
-            {
-                m_lines_grid_start_colls.push_back(startPosLinesGrid + glm::vec3((float)i * size.x, 0, (float)j * size.z));
-            }
-            if (j == 0)
-            {
-                m_lines_grid_start_rows.push_back(startPosLinesGrid + glm::vec3((float)i * size.x, 0, (float)j * size.z));
-            }
-            if (i == colls - 1)
-            {
-                m_lines_grid_end_colls.push_back(startPosLinesGrid + glm::vec3((float)(i + 1) * size.x, 0, (float)j * size.z));
-            }
-            if (j == rows - 1)
-            {
-                m_lines_grid_end_rows.push_back(startPosLinesGrid + glm::vec3((float)i * size.x, 0, (float)(j + 1) * size.z));
-            }
-        }
-    }
+    ((float*)ResourceManager::getMaterial("cube")->get_data("ambient_factor"))[0] = 0.2f;
+    ((float*)ResourceManager::getMaterial("monkey")->get_data("ambient_factor"))[0] = 0.2f;
 
     m_scene.at(2)->addComponent<Transform>();
     m_scene.at(2)->addComponent<Highlight>(ResourceManager::getMaterial("default"), true);
@@ -163,15 +132,6 @@ void GameApp::on_update(const double delta)
             shader->setMatrix4(VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
         }
         m_scene.get_list()[i]->object->update(delta);
-    }
-
-    for (int i = 0; i < m_lines_grid_start_colls.size(); i++)
-    {
-        m_grid_line->render_from_to(m_lines_grid_start_colls[i], m_lines_grid_end_colls[i], glm::vec3(1.f));
-    }
-    for (int i = 0; i < m_lines_grid_start_rows.size(); i++)
-    {
-        m_grid_line->render_from_to(m_lines_grid_start_rows[i], m_lines_grid_end_rows[i], glm::vec3(1.f));
     }
 }
 // инициализация эвентов

@@ -120,7 +120,7 @@ void GameApp::on_update(const double delta)
     ResourceManager::getShaderProgram("default3DShader")->use();
     ResourceManager::getShaderProgram("default3DShader")->setVec3("cam_position", m_cam->get_position());
 
-    m_scene.at(2)->getComponent<Transform>()->set_position(parts[count]);
+    m_grid_line->render(glm::vec3(0), glm::vec3(m_world_mouse_pos_x, m_world_mouse_pos_y + 0.1f, m_world_mouse_pos_z), glm::vec3(1.f));
 
     for (size_t i = 0; i < m_scene.get_list().size(); i++)
     {

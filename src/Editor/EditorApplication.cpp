@@ -59,10 +59,12 @@ EditorApplication::EditorApplication()
             }
         });
     highlightLayout.set_callback(
-        [&](const float* data, bool isActive)
+        [&](const float* data, bool isActive, bool mode)
         {
-            m_scene.get_list()[item_current]->object->getComponent<Highlight>()->set_active(isActive);
-            m_scene.get_list()[item_current]->object->getComponent<Highlight>()->set_color(glm::vec3(data[0], data[1], data[2]));
+            auto highlight = m_scene.get_list()[item_current]->object->getComponent<Highlight>();
+            highlight->set_active(isActive);
+            highlight->set_mode(mode);
+            highlight->set_color(glm::vec3(data[0], data[1], data[2]));
         });
     materialLayout->set_callback(
         [&](const std::string textureName, const std::string shaderName)
@@ -247,23 +249,23 @@ void EditorApplication::on_ui_render()
         {
             sprintf(bufName, m_scene.get_list()[n]->object->get_name().c_str());
             item_current = n;
-            if (m_scene.get_list()[item_current]->object->getComponent<Transform>() != nullptr)
+            if (m_scene.at(item_current)->getComponent<Transform>() != nullptr)
             {
-                glm::vec3 pos = m_scene.get_list()[item_current]->object->getComponent<Transform>()->get_position();
-                glm::vec3 scale = m_scene.get_list()[item_current]->object->getComponent<Transform>()->get_scale();
-                glm::vec3 rot = m_scene.get_list()[item_current]->object->getComponent<Transform>()->get_rotation();
+                glm::vec3 pos = m_scene.at(item_current)->getComponent<Transform>()->get_position();
+                glm::vec3 scale = m_scene.at(item_current)->getComponent<Transform>()->get_scale();
+                glm::vec3 rot = m_scene.at(item_current)->getComponent<Transform>()->get_rotation();
 
                 transformLayout.set_props(pos, scale, rot);
             }
-            if (m_scene.get_list()[item_current]->object->getComponent<Highlight>() != nullptr)
+            if (m_scene.at(item_current)->getComponent<Highlight>() != nullptr)
             {
-                highlightLayout.set_color(m_scene.get_list()[item_current]->object->getComponent<Highlight>()->get_color());
+                highlightLayout.set_color(m_scene.at(item_current)->getComponent<Highlight>()->get_color());
             }
-            if (m_scene.get_list()[item_current]->object->getComponent<MeshRenderer>() != nullptr)
+            if (m_scene.at(item_current)->getComponent<MeshRenderer>() != nullptr)
             {
-                materialLayout->set_material(m_scene.get_list()[item_current]->object->getComponent<MeshRenderer>()->get_material_ptr());
+                materialLayout->set_material(m_scene.at(item_current)->getComponent<MeshRenderer>()->get_material_ptr());
             }
-            if (m_scene.get_list()[item_current]->object->getComponent<SpriteRenderer>() != nullptr)
+            if (m_scene.at(item_current)->getComponent<SpriteRenderer>() != nullptr)
             {
                 //shaderLayout->set_shader_layout(m_objs[item_current]->getComponent<SpriteRenderer>()->get_material_ptr()->get_shader_ptr()->get_layout());
                 //materialLayout->set_material(m_objs[item_current]->getComponent<SpriteRenderer>()->get_material_ptr());
@@ -279,23 +281,23 @@ void EditorApplication::on_ui_render()
                 switch (component_current)
                 {
                 case 0:
-                    if (m_scene.get_list()[item_current]->object->addComponent<Transform>() != nullptr)  transformLayout.set_props(glm::vec3(0.f), glm::vec3(1.f), glm::vec3(0.f));
+                    if (m_scene.at(item_current)->addComponent<Transform>() != nullptr)  transformLayout.set_props(glm::vec3(0.f), glm::vec3(1.f), glm::vec3(0.f));
                     break;
                 case 1:
-                    if (m_scene.get_list()[item_current]->object->addComponent<SpriteRenderer>(ResourceManager::getMaterial("default"), "default") == nullptr)
+                    if (m_scene.at(item_current)->addComponent<SpriteRenderer>(ResourceManager::getMaterial("default"), "default") == nullptr)
                         break;
                 case 2:
                     if (!isSelectedObjFile)
                         ImGui::OpenPopup("Add component window -- MeshRenderer settings");
                     else {
-                        if (m_scene.get_list()[item_current]->object->addComponent<MeshRenderer>(ResourceManager::load_OBJ_file(selectedObj), ResourceManager::getMaterial("default")) == nullptr)
+                        if (m_scene.at(item_current)->addComponent<MeshRenderer>(ResourceManager::load_OBJ_file(selectedObj), ResourceManager::getMaterial("default")) == nullptr)
                         {
-                            materialLayout->set_material(m_scene.get_list()[item_current]->object->getComponent<MeshRenderer>()->get_material_ptr());
+                            materialLayout->set_material(m_scene.at(item_current)->getComponent<MeshRenderer>()->get_material_ptr());
                         }
                     }
                     break;
                 case 3:
-                    if (m_scene.get_list()[item_current]->object->addComponent<Highlight>(ResourceManager::getMaterial("default")) == nullptr)
+                    if (m_scene.at(item_current)->addComponent<Highlight>(ResourceManager::getMaterial("default")) == nullptr)
                     {
 
                     }
@@ -472,7 +474,7 @@ bool EditorApplication::init()
     //add_object<Cube>(ResourceManager::getMaterial("default")); 
     //add_object<Sprite>(ResourceManager::getMaterial("cube"), "YellowUp11");
 
-    //((float*)ResourceManager::getMaterial("monkey")->get_data("ambient_factor"))[0] = 0.33f;
+    ((float*)ResourceManager::getMaterial("monkey")->get_data("ambient_factor"))[0] = 0.33f;
 
     m_line = new RenderEngine::Line(ResourceManager::getMaterial("default"));
     m_line_transform = new RenderEngine::Line(ResourceManager::getMaterial("default"), 10);

@@ -100,3 +100,8 @@ std::shared_ptr<RenderEngine::Material> MeshRenderer::get_material_ptr()
 {
     return m_pMaterial;
 }
+
+const std::shared_ptr<GraphicsObject> MeshRenderer::get_object()
+{
+    return m_obj;
+}

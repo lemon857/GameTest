@@ -24,15 +24,7 @@ private:
 
 	Camera* m_cam;
 
- 	RenderEngine::Line* m_grid_line;
-
-	std::vector<glm::vec3> parts;
-
-	std::vector<glm::vec3> m_lines_grid_start_colls;
-	std::vector<glm::vec3> m_lines_grid_start_rows;
-
-	std::vector<glm::vec3> m_lines_grid_end_colls;
-	std::vector<glm::vec3> m_lines_grid_end_rows;
+	RenderEngine::Line* m_grid_line;
 
 	float m_colors[4] = { 0.33f, 0.33f, 0.33f, 0.f };
 

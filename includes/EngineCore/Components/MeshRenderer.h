@@ -27,6 +27,8 @@ public:
 	void update_object(std::shared_ptr<GraphicsObject> obj);
 
 	std::shared_ptr<RenderEngine::Material> get_material_ptr();
+
+	const std::shared_ptr<GraphicsObject> get_object();
 private:
 	std::shared_ptr<RenderEngine::Material> m_pMaterial;
 	std::shared_ptr<GraphicsObject> m_obj;

@@ -64,16 +64,20 @@ void UIlayoutHighlight::on_draw_ui()
     {
         if (ImGui::ColorEdit3("Color", m_color))
         {
-            m_on_chanege(m_color, m_is_active);
+            m_on_chanege(m_color, m_is_active, m_mode);
         }
         if (ImGui::Checkbox("Active highlight", &m_is_active))
         {
-            m_on_chanege(m_color, m_is_active);
+            m_on_chanege(m_color, m_is_active, m_mode);
+        }
+        if (ImGui::Checkbox("Mode", &m_mode))
+        {
+            m_on_chanege(m_color, m_is_active, m_mode);
         }
     }
 }
 
-void UIlayoutHighlight::set_callback(std::function<void(const float*, bool)> on_chanege)
+void UIlayoutHighlight::set_callback(std::function<void(const float*, bool, bool)> on_chanege)
 {
     m_on_chanege = on_chanege;
 }

@@ -108,6 +108,10 @@ void EditorApplication::on_ui_render()
     ImGui::Text(("Mouse world direction Y: " + std::to_string(m_world_mouse_dir_y)).c_str());
     ImGui::Text(("Mouse world direction Z: " + std::to_string(m_world_mouse_dir_z)).c_str());
     ImGui::Text("");
+    ImGui::Text(("Mouse world position X: " + std::to_string(m_world_mouse_pos_x)).c_str());
+    ImGui::Text(("Mouse world position Y: " + std::to_string(m_world_mouse_pos_y)).c_str());
+    ImGui::Text(("Mouse world position Z: " + std::to_string(m_world_mouse_pos_z)).c_str());
+    ImGui::Text("");
     ImGui::Text(("FPS: " + std::to_string(m_fps)).c_str());
     ImGui::End();
 
@@ -467,7 +471,7 @@ bool EditorApplication::init()
 
     names.push_back("default3DShader");
 
-    m_scene.add_object<ObjModel>("res/models/monkey.obj", ResourceManager::getMaterial("monkey"));
+    //m_scene.add_object<ObjModel>("res/models/monkey.obj", ResourceManager::getMaterial("monkey"));
     m_scene.add_object<DirectionalLight>(names);
     m_scene.add_object<PointerLight>(names, 1.1f);
     //add_object<Cube>(ResourceManager::getMaterial("cube"));
@@ -475,6 +479,7 @@ bool EditorApplication::init()
     //add_object<Sprite>(ResourceManager::getMaterial("cube"), "YellowUp11");
 
     ((float*)ResourceManager::getMaterial("monkey")->get_data("ambient_factor"))[0] = 0.33f;
+    ((float*)ResourceManager::getMaterial("cube")->get_data("ambient_factor"))[0] = 0.33f;
 
     m_line = new RenderEngine::Line(ResourceManager::getMaterial("default"));
     m_line_transform = new RenderEngine::Line(ResourceManager::getMaterial("default"), 10);
@@ -704,6 +709,10 @@ bool EditorApplication::init_events()
     m_event_dispather.add_event_listener<EventMouseMoved>([&](EventMouseMoved& e)
         {
             glm::vec3 objcoord = m_cam->get_world_mouse_position(glm::vec2(e.x, e.y), m_pWindow->get_size());
+
+            m_world_mouse_pos_x = objcoord.x;
+            m_world_mouse_pos_y = objcoord.y;
+            m_world_mouse_pos_z = objcoord.z;
 
             glm::vec3 pos;
 

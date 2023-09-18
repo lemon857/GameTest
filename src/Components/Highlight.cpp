@@ -33,13 +33,13 @@ void Highlight::update(const double delta)
 	glm::vec3 scale;
 	if (transform == nullptr)
 	{
-		scale = glm::vec3(ADDITION_SCALE_HIGHLIGHT);
+		scale = glm::vec3(m_mode ? ADDITION_SCALE_HIGHLIGHT : 1.f);
 		pos = glm::vec3(0.f);
 		rot = glm::vec3(0.f);
 	}
 	else
 	{
-		scale = transform->get_scale() * ADDITION_SCALE_HIGHLIGHT;
+		scale = transform->get_scale() * (m_mode ? ADDITION_SCALE_HIGHLIGHT : 1.f);
 		pos = transform->get_position();
 		rot = transform->get_rotation();
 	}

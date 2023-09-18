@@ -69,10 +69,10 @@ private:
     double m_world_mouse_dir_x = 0;
     double m_world_mouse_dir_y = 0;
     double m_world_mouse_dir_z = 0;
-
-    double m_screen_pos_x = 0;
-    double m_screen_pos_y = 0;
-    double m_screen_pos_z = 0;
+    
+    double m_world_mouse_pos_x = 0;
+    double m_world_mouse_pos_y = 0;
+    double m_world_mouse_pos_z = 0;
 
     bool m_isPerspectiveCam = true;
     bool m_isInversiveMouseY = false;

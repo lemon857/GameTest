@@ -24,6 +24,7 @@
 #include "EngineCore/Meshes/Grid.h" 
 
 int count = 0;
+int cur = 0;
 
 GameApp::GameApp()
 	: Application()
@@ -48,16 +49,32 @@ bool GameApp::init()
 	names.push_back("default3DShader");
 
     //m_scene.add_object<ObjModel>("res/models/monkey.obj", ResourceManager::getMaterial("cube"));
-	m_scene.add_object<Plane>(ResourceManager::getMaterial("cube"), glm::vec3(0.f), glm::vec3(10.f, 1.f, 10.f));
+	m_scene.add_object<Plane>(ResourceManager::getMaterial("cube"), glm::vec3(10.f, 0.f, 10.f), glm::vec3(10.f, 1.f, 10.f));
     m_scene.add_object<DirectionalLight>(names);
     m_scene.add_object<Cube>(ResourceManager::getMaterial("monkey"));
-    m_scene.add_object<Grid>(glm::vec3(0.f, 0.5f, 0.f), glm::vec2(1.f), 10, 10, glm::vec3(1.f), ResourceManager::getMaterial("default"));
+    m_scene.add_object<Grid>(glm::vec3(10.f, 0.5f, 10.f), glm::vec2(1.f), 10, 10, glm::vec3(1.f), ResourceManager::getMaterial("default"));
 
     ((float*)ResourceManager::getMaterial("cube")->get_data("ambient_factor"))[0] = 0.2f;
     ((float*)ResourceManager::getMaterial("monkey")->get_data("ambient_factor"))[0] = 0.2f;
 
     m_scene.at(2)->addComponent<Transform>();
     m_scene.at(2)->addComponent<Highlight>(ResourceManager::getMaterial("default"), true);
+
+    int colls = 10, rows = 10;
+
+    const auto& transform = m_scene.at(0)->getComponent<Transform>();
+
+    glm::vec3 size = glm::vec3(transform->get_scale().x / colls * 2, transform->get_scale().y, transform->get_scale().z / rows * 2);
+
+    glm::vec3 startPos = transform->get_position() - transform->get_scale() + glm::vec3(1.f);
+
+    for (int i = 0; i < colls; i++)
+    {
+        for (int j = 0; j < rows; j++)
+        {
+            parts.push_back(startPos + glm::vec3((float)i * size.x, 0, (float)j * size.z));
+        }
+    }
 
 	return true;
 }
@@ -68,6 +85,17 @@ void GameApp::on_key_update(const double delta)
     glm::vec3 rotation_delta{ 0,0,0 };
 
     double addSpeed = 1;
+
+    if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT))
+    {
+        int x = (int)floor(m_world_mouse_pos_x / 2.f);
+        int y = (int)floor(m_world_mouse_pos_z / 2.f);
+
+        if (x * y <= parts.size())
+        {
+            cur = x * 10 + y;
+        }
+    }
 
     if (Input::isKeyPressed(KeyCode::KEY_W))
     {
@@ -122,16 +150,18 @@ void GameApp::on_update(const double delta)
 
     m_grid_line->render(glm::vec3(0), glm::vec3(m_world_mouse_pos_x, m_world_mouse_pos_y + 0.1f, m_world_mouse_pos_z), glm::vec3(1.f));
 
+    m_scene.at(2)->getComponent<Transform>()->set_position(parts[cur]);
+
     for (size_t i = 0; i < m_scene.get_list().size(); i++)
     {
-        MeshRenderer* mesh = m_scene.get_list()[i]->object->getComponent<MeshRenderer>();
+        MeshRenderer* mesh = m_scene.at(i)->getComponent<MeshRenderer>();
         if (mesh != nullptr)
         {
             std::shared_ptr<RenderEngine::ShaderProgram> shader = mesh->get_material_ptr()->get_shader_ptr();
             shader->use();
             shader->setMatrix4(VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
         }
-        m_scene.get_list()[i]->object->update(delta);
+        m_scene.at(i)->update(delta);
     }
 }
 // инициализация эвентов

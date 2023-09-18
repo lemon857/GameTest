@@ -26,6 +26,8 @@ private:
 
 	RenderEngine::Line* m_grid_line;
 
+	std::vector<glm::vec3> parts;
+
 	float m_colors[4] = { 0.33f, 0.33f, 0.33f, 0.f };
 
 	double m_init_mouse_pos_x = 0;

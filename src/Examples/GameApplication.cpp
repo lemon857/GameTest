@@ -23,8 +23,14 @@
 #include "EngineCore/Meshes/Plane.h"
 #include "EngineCore/Meshes/Grid.h" 
 
-int count = 0;
+#include <array>
+
+const int size_x = 20, size_y = 10;
+
+std::array < bool, size_x* size_y> map;
+
 int cur = 0;
+int curObj = 3;
 
 GameApp::GameApp()
 	: Application()
@@ -44,33 +50,33 @@ bool GameApp::init()
 
     m_grid_line = new RenderEngine::Line(ResourceManager::getMaterial("default"));
 
+    map.fill(false);
+
 	std::vector<std::string> names;
 
 	names.push_back("default3DShader");
 
-    //m_scene.add_object<ObjModel>("res/models/monkey.obj", ResourceManager::getMaterial("cube"));
-	m_scene.add_object<Plane>(ResourceManager::getMaterial("cube"), glm::vec3(10.f, 0.f, 10.f), glm::vec3(10.f, 1.f, 10.f));
+	m_scene.add_object<Plane>(ResourceManager::getMaterial("cube"), glm::vec3(size_x, 0.f, size_y), glm::vec3(size_x, 0.f, size_y));
     m_scene.add_object<DirectionalLight>(names);
-    m_scene.add_object<Cube>(ResourceManager::getMaterial("monkey"));
-    m_scene.add_object<Grid>(glm::vec3(10.f, 0.5f, 10.f), glm::vec2(1.f), 10, 10, glm::vec3(1.f), ResourceManager::getMaterial("default"));
+    m_scene.add_object<Grid>(glm::vec3(size_x, 0.5f, size_y), glm::vec2(1.f), size_x, size_y, glm::vec3(1.f), ResourceManager::getMaterial("default"));
+    m_scene.add_object<ObjModel>("res/models/monkey.obj", ResourceManager::getMaterial("monkey"));
+    //m_scene.add_object<Cube>(ResourceManager::getMaterial("cube"));
 
-    ((float*)ResourceManager::getMaterial("cube")->get_data("ambient_factor"))[0] = 0.2f;
+    ((float*)ResourceManager::getMaterial("cube")->get_data("ambient_factor"))[0] = 0.3f;
     ((float*)ResourceManager::getMaterial("monkey")->get_data("ambient_factor"))[0] = 0.2f;
 
-    m_scene.at(2)->addComponent<Transform>();
-    m_scene.at(2)->addComponent<Highlight>(ResourceManager::getMaterial("default"), true);
-
-    int colls = 10, rows = 10;
+    m_scene.at(curObj)->addComponent<Transform>();
+    m_scene.at(curObj)->addComponent<Highlight>(ResourceManager::getMaterial("default"), true); 
 
     const auto& transform = m_scene.at(0)->getComponent<Transform>();
 
-    glm::vec3 size = glm::vec3(transform->get_scale().x / colls * 2, transform->get_scale().y, transform->get_scale().z / rows * 2);
+    glm::vec3 size = glm::vec3(transform->get_scale().x / size_x * 2, transform->get_scale().y, transform->get_scale().z / size_y * 2);
 
     glm::vec3 startPos = transform->get_position() - transform->get_scale() + glm::vec3(1.f);
 
-    for (int i = 0; i < colls; i++)
+    for (int i = 0; i < size_x; i++)
     {
-        for (int j = 0; j < rows; j++)
+        for (int j = 0; j < size_y; j++)
         {
             parts.push_back(startPos + glm::vec3((float)i * size.x, 0, (float)j * size.z));
         }
@@ -93,7 +99,23 @@ void GameApp::on_key_update(const double delta)
 
         if (x * y <= parts.size())
         {
-            cur = x * 10 + y;
+            cur = x * size_y + y;
+        }
+    }
+    else if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_RIGHT))
+    {
+        if (!map[cur])
+        {
+            map[cur] = true;
+            m_scene.at(curObj)->deleteComponent<Highlight>();
+            curObj++;
+
+            m_scene.add_object<ObjModel>("res/models/monkey.obj", ResourceManager::getMaterial("monkey"));
+            //m_scene.add_object<Cube>(ResourceManager::getMaterial("cube"));
+
+            m_scene.at(curObj)->addComponent<Transform>();
+            m_scene.at(curObj)->addComponent<Highlight>(ResourceManager::getMaterial("default"), true);
+            LOG_INFO("Add object");
         }
     }
 
@@ -150,7 +172,7 @@ void GameApp::on_update(const double delta)
 
     m_grid_line->render(glm::vec3(0), glm::vec3(m_world_mouse_pos_x, m_world_mouse_pos_y + 0.1f, m_world_mouse_pos_z), glm::vec3(1.f));
 
-    m_scene.at(2)->getComponent<Transform>()->set_position(parts[cur]);
+    m_scene.at(curObj)->getComponent<Transform>()->set_position(parts[cur]);
 
     for (size_t i = 0; i < m_scene.get_list().size(); i++)
     {
@@ -209,7 +231,6 @@ bool GameApp::init_events()
     m_event_dispather.add_event_listener<EventMouseScrolled>(
         [&](EventMouseScrolled& e)
         {
-            if (count + e.y_offset >= 0) count += e.y_offset;
             LOG_INFO("[EVENT] Scroll: {0}x{1}", e.x_offset, e.y_offset);
         });
     m_event_dispather.add_event_listener<EventWindowClose>([&](EventWindowClose& e)

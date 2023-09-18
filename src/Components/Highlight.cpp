@@ -14,13 +14,13 @@
 
 #define ADDITION_SCALE_HIGHLIGHT 1.1f
 
-Highlight::Highlight(std::shared_ptr<RenderEngine::Material> material, bool isActive, glm::vec3 color)
+Highlight::Highlight(std::shared_ptr<RenderEngine::Material> material, bool isActive, bool mode, glm::vec3 color)
 	: IComponent()
 	, m_line(std::make_unique<RenderEngine::Line>(material))
 	, m_color(color)
 	, m_isActive(isActive)
 	, m_pMaterial(std::move(material))
-	, m_mode(false)
+	, m_mode(mode)
 {
 }
 

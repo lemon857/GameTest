@@ -15,13 +15,15 @@ int main(int argc, char** argv)
     GameApp* gameApp = new GameApp();
     gameApp->start(windowSize, "Engine preview game", "res/resources.json", "EngineGamePreview.ini");
     delete gameApp;
-#endif // !EDITOR_BUILD
+#endif // !EDITOR_BUILD                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 
 #ifdef EDITOR_BUILD
     EditorApplication* editorApplication = new EditorApplication();
     editorApplication->start(windowSize, "Engine editor", "res/resources.json", "EngineTest.ini");
     delete editorApplication;
 #endif // EDITOR_BUILD
+
+    system("pause");
 
     return 0;
 }

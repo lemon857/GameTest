@@ -3,7 +3,7 @@
 
 #include "EngineCore/Resources/ResourceManager.h"
 
-//#define EDITOR_BUILD
+#define EDITOR_BUILD
 
 int main(int argc, char** argv)
 {

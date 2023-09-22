@@ -35,6 +35,11 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/System/List.h	
 	
 	includes/Games/GameApplication.h
+	
+	includes/EngineCore/GUI/GUI_place.h
+	includes/EngineCore/GUI/GUI_element.h
+	includes/EngineCore/GUI/Button.h
+	includes/EngineCore/GUI/Sprite.h
 )
 
 set(ENGINE_PRIVATE_INCLUDES
@@ -74,7 +79,6 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Components/Highlight.h
 	
 	includes/EngineCore/Meshes/Cube.h
-	includes/EngineCore/Meshes/Sprite.h
 	includes/EngineCore/Meshes/ObjModel.h
 	includes/EngineCore/Meshes/EmptyObject.h
 	includes/EngineCore/Meshes/Plane.h	
@@ -146,13 +150,17 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Components/Highlight.cpp
 	
 	src/Meshes/Cube.cpp
-	src/Meshes/Sprite.cpp
 	src/Meshes/ObjModel.cpp
 	src/Meshes/Plane.cpp
 	src/Meshes/Grid.cpp
 		
 	src/Light/DirectionalLight.cpp
 	src/Light/PointerLight.cpp
+	
+	src/GUI/GUI_place.cpp
+	src/GUI/GUI_element.cpp
+	src/GUI/Button.cpp
+	src/GUI/Sprite.cpp
 )
 
 

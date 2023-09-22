@@ -17,7 +17,6 @@
 #include "EngineCore/Input.h"
 
 #include "EngineCore/Meshes/Cube.h"
-#include "EngineCore/Meshes/Sprite.h"
 #include "EngineCore/Meshes/ObjModel.h"
 #include "EngineCore/Meshes/EmptyObject.h"
 #include "EngineCore/Meshes/Plane.h"
@@ -48,7 +47,7 @@ bool GameApp::init()
 
 	m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
 
-    m_grid_line = new RenderEngine::Line(ResourceManager::getMaterial("default"));
+    m_line = new RenderEngine::Line(ResourceManager::getMaterial("default"));
 
     map.fill(false);
 
@@ -170,9 +169,7 @@ void GameApp::on_update(const double delta)
     ResourceManager::getShaderProgram("default3DShader")->use();
     ResourceManager::getShaderProgram("default3DShader")->setVec3("cam_position", m_cam->get_position());
 
-    m_grid_line->render(glm::vec3(0), glm::vec3(m_world_mouse_pos_x, m_world_mouse_pos_y + 0.1f, m_world_mouse_pos_z), glm::vec3(1.f));
-
-    m_scene.at(curObj)->getComponent<Transform>()->set_position(parts[cur]);
+    m_scene.at(curObj)->getComponent<Transform>()->set_position(parts[cur]);    
 
     for (size_t i = 0; i < m_scene.get_list().size(); i++)
     {
@@ -225,6 +222,9 @@ bool GameApp::init_events()
             m_world_mouse_pos_x = objcoord.x;
             m_world_mouse_pos_y = objcoord.y;
             m_world_mouse_pos_z = objcoord.z;
+
+            m_mouse_pos_x = e.x;
+            m_mouse_pos_y = e.y;
 
             LOG_INFO("[EVENT] Mouse moved to {0}x{1}", e.x, e.y);
         });

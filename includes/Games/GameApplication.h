@@ -23,8 +23,7 @@ private:
 	Scene m_scene;
 
 	Camera* m_cam;
-
-	RenderEngine::Line* m_grid_line;
+	RenderEngine::Line* m_line;
 
 	std::vector<glm::vec3> parts;
 
@@ -32,6 +31,9 @@ private:
 
 	double m_init_mouse_pos_x = 0;
 	double m_init_mouse_pos_y = 0;
+
+	double m_mouse_pos_x = 0;
+	double m_mouse_pos_y = 0;
 
 	double m_world_mouse_pos_x = 0;
 	double m_world_mouse_pos_y = 0;

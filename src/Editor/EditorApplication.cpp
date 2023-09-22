@@ -28,7 +28,6 @@
 #include "EngineCore/Input.h"
 
 #include "EngineCore/Meshes/Cube.h"
-#include "EngineCore/Meshes/Sprite.h"
 #include "EngineCore/Meshes/ObjModel.h"
 #include "EngineCore/Meshes/EmptyObject.h"
 #include "EngineCore/Meshes/Plane.h"
@@ -94,7 +93,7 @@ EditorApplication::~EditorApplication()
 void EditorApplication::on_ui_render()
 {
     UImodule::on_window_update_begin();
-
+    
     bool show = true;
     UImodule::show_example_app_dock_space(&show);
 
@@ -192,7 +191,7 @@ void EditorApplication::on_ui_render()
                 ImGui::CloseCurrentPopup();
                 break;
             case 2:
-                m_scene.add_object<Sprite>(ResourceManager::getMaterial(matNames[material_current]), "default");
+                //m_scene.add_object<Sprite>(ResourceManager::getMaterial(matNames[material_current]), "default");
                 ImGui::CloseCurrentPopup();
                 break;
             case 3:
@@ -455,6 +454,7 @@ void EditorApplication::on_ui_render()
         m_cam_rot[2] = 0;
         m_cam->set_rotation(glm::vec3(m_cam_rot[0], m_cam_rot[1], m_cam_rot[2]));
     }
+    ImGui::SliderFloat3("Test", m_testpos, -20.f, 20.f);
     ImGui::End();
 
     UImodule::on_window_update_draw();
@@ -607,11 +607,14 @@ void EditorApplication::on_update(const double delta)
     m_cam_rot[2] = rot.z;
 
     ResourceManager::getShaderProgram("colorShader")->use();
-    ResourceManager::getShaderProgram("colorShader")->setMatrix4(VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+    //ResourceManager::getShaderProgram("colorShader")->setMatrix4(VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+    ResourceManager::getShaderProgram("colorShader")->setMatrix4(VIEW_PROJECTION_MATRIX_NAME, glm::mat4(1.f));
 
     ResourceManager::getShaderProgram("default3DShader")->use();
     ResourceManager::getShaderProgram("default3DShader")->setVec3("cam_position", m_cam->get_position());
     ResourceManager::getShaderProgram("default3DShader")->setFloat("ambient_factor", 0.33f);
+
+    m_line->render(glm::vec3(0.f), glm::vec3(m_testpos[0], m_testpos[1], m_testpos[2]), glm::vec3(1.f));
 
     if (m_drawNullIntersection)
     {

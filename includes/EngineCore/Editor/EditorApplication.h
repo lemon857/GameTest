@@ -36,6 +36,7 @@ private:
     float m_colors[4] = { 0.33f, 0.33f, 0.33f, 0.f };
     float m_cam_pos[3] = { -5.f, 0.f, 0.f };
     float m_cam_rot[3] = { 0.f, 0.f, 0.f };
+    float m_testpos[3] = { 0.f, 0.f, 0.f };
 
     float m_light_color[3] = { 1.f, 1.f, 1.f };
 

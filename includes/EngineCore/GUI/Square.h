@@ -2,6 +2,8 @@
 
 #include "EngineCore/GUI/GUI_element.h"
 
+#include <glm/vec3.hpp>
+
 namespace RenderEngine
 {
 	class Material;
@@ -12,20 +14,20 @@ namespace RenderEngine
 
 namespace GUI
 {
-	class Sprite : public GUI_element
+	class Square : public GUI_element
 	{
 	public:
-		Sprite(std::shared_ptr<RenderEngine::Material> pMaterial, std::string initSubTexture = "default");
-
-		~Sprite();
-		
-		void setSubTexture(std::string subTexture);
+		Square(std::shared_ptr<RenderEngine::Material> pMaterial, glm::ivec2 pos, glm::ivec2 scale);
+		~Square();
 
 		void on_render() override;
+
+		void set_color(glm::vec3 color);
 	private:
+		glm::vec3 m_color;
+
 		std::shared_ptr<RenderEngine::VertexArray> m_vertexArray;
 		RenderEngine::VertexBuffer* m_vertexCoordsBuffer;
-		RenderEngine::VertexBuffer* m_textureCoordsBuffer;
 		RenderEngine::IndexBuffer* m_indexBuffer;
 	};
 }

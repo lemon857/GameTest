@@ -5,13 +5,7 @@
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Renderer/Renderer.h"
 
-#include <GLFW/glfw3.h>
-#include <glad/glad.h>
 #include <chrono>
-
-#include <glm/gtc/matrix_transform.hpp>
-
-Stopwatch watch;
 
 Application::Application()
 {
@@ -26,7 +20,7 @@ Application::~Application()
 
 int Application::start(glm::ivec2& window_size, const char* title, const char* json_rel_path, const char* ini_rel_path)
 {
-    watch.start();
+    m_watch = new Stopwatch();
 
     INIdata data{ window_size, m_window_position, m_maximized_window };
     ResourceManager::load_INI_settings(ini_rel_path, data, false);
@@ -48,7 +42,7 @@ int Application::start(glm::ivec2& window_size, const char* title, const char* j
     LOG_INFO("Renderer: {0}", RenderEngine::Renderer::getRendererStr());
     LOG_INFO("OpenGL version: {0}", RenderEngine::Renderer::getVersionStr());
     
-    LOG_INFO("Time initialization: {0}", watch.stop());
+    LOG_INFO("Time initialization: {0}", m_watch->stop());
 
     auto lastTime = std::chrono::high_resolution_clock::now();
 

@@ -3,7 +3,7 @@
 
 #include "EngineCore/Resources/ResourceManager.h"
 
-#define EDITOR_BUILD
+//#define EDITOR_BUILD
 
 int main(int argc, char** argv)
 {
@@ -14,13 +14,13 @@ int main(int argc, char** argv)
 #ifndef EDITOR_BUILD
     GameApp* gameApp = new GameApp();
     gameApp->start(windowSize, "Engine preview game", "res/resources.json", "EngineGamePreview.ini");
-    delete gameApp;
+    //delete gameApp;
 #endif // !EDITOR_BUILD
 
 #ifdef EDITOR_BUILD
     EditorApplication* editorApplication = new EditorApplication();
     editorApplication->start(windowSize, "Engine editor", "res/resources.json", "EngineTest.ini");
-    delete editorApplication;
+    //delete editorApplication;
 #endif // EDITOR_BUILD
 
     return 0;

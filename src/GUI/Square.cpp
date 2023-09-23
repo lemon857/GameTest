@@ -1,4 +1,4 @@
-#include "EngineCore/GUI/Sprite.h"
+#include "EngineCore/GUI/Square.h"
 
 #include "EngineCore/Renderer/Renderer.h"
 #include "EngineCore/Renderer/VertexArray.h"
@@ -6,17 +6,20 @@
 #include "EngineCore/Renderer/VertexBufferLayout.h"
 #include "EngineCore/Renderer/IndexBuffer.h"
 #include "EngineCore/Renderer/Material.h"
+#include "EngineCore/System/ShadersSettings.h"
 
 namespace GUI
 {
-	static int g_current_sprite_ID = 0;
-	Sprite::Sprite(std::shared_ptr<RenderEngine::Material> pMaterial, std::string initSubTexture)
-		: GUI_element(pMaterial, "Sprite" + std::to_string(g_current_sprite_ID++))
+	static int g_current_square_ID = 0;
+	Square::Square(std::shared_ptr<RenderEngine::Material> pMaterial, glm::ivec2 pos, glm::ivec2 scale)
+		: GUI_element(pMaterial, "Square" + std::to_string(g_current_square_ID++))
 		, m_vertexArray(std::make_shared<RenderEngine::VertexArray>())
 		, m_vertexCoordsBuffer(new RenderEngine::VertexBuffer())
-		, m_textureCoordsBuffer(new RenderEngine::VertexBuffer())
 		, m_indexBuffer(new RenderEngine::IndexBuffer())
+		, m_color(glm::vec3(1.f))
 	{
+		m_position = pos;
+		m_scale = scale;
 		const GLfloat vertexCoords[] = {
 			//2--3  1
 			//| / /	|
@@ -31,14 +34,6 @@ namespace GUI
 			 1.f, -1.f, 0.f
 		};
 
-		auto aSubTexture = m_pMaterial->get_texture_ptr()->getSubTexture(initSubTexture);
-		const GLfloat textureCoords[] = {
-			//U --- V
-			aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
-			aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
-			aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
-			aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
-		};
 		const GLuint indexes[] = { 0, 1, 2, 2, 3, 0 };
 
 		m_vertexCoordsBuffer->init(&vertexCoords, 3 * 4 * sizeof(GLfloat), false);
@@ -46,40 +41,18 @@ namespace GUI
 		vertexCoordsLayout.addElementLayoutFloat(3, false);
 		m_vertexArray->addBuffer(*m_vertexCoordsBuffer, vertexCoordsLayout);
 
-		m_textureCoordsBuffer->init(&textureCoords, 2 * 4 * sizeof(GLfloat), true);
-		RenderEngine::VertexBufferLayout textureCoordsLayout;
-		textureCoordsLayout.addElementLayoutFloat(2, false);
-		m_vertexArray->addBuffer(*m_textureCoordsBuffer, textureCoordsLayout);
-
 		m_indexBuffer->init(&indexes, 6);
 
 		m_vertexArray->unbind();
 		m_indexBuffer->unbind();
-
 	}
-
-	Sprite::~Sprite()
+	Square::~Square()
 	{
 		delete m_indexBuffer;
-		delete m_textureCoordsBuffer;
 		delete m_vertexCoordsBuffer;
 		delete m_vertexArray.get();
 	}
-
-	void Sprite::setSubTexture(std::string subTexture)
-	{
-		auto aSubTexture = m_pMaterial->get_texture_ptr()->getSubTexture(subTexture);
-		const GLfloat textureCoords[] = {
-			//U --- V
-			aSubTexture.leftBottomUV.x, aSubTexture.leftBottomUV.y,
-			aSubTexture.leftBottomUV.x, aSubTexture.rightTopUV.y,
-			aSubTexture.rightTopUV.x, aSubTexture.rightTopUV.y,
-			aSubTexture.rightTopUV.x, aSubTexture.leftBottomUV.y,
-		};
-		m_textureCoordsBuffer->update(&textureCoords, 2 * 4 * sizeof(GLfloat));
-	}
-
-	void Sprite::on_render()
+	void Square::on_render()
 	{
 		glm::mat4 scaleMat(
 			m_scale[0], 0, 0, 0,
@@ -97,8 +70,12 @@ namespace GUI
 
 		m_pMaterial->use();
 		m_pMaterial->set_model_matrix(model);
+		m_pMaterial->get_shader_ptr()->setVec4(SS_COLOR_PROP_NAME, glm::vec4(m_color, 1.f));
 
 		RenderEngine::Renderer::drawTriangles(*m_vertexArray, *m_indexBuffer);
 	}
-
+	void Square::set_color(glm::vec3 color)
+	{
+		m_color = color;
+	}
 }

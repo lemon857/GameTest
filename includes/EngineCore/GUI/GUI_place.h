@@ -17,13 +17,17 @@ namespace GUI
 	class GUI_place
 	{
 	public:
-		GUI_place(std::shared_ptr<RenderEngine::Material> pMaterial);
-		~GUI_place();
+		GUI_place(Camera* render_cam, std::shared_ptr<RenderEngine::Material> pMaterial);
+		~GUI_place() = default;
 
 		void on_update(const double delta);
 
+		void on_render();
+
+		void add_element(GUI_element* element);
 	private:
 		Camera* m_render_cam;
-		std::vector<GUI_element> m_elements;
+		std::shared_ptr<RenderEngine::Material> m_pMaterial;
+		std::vector<GUI_element*> m_elements;
 	};
 }

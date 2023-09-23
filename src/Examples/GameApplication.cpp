@@ -22,7 +22,11 @@
 #include "EngineCore/Meshes/Plane.h"
 #include "EngineCore/Meshes/Grid.h" 
 
+#include "EngineCore/GUI/GUI_place.h"
+#include "EngineCore/GUI/Square.h"
+
 #include <array>
+#include <glm/gtc/matrix_transform.hpp>
 
 const int size_x = 20, size_y = 10;
 
@@ -46,6 +50,10 @@ bool GameApp::init()
 	m_cam = new Camera(glm::vec3(0), glm::vec3(0));
 
 	m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
+
+    m_gui_place = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
+
+    m_gui_place->add_element(new GUI::Square(ResourceManager::getMaterial("default"), glm::ivec2(m_pWindow->get_size().x / 2, m_pWindow->get_size().y / 2), glm::ivec2(100)));
 
     m_line = new RenderEngine::Line(ResourceManager::getMaterial("default"));
 
@@ -91,32 +99,32 @@ void GameApp::on_key_update(const double delta)
 
     double addSpeed = 1;
 
-    if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT))
-    {
-        int x = (int)floor(m_world_mouse_pos_x / 2.f);
-        int y = (int)floor(m_world_mouse_pos_z / 2.f);
+    //if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT))
+    //{
+    //    int x = (int)floor(m_world_mouse_pos_x / 2.f);
+    //    int y = (int)floor(m_world_mouse_pos_z / 2.f);
 
-        if (x * y <= parts.size())
-        {
-            cur = x * size_y + y;
-        }
-    }
-    else if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_RIGHT))
-    {
-        if (!map[cur])
-        {
-            map[cur] = true;
-            m_scene.at(curObj)->deleteComponent<Highlight>();
-            curObj++;
+    //    if (x * y <= parts.size())
+    //    {
+    //        cur = x * size_y + y;
+    //    }
+    //}
+    //else if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_RIGHT))
+    //{
+    //    if (!map[cur])
+    //    {
+    //        map[cur] = true;
+    //        m_scene.at(curObj)->deleteComponent<Highlight>();
+    //        curObj++;
 
-            m_scene.add_object<ObjModel>("res/models/monkey.obj", ResourceManager::getMaterial("monkey"));
-            //m_scene.add_object<Cube>(ResourceManager::getMaterial("cube"));
+    //        m_scene.add_object<ObjModel>("res/models/monkey.obj", ResourceManager::getMaterial("monkey"));
+    //        //m_scene.add_object<Cube>(ResourceManager::getMaterial("cube"));
 
-            m_scene.at(curObj)->addComponent<Transform>();
-            m_scene.at(curObj)->addComponent<Highlight>(ResourceManager::getMaterial("default"), true);
-            LOG_INFO("Add object");
-        }
-    }
+    //        m_scene.at(curObj)->addComponent<Transform>();
+    //        m_scene.at(curObj)->addComponent<Highlight>(ResourceManager::getMaterial("default"), true);
+    //        LOG_INFO("Add object");
+    //    }
+    //}
 
     if (Input::isKeyPressed(KeyCode::KEY_W))
     {
@@ -164,12 +172,15 @@ void GameApp::on_update(const double delta)
     RenderEngine::Renderer::clearColor();
 
     ResourceManager::getShaderProgram("colorShader")->use();
-    ResourceManager::getShaderProgram("colorShader")->setMatrix4(VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+    ResourceManager::getShaderProgram("colorShader")->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+    //ResourceManager::getShaderProgram("colorShader")->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_cam->get_ui_matrix());
 
     ResourceManager::getShaderProgram("default3DShader")->use();
     ResourceManager::getShaderProgram("default3DShader")->setVec3("cam_position", m_cam->get_position());
 
-    m_scene.at(curObj)->getComponent<Transform>()->set_position(parts[cur]);    
+    m_gui_place->on_update(delta);
+
+    m_scene.at(curObj)->getComponent<Transform>()->set_position(parts[cur]);  
 
     for (size_t i = 0; i < m_scene.get_list().size(); i++)
     {
@@ -178,10 +189,14 @@ void GameApp::on_update(const double delta)
         {
             std::shared_ptr<RenderEngine::ShaderProgram> shader = mesh->get_material_ptr()->get_shader_ptr();
             shader->use();
-            shader->setMatrix4(VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+            shader->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
         }
         m_scene.at(i)->update(delta);
     }
+}
+void GameApp::on_ui_render()
+{
+    m_gui_place->on_render();
 }
 // инициализация эвентов
 bool GameApp::init_events()

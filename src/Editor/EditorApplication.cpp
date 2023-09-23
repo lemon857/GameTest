@@ -2,6 +2,7 @@
 
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <iostream>
 #include <chrono>
@@ -454,7 +455,6 @@ void EditorApplication::on_ui_render()
         m_cam_rot[2] = 0;
         m_cam->set_rotation(glm::vec3(m_cam_rot[0], m_cam_rot[1], m_cam_rot[2]));
     }
-    ImGui::SliderFloat3("Test", m_testpos, -20.f, 20.f);
     ImGui::End();
 
     UImodule::on_window_update_draw();
@@ -607,14 +607,14 @@ void EditorApplication::on_update(const double delta)
     m_cam_rot[2] = rot.z;
 
     ResourceManager::getShaderProgram("colorShader")->use();
-    //ResourceManager::getShaderProgram("colorShader")->setMatrix4(VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
-    ResourceManager::getShaderProgram("colorShader")->setMatrix4(VIEW_PROJECTION_MATRIX_NAME, glm::mat4(1.f));
-
+    ResourceManager::getShaderProgram("colorShader")->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+    //ResourceManager::getShaderProgram("colorShader")->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_cam->get_ui_matrix());
+   
     ResourceManager::getShaderProgram("default3DShader")->use();
     ResourceManager::getShaderProgram("default3DShader")->setVec3("cam_position", m_cam->get_position());
     ResourceManager::getShaderProgram("default3DShader")->setFloat("ambient_factor", 0.33f);
 
-    m_line->render(glm::vec3(0.f), glm::vec3(m_testpos[0], m_testpos[1], m_testpos[2]), glm::vec3(1.f));
+    //m_line->render_from_to(glm::vec3(0.f, 0.f, 0.f), glm::vec3(m_mouse_pos_x, (float)m_pWindow->get_size().y - m_mouse_pos_y, 0.f), glm::vec3(1.f, 1.f, 1.f));
 
     if (m_drawNullIntersection)
     {
@@ -652,7 +652,7 @@ void EditorApplication::on_update(const double delta)
         {
             std::shared_ptr<RenderEngine::ShaderProgram> shader = mesh->get_material_ptr()->get_shader_ptr();
             shader->use();
-            shader->setMatrix4(VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+            shader->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
         }
         m_scene.at(i)->update(delta);
     }

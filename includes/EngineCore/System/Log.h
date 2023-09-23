@@ -18,4 +18,4 @@
 #define LOG_WARN(...)
 #define LOG_ERROR(...)
 #define LOG_CRIT(...)
-#endif
+#endif // DEBUG_CONSOLE

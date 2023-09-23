@@ -40,6 +40,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/GUI/GUI_element.h
 	includes/EngineCore/GUI/Button.h
 	includes/EngineCore/GUI/Sprite.h
+	includes/EngineCore/GUI/Square.h
 )
 
 set(ENGINE_PRIVATE_INCLUDES
@@ -158,9 +159,9 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Light/PointerLight.cpp
 	
 	src/GUI/GUI_place.cpp
-	src/GUI/GUI_element.cpp
 	src/GUI/Button.cpp
 	src/GUI/Sprite.cpp
+	src/GUI/Square.cpp
 )
 
 

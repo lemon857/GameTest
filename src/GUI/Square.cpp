@@ -11,7 +11,7 @@
 namespace GUI
 {
 	static int g_current_square_ID = 0;
-	Square::Square(std::shared_ptr<RenderEngine::Material> pMaterial, glm::ivec2 pos, glm::ivec2 scale)
+	Square::Square(std::shared_ptr<RenderEngine::Material> pMaterial, glm::vec2 pos, glm::vec2 scale)
 		: GUI_element(pMaterial, "Square" + std::to_string(g_current_square_ID++))
 		, m_vertexArray(std::make_shared<RenderEngine::VertexArray>())
 		, m_vertexCoordsBuffer(new RenderEngine::VertexBuffer())
@@ -56,7 +56,7 @@ namespace GUI
 	{
 		glm::mat4 scaleMat(
 			m_scale[0], 0, 0, 0,
-			0, m_scale[1], 0, 0,
+			0,m_scale[1], 0, 0,
 			0, 0, 1, 0,
 			0, 0, 0, 1);
 

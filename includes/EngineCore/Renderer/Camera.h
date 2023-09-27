@@ -35,6 +35,7 @@ public:
 
 	glm::vec3 get_position() const { return m_position; };
 	glm::vec3 get_rotation() const { return m_rotation; };
+	glm::vec2 get_viewport_size() const { return glm::vec2(m_viewport_width, m_viewport_height); };
 	glm::vec3 get_world_mouse_position(glm::vec2 mouse_position, glm::vec2 window_size);
 
 	void move_forward(const float delta);

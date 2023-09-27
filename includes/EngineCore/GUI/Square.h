@@ -17,7 +17,7 @@ namespace GUI
 	class Square : public GUI_element
 	{
 	public:
-		Square(std::shared_ptr<RenderEngine::Material> pMaterial, glm::ivec2 pos, glm::ivec2 scale);
+		Square(std::shared_ptr<RenderEngine::Material> pMaterial, glm::vec2 pos, glm::vec2 scale);
 		~Square();
 
 		void on_render() override;

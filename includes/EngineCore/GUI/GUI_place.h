@@ -25,6 +25,10 @@ namespace GUI
 		void on_render();
 
 		void add_element(GUI_element* element);
+
+		GUI_element* get_element(size_t index);
+
+		void on_mouse_click(int x, int y);
 	private:
 		Camera* m_render_cam;
 		std::shared_ptr<RenderEngine::Material> m_pMaterial;

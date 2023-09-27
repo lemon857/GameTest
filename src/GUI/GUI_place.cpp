@@ -7,6 +7,8 @@
 #include "EngineCore/System/ShadersSettings.h"
 #include "EngineCore/Renderer/Camera.h"
 
+#include "EngineCore/System/Log.h"
+
 namespace GUI
 {
 	GUI_place::GUI_place(Camera* render_cam, std::shared_ptr<RenderEngine::Material> pMaterial)
@@ -26,6 +28,7 @@ namespace GUI
 	{
 		m_pMaterial->use();
 		m_pMaterial->get_shader_ptr()->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_render_cam->get_ui_matrix());
+		//glm::vec2 size = m_render_cam->get_viewport_size();
 		for (auto cur : m_elements)
 		{
 			cur->on_render();
@@ -34,5 +37,26 @@ namespace GUI
 	void GUI_place::add_element(GUI_element* element)
 	{
 		m_elements.push_back(element);
+	}
+	GUI_element* GUI_place::get_element(size_t index)
+	{
+		return m_elements[index];
+	}
+	void GUI_place::on_mouse_click(int x, int y)
+	{
+		glm::vec2 VPsize = m_render_cam->get_viewport_size();
+		y = VPsize.y - y; // set null pos in left down
+		for (auto cur : m_elements)
+		{
+			if (!cur->get_active()) continue;
+			glm::vec2 scale = cur->get_scale();
+			glm::vec2 pos = cur->get_position() - scale;
+			scale *= 2;
+			if ((x >= pos.x && y >= pos.y && x <= pos.x + scale.x && y <= pos.y + scale.y))
+			{
+				cur->on_click();
+				LOG_INFO("[GUI] Click on object: {0}", cur->get_name());
+			}
+		}
 	}
 }

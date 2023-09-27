@@ -3,8 +3,6 @@
 #include "EngineCore/Editor/UI/UImodule.h"
 #include "EngineCore/System/Log.h"
 #include "EngineCore/Renderer/Renderer.h"
-#include "EngineCore/Components/SpriteRenderer.h"
-#include "EngineCore/Renderer/Camera.h"
 #include "EngineCore/Resources/ResourceManager.h"
 
 #include <GLFW/glfw3.h>

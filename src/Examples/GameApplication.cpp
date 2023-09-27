@@ -47,13 +47,20 @@ GameApp::~GameApp()
 // инициализация, создание объектов
 bool GameApp::init()
 {
-	m_cam = new Camera(glm::vec3(0), glm::vec3(0));
+    m_cam = new Camera(glm::vec3(0), glm::vec3(0));
 
-	m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
+    m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
 
     m_gui_place = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
 
-    m_gui_place->add_element(new GUI::Square(ResourceManager::getMaterial("default"), glm::ivec2(m_pWindow->get_size().x / 2, m_pWindow->get_size().y / 2), glm::ivec2(100)));
+    auto square = new GUI::Square(ResourceManager::getMaterial("default"), glm::vec2(100.f), glm::vec2(100.f));
+
+    square->set_click_callback([]() 
+        {
+            LOG_INFO("EEE HELLO WORLD YEPTA");
+        });
+
+    m_gui_place->add_element(square);
 
     m_line = new RenderEngine::Line(ResourceManager::getMaterial("default"));
 
@@ -194,6 +201,7 @@ void GameApp::on_update(const double delta)
         m_scene.at(i)->update(delta);
     }
 }
+// отрисовка интерфейса
 void GameApp::on_ui_render()
 {
     m_gui_place->on_render();
@@ -246,6 +254,7 @@ bool GameApp::init_events()
     m_event_dispather.add_event_listener<EventMouseScrolled>(
         [&](EventMouseScrolled& e)
         {
+            m_gui_place->get_element(0)->add_position(glm::vec2(0.f, e.y_offset * 2.f));
             LOG_INFO("[EVENT] Scroll: {0}x{1}", e.x_offset, e.y_offset);
         });
     m_event_dispather.add_event_listener<EventWindowClose>([&](EventWindowClose& e)
@@ -259,6 +268,7 @@ bool GameApp::init_events()
             Input::pressMouseButton(e.mouse_button);
             m_init_mouse_pos_x = e.x_pos;
             m_init_mouse_pos_y = e.y_pos;
+            m_gui_place->on_mouse_click(e.x_pos, e.y_pos);
         });
     m_event_dispather.add_event_listener<EventMouseButtonReleased>([&](EventMouseButtonReleased& e)
         {

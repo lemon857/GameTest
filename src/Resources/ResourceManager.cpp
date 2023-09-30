@@ -126,6 +126,15 @@ bool ResourceManager::load_JSON_resources(const std::string & JSONpath)
 			loadMaterial(name, textureName, shaderName);
 		}
 	}
+	auto fontsIt = doc.FindMember("fonts");
+	if (fontsIt != doc.MemberEnd())
+	{
+		for (const auto& currentFont : fontsIt->value.GetArray())
+		{
+			const std::string name = currentFont["name"].GetString();
+			const std::string path = currentFont["path"].GetString();
+		}
+	}
 	/*auto SpriteRenderersIt = doc.FindMember("SpriteRenderers");
 	if (SpriteRenderersIt != doc.MemberEnd())
 	{
@@ -255,10 +264,10 @@ Font_Character ResourceManager::get_character(const std::string& fontName, const
 			return it_f->second;
 		}
 		LOG_ERROR("Can't find character: {0} in font: {1}", sym, fontName);
-		return;
+		return Font_Character();
 	}
 	LOG_ERROR("Can't find font: {0}", fontName);
-	return;
+	return Font_Character();
 }
 bool ResourceManager::load_scene(std::string relativePath, Scene& scene)
 {

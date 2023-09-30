@@ -1,8 +1,3 @@
-#pragma comment(lib, "ws2_32.lib")
-#include <winsock2.h>
-
-#pragma warning(disable: 4996)
-
 #include "Games/GameApplication.h"
 
 #include "EngineCore/System/Log.h"
@@ -29,6 +24,7 @@
 #include "EngineCore/Meshes/Grid.h" 
 
 #include <array>
+#include <iostream>
 
 const int size_x = 20, size_y = 10;
 
@@ -36,31 +32,6 @@ std::array < bool, size_x* size_y> map;
 
 int cur = 0;
 int curObj = 3;
-
-SOCKET sConnections[100];
-int iCounter = 0;
-
-char sKey[256] = "Hello, this is test game server, welcome!\n";
-
-void clientHandler(int index)
-{
-    char msg[256];
-    while (true)
-    {
-        recv(sConnections[index], msg, sizeof(msg), NULL);
-        LOG_INFO(msg);
-        if (msg[0] == 's' && msg[1] == 'd') return;
-        else if (msg[0] == 'c')
-        {
-            cur = msg[1] - '0';
-        }
-        for (int i = 0; i < iCounter; i++)
-        {
-            if (i == index) continue;
-            send(sConnections[i], msg, sizeof(msg), NULL);
-        }
-    }
-}
 
 GameApp::GameApp()
 	: Application()
@@ -111,53 +82,6 @@ bool GameApp::init()
             parts.push_back(startPos + glm::vec3((float)i * size.x, 0, (float)j * size.z));
         }
     }
-
-    std::thread t([&](){
-        WSAData wsaData;
-        WORD DLLVersion = MAKEWORD(2, 1);
-
-        if (WSAStartup(DLLVersion, &wsaData))
-        {
-            LOG_ERROR("Error startup WinSock");
-            return;
-        }
-
-        SOCKADDR_IN addr;
-        int sizeofAddr = sizeof(addr);
-        addr.sin_addr.s_addr = inet_addr("192.168.1.194");
-        addr.sin_port = htons(20746);
-        addr.sin_family = AF_INET;
-
-        SOCKET sListen = socket(AF_INET, SOCK_STREAM, NULL);
-        if (!sListen)
-        {
-            LOG_ERROR("Error create socket");
-            return;
-        }
-
-        bind(sListen, (SOCKADDR*)&addr, sizeof(addr));
-        listen(sListen, SOMAXCONN);
-
-        for (int i = 0; i < 100; i++)
-        {
-            SOCKET newConnection;
-            newConnection = accept(sListen, (SOCKADDR*)&addr, &sizeofAddr);
-            if (newConnection)
-            {
-                LOG_INFO("Client connect");
-                send(newConnection, sKey, sizeof(sKey), NULL);
-                sConnections[i] = newConnection;
-                iCounter++;
-                CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)clientHandler, (LPVOID)(i), NULL, NULL);
-            }
-            else
-            {
-                LOG_ERROR("Client connection error");
-            }
-        }
-        });
-
-    t.detach();
 
 	return true;
 }
@@ -247,7 +171,7 @@ void GameApp::on_update(const double delta)
     ResourceManager::getShaderProgram("default3DShader")->use();
     ResourceManager::getShaderProgram("default3DShader")->setVec3("cam_position", m_cam->get_position());
 
-    m_grid_line->render(glm::vec3(0), glm::vec3(m_world_mouse_pos_x, m_world_mouse_pos_y + 0.1f, m_world_mouse_pos_z), glm::vec3(1.f));
+    //m_grid_line->render(glm::vec3(0), glm::vec3(m_world_mouse_pos_x, m_world_mouse_pos_y + 0.1f, m_world_mouse_pos_z), glm::vec3(1.f));
 
     m_scene.at(curObj)->getComponent<Transform>()->set_position(parts[cur]);
 

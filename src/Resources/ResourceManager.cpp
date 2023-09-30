@@ -29,6 +29,7 @@ ResourceManager::ShaderProgramsMap ResourceManager::m_ShaderPrograms;
 ResourceManager::TexturesMap ResourceManager::m_textures;
 ResourceManager::MaterialsMap ResourceManager::m_materials;
 ResourceManager::CacheOBJMap ResourceManager::m_obj_files;
+ResourceManager::FontsMap ResourceManager::m_fonts_map;
 //ResourceManager::SpriteRenderersMap ResourceManager::m_SpriteRenderers;
 //ResourceManager::GraphObjMap ResourceManager::m_graph_objs;
 //ResourceManager::AnimatorsMap ResourceManager::m_animators;
@@ -41,6 +42,7 @@ void ResourceManager::unloadAllResources()
 	m_textures.clear();
 	m_materials.clear();
 	m_obj_files.clear();
+	m_fonts_map.clear();
 	//m_SpriteRenderers.clear();
 }
 void ResourceManager::setExecutablePath(const std::string& executablePath)
@@ -241,6 +243,22 @@ bool ResourceManager::load_INI_settings(const std::string& INIpath, INIdata& dat
 		writeStream.close();
 		return false;
 	}
+}
+Font_Character ResourceManager::get_character(const std::string& fontName, const char sym)
+{
+	FontsMap::const_iterator it = m_fonts_map.find(fontName);
+	if (it != m_fonts_map.end())
+	{
+		TTFMap::const_iterator it_f = it->second.find(sym);
+		if (it_f != it->second.end())
+		{
+			return it_f->second;
+		}
+		LOG_ERROR("Can't find character: {0} in font: {1}", sym, fontName);
+		return;
+	}
+	LOG_ERROR("Can't find font: {0}", fontName);
+	return;
 }
 bool ResourceManager::load_scene(std::string relativePath, Scene& scene)
 {

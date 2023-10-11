@@ -13,11 +13,13 @@ struct INIdata
 	bool& maximized_window;
 };
 
-struct Font_Character {
+struct Font_Glyph {
 	unsigned int TextureID; // ID текстуры глифа
 	glm::ivec2   Size;      // Размеры глифа
 	glm::ivec2   Bearing;   // Смещение верхней левой точки глифа
 	unsigned int Advance;   // Горизонтальное смещение до начала следующего глифа
+
+	~Font_Glyph();
 };
 
 class Scene;
@@ -58,7 +60,9 @@ namespace RenderEngine
 
 		static bool load_INI_settings(const std::string& INIrelativePath, INIdata& data, const bool isWrite);
 
-		static Font_Character get_character(const std::string& fontName, const char sym);
+		static Font_Glyph get_character(const std::string& fontName, const char sym);
+
+		static bool load_font(std::string relativePath, std::string font_name, unsigned int font_size);
 
 		static bool load_scene(std::string relativePath, Scene& scene);
 
@@ -135,7 +139,7 @@ namespace RenderEngine
 		typedef std::map<const std::string, std::shared_ptr<GraphicsObject>> CacheOBJMap;
 		static CacheOBJMap m_obj_files;
 
-		typedef std::map<const char, Font_Character> TTFMap;
+		typedef std::map<const char, Font_Glyph> TTFMap;
 		typedef std::map<const std::string, TTFMap> FontsMap;
 		static FontsMap m_fonts_map;
 

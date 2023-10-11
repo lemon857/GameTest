@@ -18,6 +18,9 @@
 #include <iostream>
 #include <filesystem>
 
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
 #include <rapidjson/document.h>
 #include <rapidjson/error/en.h>
 
@@ -34,7 +37,6 @@ ResourceManager::FontsMap ResourceManager::m_fonts_map;
 //ResourceManager::GraphObjMap ResourceManager::m_graph_objs;
 //ResourceManager::AnimatorsMap ResourceManager::m_animators;
 std::string ResourceManager::m_path;
-
 
 void ResourceManager::unloadAllResources()
 {
@@ -133,6 +135,8 @@ bool ResourceManager::load_JSON_resources(const std::string & JSONpath)
 		{
 			const std::string name = currentFont["name"].GetString();
 			const std::string path = currentFont["path"].GetString();
+			const unsigned int size = currentFont["size"].GetUint();
+			load_font(path, name, size);
 		}
 	}
 	/*auto SpriteRenderersIt = doc.FindMember("SpriteRenderers");
@@ -253,7 +257,7 @@ bool ResourceManager::load_INI_settings(const std::string& INIpath, INIdata& dat
 		return false;
 	}
 }
-Font_Character ResourceManager::get_character(const std::string& fontName, const char sym)
+Font_Glyph ResourceManager::get_character(const std::string& fontName, const char sym)
 {
 	FontsMap::const_iterator it = m_fonts_map.find(fontName);
 	if (it != m_fonts_map.end())
@@ -264,10 +268,76 @@ Font_Character ResourceManager::get_character(const std::string& fontName, const
 			return it_f->second;
 		}
 		LOG_ERROR("Can't find character: {0} in font: {1}", sym, fontName);
-		return Font_Character();
+		return Font_Glyph();
 	}
 	LOG_ERROR("Can't find font: {0}", fontName);
-	return Font_Character();
+	return Font_Glyph();
+}
+bool ResourceManager::load_font(std::string relativePath, std::string font_name, unsigned int font_size)
+{
+	FT_Library ft;
+	if (FT_Init_FreeType(&ft))
+	{
+		LOG_ERROR("Freetype not init");
+		return false;
+	}
+
+	FT_Face face;
+	if (FT_New_Face(ft, relativePath.c_str(), 0, &face))
+	{
+		LOG_ERROR("Freetype face not load | path: {0}, {1}", relativePath);
+	}
+
+	FT_Set_Pixel_Sizes(face, 0, font_size);
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Disable byte-alignment restriction
+
+	TTFMap font_map;
+	// Пока подгрузка только первых 128 символов !!! ---------------------------------- !!!
+	for (GLubyte c = 0; c < 128; c++)
+	{
+		// Load character glyph
+		if (FT_Load_Char(face, c, FT_LOAD_RENDER))
+		{
+			LOG_WARN("Failed to load Glyph: {0}", std::to_string(c));
+			continue;
+		}
+		// Generate texture
+		GLuint texture;
+		glGenTextures(1, &texture);
+		glBindTexture(GL_TEXTURE_2D, texture);
+		glTexImage2D(
+			GL_TEXTURE_2D,
+			0,
+			GL_RED,
+			face->glyph->bitmap.width,
+			face->glyph->bitmap.rows,
+			0,
+			GL_RED,
+			GL_UNSIGNED_BYTE,
+			face->glyph->bitmap.buffer
+		);
+		// Set texture options
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		// Now store character for later use
+		Font_Glyph character = {
+			texture,
+			glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
+			glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
+			face->glyph->advance.x
+		};
+		font_map.insert(std::pair<GLchar, Font_Glyph>(c, character));
+	}
+
+	FT_Done_Face(face);   // Завершение работы с шрифтом face
+	FT_Done_FreeType(ft); // Завершение работы FreeType
+
+	LOG_INFO("Success load font: {0}", font_name);
+
+	return true;
 }
 bool ResourceManager::load_scene(std::string relativePath, Scene& scene)
 {
@@ -780,3 +850,8 @@ std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTextureAtlas(
 //	std::cerr << "Can't find animator: " << animatorName << "\n";
 //	return nullptr;
 //}
+
+Font_Glyph::~Font_Glyph()
+{
+	glDeleteTextures(1, &TextureID);
+}

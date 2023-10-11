@@ -215,7 +215,8 @@
   "fonts": [
     {
       "name": "calibri",
-      "path": "fonts/calibri.ttf"
+      "path": "fonts/calibri.ttf",
+      "size": 48
     }
   ]
 }

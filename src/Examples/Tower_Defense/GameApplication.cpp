@@ -1,4 +1,4 @@
-#include "Games/GameApplication.h"
+#include "Games/Tower_Defense/GameApplication.h"
 
 #include "EngineCore/System/Log.h"
 #include "EngineCore/Components/Transform.h"
@@ -27,7 +27,7 @@
 
 const int size_x = 20, size_y = 10;
 
-std::array < bool, size_x* size_y> map;
+std::array <bool, size_x * size_y> map;
 
 int cur = 0;
 int curObj = 3;
@@ -44,10 +44,11 @@ GameApp::~GameApp()
 // инициализация, создание объектов
 bool GameApp::init()
 {
+    // Создание рендер камеры
 	m_cam = new Camera(glm::vec3(0), glm::vec3(0));
-
+    // Установка вьюпорта для рендера
 	m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
-
+    // Создание линии для сетки
     m_grid_line = new RenderEngine::Line(ResourceManager::getMaterial("default"));
 
     map.fill(false);
@@ -82,6 +83,8 @@ bool GameApp::init()
         }
     }
 
+    m_main_castle = new Castle(parts[4], 100, new Cube(ResourceManager::getMaterial("cube")), ResourceManager::getMaterial("default"));
+    
 	return true;
 }
 // цикл для проерки нажатия клавиш
@@ -185,6 +188,7 @@ void GameApp::on_update(const double delta)
         }
         m_scene.at(i)->update(delta);
     }
+    m_main_castle->update();
 }
 // инициализация эвентов
 bool GameApp::init_events()
@@ -231,6 +235,7 @@ bool GameApp::init_events()
     m_event_dispather.add_event_listener<EventMouseScrolled>(
         [&](EventMouseScrolled& e)
         {
+            m_main_castle->damage(10);
             LOG_INFO("[EVENT] Scroll: {0}x{1}", e.x_offset, e.y_offset);
         });
     m_event_dispather.add_event_listener<EventWindowClose>([&](EventWindowClose& e)

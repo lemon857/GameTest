@@ -16,6 +16,7 @@
 #include "EngineCore/Renderer/Material.h"
 #include "EngineCore/Input.h"
 
+#include "EngineCore/Meshes/EmptyObject.h"
 #include "EngineCore/Meshes/Cube.h"
 #include "EngineCore/Meshes/Sprite.h"
 #include "EngineCore/Meshes/ObjModel.h"
@@ -64,7 +65,7 @@ bool GameApp::init()
 	m_scene.add_object<Plane>(ResourceManager::getMaterial("dirt"), glm::vec3(size_x, 0.f, size_y), glm::vec3(size_x, 0.f, size_y));
     m_scene.add_object<DirectionalLight>(names);
     m_scene.add_object<Grid>(glm::vec3(size_x, 0.5f, size_y), glm::vec2(1.f), size_x, size_y, glm::vec3(1.f), ResourceManager::getMaterial("default"));
-    m_scene.add_object<ObjModel>("res/models/monkey.obj", ResourceManager::getMaterial("monkey"));
+    m_scene.add_object<EmptyObject>();
     //m_scene.add_object<Cube>(ResourceManager::getMaterial("cube"));
 
     ((float*)ResourceManager::getMaterial("cube")->get_data("ambient_factor"))[0] = 0.3f;
@@ -89,8 +90,7 @@ bool GameApp::init()
     }
 
     m_main_castle = new Castle(parts[14], 100, new Cube(ResourceManager::getMaterial("cube")), ResourceManager::getMaterial("default"));
-    m_enemy = new Enemy(new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("monkey")), m_main_castle, parts[cur], 1, 0.005, 50, ResourceManager::getMaterial("default"));
-
+    m_enemy = new Enemy(new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("monkey")), m_main_castle, parts[100], 1, 0.005, 50, ResourceManager::getMaterial("default"));
 	return true;
 }
 // цикл для проерки нажатия клавиш
@@ -116,12 +116,12 @@ void GameApp::on_key_update(const double delta)
         if (!map[cur])
         {
             map[cur] = true;
+
+            m_tower = new BaseTower(new ObjModel("res/models/cube.obj", ResourceManager::getMaterial("tower")), m_enemy, parts[cur], 1, new RenderEngine::Line(ResourceManager::getMaterial("default")));
+
             //m_scene.at(curObj)->deleteComponent<Highlight>();
             //curObj++;
-
-            delete m_enemy;
-
-            m_enemy = new Enemy(new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("monkey")), m_main_castle, parts[cur], 1, 0.005, 50, ResourceManager::getMaterial("default"));
+            // 
             //m_scene.add_object<ObjModel>("res/models/monkey.obj", ResourceManager::getMaterial("monkey"));
             //m_scene.add_object<Cube>(ResourceManager::getMaterial("cube"));
 
@@ -211,9 +211,20 @@ void GameApp::on_update(const double delta)
         if (i != 2) m_scene.at(i)->update(delta);
         if (i == 2 && is_grid_active) m_scene.at(i)->update(delta);
     }
+
+    if (m_enemy->is_destroy())
+    {
+        delete m_enemy;
+
+        m_enemy = new Enemy(new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("monkey")),
+            m_main_castle, parts[100], 1, 0.005, 50, ResourceManager::getMaterial("default"));
+    }
+
+    if (m_tower != nullptr) m_tower->update(delta);
+
     m_main_castle->update();
 
-    m_enemy->update(delta);
+    if (m_enemy != nullptr) m_enemy->update(delta);
 }
 // инициализация эвентов
 bool GameApp::init_events()

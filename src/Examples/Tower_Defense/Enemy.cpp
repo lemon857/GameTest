@@ -15,19 +15,21 @@ Enemy::Enemy(ObjModel* model, Castle* target, glm::vec3 pos, double cooldown, do
 	, m_model(std::move(model))
 	, m_bar(new HealthBar(pMaterial, pos + glm::vec3(0.f, 2.5f, 0.f), 25, 2, hp, glm::vec3(1.f), glm::vec3(1.f, 0.f, 0.f)))
 	, m_isDestroyed(false)
+	, m_hp(hp)
 {
 	m_model->addComponent<Transform>(pos);
 }
 
 Enemy::~Enemy()
 {
+	delete m_bar;
 }
 
 void Enemy::update(const double delta)
 {
 	if (m_isDestroyed) return;
 	glm::vec3 a = m_target_castle->get_pos() - m_model->getComponent<Transform>()->get_position();
-	if (sqrt(a.x * a.x + a.z * a.z) > MIN_DISTANCE)
+	if (sqrt(a.x * a.x + a.z * a.z) > MIN_DISTANCE_TO_CASTLE)
 	{
 		m_model->getComponent<Transform>()->add_position(glm::normalize(a) * (float)delta * (float)m_velocity);
 		m_bar->set_pos(m_model->getComponent<Transform>()->get_position() + glm::vec3(0.f, 2.5f, 0.f));
@@ -51,11 +53,11 @@ void Enemy::damage(const unsigned int damage_hp)
 	m_bar->set_value(m_hp);
 	if (m_hp <= 0)
 	{
-		dead();
+		m_isDestroyed = true;
 	}
 }
 
-void Enemy::dead()
+glm::vec3 Enemy::get_pos()
 {
-	m_isDestroyed = true;
+	return m_model->getComponent<Transform>()->get_position();
 }

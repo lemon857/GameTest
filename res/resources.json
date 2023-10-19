@@ -199,6 +199,17 @@
       "subTextures": [
         "default"
       ]
+    },
+    {
+      "name": "Tower",
+      "filePath": "res/textures/tower.png",
+      "width": 128,
+      "height": 128,
+      "subTexture_w": 128,
+      "subTexture_h": 128,
+      "subTextures": [
+        "default"
+      ]
     }
   ],
   "materials": [
@@ -211,6 +222,11 @@
       "name": "cube",
       "nameShader": "default3DShader",
       "nameTexture": "CubeTexture"
+    },
+    {
+      "name": "tower",
+      "nameShader": "default3DShader",
+      "nameTexture": "Tower"
     },
     {
       "name": "dirt",

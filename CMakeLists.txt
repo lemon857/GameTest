@@ -38,6 +38,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/Games/Tower_Defense/Castle.h
 	includes/Games/Tower_Defense/HealthBar.h
 	includes/Games/Tower_Defense/Enemy.h
+	includes/Games/Tower_Defense/BaseTower.h
 )
 
 set(ENGINE_PRIVATE_INCLUDES
@@ -119,6 +120,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Examples/Tower_Defense/Castle.cpp
 	src/Examples/Tower_Defense/HealthBar.cpp
 	src/Examples/Tower_Defense/Enemy.cpp
+	src/Examples/Tower_Defense/BaseTower.cpp
 	
 	src/Resources/ResourceManager.cpp
 	src/Resources/Scene.cpp

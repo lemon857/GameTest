@@ -8,6 +8,7 @@
 
 #include "Games/Tower_Defense/Castle.h"
 #include "Games/Tower_Defense/Enemy.h"
+#include "Games/Tower_Defense/BaseTower.h"
 
 #include <vector>
 #include <glm/vec3.hpp>
@@ -28,6 +29,8 @@ private:
 	Castle* m_main_castle;
 
 	Enemy* m_enemy;
+
+	BaseTower* m_tower = nullptr;
 
 	Camera* m_cam;
 

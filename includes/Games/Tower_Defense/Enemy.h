@@ -1,10 +1,11 @@
 #pragma once
 
-#define MIN_DISTANCE 2.7f
+#define MIN_DISTANCE_TO_CASTLE 2.7f
 
 #include <glm/vec3.hpp>
 
 #include <memory>
+#include <functional>
 
 class Castle;
 class ObjModel;
@@ -25,10 +26,13 @@ public:
 	void update(const double delta);
 
 	void damage(const unsigned int damage_hp);
+	
+	bool is_destroy() { return m_isDestroyed; }
 
-	void dead();
+	glm::vec3 get_pos();
 
 private:
+
 	Castle* m_target_castle;
 	ObjModel* m_model;
 	HealthBar* m_bar;
@@ -40,6 +44,5 @@ private:
 	double m_cool_down;
 
 	double m_velocity;
-
 	bool m_isDestroyed;
 };

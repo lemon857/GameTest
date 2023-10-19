@@ -90,7 +90,7 @@ bool GameApp::init()
     }
 
     m_main_castle = new Castle(parts[14], 100, new Cube(ResourceManager::getMaterial("cube")), ResourceManager::getMaterial("default"));
-    m_enemy = new Enemy(new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("monkey")), m_main_castle, parts[100], 1, 0.005, 50, ResourceManager::getMaterial("default"));
+    m_enemy = new Enemy(new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("monkey")), m_main_castle, parts[155], 1, 0.005, 50, ResourceManager::getMaterial("default"));
 	return true;
 }
 // цикл для проерки нажатия клавиш
@@ -117,7 +117,8 @@ void GameApp::on_key_update(const double delta)
         {
             map[cur] = true;
 
-            m_tower = new BaseTower(new ObjModel("res/models/cube.obj", ResourceManager::getMaterial("tower")), m_enemy, parts[cur], 1, new RenderEngine::Line(ResourceManager::getMaterial("default")));
+            m_towers.push_back(new BaseTower(new ObjModel("res/models/cube.obj",
+                ResourceManager::getMaterial("tower")), m_enemy, parts[cur], 1, new RenderEngine::Line(ResourceManager::getMaterial("default"))));
 
             //m_scene.at(curObj)->deleteComponent<Highlight>();
             //curObj++;
@@ -210,21 +211,31 @@ void GameApp::on_update(const double delta)
         }
         if (i != 2) m_scene.at(i)->update(delta);
         if (i == 2 && is_grid_active) m_scene.at(i)->update(delta);
-    }
+    }       
 
+    m_main_castle->update();
+
+    if (m_enemy != nullptr)
+    {
+        m_enemy->update(delta);
+        for (auto curTower : m_towers)
+        {
+            curTower->update(delta);
+        }
+    }
+    
     if (m_enemy->is_destroy())
     {
         delete m_enemy;
 
         m_enemy = new Enemy(new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("monkey")),
-            m_main_castle, parts[100], 1, 0.005, 50, ResourceManager::getMaterial("default"));
+            m_main_castle, parts[155], 1, 0.005, 50, ResourceManager::getMaterial("default"));
+
+        for (auto curTower : m_towers)
+        {
+            curTower->set_target(m_enemy);
+        }
     }
-
-    if (m_tower != nullptr) m_tower->update(delta);
-
-    m_main_castle->update();
-
-    if (m_enemy != nullptr) m_enemy->update(delta);
 }
 // инициализация эвентов
 bool GameApp::init_events()

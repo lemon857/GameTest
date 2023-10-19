@@ -30,7 +30,7 @@ private:
 
 	Enemy* m_enemy;
 
-	BaseTower* m_tower = nullptr;
+	std::vector<BaseTower*> m_towers;
 
 	Camera* m_cam;
 

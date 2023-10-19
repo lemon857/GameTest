@@ -24,6 +24,7 @@ BaseTower::~BaseTower()
 
 void BaseTower::update(const double delta)
 {
+	if (m_target_enemy == nullptr) return;
 	glm::vec3 a = m_target_enemy->get_pos() - m_model->getComponent<Transform>()->get_position();
 	if (sqrt(a.x * a.x + a.z * a.z) < MIN_DISTANCE_TO_ENEMY)
 	{

@@ -15,7 +15,7 @@ namespace RenderEngine
 class Castle
 {
 public:
-	Castle(glm::vec3 initPos, unsigned int hp, Cube* model, std::shared_ptr<RenderEngine::Material> pMaterial);
+	Castle(glm::vec3 initPos, const unsigned int hp, Cube* model, std::shared_ptr<RenderEngine::Material> pMaterial);
 
 	~Castle() = default;
 
@@ -23,6 +23,8 @@ public:
 
 	void damage(const unsigned int damage_hp);
 		
+	glm::vec3 get_pos();
+
 private:
 	Cube* m_model;
 

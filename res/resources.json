@@ -188,6 +188,17 @@
       "subTextures": [
         "default"
       ]
+    },
+    {
+      "name": "Dirt",
+      "filePath": "res/textures/dirt.png",
+      "width": 1440,
+      "height": 960,
+      "subTexture_w": 1440,
+      "subTexture_h": 960,
+      "subTextures": [
+        "default"
+      ]
     }
   ],
   "materials": [
@@ -200,6 +211,11 @@
       "name": "cube",
       "nameShader": "default3DShader",
       "nameTexture": "CubeTexture"
+    },
+    {
+      "name": "dirt",
+      "nameShader": "default3DShader",
+      "nameTexture": "Dirt"
     },
     {
       "name": "sprite",

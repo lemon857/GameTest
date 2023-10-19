@@ -26,13 +26,18 @@ HealthBar::~HealthBar()
 
 void HealthBar::update()
 {
-	/*m_background_line->render_from_to(glm::vec3(m_pos.x, m_pos.y, (m_pos.z + m_lenght) * m_value / m_max_value),
-		glm::vec3(m_pos.x, m_pos.y, m_pos.z + m_lenght), m_background_color);*/
+	m_background_line->render_from_to(glm::vec3(m_pos.x, m_pos.y, m_pos.z + 2 * m_lenght * m_value / m_max_value - m_lenght),
+		glm::vec3(m_pos.x, m_pos.y, m_pos.z + m_lenght), m_background_color);
 	m_foreground_line->render_from_to(glm::vec3(m_pos.x, m_pos.y, m_pos.z - m_lenght),
-		glm::vec3(m_pos.x, m_pos.y, (m_pos.z + m_lenght) * m_value / m_max_value), m_foreground_color);
+			glm::vec3(m_pos.x, m_pos.y, m_pos.z + 2 * m_lenght * m_value / m_max_value - m_lenght), m_foreground_color);
 }
 
 void HealthBar::set_value(const double value)
 {
 	if (value >= 0 && value <= m_max_value) m_value = value;
+}
+
+void HealthBar::set_pos(glm::vec3 pos)
+{
+	m_pos = pos;
 }

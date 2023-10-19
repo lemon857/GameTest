@@ -7,6 +7,7 @@
 #include "EngineCore/Resources/Scene.h"
 
 #include "Games/Tower_Defense/Castle.h"
+#include "Games/Tower_Defense/Enemy.h"
 
 #include <vector>
 #include <glm/vec3.hpp>
@@ -25,6 +26,8 @@ private:
 	Scene m_scene;
 
 	Castle* m_main_castle;
+
+	Enemy* m_enemy;
 
 	Camera* m_cam;
 

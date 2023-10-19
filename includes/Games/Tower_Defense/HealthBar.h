@@ -22,6 +22,8 @@ public:
 
 	void set_value(const double value);
 
+	void set_pos(glm::vec3 pos);
+
 private:
 	// Линия заднего фона бара
 	RenderEngine::Line* m_background_line;

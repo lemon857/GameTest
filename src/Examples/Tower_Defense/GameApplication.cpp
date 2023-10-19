@@ -32,6 +32,10 @@ std::array <bool, size_x * size_y> map;
 int cur = 0;
 int curObj = 3;
 
+bool is_grid_active = false;
+
+bool isKeyPressed = false;
+
 GameApp::GameApp()
 	: Application()
 {
@@ -57,13 +61,14 @@ bool GameApp::init()
 
 	names.push_back("default3DShader");
 
-	m_scene.add_object<Plane>(ResourceManager::getMaterial("cube"), glm::vec3(size_x, 0.f, size_y), glm::vec3(size_x, 0.f, size_y));
+	m_scene.add_object<Plane>(ResourceManager::getMaterial("dirt"), glm::vec3(size_x, 0.f, size_y), glm::vec3(size_x, 0.f, size_y));
     m_scene.add_object<DirectionalLight>(names);
     m_scene.add_object<Grid>(glm::vec3(size_x, 0.5f, size_y), glm::vec2(1.f), size_x, size_y, glm::vec3(1.f), ResourceManager::getMaterial("default"));
     m_scene.add_object<ObjModel>("res/models/monkey.obj", ResourceManager::getMaterial("monkey"));
     //m_scene.add_object<Cube>(ResourceManager::getMaterial("cube"));
 
     ((float*)ResourceManager::getMaterial("cube")->get_data("ambient_factor"))[0] = 0.3f;
+    ((float*)ResourceManager::getMaterial("dirt")->get_data("ambient_factor"))[0] = 0.3f;
     ((float*)ResourceManager::getMaterial("monkey")->get_data("ambient_factor"))[0] = 0.2f;
 
     m_scene.at(curObj)->addComponent<Transform>();
@@ -83,8 +88,9 @@ bool GameApp::init()
         }
     }
 
-    m_main_castle = new Castle(parts[4], 100, new Cube(ResourceManager::getMaterial("cube")), ResourceManager::getMaterial("default"));
-    
+    m_main_castle = new Castle(parts[14], 100, new Cube(ResourceManager::getMaterial("cube")), ResourceManager::getMaterial("default"));
+    m_enemy = new Enemy(new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("monkey")), m_main_castle, parts[cur], 1, 0.005, 50, ResourceManager::getMaterial("default"));
+
 	return true;
 }
 // цикл для проерки нажатия клавиш
@@ -110,15 +116,31 @@ void GameApp::on_key_update(const double delta)
         if (!map[cur])
         {
             map[cur] = true;
-            m_scene.at(curObj)->deleteComponent<Highlight>();
-            curObj++;
+            //m_scene.at(curObj)->deleteComponent<Highlight>();
+            //curObj++;
 
-            m_scene.add_object<ObjModel>("res/models/monkey.obj", ResourceManager::getMaterial("monkey"));
+            delete m_enemy;
+
+            m_enemy = new Enemy(new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("monkey")), m_main_castle, parts[cur], 1, 0.005, 50, ResourceManager::getMaterial("default"));
+            //m_scene.add_object<ObjModel>("res/models/monkey.obj", ResourceManager::getMaterial("monkey"));
             //m_scene.add_object<Cube>(ResourceManager::getMaterial("cube"));
 
-            m_scene.at(curObj)->addComponent<Transform>();
-            m_scene.at(curObj)->addComponent<Highlight>(ResourceManager::getMaterial("default"), true);
+            //m_scene.at(curObj)->addComponent<Transform>();
+            //m_scene.at(curObj)->addComponent<Highlight>(ResourceManager::getMaterial("default"), true);
             LOG_INFO("Add object");
+        }
+    }
+    if (Input::isKeyPressed(KeyCode::KEY_G))
+    {
+        if (is_grid_active && !isKeyPressed)
+        {
+            is_grid_active = false;
+            isKeyPressed = true;
+        }
+        else if (!isKeyPressed)
+        {
+            is_grid_active = true;
+            isKeyPressed = true;
         }
     }
 
@@ -173,7 +195,7 @@ void GameApp::on_update(const double delta)
     ResourceManager::getShaderProgram("default3DShader")->use();
     ResourceManager::getShaderProgram("default3DShader")->setVec3("cam_position", m_cam->get_position());
 
-    m_grid_line->render(glm::vec3(0), glm::vec3(m_world_mouse_pos_x, m_world_mouse_pos_y + 0.1f, m_world_mouse_pos_z), glm::vec3(1.f));
+    //m_grid_line->render(glm::vec3(0), glm::vec3(m_world_mouse_pos_x, m_world_mouse_pos_y + 0.1f, m_world_mouse_pos_z), glm::vec3(1.f));
 
     m_scene.at(curObj)->getComponent<Transform>()->set_position(parts[cur]);
 
@@ -186,9 +208,12 @@ void GameApp::on_update(const double delta)
             shader->use();
             shader->setMatrix4(VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
         }
-        m_scene.at(i)->update(delta);
+        if (i != 2) m_scene.at(i)->update(delta);
+        if (i == 2 && is_grid_active) m_scene.at(i)->update(delta);
     }
     m_main_castle->update();
+
+    m_enemy->update(delta);
 }
 // инициализация эвентов
 bool GameApp::init_events()
@@ -220,6 +245,7 @@ bool GameApp::init_events()
     m_event_dispather.add_event_listener<EventKeyReleased>([&](EventKeyReleased& e)
         {
             if (e.key_code <= KeyCode::KEY_Z)  LOG_INFO("[EVENT] Key released {0}", static_cast<char>(e.key_code));
+            isKeyPressed = false;
             Input::releaseKey(e.key_code);
         });
     m_event_dispather.add_event_listener<EventMouseMoved>([&](EventMouseMoved& e)
@@ -235,7 +261,6 @@ bool GameApp::init_events()
     m_event_dispather.add_event_listener<EventMouseScrolled>(
         [&](EventMouseScrolled& e)
         {
-            m_main_castle->damage(10);
             LOG_INFO("[EVENT] Scroll: {0}x{1}", e.x_offset, e.y_offset);
         });
     m_event_dispather.add_event_listener<EventWindowClose>([&](EventWindowClose& e)

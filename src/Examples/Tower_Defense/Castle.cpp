@@ -35,3 +35,8 @@ glm::vec3 Castle::get_pos()
 {
 	return m_model->getComponent<Transform>()->get_position();
 }
+
+bool Castle::isDestroyed()
+{
+	return m_isDestroyed;
+}

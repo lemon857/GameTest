@@ -1,7 +1,5 @@
 #pragma once
 
-#define MIN_DISTANCE_TO_ENEMY 7.f
-
 #include <glm/vec3.hpp>
 
 class Enemy;
@@ -22,6 +20,10 @@ public:
 	void update(const double delta);
 
 	void set_target(Enemy* target);
+
+	glm::vec3 get_pos();
+
+	Enemy* get_target();
 
 private:
 	Enemy* m_target_enemy;

@@ -25,6 +25,8 @@ public:
 		
 	glm::vec3 get_pos();
 
+	bool isDestroyed();
+
 private:
 	Cube* m_model;
 

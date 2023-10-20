@@ -6,6 +6,8 @@
 #include "EngineCore/Renderer/Line.h"
 #include "EngineCore/Resources/Scene.h"
 
+#include "EngineCore/System/List.h"
+
 #include "Games/Tower_Defense/Castle.h"
 #include "Games/Tower_Defense/Enemy.h"
 #include "Games/Tower_Defense/BaseTower.h"
@@ -28,7 +30,7 @@ private:
 
 	Castle* m_main_castle;
 
-	Enemy* m_enemy;
+	linked_list<Enemy*> m_enemies;
 
 	std::vector<BaseTower*> m_towers;
 
@@ -51,4 +53,6 @@ private:
 	float m_cam_sensetivity = 0.5f;
 
 	bool m_isInversiveMouseY = false;
+
+	bool m_isLoose = false;
 };

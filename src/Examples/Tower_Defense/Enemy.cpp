@@ -17,7 +17,7 @@ Enemy::Enemy(ObjModel* model, Castle* target, glm::vec3 pos, double cooldown, do
 	, m_isDestroyed(false)
 	, m_hp(hp)
 {
-	m_model->addComponent<Transform>(pos);
+	m_model->addComponent<Transform>(pos, glm::vec3(1.f), glm::vec3(0.f, 90.f, 0.f));
 }
 
 Enemy::~Enemy()

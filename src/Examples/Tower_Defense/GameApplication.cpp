@@ -26,6 +26,8 @@
 
 #include <array>
 
+#define MIN_DISTANCE_TO_ENEMY 7.f
+
 const int size_x = 20, size_y = 10;
 
 std::array <bool, size_x * size_y> map;
@@ -33,9 +35,15 @@ std::array <bool, size_x * size_y> map;
 int cur = 0;
 int curObj = 3;
 
+int countEnemies = 0;
+
+bool is_event_logging_active = false;
+
 bool is_grid_active = false;
 
 bool isKeyPressed = false;
+
+unsigned int countKills = 0;
 
 GameApp::GameApp()
 	: Application()
@@ -69,8 +77,9 @@ bool GameApp::init()
     //m_scene.add_object<Cube>(ResourceManager::getMaterial("cube"));
 
     ((float*)ResourceManager::getMaterial("cube")->get_data("ambient_factor"))[0] = 0.3f;
-    ((float*)ResourceManager::getMaterial("dirt")->get_data("ambient_factor"))[0] = 0.3f;
-    ((float*)ResourceManager::getMaterial("monkey")->get_data("ambient_factor"))[0] = 0.2f;
+    ((float*)ResourceManager::getMaterial("dirt")->get_data("ambient_factor"))[0] = 0.25f;
+    ((float*)ResourceManager::getMaterial("tower")->get_data("ambient_factor"))[0] = 0.3f;
+    ((float*)ResourceManager::getMaterial("monkey")->get_data("ambient_factor"))[0] = 0.5f;
 
     m_scene.at(curObj)->addComponent<Transform>();
     m_scene.at(curObj)->addComponent<Highlight>(ResourceManager::getMaterial("default"), true); 
@@ -89,8 +98,10 @@ bool GameApp::init()
         }
     }
 
+    ResourceManager::load_OBJ_file("res/models/monkey.obj");
+    ResourceManager::load_OBJ_file("res/models/cube.obj");
+
     m_main_castle = new Castle(parts[14], 100, new Cube(ResourceManager::getMaterial("cube")), ResourceManager::getMaterial("default"));
-    m_enemy = new Enemy(new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("monkey")), m_main_castle, parts[155], 1, 0.005, 50, ResourceManager::getMaterial("default"));
 	return true;
 }
 // цикл для проерки нажатия клавиш
@@ -118,7 +129,7 @@ void GameApp::on_key_update(const double delta)
             map[cur] = true;
 
             m_towers.push_back(new BaseTower(new ObjModel("res/models/cube.obj",
-                ResourceManager::getMaterial("tower")), m_enemy, parts[cur], 1, new RenderEngine::Line(ResourceManager::getMaterial("default"))));
+                ResourceManager::getMaterial("tower")), nullptr, parts[cur], 1, new RenderEngine::Line(ResourceManager::getMaterial("default"))));
 
             //m_scene.at(curObj)->deleteComponent<Highlight>();
             //curObj++;
@@ -128,7 +139,7 @@ void GameApp::on_key_update(const double delta)
 
             //m_scene.at(curObj)->addComponent<Transform>();
             //m_scene.at(curObj)->addComponent<Highlight>(ResourceManager::getMaterial("default"), true);
-            LOG_INFO("Add object");
+            LOG_INFO("Add tower at {0}x{1}", parts[cur].x, parts[cur].z);
         }
     }
     if (Input::isKeyPressed(KeyCode::KEY_G))
@@ -141,6 +152,27 @@ void GameApp::on_key_update(const double delta)
         else if (!isKeyPressed)
         {
             is_grid_active = true;
+            isKeyPressed = true;
+        }
+    }
+    else if (Input::isKeyPressed(KeyCode::KEY_L))
+    {
+        if (is_event_logging_active && !isKeyPressed)
+        {
+            is_event_logging_active = false;
+            isKeyPressed = true;
+        }
+        else if (!isKeyPressed)
+        {
+            is_event_logging_active = true;
+            isKeyPressed = true;
+        }
+    }
+    else if (Input::isKeyPressed(KeyCode::KEY_J))
+    {
+        if (!isKeyPressed)
+        {
+            countEnemies++;
             isKeyPressed = true;
         }
     }
@@ -213,28 +245,52 @@ void GameApp::on_update(const double delta)
         if (i == 2 && is_grid_active) m_scene.at(i)->update(delta);
     }       
 
+    if (m_isLoose) return;
+
     m_main_castle->update();
 
-    if (m_enemy != nullptr)
+    if (m_main_castle->isDestroyed() && !m_isLoose)
     {
-        m_enemy->update(delta);
-        for (auto curTower : m_towers)
-        {
-            curTower->update(delta);
-        }
+        LOG_CRIT("You loose!!! You score: {0}", countKills);
+        m_isLoose = true;
     }
-    
-    if (m_enemy->is_destroy())
+
+    for (; countEnemies > 0; countEnemies--)
     {
-        delete m_enemy;
+        m_enemies.push_back(new Enemy(new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("monkey")),
+            m_main_castle, parts[189 + (rand() % 10)], 1, 0.005, 50, ResourceManager::getMaterial("default")));
+    }
 
-        m_enemy = new Enemy(new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("monkey")),
-            m_main_castle, parts[155], 1, 0.005, 50, ResourceManager::getMaterial("default"));
-
-        for (auto curTower : m_towers)
+    for (auto curTower : m_towers)
+    {
+        for (size_t i = 0; i < m_enemies.size(); i++)
         {
-            curTower->set_target(m_enemy);
+            if (m_enemies[i] == nullptr) continue;
+            glm::vec3 a = m_enemies[i]->get_pos() - curTower->get_pos();
+            if (sqrt(a.x * a.x + a.z * a.z) < MIN_DISTANCE_TO_ENEMY)
+            {
+                curTower->set_target(m_enemies[i]);
+            }
         }
+        curTower->update(delta);
+    }
+
+    for (size_t i = 0; i < m_enemies.size(); i++)
+    {
+        if (m_enemies[i] == nullptr) continue;        
+        if (m_enemies[i]->is_destroy())
+        {
+            countEnemies++;
+            for (auto curTower : m_towers)
+            {
+                if (curTower->get_target() == m_enemies[i]) curTower->set_target(nullptr);
+            }
+            delete m_enemies[i];
+            m_enemies.remove(i);
+            LOG_INFO("You kill {0} enemies", ++countKills);
+            continue;
+        }
+        m_enemies[i]->update(delta);        
     }
 }
 // инициализация эвентов
@@ -242,7 +298,7 @@ bool GameApp::init_events()
 {
     m_event_dispather.add_event_listener<EventWindowResize>([&](EventWindowResize& e)
         {
-            LOG_INFO("[EVENT] Resize: {0}x{1}", e.width, e.height);
+            if (is_event_logging_active) LOG_INFO("[EVENT] Resize: {0}x{1}", e.width, e.height);
             if (e.width != 0 && e.height != 0)
             {
                 RenderEngine::Renderer::setViewport(e.width, e.height);
@@ -255,18 +311,18 @@ bool GameApp::init_events()
             {
                 if (e.repeated)
                 {
-                    LOG_INFO("[EVENT] Key repeated {0}", static_cast<char>(e.key_code));
+                    if (is_event_logging_active) LOG_INFO("[EVENT] Key repeated {0}", static_cast<char>(e.key_code));
                 }
                 else
                 {
-                    LOG_INFO("[EVENT] Key pressed {0}", static_cast<char>(e.key_code));
+                    if (is_event_logging_active) LOG_INFO("[EVENT] Key pressed {0}", static_cast<char>(e.key_code));
                 }
             }
             Input::pressKey(e.key_code);
         });
     m_event_dispather.add_event_listener<EventKeyReleased>([&](EventKeyReleased& e)
         {
-            if (e.key_code <= KeyCode::KEY_Z)  LOG_INFO("[EVENT] Key released {0}", static_cast<char>(e.key_code));
+            if (e.key_code <= KeyCode::KEY_Z)  if (is_event_logging_active) LOG_INFO("[EVENT] Key released {0}", static_cast<char>(e.key_code));
             isKeyPressed = false;
             Input::releaseKey(e.key_code);
         });
@@ -278,40 +334,40 @@ bool GameApp::init_events()
             m_world_mouse_pos_y = objcoord.y;
             m_world_mouse_pos_z = objcoord.z;
 
-            LOG_INFO("[EVENT] Mouse moved to {0}x{1}", e.x, e.y);
+            if (is_event_logging_active) LOG_INFO("[EVENT] Mouse moved to {0}x{1}", e.x, e.y);
         });
     m_event_dispather.add_event_listener<EventMouseScrolled>(
         [&](EventMouseScrolled& e)
         {
-            LOG_INFO("[EVENT] Scroll: {0}x{1}", e.x_offset, e.y_offset);
+            if (is_event_logging_active) LOG_INFO("[EVENT] Scroll: {0}x{1}", e.x_offset, e.y_offset);
         });
     m_event_dispather.add_event_listener<EventWindowClose>([&](EventWindowClose& e)
         {
-            LOG_INFO("[EVENT] Window close");
+            if (is_event_logging_active) LOG_INFO("[EVENT] Window close");
             m_pCloseWindow = true;
         });
     m_event_dispather.add_event_listener<EventMouseButtonPressed>([&](EventMouseButtonPressed& e)
         {
-            LOG_INFO("[EVENT] Mouse button pressed at ({0}x{1})", e.x_pos, e.y_pos);
+            if (is_event_logging_active) LOG_INFO("[EVENT] Mouse button pressed at ({0}x{1})", e.x_pos, e.y_pos);
             Input::pressMouseButton(e.mouse_button);
             m_init_mouse_pos_x = e.x_pos;
             m_init_mouse_pos_y = e.y_pos;
         });
     m_event_dispather.add_event_listener<EventMouseButtonReleased>([&](EventMouseButtonReleased& e)
         {
-            LOG_INFO("[EVENT] Mouse button released at ({0}x{1})", e.x_pos, e.y_pos);
+            if (is_event_logging_active) LOG_INFO("[EVENT] Mouse button released at ({0}x{1})", e.x_pos, e.y_pos);
             Input::releaseMouseButton(e.mouse_button);
             m_init_mouse_pos_x = e.x_pos;
             m_init_mouse_pos_y = e.y_pos;
         });
     m_event_dispather.add_event_listener<EventMaximizeWindow>([&](EventMaximizeWindow& e)
         {
-            LOG_INFO("[EVENT] Maximized window: {0}", e.isMaximized);
+            if (is_event_logging_active) LOG_INFO("[EVENT] Maximized window: {0}", e.isMaximized);
             m_maximized_window = e.isMaximized;
         });
     m_event_dispather.add_event_listener<EventMoveWindow>([&](EventMoveWindow& e)
         {
-            LOG_INFO("[EVENT] Move window to: {0}x{1}", e.x_pos, e.y_pos);
+            if (is_event_logging_active) LOG_INFO("[EVENT] Move window to: {0}x{1}", e.x_pos, e.y_pos);
             m_window_position = glm::ivec2(e.x_pos, e.y_pos);
         });
     m_pWindow->set_event_callback(

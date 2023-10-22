@@ -1,6 +1,13 @@
 {
   "shaders": [
     {
+      "name": "textShader",
+      "filePath_v": "res/shaders/textVert.glsl",
+      "filePath_f": "res/shaders/textFrag.glsl",
+      "layout": [
+      ]
+    },
+    {
       "name": "spriteShader",
       "filePath_v": "res/shaders/spriteVert.glsl",
       "filePath_f": "res/shaders/spriteFrag.glsl",
@@ -215,7 +222,7 @@
   "fonts": [
     {
       "name": "calibri",
-      "path": "fonts/calibri.ttf",
+      "path": "res/fonts/calibri.ttf",
       "size": 48
     }
   ]

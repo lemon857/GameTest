@@ -1,4 +1,4 @@
-#include "EngineCore/Resources/ResourceManager.h";
+п»ї#include "EngineCore/Resources/ResourceManager.h";
 #include "EngineCore/Renderer/ShaderProgram.h"
 #include "EngineCore/Renderer/Texture2D.h"
 #include "EngineCore/Renderer/Material.h"
@@ -278,14 +278,15 @@ bool ResourceManager::load_font(std::string relativePath, std::string font_name,
 	FT_Library ft;
 	if (FT_Init_FreeType(&ft))
 	{
-		LOG_ERROR("Freetype not init");
+		LOG_ERROR("FREETYPE: Could not init FreeType Library");
 		return false;
 	}
 
 	FT_Face face;
-	if (FT_New_Face(ft, relativePath.c_str(), 0, &face))
+	if (FT_New_Face(ft, (m_path + "/" + relativePath).c_str(), 0, &face))
 	{
-		LOG_ERROR("Freetype face not load | path: {0}, {1}", relativePath);
+		LOG_ERROR("FREETYPE: Failed to load font: {0}", font_name);
+		return false;
 	}
 
 	FT_Set_Pixel_Sizes(face, 0, font_size);
@@ -293,7 +294,7 @@ bool ResourceManager::load_font(std::string relativePath, std::string font_name,
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Disable byte-alignment restriction
 
 	TTFMap font_map;
-	// Пока подгрузка только первых 128 символов !!! ---------------------------------- !!!
+
 	for (GLubyte c = 0; c < 128; c++)
 	{
 		// Load character glyph
@@ -332,8 +333,12 @@ bool ResourceManager::load_font(std::string relativePath, std::string font_name,
 		font_map.insert(std::pair<GLchar, Font_Glyph>(c, character));
 	}
 
-	FT_Done_Face(face);   // Завершение работы с шрифтом face
-	FT_Done_FreeType(ft); // Завершение работы FreeType
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	FT_Done_Face(face); 
+	FT_Done_FreeType(ft);
+
+	m_fonts_map.emplace(font_name, font_map);
 
 	LOG_INFO("Success load font: {0}", font_name);
 

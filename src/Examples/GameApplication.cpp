@@ -26,14 +26,62 @@
 #include "EngineCore/GUI/Square.h"
 
 #include <array>
+
+#include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
 
-const int size_x = 20, size_y = 10;
+const int size_x = 50, size_y = 50;
 
 std::array < bool, size_x* size_y> map;
 
 int cur = 0;
 int curObj = 3;
+
+unsigned int VAO, VBO;
+void RenderText(std::shared_ptr<RenderEngine::ShaderProgram> s, std::string text, float x, float y, float scale, glm::vec3 color, glm::mat4& prj)
+{
+    // activate corresponding render state	
+    s->use();
+    s->setVec3("textColor", glm::vec3(color.x, color.y, color.z));
+    s->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, prj);
+    glActiveTexture(GL_TEXTURE0);
+    glBindVertexArray(VAO);
+
+    // iterate through all characters
+    std::string::const_iterator c;
+    for (c = text.begin(); c != text.end(); c++)
+    {
+        Font_Glyph ch = ResourceManager::get_character("calibri", *c);
+
+        float xpos = x + ch.Bearing.x * scale;
+        float ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
+
+        float w = ch.Size.x * scale;
+        float h = ch.Size.y * scale;
+        // update VBO for each character
+        float vertices[6][4] = {
+            { xpos,     ypos + h,   0.0f, 0.0f },
+            { xpos,     ypos,       0.0f, 1.0f },
+            { xpos + w, ypos,       1.0f, 1.0f },
+
+            { xpos,     ypos + h,   0.0f, 0.0f },
+            { xpos + w, ypos,       1.0f, 1.0f },
+            { xpos + w, ypos + h,   1.0f, 0.0f }
+        };
+        // render glyph texture over quad
+        glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+        // update content of VBO memory
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        // render quad
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+        x += (ch.Advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64)
+    }
+    glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
 
 GameApp::GameApp()
 	: Application()
@@ -42,7 +90,7 @@ GameApp::GameApp()
 
 GameApp::~GameApp()
 {
-	delete m_cam;
+    delete m_cam;
 }
 // инициализация, создание объектов
 bool GameApp::init()
@@ -50,6 +98,18 @@ bool GameApp::init()
     m_cam = new Camera(glm::vec3(0), glm::vec3(0));
 
     m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 
     m_gui_place = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
 
@@ -63,7 +123,7 @@ bool GameApp::init()
     m_gui_place->add_element(square);
 
     m_line = new RenderEngine::Line(ResourceManager::getMaterial("default"));
-
+    
     map.fill(false);
 
 	std::vector<std::string> names;
@@ -204,6 +264,7 @@ void GameApp::on_update(const double delta)
 // отрисовка интерфейса
 void GameApp::on_ui_render()
 {
+    RenderText(ResourceManager::getShaderProgram("textShader"), "12345678", 100, 100, 1, glm::vec3(1.f), m_cam->get_projection_matrix());
     m_gui_place->on_render();
 }
 // инициализация эвентов

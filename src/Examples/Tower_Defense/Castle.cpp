@@ -2,23 +2,24 @@
 
 #include "Games/Tower_Defense/HealthBar.h"
 
-#include "EngineCore/Meshes/Cube.h"
+#include "EngineCore/Components/MeshRenderer.h"
 #include "EngineCore/Components/Transform.h"
 
-Castle::Castle(glm::vec3 initPos, const unsigned int hp, Cube* model, std::shared_ptr<RenderEngine::Material> pMaterial)
+Castle::Castle(glm::vec3 initPos, const unsigned int hp, std::shared_ptr<GraphicsObject> obj, std::shared_ptr<RenderEngine::Material> pMaterial)
 	: m_hp(hp)
-	, m_model(std::move(model))
 	, m_isDestroyed(false)
 	, m_bar(new HealthBar(pMaterial, initPos + glm::vec3(0.f, 2.5f, 0.f), 25, 2, hp, glm::vec3(1.f), glm::vec3(1.f, 0.f, 0.f)))
+	, IGameObject("MainCastle")
 {
-	model->addComponent<Transform>(initPos);
+	addComponent<Transform>(initPos);
+	addComponent<MeshRenderer>(obj, pMaterial);
 }
 
-void Castle::update()
+void Castle::update(const double delta)
 {
 	if (m_isDestroyed) return;
-	m_model->update(0);
 	m_bar->update();
+	updateComponents(delta);
 }
 
 void Castle::damage(const unsigned int damage_hp)
@@ -33,7 +34,7 @@ void Castle::damage(const unsigned int damage_hp)
 
 glm::vec3 Castle::get_pos()
 {
-	return m_model->getComponent<Transform>()->get_position();
+	return getComponent<Transform>()->get_position();
 }
 
 bool Castle::isDestroyed()

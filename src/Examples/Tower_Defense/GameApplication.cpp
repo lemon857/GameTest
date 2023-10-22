@@ -14,6 +14,7 @@
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Renderer/Renderer.h"
 #include "EngineCore/Renderer/Material.h"
+#include "EngineCore/Renderer3D/GraphicsObject.h"
 #include "EngineCore/Input.h"
 
 #include "EngineCore/Meshes/EmptyObject.h"
@@ -25,10 +26,11 @@
 #include "EngineCore/Meshes/Grid.h" 
 
 #include <array>
+#include <memory>
 
 #define MIN_DISTANCE_TO_ENEMY 7.f
 
-const int size_x = 20, size_y = 10;
+const int size_x = 30, size_y = 30;
 
 std::array <bool, size_x * size_y> map;
 
@@ -99,9 +101,9 @@ bool GameApp::init()
     }
 
     ResourceManager::load_OBJ_file("res/models/monkey.obj");
-    ResourceManager::load_OBJ_file("res/models/cube.obj");
+    //ResourceManager::load_OBJ_file("res/models/cube.obj");
 
-    m_main_castle = new Castle(parts[14], 100, new Cube(ResourceManager::getMaterial("cube")), ResourceManager::getMaterial("default"));
+    //m_main_castle = new Castle(parts[int((size_x * size_y) / 2) + int(size_x / 2)], 100, ResourceManager::load_OBJ_file("res/models/castle.obj"), ResourceManager::getMaterial("default"));
 	return true;
 }
 // цикл для проерки нажатия клавиш
@@ -117,7 +119,7 @@ void GameApp::on_key_update(const double delta)
         int x = (int)floor(m_world_mouse_pos_x / 2.f);
         int y = (int)floor(m_world_mouse_pos_z / 2.f);
 
-        if (x * y <= parts.size())
+        if (x * y <= (size_x - 1) * (size_y - 1))
         {
             cur = x * size_y + y;
         }
@@ -247,18 +249,25 @@ void GameApp::on_update(const double delta)
 
     if (m_isLoose) return;
 
-    m_main_castle->update();
+    m_main_castle->update(delta);
 
     if (m_main_castle->isDestroyed() && !m_isLoose)
     {
         LOG_CRIT("You loose!!! You score: {0}", countKills);
         m_isLoose = true;
+        m_pCloseWindow = true;
     }
 
     for (; countEnemies > 0; countEnemies--)
     {
+        short snum = rand() % 4;
+        int spawn = 0;        
+        if (snum == 0) spawn = rand() % size_x;
+        else if (snum == 1) spawn = (rand() % size_x) + ((size_x - 1) * size_y);
+        else if (snum == 2) spawn = (rand() % size_y) * size_x;
+        else if (snum == 3) spawn = ((rand() % size_y) * size_x) + (size_x - 1);
         m_enemies.push_back(new Enemy(new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("monkey")),
-            m_main_castle, parts[189 + (rand() % 10)], 1, 0.005, 50, ResourceManager::getMaterial("default")));
+            m_main_castle, parts[spawn], 1, 0.005, 50, ResourceManager::getMaterial("default")));
     }
 
     for (auto curTower : m_towers)

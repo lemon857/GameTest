@@ -6,6 +6,7 @@
 #include "EngineCore/Components/Transform.h"
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/vector_angle.hpp>
 
 Enemy::Enemy(ObjModel* model, Castle* target, glm::vec3 pos, double cooldown, double velocity, const unsigned int hp, std::shared_ptr<RenderEngine::Material> pMaterial)
 	: m_cool_down(cooldown * 1000)
@@ -17,7 +18,7 @@ Enemy::Enemy(ObjModel* model, Castle* target, glm::vec3 pos, double cooldown, do
 	, m_isDestroyed(false)
 	, m_hp(hp)
 {
-	m_model->addComponent<Transform>(pos, glm::vec3(1.f), glm::vec3(0.f, 90.f, 0.f));
+	m_model->addComponent<Transform>(pos, glm::vec3(1.f));
 }
 
 Enemy::~Enemy()
@@ -32,6 +33,7 @@ void Enemy::update(const double delta)
 	if (sqrt(a.x * a.x + a.z * a.z) > MIN_DISTANCE_TO_CASTLE)
 	{
 		m_model->getComponent<Transform>()->add_position(glm::normalize(a) * (float)delta * (float)m_velocity);
+		m_model->getComponent<Transform>()->set_rotation(glm::vec3(0.f, glm::degrees(glm::angle(glm::normalize(a), glm::vec3(0.f, 0.f, -1.f))), 0.f));
 		m_bar->set_pos(m_model->getComponent<Transform>()->get_position() + glm::vec3(0.f, 2.5f, 0.f));
 	}
 	else

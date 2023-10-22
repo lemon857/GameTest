@@ -1,25 +1,28 @@
 #pragma once
 
+#include "EngineCore/IGameObject.h"
+
 #include <glm/vec3.hpp>
 
 #include <memory>
+#include <string>
 
-class Cube;
 class HealthBar;
+class GraphicsObject;
 
 namespace RenderEngine
 {
 	class Material;
 }
 
-class Castle
+class Castle : public IGameObject
 {
 public:
-	Castle(glm::vec3 initPos, const unsigned int hp, Cube* model, std::shared_ptr<RenderEngine::Material> pMaterial);
+	Castle(glm::vec3 initPos, const unsigned int hp, std::shared_ptr<GraphicsObject> obj, std::shared_ptr<RenderEngine::Material> pMaterial);
 
 	~Castle() = default;
 
-	void update();
+	void update(const double delta) override;
 
 	void damage(const unsigned int damage_hp);
 		
@@ -28,8 +31,6 @@ public:
 	bool isDestroyed();
 
 private:
-	Cube* m_model;
-
 	HealthBar* m_bar;
 
 	unsigned int m_hp;

@@ -263,12 +263,14 @@ void GameApp::on_update(const double delta)
 
     for (auto curTower : m_towers)
     {
+        unsigned int distance = 100;
         for (size_t i = 0; i < m_enemies.size(); i++)
         {
             if (m_enemies[i] == nullptr) continue;
             glm::vec3 a = m_enemies[i]->get_pos() - curTower->get_pos();
-            if (sqrt(a.x * a.x + a.z * a.z) < MIN_DISTANCE_TO_ENEMY)
+            if (sqrt(a.x * a.x + a.z * a.z) < MIN_DISTANCE_TO_ENEMY && sqrt(a.x * a.x + a.z * a.z) < distance)
             {
+                distance = sqrt(a.x * a.x + a.z * a.z);
                 curTower->set_target(m_enemies[i]);
             }
         }

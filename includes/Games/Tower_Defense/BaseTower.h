@@ -1,6 +1,10 @@
 #pragma once
 
+#include "EngineCore/IGameObject.h"
+
 #include <glm/vec3.hpp>
+#include <memory>
+#include <string>
 
 class Enemy;
 class ObjModel;
@@ -11,13 +15,13 @@ namespace RenderEngine
 	class Line;
 }
 
-class BaseTower
+class BaseTower : public IGameObject
 {
 public:
-	BaseTower(ObjModel* model, Enemy* target, glm::vec3 pos, double cooldown, RenderEngine::Line* line);
+	BaseTower(std::string objPath, std::shared_ptr<RenderEngine::Material> pMaterial, Enemy* target, glm::vec3 pos, double cooldown, RenderEngine::Line* line);
 	~BaseTower();
 
-	void update(const double delta);
+	void update(const double delta) override;
 
 	void set_target(Enemy* target);
 
@@ -27,7 +31,6 @@ public:
 
 private:
 	Enemy* m_target_enemy;
-	ObjModel* m_model;
 
 	double m_cur_time;
 

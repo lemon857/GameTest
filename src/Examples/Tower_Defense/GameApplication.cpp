@@ -81,6 +81,7 @@ bool GameApp::init()
     ((float*)ResourceManager::getMaterial("cube")->get_data("ambient_factor"))[0] = 0.3f;
     ((float*)ResourceManager::getMaterial("dirt")->get_data("ambient_factor"))[0] = 0.25f;
     ((float*)ResourceManager::getMaterial("tower")->get_data("ambient_factor"))[0] = 0.3f;
+    ((float*)ResourceManager::getMaterial("castle")->get_data("ambient_factor"))[0] = 0.3f;
     ((float*)ResourceManager::getMaterial("monkey")->get_data("ambient_factor"))[0] = 0.5f;
 
     m_scene.at(curObj)->addComponent<Transform>();
@@ -100,11 +101,14 @@ bool GameApp::init()
         }
     }
 
-    ResourceManager::load_OBJ_file("res/models/monkey.obj");
-    //ResourceManager::load_OBJ_file("res/models/cube.obj");
+    ResourceManager::load_OBJ_file("res/models/castle.obj");
+    ResourceManager::load_OBJ_file("res/models/tower.obj");
 
-    //m_main_castle = new Castle(parts[int((size_x * size_y) / 2) + int(size_x / 2)], 100, ResourceManager::load_OBJ_file("res/models/castle.obj"), ResourceManager::getMaterial("default"));
-	return true;
+    m_main_castle = new Castle(parts[int((size_x * size_y) / 2) + int(size_x / 2)], 100,
+        "res/models/castle.obj", ResourceManager::getMaterial("castle"), ResourceManager::getMaterial("default"));
+    map[int((size_x * size_y) / 2) + int(size_x / 2)] = true;
+
+    return true;
 }
 // цикл для проерки нажатия клавиш
 void GameApp::on_key_update(const double delta)
@@ -130,13 +134,13 @@ void GameApp::on_key_update(const double delta)
         {
             map[cur] = true;
 
-            m_towers.push_back(new BaseTower(new ObjModel("res/models/cube.obj",
-                ResourceManager::getMaterial("tower")), nullptr, parts[cur], 1, new RenderEngine::Line(ResourceManager::getMaterial("default"))));
+            m_towers.push_back(new BaseTower("res/models/tower.obj",
+                ResourceManager::getMaterial("monkey"), nullptr, parts[cur], 1, new RenderEngine::Line(ResourceManager::getMaterial("default"))));
 
             //m_scene.at(curObj)->deleteComponent<Highlight>();
             //curObj++;
             // 
-            //m_scene.add_object<ObjModel>("res/models/monkey.obj", ResourceManager::getMaterial("monkey"));
+            //m_scene.add_object<ObjModel>("res/models/monkey.obj", ResourceManajger::getMaterial("monkey"));
             //m_scene.add_object<Cube>(ResourceManager::getMaterial("cube"));
 
             //m_scene.at(curObj)->addComponent<Transform>();

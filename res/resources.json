@@ -179,6 +179,17 @@
       ]
     },
     {
+      "name": "CastleTexture",
+      "filePath": "res/textures/castle.png",
+      "width": 128,
+      "height": 128,
+      "subTexture_w": 128,
+      "subTexture_h": 128,
+      "subTextures": [
+        "default"
+      ]
+    },
+    {
       "name": "MonkeyTexture",
       "filePath": "res/textures/monkey.png",
       "width": 512,
@@ -227,6 +238,11 @@
       "name": "tower",
       "nameShader": "default3DShader",
       "nameTexture": "Tower"
+    },
+    {
+      "name": "castle",
+      "nameShader": "default3DShader",
+      "nameTexture": "CastleTexture"
     },
     {
       "name": "dirt",

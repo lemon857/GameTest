@@ -70,7 +70,7 @@ bool GameApp::init()
 
 	std::vector<std::string> names;
 
-	names.push_back("default3DShader");
+    names.push_back("default3DShader");
 
 	m_scene.add_object<Plane>(ResourceManager::getMaterial("dirt"), glm::vec3(size_x, 0.f, size_y), glm::vec3(size_x, 0.f, size_y));
     m_scene.add_object<DirectionalLight>(names);
@@ -81,6 +81,7 @@ bool GameApp::init()
     ((float*)ResourceManager::getMaterial("cube")->get_data("ambient_factor"))[0] = 0.3f;
     ((float*)ResourceManager::getMaterial("dirt")->get_data("ambient_factor"))[0] = 0.25f;
     ((float*)ResourceManager::getMaterial("tower")->get_data("ambient_factor"))[0] = 0.3f;
+    ((float*)ResourceManager::getMaterial("tower")->get_data("diffuse_factor"))[0] = 0.4f;
     ((float*)ResourceManager::getMaterial("castle")->get_data("ambient_factor"))[0] = 0.3f;
     ((float*)ResourceManager::getMaterial("monkey")->get_data("ambient_factor"))[0] = 0.5f;
 
@@ -135,7 +136,7 @@ void GameApp::on_key_update(const double delta)
             map[cur] = true;
 
             m_towers.push_back(new BaseTower("res/models/tower.obj",
-                ResourceManager::getMaterial("monkey"), nullptr, parts[cur], 1, new RenderEngine::Line(ResourceManager::getMaterial("default"))));
+                ResourceManager::getMaterial("tower"), nullptr, parts[cur], 1, new RenderEngine::Line(ResourceManager::getMaterial("default"))));
 
             //m_scene.at(curObj)->deleteComponent<Highlight>();
             //curObj++;

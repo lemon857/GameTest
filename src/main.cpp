@@ -12,6 +12,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "EngineCore/Window.h"
+#include "EngineCore/Renderer/Renderer.h"
+
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
@@ -207,13 +210,11 @@ private:
 };
 #endif
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void processInput(GLFWwindow* window);
-void RenderText(Shader& shader, std::string text, float x, float y, float scale, glm::vec3 color);
-
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
+
+void RenderText(Shader& shader, std::string text, float x, float y, float scale, glm::vec3 color);
 
 /// Holds all state information relevant to a character as loaded using FreeType
 struct Character {
@@ -228,40 +229,11 @@ unsigned int VAO, VBO;
 
 int main(int argc, char** argv)
 {
-    // glfw: initialize and configure
-    // ------------------------------
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-#ifdef __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
-
-    // glfw window creation
-    // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
-    if (window == NULL)
-    {
-        std::cout << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();
-        return -1;
-    }
-    glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
-    // glad: load all OpenGL function pointers
-    // ---------------------------------------
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        std::cout << "Failed to initialize GLAD" << std::endl;
-        return -1;
-    }
-
+    Window* win = new Window("123", glm::ivec2(100), glm::ivec2(SCR_WIDTH, SCR_HEIGHT), false);
+    
     // OpenGL state
     // ------------
-    glEnable(GL_CULL_FACE);
+    //glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -273,13 +245,13 @@ int main(int argc, char** argv)
 
     std::string path = a.substr(0, found);
 
-    std::string v1 = "\\text.vs";
-    std::string f1 = "\\text.fs";
+    std::string v1 = "\\res/shaders/textVert.glsl";
+    std::string f1 = "\\res/shaders/textFrag.glsl";
 
     Shader shader((path + v1).c_str(), (path + f1).c_str());
-    glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(SCR_WIDTH), 0.0f, static_cast<float>(SCR_HEIGHT));
+    glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(SCR_WIDTH), 0.0f, static_cast<float>(SCR_HEIGHT), -1.f, 100.f);
     shader.use();
-    glUniformMatrix4fv(glGetUniformLocation(shader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+    glUniformMatrix4fv(glGetUniformLocation(shader.ID, "view_projectionMat"), 1, GL_FALSE, glm::value_ptr(projection));
 
     // FreeType
     // --------
@@ -371,47 +343,26 @@ int main(int argc, char** argv)
 
     // render loop
     // -----------
-    while (!glfwWindowShouldClose(window))
+    while (true)
     {
-        // input
-        // -----
-        processInput(window);
 
         // render
         // ------
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        RenderText(shader, "Eto pizdec blya", 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+        //RenderEngine::Renderer::setDepthTest(false);
+        RenderText(shader, std::to_string(rand() % 1000000), 25.0f, 25.0f, 2.0f, glm::vec3(0.5, 0.8f, 0.2f));
         RenderText(shader, "(C) uzas kakoi to", 540.0f, 570.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
+        //RenderEngine::Renderer::setDepthTest(true);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+        win->on_update();
     }
-
     glfwTerminate();
     return 0;
 }
-
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-// ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow* window)
-{
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-}
-
-// glfw: whenever the window size changed (by OS or user resize) this callback function executes
-// ---------------------------------------------------------------------------------------------
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-    // make sure the viewport matches the new window dimensions; note that width and 
-    // height will be significantly larger than specified on retina displays.
-    glViewport(0, 0, width, height);
-}
-
 
 // render line of text
 // -------------------
@@ -476,7 +427,7 @@ int main(int argc, char** argv)
 
 #ifndef EDITOR_BUILD
     GameApp* gameApp = new GameApp();
-    gameApp->start(windowSize, "Engine preview game", "res/resources.json", "EngineGamePreview.ini");
+    gameApp->start(windowSize, "Tower defence", "res/resources.json", "EngineGamePreview.ini");
     //delete gameApp;
 #endif // !EDITOR_BUILD
 

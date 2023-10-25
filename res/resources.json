@@ -224,6 +224,11 @@
       "name": "calibri",
       "path": "res/fonts/calibri.ttf",
       "size": 48
+    },
+    {
+      "name": "agaaler",
+      "path": "res/fonts/agaaler.ttf",
+      "size": 48
     }
   ]
 }

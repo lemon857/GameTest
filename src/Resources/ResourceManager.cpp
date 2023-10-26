@@ -113,7 +113,7 @@ bool ResourceManager::load_JSON_resources(const std::string & JSONpath)
 				subTextures.emplace_back(currentSubTexture.GetString());
 			}
 
-			//loadTextureAtlas(name, subTextures, path, width, height, subTextureWidth, subTextureHeight);
+			loadTextureAtlas(name, subTextures, path, width, height, subTextureWidth, subTextureHeight);
 		}
 	}
 	auto materialsIt = doc.FindMember("materials");

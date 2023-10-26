@@ -6,6 +6,7 @@
 #include "EngineCore/Renderer/Line.h"
 #include "EngineCore/Resources/Scene.h"
 
+#include <functional>
 #include <vector>
 #include <glm/vec3.hpp>
 	
@@ -25,6 +26,9 @@ public:
 	void on_update(const double delta) override;
 	void on_ui_render() override;
 	bool init_events() override;
+
+	void set_init(std::function<void()> a) { m_func = a; };
+	void set_update(std::function<void()> a) { m_funcUpdate = a; };
 private:
 	Scene m_scene;
 
@@ -33,6 +37,9 @@ private:
 	RenderEngine::Line* m_line;
 
 	std::vector<glm::vec3> parts;
+
+	std::function<void()> m_func;
+	std::function<void()> m_funcUpdate;
 
 	float m_colors[4] = { 0.33f, 0.33f, 0.33f, 0.f };
 

@@ -79,10 +79,25 @@ bool GameApp::init()
     //m_scene.add_object<Cube>(ResourceManager::getMaterial("cube"));
 
     ((float*)ResourceManager::getMaterial("cube")->get_data("ambient_factor"))[0] = 0.3f;
+
     ((float*)ResourceManager::getMaterial("dirt")->get_data("ambient_factor"))[0] = 0.25f;
+    ((float*)ResourceManager::getMaterial("dirt")->get_data("diffuse_factor"))[0] = 0.1f;
+    ((float*)ResourceManager::getMaterial("dirt")->get_data("specular_factor"))[0] = 0.0f;
+    ((float*)ResourceManager::getMaterial("dirt")->get_data("metalic_factor"))[0] = 0.0f;
+    ((float*)ResourceManager::getMaterial("dirt")->get_data("shininess"))[0] = 0.1f;
+
     ((float*)ResourceManager::getMaterial("tower")->get_data("ambient_factor"))[0] = 0.3f;
     ((float*)ResourceManager::getMaterial("tower")->get_data("diffuse_factor"))[0] = 0.4f;
+    ((float*)ResourceManager::getMaterial("tower")->get_data("specular_factor"))[0] = 0.0f;
+    ((float*)ResourceManager::getMaterial("tower")->get_data("metalic_factor"))[0] = 0.0f;
+    ((float*)ResourceManager::getMaterial("tower")->get_data("shininess"))[0] = 0.1f;
+
     ((float*)ResourceManager::getMaterial("castle")->get_data("ambient_factor"))[0] = 0.3f;
+    ((float*)ResourceManager::getMaterial("castle")->get_data("diffuse_factor"))[0] = 0.4f;
+    ((float*)ResourceManager::getMaterial("castle")->get_data("specular_factor"))[0] = 0.0f;
+    ((float*)ResourceManager::getMaterial("castle")->get_data("metalic_factor"))[0] = 0.0f;
+    ((float*)ResourceManager::getMaterial("castle")->get_data("shininess"))[0] = 0.1f;
+
     ((float*)ResourceManager::getMaterial("monkey")->get_data("ambient_factor"))[0] = 0.5f;
 
     m_scene.at(curObj)->addComponent<Transform>();

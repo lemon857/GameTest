@@ -310,11 +310,11 @@ void RenderText(Shader& shader, std::string text, float x, float y, float scale,
 #include <iostream>
 #include <map>
 #include <string>
-#include <GLFW/glfw3.h>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
 #include <string>
@@ -324,6 +324,12 @@ void RenderText(Shader& shader, std::string text, float x, float y, float scale,
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+#include "EngineCore/Renderer/ShaderProgram.h"
+#include "EngineCore/Editor/EditorApplication.h"
+#include "Games/GameApplication.h"    
+
+#include "EngineCore/Resources/ResourceManager.h"
 
 const unsigned int SCR_WIDTH = 1920;
 const unsigned int SCR_HEIGHT = 1080;
@@ -517,11 +523,11 @@ private:
         }
     }
 };
-void RenderText(Shader& shader, std::string text, float x, float y, float scale, glm::vec3 color)
+void RenderText(std::string text, float x, float y, float scale, glm::vec3 color)
 {
     // activate corresponding render state	
-    shader.use();
-    glUniform3f(glGetUniformLocation(shader.ID, "textColor"), color.x, color.y, color.z);
+    ResourceManager::getShaderProgram("textShader")->use();
+    ResourceManager::getShaderProgram("textShader")->setVec3("textColor", color);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO);
 
@@ -563,11 +569,6 @@ void RenderText(Shader& shader, std::string text, float x, float y, float scale,
 }
 
 Shader* shader;
-
-#include "EngineCore/Editor/EditorApplication.h"
-#include "Games/GameApplication.h"    
-
-#include "EngineCore/Resources/ResourceManager.h"
 
 //#define EDITOR_BUILD
 
@@ -694,8 +695,8 @@ int main(int argc, char** argv)
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             //RenderEngine::Renderer::setDepthTest(false);
-            RenderText(*shader, std::to_string(rand() % 1000000), 25.0f, 25.0f, 2.0f, glm::vec3(0.5, 0.8f, 0.2f));
-            RenderText(*shader, "(C) uzas kakoi to", 540.0f, 570.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
+            RenderText(std::to_string(rand() % 1000000), 25.0f, 25.0f, 2.0f, glm::vec3(0.5, 0.8f, 0.2f));
+            RenderText("(C) uzas kakoi to", 540.0f, 570.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
         });
     gameApp->start(windowSize, "Tower defence", "res/resources.json", "EngineGamePreview.ini");
     //delete gameApp;

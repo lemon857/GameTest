@@ -21,7 +21,7 @@ namespace GUI
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         m_vertexArray = std::make_unique<RenderEngine::VertexArray>();
-        m_vertexCoordsBuffer = std::make_unique<RenderEngine::VertexBuffer>();
+        m_vertexCoordsBuffer = new RenderEngine::VertexBuffer();
 
         m_vertexCoordsBuffer->init(NULL, sizeof(float) * 6 * 4, false);
 		RenderEngine::VertexBufferLayout vertexCoordsLayout;

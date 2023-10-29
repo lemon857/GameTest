@@ -29,7 +29,7 @@ namespace GUI
 		std::shared_ptr<RenderEngine::ShaderProgram> m_shader;
 
 		std::unique_ptr<RenderEngine::VertexArray> m_vertexArray;
-		std::unique_ptr<RenderEngine::VertexBuffer> m_vertexCoordsBuffer;
+		RenderEngine::VertexBuffer* m_vertexCoordsBuffer;
 		unsigned int VAO, VBO;
 	};
 }

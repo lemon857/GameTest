@@ -16,13 +16,10 @@
 #include "EngineCore/Renderer/Material.h"
 #include "EngineCore/Input.h"
 
-#include "EngineCore/Meshes/Cube.h"
 #include "EngineCore/Renderer3D/GraphicsObject.h"
-#include "EngineCore/Input.h"
 
 #include "EngineCore/Meshes/EmptyObject.h"
 #include "EngineCore/Meshes/Cube.h"
-#include "EngineCore/Meshes/Sprite.h"
 #include "EngineCore/Meshes/ObjModel.h"
 #include "EngineCore/Meshes/EmptyObject.h"
 #include "EngineCore/Meshes/Plane.h"
@@ -55,6 +52,8 @@ bool isKeyPressed = false;
 
 unsigned int countKills = 0;
 
+GUI::GUI_place* m_gui_place;
+
 GameApp::GameApp()
 	: Application()
 {
@@ -77,14 +76,12 @@ bool GameApp::init()
 
     auto square = new GUI::Square(ResourceManager::getMaterial("default"), glm::vec2(100.f), glm::vec2(100.f));
 
-    square->set_click_callback([]() 
+    m_gui_place->add_element(square);
+    m_gui_place->get_element(0)->set_click_callback([]()
         {
             LOG_INFO("EEE HELLO WORLD YEPTA");
         });
-
-    m_gui_place->add_element(square);
-
-    m_line = new RenderEngine::Line(ResourceManager::getMaterial("default"));
+    //m_line = new RenderEngine::Line(ResourceManager::getMaterial("default"));
   
     map.fill(false);
 
@@ -159,7 +156,7 @@ void GameApp::on_key_update(const double delta)
         int x = (int)floor(m_world_mouse_pos_x / 2.f);
         int y = (int)floor(m_world_mouse_pos_z / 2.f);
 
-        if (x * y <= (size_x - 1) * (size_y - 1))
+        if ((x * y <= (size_x - 1) * (size_y - 1)) && (x >= 0 && y >= 0))
         {
             cur = x * size_y + y;
         }
@@ -285,7 +282,7 @@ void GameApp::on_update(const double delta)
             std::shared_ptr<RenderEngine::ShaderProgram> shader = mesh->get_material_ptr()->get_shader_ptr();
             shader->use();
 
-            shader->setMatrix4(VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+            shader->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
         }
         if (i != 2) m_scene.at(i)->update(delta);
         if (i == 2 && is_grid_active) m_scene.at(i)->update(delta);
@@ -415,7 +412,7 @@ bool GameApp::init_events()
         });
     m_event_dispather.add_event_listener<EventMouseButtonPressed>([&](EventMouseButtonPressed& e)
         {
-
+            m_gui_place->on_mouse_click(e.x_pos, e.y_pos);
             if (is_event_logging_active) LOG_INFO("[EVENT] Mouse button pressed at ({0}x{1})", e.x_pos, e.y_pos);
             Input::pressMouseButton(e.mouse_button);
             m_init_mouse_pos_x = e.x_pos;

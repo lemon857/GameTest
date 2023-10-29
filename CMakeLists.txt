@@ -175,6 +175,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/GUI/Square.cpp
 	src/GUI/Font.cpp
 	src/GUI/FontRenderer.cpp
+	src/GUI/Button.cpp
 )
 
 

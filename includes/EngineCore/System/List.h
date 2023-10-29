@@ -109,10 +109,47 @@ public:
 		m_size--;
 	}
 
-	_Ty operator[] (const int index) {
+	void remove(const size_t index)
+	{
+		if (is_empty()) return;
+		_Ty _val = at(index);
+		if (m_first->value == _val) {
+			remove_first();
+			m_size--;
+			return;
+		}
+		else if (m_last->value == _val) {
+			remove_last();
+			return;
+		}
+		ListNode* slow = m_first;
+		ListNode* fast = m_first->m_next;
+		while (fast && fast->value != _val) {
+			fast = fast->m_next;
+			slow = slow->m_next;
+		}
+		if (!fast) {
+			return;
+		}
+		slow->m_next = fast->m_next;
+		delete fast;
+		m_size--;
+	}
+
+	_Ty operator[] (const size_t index) {
 		if (is_empty()) return nullptr;
 		ListNode* p = m_first;
-		for (int i = 0; i < index; i++) {
+		for (size_t i = 0; i < index; i++) {
+			p = p->m_next;
+			if (!p) return nullptr;
+		}
+		return p->value;
+	}
+
+	_Ty at(const size_t index) {
+		if (is_empty()) return nullptr;
+		ListNode* p = m_first;
+		for (size_t i = 0; i < index; i++) {
 			p = p->m_next;
 			if (!p) return nullptr;
 		}
@@ -123,6 +160,19 @@ public:
 	{
 		return m_size;
 	}
+	// This function create new array, take care and don't forget delete this array
+	_Ty* data()
+	{
+		if (is_empty()) return nullptr;
+		_Ty* p = new _Ty[m_size];
+		ListNode* pData = m_first;
+		for (int i = 0; i < m_size; i++) {
+			p[i] = pData->value;
+			pData = pData->m_next;
+		}
+		return p;
+	}
+
 private:
 	ListNode* m_first;
 	ListNode* m_last;

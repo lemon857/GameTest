@@ -2,6 +2,22 @@ cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 
 set(PROJECT_NAME EngineTest)
 
+set(EDITOR_BUILD)
+
+set(ENGINE_PUBLIC_INCLUDES_EDITOR	
+	includes/EngineCore/Editor/EditorApplication.h	
+
+	includes/EngineCore/Editor/UI/UImodule.h
+	includes/EngineCore/Editor/UI/UIlayouts.h		   
+)
+
+set(ENGINE_PUBLIC_SRC_EDITOR			
+	src/Editor/EditorApplication.cpp	
+	
+	src/Editor/UI/UImodule.cpp	
+	src/Editor/UI/UIlayouts.cpp
+)
+
 set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/Engine.h
 	includes/EngineCore/Application.h
@@ -11,15 +27,18 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/Event.h
 	includes/EngineCore/Keys.h
 	includes/EngineCore/Input.h
-	
-	includes/EngineCore/UI/UImodule.h
-	includes/EngineCore/UI/UIlayouts.h
 		   
 	includes/EngineCore/System/Log.h
 	includes/EngineCore/System/Timer.h
 	includes/EngineCore/System/TemplateTimer.h
 	includes/EngineCore/System/Stopwatch.h
-	includes/EngineCore/System/List.h
+	includes/EngineCore/System/List.h	
+	
+	includes/Games/Tower_Defense/GameApplication.h
+	includes/Games/Tower_Defense/Castle.h
+	includes/Games/Tower_Defense/HealthBar.h
+	includes/Games/Tower_Defense/Enemy.h
+	includes/Games/Tower_Defense/BaseTower.h
 )
 
 set(ENGINE_PRIVATE_INCLUDES
@@ -27,6 +46,8 @@ set(ENGINE_PRIVATE_INCLUDES
 	
 	includes/EngineCore/Resources/ResourceManager.h
 	includes/EngineCore/Resources/stb_image.h
+	includes/EngineCore/Resources/Scene.h
+	
 	includes/EngineCore/Renderer/ShaderProgram.h
 	includes/EngineCore/Renderer/Texture2D.h
 	includes/EngineCore/Renderer/VertexBuffer.h
@@ -61,6 +82,7 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Meshes/ObjModel.h
 	includes/EngineCore/Meshes/EmptyObject.h
 	includes/EngineCore/Meshes/Plane.h	
+	includes/EngineCore/Meshes/Grid.h	
   
 	includes/EngineCore/Light/DirectionalLight.h
 	includes/EngineCore/Light/PointerLight.h
@@ -72,29 +94,36 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Engine/Application.cpp
 	src/Engine/Input.cpp
 	
-	src/Examples/TanksDemo/TanksDemoGame.cpp
-	src/Examples/TanksDemo/TanksDemoGame.h
-	src/Examples/TanksDemo/Tank.cpp
-	src/Examples/TanksDemo/Tank.h
-	src/Examples/TanksDemo/BrickWall.h
-	src/Examples/TanksDemo/BrickWall.cpp
-	src/Examples/TanksDemo/Bullet.h
-	src/Examples/TanksDemo/Bullet.cpp
+	#src/Examples/TanksDemo/TanksDemoGame.cpp
+	#src/Examples/TanksDemo/TanksDemoGame.h
+	#src/Examples/TanksDemo/Tank.cpp
+	#src/Examples/TanksDemo/Tank.h
+	#src/Examples/TanksDemo/BrickWall.h
+	#src/Examples/TanksDemo/BrickWall.cpp
+	#src/Examples/TanksDemo/Bullet.h
+	#src/Examples/TanksDemo/Bullet.cpp
+	#
+	#src/Examples/SnakeDemo/SnakeDemoGame.cpp
+	#src/Examples/SnakeDemo/SnakeDemoGame.h
+	#src/Examples/SnakeDemo/SnakePart.h
+	#src/Examples/SnakeDemo/SnakePart.cpp
+	#src/Examples/SnakeDemo/SnakePart.h
+	#
+	#src/Examples/PongDemo/PongDemoGame.h
+	#src/Examples/PongDemo/PongDemoGame.cpp
+	#src/Examples/PongDemo/PongObject.h
+	#src/Examples/PongDemo/PongObject.cpp
+	#src/Examples/PongDemo/Ball.h
+	#src/Examples/PongDemo/Ball.cpp
 	
-	src/Examples/SnakeDemo/SnakeDemoGame.cpp
-	src/Examples/SnakeDemo/SnakeDemoGame.h
-	src/Examples/SnakeDemo/SnakePart.h
-	src/Examples/SnakeDemo/SnakePart.cpp
-	src/Examples/SnakeDemo/SnakePart.h
-	
-	src/Examples/PongDemo/PongDemoGame.h
-	src/Examples/PongDemo/PongDemoGame.cpp
-	src/Examples/PongDemo/PongObject.h
-	src/Examples/PongDemo/PongObject.cpp
-	src/Examples/PongDemo/Ball.h
-	src/Examples/PongDemo/Ball.cpp
+	src/Examples/Tower_Defense/GameApplication.cpp
+	src/Examples/Tower_Defense/Castle.cpp
+	src/Examples/Tower_Defense/HealthBar.cpp
+	src/Examples/Tower_Defense/Enemy.cpp
+	src/Examples/Tower_Defense/BaseTower.cpp
 	
 	src/Resources/ResourceManager.cpp
+	src/Resources/Scene.cpp
 	
 	src/Renderer/ShaderProgram.cpp
 	src/Renderer/Texture2D.cpp
@@ -117,10 +146,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Physics/Ray.cpp
 	
 	src/System/Timer.cpp
-	src/System/Stopwatch.cpp
-		
-	src/UI/UImodule.cpp	
-	src/UI/UIlayouts.cpp	
+	src/System/Stopwatch.cpp	
 	
 	src/Components/MeshRenderer.cpp	
 	src/Components/Transform.cpp
@@ -131,6 +157,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Meshes/Sprite.cpp
 	src/Meshes/ObjModel.cpp
 	src/Meshes/Plane.cpp
+	src/Meshes/Grid.cpp
 		
 	src/Light/DirectionalLight.cpp
 	src/Light/PointerLight.cpp
@@ -139,12 +166,25 @@ set(ENGINE_PRIVATE_SOURCES
 
 project(${PROJECT_NAME})
 
-add_executable(${PROJECT_NAME}
-	src/main.cpp
-	${ENGINE_PRIVATE_SOURCES}
-	${ENGINE_PUBLIC_INCLUDES}
-	${ENGINE_PRIVATE_INCLUDES}
-)
+
+#if (DEFINED EDITOR_BUILD)
+	add_executable(${PROJECT_NAME}
+		src/main.cpp
+		${ENGINE_PRIVATE_SOURCES}
+		${ENGINE_PUBLIC_INCLUDES}
+		${ENGINE_PRIVATE_INCLUDES}
+		
+		${ENGINE_PUBLIC_INCLUDES_EDITOR}
+		${ENGINE_PUBLIC_SRC_EDITOR}
+	)
+#else()
+#	add_executable(${PROJECT_NAME}
+#		src/main.cpp
+#		${ENGINE_PRIVATE_SOURCES}
+#		${ENGINE_PUBLIC_INCLUDES}
+#		${ENGINE_PRIVATE_INCLUDES}
+#		)
+#endif()
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 

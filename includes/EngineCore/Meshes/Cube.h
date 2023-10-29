@@ -9,7 +9,7 @@ namespace RenderEngine
 {
 	class Material;
 }
-
+// ѕростой класс дл€ использовани€ 3д куба
 class Cube : public IGameObject
 {
 public:

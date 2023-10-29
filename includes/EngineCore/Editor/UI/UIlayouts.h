@@ -60,16 +60,17 @@ public:
 
 	void on_draw_ui() override;
 
-	void set_callback(std::function<void(const float*, bool)> on_chanege);
+	void set_callback(std::function<void(const float*, bool, bool)> on_chanege);
 
 	void set_color(glm::vec3 color);
 
 	void activate() { m_is_active = true; };
 private:
-	std::function<void(const float*, bool)> m_on_chanege;
+	std::function<void(const float*, bool, bool)> m_on_chanege;
 
 	float m_color[3] = { 0.f, 0.f, 0.f };
 	bool m_is_active = false;
+	bool m_mode = false;
 };
 
 class UIlayoutMaterial : IUIlayout

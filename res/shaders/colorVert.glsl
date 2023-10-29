@@ -1,4 +1,4 @@
-#version 460
+#version 410
 layout(location = 0) in vec3 vertex_position;
 layout(location = 2) in vec2 texture_coord;
 

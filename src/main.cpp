@@ -1,7 +1,7 @@
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Renderer/ShaderProgram.h"
 #include "EngineCore/Editor/EditorApplication.h"
-#include "Games/GameApplication.h"    
+#include "Games/Tower_Defense/GameApplication.h"    
 
 //#define EDITOR_BUILD
 

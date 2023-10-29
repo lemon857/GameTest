@@ -34,7 +34,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/System/Stopwatch.h
 	includes/EngineCore/System/List.h	
 	
-	includes/Games/GameApplication.h
+	includes/Games/Tower_Defense/GameApplication.h
 	
 	includes/EngineCore/GUI/GUI_place.h
 	includes/EngineCore/GUI/GUI_element.h
@@ -119,7 +119,7 @@ set(ENGINE_PRIVATE_SOURCES
 	#src/Examples/PongDemo/Ball.h
 	#src/Examples/PongDemo/Ball.cpp
 	
-	src/Examples/GameApplication.cpp
+	src/Examples/Tower_Defense/GameApplication.cpp
 	
 	src/Resources/ResourceManager.cpp
 	src/Resources/Scene.cpp

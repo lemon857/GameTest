@@ -275,7 +275,7 @@ void GameApp::on_update(const double delta)
 void GameApp::on_ui_render()
 {
     //m_funcUpdate();
-    RenderText(ResourceManager::getShaderProgram("textShader"), "Hello, world!", 500.f, 500.f, 2.f, glm::vec3(1.f, 0.f, 0.f), m_cam->get_ui_matrix());
+    RenderText(ResourceManager::getShaderProgram("textShader"), "Hello, world!", 50.f, 900.f, 2.f, glm::vec3(1.f, 0.f, 0.f), m_cam->get_ui_matrix());
     m_gui_place->on_render();
 }
 // инициализация эвентов

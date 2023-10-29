@@ -41,6 +41,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/GUI/Button.h
 	includes/EngineCore/GUI/Sprite.h
 	includes/EngineCore/GUI/Square.h
+	includes/EngineCore/GUI/Font.h
 )
 
 set(ENGINE_PRIVATE_INCLUDES
@@ -162,6 +163,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/GUI/Button.cpp
 	src/GUI/Sprite.cpp
 	src/GUI/Square.cpp
+	src/GUI/Font.cpp
 )
 
 

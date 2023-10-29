@@ -5,6 +5,7 @@
 #include "EngineCore/Renderer/Camera.h"
 #include "EngineCore/Renderer/Line.h"
 #include "EngineCore/Resources/Scene.h"
+//#include "EngineCore/Resources/ResourceManager.h"
 
 #include <functional>
 #include <vector>

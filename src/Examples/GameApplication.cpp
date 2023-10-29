@@ -31,7 +31,10 @@
 #include FT_FREETYPE_H
 
 #include <glad/glad.h>
+
+#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 const int size_x = 50, size_y = 50;
 
@@ -41,7 +44,7 @@ int cur = 0;
 int curObj = 3;
 
 // --------------------------------------------------------------------- //
-std::map<GLchar, Font_Glyph> Characters;
+
 unsigned int VAO1, VBO1;
 void RenderText(std::shared_ptr<RenderEngine::ShaderProgram> s, std::string text, float x, float y, float scale, glm::vec3 color, glm::mat4& prj)
 {
@@ -52,13 +55,11 @@ void RenderText(std::shared_ptr<RenderEngine::ShaderProgram> s, std::string text
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO1);
 
-    // iterate through all characters
+    // iterate through all Characters1
     std::string::const_iterator c;
     for (c = text.begin(); c != text.end(); c++)
     {
-        //Font_Glyph ch = ResourceManager::get_character("agaaler", *c);
-
-        Font_Glyph ch = Characters[*c];
+        Font_Glyph ch = ResourceManager::get_character("agaaler", *c);
 
         float xpos = x + ch.Bearing.x * scale;
         float ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
@@ -103,28 +104,9 @@ GameApp::~GameApp()
 // инициализация, создание объектов
 bool GameApp::init()
 {
-    m_func();
-
     m_cam = new Camera(glm::vec3(0), glm::vec3(0));
 
     m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
-
-    // --------------------------------------------------------------------- //
-    /*std::string font_name = ResourceManager::getExeFilePath() + "\\res/fonts/calibri.ttf";
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);    
-
-    glGenVertexArrays(1, &VAO1);
-    glGenBuffers(1, &VBO1);
-    glBindVertexArray(VAO1);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO1);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);*/
-    // --------------------------------------------------------------------- //
 
     m_gui_place = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
 
@@ -171,54 +153,19 @@ bool GameApp::init()
         }
     }
 
-    // --------------------------------------------------------------------- //
-    //FT_Library ft;
-    //// All functions return a value different than 0 whenever an error occurred
-    //if (FT_Init_FreeType(&ft))
-    //{
-    //    LOG_ERROR("ERROR::FREETYPE: Could not init FreeType Library");
-    //    return -1;
-    //}
-    //FT_Face face;
-    //if (FT_New_Face(ft, font_name.c_str(), 0, &face)) {
-    //    LOG_ERROR("ERROR::FREETYPE: Failed to load font");
-    //    return -1;
-    //}
-    //else {
-    //    // set size to load glyphs as
-    //    FT_Set_Pixel_Sizes(face, 0, 48);
-    //    // disable byte-alignment restriction
-    //    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    //    unsigned int texture;
-    //    for (unsigned char c = 0; c < 128; c++)
-    //    {
-    //        // Load character glyph 
-    //        if (FT_Load_Char(face, c, FT_LOAD_RENDER))
-    //        {
-    //            LOG_ERROR("ERROR::FREETYTPE: Failed to load Glyph");
-    //            continue;
-    //        }
-    //        glGenTextures(1, &texture);
-    //        glBindTexture(GL_TEXTURE_2D, texture); // -------------- беда, текстура вроде создаётся, НО id не обновляется и остаётся один и тот же для всех глифов
-    //        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, face->glyph->bitmap.width, face->glyph->bitmap.rows, 0, GL_RED, GL_UNSIGNED_BYTE, face->glyph->bitmap.buffer);
-    //        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    //        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    //        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    //        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    //        Font_Glyph character = {
-    //            texture,
-    //            glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
-    //            glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-    //            static_cast<unsigned int>(face->glyph->advance.x)
-    //        };
-    //        Characters.insert(std::pair<char, Font_Glyph>(c, character));
-    //    }
-    //    glBindTexture(GL_TEXTURE_2D, 0);
-    //}
-    // destroy FreeType once we're finished
-    //FT_Done_Face(face);
-    //FT_Done_FreeType(ft);
-    // --------------------------------------------------------------------- //
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glGenVertexArrays(1, &VAO1);
+    glGenBuffers(1, &VBO1);
+    glBindVertexArray(VAO1);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO1);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
 	return true;
 }
 // цикл для проерки нажатия клавиш
@@ -327,8 +274,8 @@ void GameApp::on_update(const double delta)
 // отрисовка интерфейса
 void GameApp::on_ui_render()
 {
-    m_funcUpdate();
-    //RenderText(ResourceManager::getShaderProgram("textShader"), "12345678", 500.f, 500.f, 2.f, glm::vec3(1.f), m_cam->get_ui_matrix());
+    //m_funcUpdate();
+    RenderText(ResourceManager::getShaderProgram("textShader"), "Hello, world!", 500.f, 500.f, 2.f, glm::vec3(1.f, 0.f, 0.f), m_cam->get_ui_matrix());
     m_gui_place->on_render();
 }
 // инициализация эвентов

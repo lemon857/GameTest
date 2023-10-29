@@ -136,7 +136,7 @@ bool ResourceManager::load_JSON_resources(const std::string & JSONpath)
 			const std::string name = currentFont["name"].GetString();
 			const std::string path = currentFont["path"].GetString();
 			const unsigned int size = currentFont["size"].GetUint();
-			//load_font(path, name, size);
+			load_font(path, name, size);
 		}
 	}
 	/*auto SpriteRenderersIt = doc.FindMember("SpriteRenderers");
@@ -855,8 +855,3 @@ std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTextureAtlas(
 //	std::cerr << "Can't find animator: " << animatorName << "\n";
 //	return nullptr;
 //}
-
-Font_Glyph::~Font_Glyph()
-{
-	glDeleteTextures(1, &TextureID);
-}

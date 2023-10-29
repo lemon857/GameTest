@@ -81,7 +81,7 @@ int Window::init()
         return -1;
     }
 
-#define OFF_CALLBACKS
+//#define OFF_CALLBACKS
 
 #ifndef OFF_CALLBACKS
     glfwSetWindowUserPointer(m_pWindow, &m_data);

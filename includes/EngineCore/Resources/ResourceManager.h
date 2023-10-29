@@ -18,7 +18,6 @@ struct Font_Glyph {
 	glm::ivec2   Size;      // Размеры глифа
 	glm::ivec2   Bearing;   // Смещение верхней левой точки глифа
 	unsigned int Advance;   // Горизонтальное смещение до начала следующего глифа
-	~Font_Glyph();
 };
 
 class Scene;

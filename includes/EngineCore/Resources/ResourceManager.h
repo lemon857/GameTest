@@ -64,6 +64,8 @@ namespace RenderEngine
 
 		static std::shared_ptr<GUI::Font> load_font(std::string relativePath, std::string font_name, unsigned int font_size);
 
+		static std::shared_ptr<GUI::Font> get_font(std::string font_name);
+
 		static std::shared_ptr<RenderEngine::ShaderProgram> loadShaders(
 			const std::string& shaderName, 
 			const std::string& vertexPath, 

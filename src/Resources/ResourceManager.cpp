@@ -275,6 +275,16 @@ std::shared_ptr<GUI::Font> ResourceManager::load_font(std::string relativePath, 
 
 	return nullptr;
 }
+std::shared_ptr<GUI::Font> ResourceManager::get_font(std::string font_name)
+{
+	FontsMap::const_iterator it = m_fonts_map.find(font_name);
+	if (it != m_fonts_map.end())
+	{
+		return it->second;
+	}
+	LOG_ERROR("Can't find font: {0}", font_name);
+	return nullptr;
+}
 bool ResourceManager::load_scene(std::string relativePath, Scene& scene)
 {
 	std::ifstream fin;

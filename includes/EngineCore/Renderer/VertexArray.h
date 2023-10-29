@@ -20,6 +20,8 @@ namespace RenderEngine
 		void addBuffer(const VertexBuffer& vertexBuffer, const VertexBufferLayout& layout);
 		void bind() const;
 		void unbind() const;
+
+		unsigned int count() const;
 	private:
 		GLuint m_ID = 0;
 		unsigned int m_elementsCount = 0;

@@ -24,17 +24,12 @@
 
 #include "EngineCore/GUI/GUI_place.h"
 #include "EngineCore/GUI/Square.h"
+#include "EngineCore/GUI/FontRenderer.h"
 
 #include <array>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
-
-#include <glad/glad.h>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 const int size_x = 50, size_y = 50;
 
@@ -43,55 +38,8 @@ std::array < bool, size_x* size_y> map;
 int cur = 0;
 int curObj = 3;
 
-// --------------------------------------------------------------------- //
+GUI::FontRenderer* text;
 
-unsigned int VAO1, VBO1;
-void RenderText(std::shared_ptr<RenderEngine::ShaderProgram> s, std::string text, float x, float y, float scale, glm::vec3 color, glm::mat4& prj)
-{
-    // activate corresponding render state	
-    s->use();
-    s->setVec3("textColor", glm::vec3(color.x, color.y, color.z));
-    s->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, prj);
-    glActiveTexture(GL_TEXTURE0);
-    glBindVertexArray(VAO1);
-
-    // iterate through all Characters1
-    std::string::const_iterator c;
-    for (c = text.begin(); c != text.end(); c++)
-    {
-        Font_Glyph ch = ResourceManager::get_character("agaaler", *c);
-
-        float xpos = x + ch.Bearing.x * scale;
-        float ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
-
-        float w = ch.Size.x * scale;
-        float h = ch.Size.y * scale;
-        // update VBO for each character
-        float vertices[6][4] = {
-            { xpos,     ypos + h,   0.0f, 0.0f },
-            { xpos,     ypos,       0.0f, 1.0f },
-            { xpos + w, ypos,       1.0f, 1.0f },
-
-            { xpos,     ypos + h,   0.0f, 0.0f },
-            { xpos + w, ypos,       1.0f, 1.0f },
-            { xpos + w, ypos + h,   1.0f, 0.0f }
-        };
-        // render glyph texture over quad
-        glBindTexture(GL_TEXTURE_2D, ch.TextureID);
-        // update content of VBO memory
-        glBindBuffer(GL_ARRAY_BUFFER, VBO1);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        // render quad
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-        // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-        x += (ch.Advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64)
-    }
-    glBindVertexArray(0);
-    glBindTexture(GL_TEXTURE_2D, 0);
-}
-
-// --------------------------------------------------------------------- //
 GameApp::GameApp()
 	: Application()
 {
@@ -104,6 +52,8 @@ GameApp::~GameApp()
 // инициализация, создание объектов
 bool GameApp::init()
 {
+    text = new GUI::FontRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"));
+
     m_cam = new Camera(glm::vec3(0), glm::vec3(0));
 
     m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
@@ -151,20 +101,7 @@ bool GameApp::init()
         {
             parts.push_back(startPos + glm::vec3((float)i * size.x, 0, (float)j * size.z));
         }
-    }
-
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glGenVertexArrays(1, &VAO1);
-    glGenBuffers(1, &VBO1);
-    glBindVertexArray(VAO1);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO1);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    }   
 
 	return true;
 }
@@ -275,7 +212,8 @@ void GameApp::on_update(const double delta)
 void GameApp::on_ui_render()
 {
     //m_funcUpdate();
-    RenderText(ResourceManager::getShaderProgram("textShader"), "Hello, world!", 50.f, 900.f, 2.f, glm::vec3(1.f, 0.f, 0.f), m_cam->get_ui_matrix());
+    //RenderText(ResourceManager::getShaderProgram("textShader"), "Hello, world!", 50.f, 900.f, 2.f, glm::vec3(1.f, 0.f, 0.f), m_cam->get_ui_matrix());
+    text->render_text("HELLO YEPTA", 500.f, 10.f, 1.f, glm::vec3(1.f, 1.f, 0.f), m_cam->get_ui_matrix());
     m_gui_place->on_render();
 }
 // инициализация эвентов

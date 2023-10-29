@@ -181,10 +181,11 @@ void GameApp::on_key_update(const double delta)
 // основной цикл движка
 void GameApp::on_update(const double delta)
 {
+    // clear screen
     RenderEngine::Renderer::setClearColor(m_colors[0], m_colors[1], m_colors[2], m_colors[3]);
 
     RenderEngine::Renderer::clearColor();
-
+    // set matrix
     ResourceManager::getShaderProgram("colorShader")->use();
     ResourceManager::getShaderProgram("colorShader")->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
     //ResourceManager::getShaderProgram("colorShader")->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_cam->get_ui_matrix());
@@ -211,9 +212,7 @@ void GameApp::on_update(const double delta)
 // отрисовка интерфейса
 void GameApp::on_ui_render()
 {
-    //m_funcUpdate();
-    //RenderText(ResourceManager::getShaderProgram("textShader"), "Hello, world!", 50.f, 900.f, 2.f, glm::vec3(1.f, 0.f, 0.f), m_cam->get_ui_matrix());
-    text->render_text("HELLO YEPTA", 500.f, 10.f, 1.f, glm::vec3(1.f, 1.f, 0.f), m_cam->get_ui_matrix());
+    text->render_text("HELLO, WORLD!", 500.f, 10.f, 1.f, glm::vec3(1.f, 1.f, 0.f), m_cam->get_ui_matrix());
     m_gui_place->on_render();
 }
 // инициализация эвентов

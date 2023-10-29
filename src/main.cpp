@@ -23,5 +23,7 @@ int main(int argc, char** argv)
     //delete editorApplication;
 #endif // EDITOR_BUILD
 
+    system("pause");
+
     return 0;
 }

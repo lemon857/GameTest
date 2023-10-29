@@ -35,7 +35,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/System/List.h	
 	
 	includes/Games/Tower_Defense/GameApplication.h
-	
+  
 	includes/EngineCore/GUI/GUI_place.h
 	includes/EngineCore/GUI/GUI_element.h
 	includes/EngineCore/GUI/Button.h
@@ -43,6 +43,11 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/GUI/Square.h
 	includes/EngineCore/GUI/Font.h
 	includes/EngineCore/GUI/FontRenderer.h
+  
+	includes/Games/Tower_Defense/Castle.h
+	includes/Games/Tower_Defense/HealthBar.h
+	includes/Games/Tower_Defense/Enemy.h
+	includes/Games/Tower_Defense/BaseTower.h
 )
 
 set(ENGINE_PRIVATE_INCLUDES
@@ -120,6 +125,10 @@ set(ENGINE_PRIVATE_SOURCES
 	#src/Examples/PongDemo/Ball.cpp
 	
 	src/Examples/Tower_Defense/GameApplication.cpp
+	src/Examples/Tower_Defense/Castle.cpp
+	src/Examples/Tower_Defense/HealthBar.cpp
+	src/Examples/Tower_Defense/Enemy.cpp
+	src/Examples/Tower_Defense/BaseTower.cpp
 	
 	src/Resources/ResourceManager.cpp
 	src/Resources/Scene.cpp

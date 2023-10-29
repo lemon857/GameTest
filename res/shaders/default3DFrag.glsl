@@ -1,4 +1,4 @@
-#version 460
+#version 410
 in vec2 texCoord;
 in vec3 frag_normal;
 in vec3 frag_position;

@@ -5,12 +5,16 @@
 #include "EngineCore/Renderer/Camera.h"
 #include "EngineCore/Renderer/Line.h"
 #include "EngineCore/Resources/Scene.h"
-//#include "EngineCore/Resources/ResourceManager.h"
 
-#include <functional>
 #include <vector>
-#include <glm/vec3.hpp>
-	
+#include <glm/vec3.hpp>	
+
+#include "EngineCore/System/List.h"
+
+#include "Games/Tower_Defense/Castle.h"
+#include "Games/Tower_Defense/Enemy.h"
+#include "Games/Tower_Defense/BaseTower.h"
+
 namespace GUI
 {
 	class GUI_place;
@@ -25,22 +29,21 @@ public:
 	bool init() override;
 	void on_key_update(const double delta) override;
 	void on_update(const double delta) override;
-	void on_ui_render() override;
 	bool init_events() override;
-
-	void set_init(std::function<void()> a) { m_func = a; };
-	void set_update(std::function<void()> a) { m_funcUpdate = a; };
 private:
 	Scene m_scene;
 
-	GUI::GUI_place* m_gui_place;
+	Castle* m_main_castle;
+
+	linked_list<Enemy*> m_enemies;
+
+	std::vector<BaseTower*> m_towers;
+
 	Camera* m_cam;
-	RenderEngine::Line* m_line;
+
+	RenderEngine::Line* m_grid_line;
 
 	std::vector<glm::vec3> parts;
-
-	std::function<void()> m_func;
-	std::function<void()> m_funcUpdate;
 
 	float m_colors[4] = { 0.33f, 0.33f, 0.33f, 0.f };
 
@@ -49,7 +52,6 @@ private:
 
 	double m_mouse_pos_x = 0;
 	double m_mouse_pos_y = 0;
-
 	double m_world_mouse_pos_x = 0;
 	double m_world_mouse_pos_y = 0;
 	double m_world_mouse_pos_z = 0;
@@ -58,4 +60,5 @@ private:
 	float m_cam_sensetivity = 0.5f;
 
 	bool m_isInversiveMouseY = false;
+	bool m_isLose = false;
 };

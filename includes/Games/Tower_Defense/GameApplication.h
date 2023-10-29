@@ -54,5 +54,5 @@ private:
 
 	bool m_isInversiveMouseY = false;
 
-	bool m_isLoose = false;
+	bool m_isLose = false;
 };

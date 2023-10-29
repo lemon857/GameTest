@@ -119,6 +119,7 @@ bool GameApp::init()
 
     ResourceManager::load_OBJ_file("res/models/castle.obj");
     ResourceManager::load_OBJ_file("res/models/tower.obj");
+    ResourceManager::load_OBJ_file("res/models/monkey.obj");
 
     m_main_castle = new Castle(parts[int((size_x * size_y) / 2) + int(size_x / 2)], 100,
         "res/models/castle.obj", ResourceManager::getMaterial("castle"), ResourceManager::getMaterial("default"));
@@ -267,14 +268,14 @@ void GameApp::on_update(const double delta)
         if (i == 2 && is_grid_active) m_scene.at(i)->update(delta);
     }       
 
-    if (m_isLoose) return;
+    if (m_isLose) return;
 
     m_main_castle->update(delta);
 
-    if (m_main_castle->isDestroyed() && !m_isLoose)
+    if (m_main_castle->isDestroyed() && !m_isLose)
     {
-        LOG_CRIT("You loose!!! You score: {0}", countKills);
-        m_isLoose = true;
+        LOG_CRIT("You lose!!! You score: {0}", countKills);
+        m_isLose = true;
         m_pCloseWindow = true;
     }
 

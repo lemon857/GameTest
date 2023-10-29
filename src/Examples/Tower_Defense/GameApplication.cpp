@@ -123,6 +123,10 @@ bool GameApp::init()
     ((float*)ResourceManager::getMaterial("castle")->get_data("shininess"))[0] = 0.1f;
 
     ((float*)ResourceManager::getMaterial("monkey")->get_data("ambient_factor"))[0] = 0.5f;
+    ((float*)ResourceManager::getMaterial("monkey")->get_data("diffuse_factor"))[0] = 0.4f;
+    ((float*)ResourceManager::getMaterial("monkey")->get_data("specular_factor"))[0] = 0.0f;
+    ((float*)ResourceManager::getMaterial("monkey")->get_data("metalic_factor"))[0] = 0.0f;
+    ((float*)ResourceManager::getMaterial("monkey")->get_data("shininess"))[0] = 0.1f;
 
     m_scene.at(curObj)->addComponent<Transform>();
     m_scene.at(curObj)->addComponent<Highlight>(ResourceManager::getMaterial("default"), true); 

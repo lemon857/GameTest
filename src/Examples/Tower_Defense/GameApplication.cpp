@@ -14,6 +14,9 @@
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Renderer/Renderer.h"
 #include "EngineCore/Renderer/Material.h"
+#include "EngineCore/Input.h"
+
+#include "EngineCore/Meshes/Cube.h"
 #include "EngineCore/Renderer3D/GraphicsObject.h"
 #include "EngineCore/Input.h"
 
@@ -24,6 +27,10 @@
 #include "EngineCore/Meshes/EmptyObject.h"
 #include "EngineCore/Meshes/Plane.h"
 #include "EngineCore/Meshes/Grid.h" 
+
+#include "EngineCore/GUI/GUI_place.h"
+#include "EngineCore/GUI/Square.h"
+#include "EngineCore/GUI/FontRenderer.h"
 
 #include <array>
 #include <memory>
@@ -37,6 +44,7 @@ std::array <bool, size_x * size_y> map;
 int cur = 0;
 int curObj = 3;
 
+GUI::FontRenderer* text;
 int countEnemies = 0;
 
 bool is_event_logging_active = false;
@@ -54,23 +62,35 @@ GameApp::GameApp()
 
 GameApp::~GameApp()
 {
-	delete m_cam;
+    delete m_cam;
 }
-// èíèöèàëèçàöèÿ, ñîçäàíèå îáúåêòîâ
+// Ã¨Ã­Ã¨Ã¶Ã¨Ã Ã«Ã¨Ã§Ã Ã¶Ã¨Ã¿, Ã±Ã®Ã§Ã¤Ã Ã­Ã¨Ã¥ Ã®Ã¡ÃºÃ¥ÃªÃ²Ã®Ã¢
 bool GameApp::init()
 {
-    // Ñîçäàíèå ðåíäåð êàìåðû
-	m_cam = new Camera(glm::vec3(0), glm::vec3(0));
-    // Óñòàíîâêà âüþïîðòà äëÿ ðåíäåðà
-	m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
-    // Ñîçäàíèå ëèíèè äëÿ ñåòêè
-    m_grid_line = new RenderEngine::Line(ResourceManager::getMaterial("default"));
+    text = new GUI::FontRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"));
 
+    m_cam = new Camera(glm::vec3(0), glm::vec3(0));
+
+    m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
+
+    m_gui_place = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
+
+    auto square = new GUI::Square(ResourceManager::getMaterial("default"), glm::vec2(100.f), glm::vec2(100.f));
+
+    square->set_click_callback([]() 
+        {
+            LOG_INFO("EEE HELLO WORLD YEPTA");
+        });
+
+    m_gui_place->add_element(square);
+
+    m_line = new RenderEngine::Line(ResourceManager::getMaterial("default"));
+  
     map.fill(false);
 
 	std::vector<std::string> names;
 
-    names.push_back("default3DShader");
+  names.push_back("default3DShader");
 
 	m_scene.add_object<Plane>(ResourceManager::getMaterial("dirt"), glm::vec3(size_x, 0.f, size_y), glm::vec3(size_x, 0.f, size_y));
     m_scene.add_object<DirectionalLight>(names);
@@ -127,14 +147,13 @@ bool GameApp::init()
 
     return true;
 }
-// öèêë äëÿ ïðîåðêè íàæàòèÿ êëàâèø
+// Ã¶Ã¨ÃªÃ« Ã¤Ã«Ã¿ Ã¯Ã°Ã®Ã¥Ã°ÃªÃ¨ Ã­Ã Ã¦Ã Ã²Ã¨Ã¿ ÃªÃ«Ã Ã¢Ã¨Ã¸
 void GameApp::on_key_update(const double delta)
 {
     glm::vec3 movement_delta{ 0,0,0 };
     glm::vec3 rotation_delta{ 0,0,0 };
 
     double addSpeed = 1;
-
     if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT))
     {
         int x = (int)floor(m_world_mouse_pos_x / 2.f);
@@ -238,22 +257,25 @@ void GameApp::on_key_update(const double delta)
 
     m_cam->add_movement_and_rotation(movement_delta, rotation_delta);
 }
-// îñíîâíîé öèêë äâèæêà
+// Ã®Ã±Ã­Ã®Ã¢Ã­Ã®Ã© Ã¶Ã¨ÃªÃ« Ã¤Ã¢Ã¨Ã¦ÃªÃ 
 void GameApp::on_update(const double delta)
 {
+    // clear screen
     RenderEngine::Renderer::setClearColor(m_colors[0], m_colors[1], m_colors[2], m_colors[3]);
 
     RenderEngine::Renderer::clearColor();
-
+    // set matrix
     ResourceManager::getShaderProgram("colorShader")->use();
-    ResourceManager::getShaderProgram("colorShader")->setMatrix4(VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+    ResourceManager::getShaderProgram("colorShader")->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+    //ResourceManager::getShaderProgram("colorShader")->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_cam->get_ui_matrix());
 
     ResourceManager::getShaderProgram("default3DShader")->use();
     ResourceManager::getShaderProgram("default3DShader")->setVec3("cam_position", m_cam->get_position());
 
-    //m_grid_line->render(glm::vec3(0), glm::vec3(m_world_mouse_pos_x, m_world_mouse_pos_y + 0.1f, m_world_mouse_pos_z), glm::vec3(1.f));
+    m_gui_place->on_update(delta);
 
-    m_scene.at(curObj)->getComponent<Transform>()->set_position(parts[cur]);
+    m_scene.at(curObj)->getComponent<Transform>()->set_position(parts[cur]); 
+    //m_grid_line->render(glm::vec3(0), glm::vec3(m_world_mouse_pos_x, m_world_mouse_pos_y + 0.1f, m_world_mouse_pos_z), glm::vec3(1.f));
 
     for (size_t i = 0; i < m_scene.get_list().size(); i++)
     {
@@ -262,6 +284,7 @@ void GameApp::on_update(const double delta)
         {
             std::shared_ptr<RenderEngine::ShaderProgram> shader = mesh->get_material_ptr()->get_shader_ptr();
             shader->use();
+
             shader->setMatrix4(VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
         }
         if (i != 2) m_scene.at(i)->update(delta);
@@ -325,7 +348,14 @@ void GameApp::on_update(const double delta)
         m_enemies[i]->update(delta);        
     }
 }
-// èíèöèàëèçàöèÿ ýâåíòîâ
+// Ã®Ã²Ã°Ã¨Ã±Ã®Ã¢ÃªÃ  Ã¨Ã­Ã²Ã¥Ã°Ã´Ã¥Ã©Ã±Ã 
+void GameApp::on_ui_render()
+{
+    text->render_text("HELLO, WORLD!", 500.f, 10.f, 1.f, glm::vec3(1.f, 1.f, 0.f), m_cam->get_ui_matrix());
+    m_gui_place->on_render();
+}
+
+// Ã¨Ã­Ã¨Ã¶Ã¨Ã Ã«Ã¨Ã§Ã Ã¶Ã¨Ã¿ Ã½Ã¢Ã¥Ã­Ã²Ã®Ã¢
 bool GameApp::init_events()
 {
     m_event_dispather.add_event_listener<EventWindowResize>([&](EventWindowResize& e)
@@ -343,11 +373,12 @@ bool GameApp::init_events()
             {
                 if (e.repeated)
                 {
-                    if (is_event_logging_active) LOG_INFO("[EVENT] Key repeated {0}", static_cast<char>(e.key_code));
+
+                  if (is_event_logging_active) LOG_INFO("[EVENT] Key repeated {0}", static_cast<char>(e.key_code));
                 }
                 else
                 {
-                    if (is_event_logging_active) LOG_INFO("[EVENT] Key pressed {0}", static_cast<char>(e.key_code));
+                   if (is_event_logging_active) LOG_INFO("[EVENT] Key pressed {0}", static_cast<char>(e.key_code));
                 }
             }
             Input::pressKey(e.key_code);
@@ -366,11 +397,15 @@ bool GameApp::init_events()
             m_world_mouse_pos_y = objcoord.y;
             m_world_mouse_pos_z = objcoord.z;
 
+            m_mouse_pos_x = e.x;
+            m_mouse_pos_y = e.y;
             if (is_event_logging_active) LOG_INFO("[EVENT] Mouse moved to {0}x{1}", e.x, e.y);
         });
     m_event_dispather.add_event_listener<EventMouseScrolled>(
         [&](EventMouseScrolled& e)
         {
+            m_gui_place->get_element(0)->add_position(glm::vec2(0.f, e.y_offset * 2.f));
+
             if (is_event_logging_active) LOG_INFO("[EVENT] Scroll: {0}x{1}", e.x_offset, e.y_offset);
         });
     m_event_dispather.add_event_listener<EventWindowClose>([&](EventWindowClose& e)
@@ -380,6 +415,7 @@ bool GameApp::init_events()
         });
     m_event_dispather.add_event_listener<EventMouseButtonPressed>([&](EventMouseButtonPressed& e)
         {
+
             if (is_event_logging_active) LOG_INFO("[EVENT] Mouse button pressed at ({0}x{1})", e.x_pos, e.y_pos);
             Input::pressMouseButton(e.mouse_button);
             m_init_mouse_pos_x = e.x_pos;

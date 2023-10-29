@@ -6,15 +6,20 @@
 #include "EngineCore/Renderer/Line.h"
 #include "EngineCore/Resources/Scene.h"
 
+#include <vector>
+#include <glm/vec3.hpp>	
+
 #include "EngineCore/System/List.h"
 
 #include "Games/Tower_Defense/Castle.h"
 #include "Games/Tower_Defense/Enemy.h"
 #include "Games/Tower_Defense/BaseTower.h"
 
-#include <vector>
-#include <glm/vec3.hpp>
-	
+namespace GUI
+{
+	class GUI_place;
+}
+
 class GameApp : public Application
 {
 public:
@@ -45,6 +50,8 @@ private:
 	double m_init_mouse_pos_x = 0;
 	double m_init_mouse_pos_y = 0;
 
+	double m_mouse_pos_x = 0;
+	double m_mouse_pos_y = 0;
 	double m_world_mouse_pos_x = 0;
 	double m_world_mouse_pos_y = 0;
 	double m_world_mouse_pos_z = 0;
@@ -53,6 +60,5 @@ private:
 	float m_cam_sensetivity = 0.5f;
 
 	bool m_isInversiveMouseY = false;
-
 	bool m_isLose = false;
 };

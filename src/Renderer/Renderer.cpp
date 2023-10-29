@@ -20,6 +20,11 @@ namespace RenderEngine
 		indexBuffer.bind();
 		glDrawElements(GL_TRIANGLES, indexBuffer.getCount(), GL_UNSIGNED_INT, 0);
 	}
+	void Renderer::drawTriangles(const VertexArray& vertexArray)
+	{
+		vertexArray.bind();
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+	}
 	void Renderer::drawPoint(const VertexArray& vertexArray, const ShaderProgram& shader, const GLfloat size)
 	{
 		shader.use();
@@ -51,6 +56,17 @@ namespace RenderEngine
 		else
 		{
 			glDisable(GL_DEPTH_TEST);
+		}
+	}
+	void Renderer::setBlend(const bool enable)
+	{
+		if (enable)
+		{
+			glEnable(GL_BLEND);
+		}
+		else
+		{
+			glDisable(GL_BLEND);
 		}
 	}
 	void Renderer::clearColor() 

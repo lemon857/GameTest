@@ -28,6 +28,14 @@ glm::mat4 Camera::get_projection_matrix()
 	}
 	return m_projection_matrix;
 }
+glm::mat4 Camera::get_ui_matrix()
+{
+	if (m_update_ui_matrix)
+	{
+		update_ui_matrix();
+	}
+	return m_ui_matrix;
+}
 
 void Camera::set_position(const glm::vec3& position)
 {
@@ -65,6 +73,7 @@ void Camera::set_viewport_size(const float width, const float height)
 	m_viewport_width = width;
 	m_viewport_height = height;
 	m_update_projection_matrix = true;
+	m_update_ui_matrix = true;
 }
 void Camera::set_field_of_view(const float fov)
 {
@@ -141,6 +150,7 @@ void Camera::update_veiw_matrix()
 	m_up = glm::cross(m_right, m_direction);
 
 	m_veiw_matrix = glm::lookAt(m_position, m_position + m_direction, m_up);
+	m_update_view_matrix = false;
 }
 
 void Camera::update_projection_matrix()
@@ -154,4 +164,11 @@ void Camera::update_projection_matrix()
 		const float aspect = m_viewport_width / m_viewport_height;
 		m_projection_matrix = glm::ortho(-m_size_of_view * aspect, m_size_of_view * aspect, -m_size_of_view * aspect, m_size_of_view * aspect, m_near_clip_plane, m_far_clip_plane);
 	}
+	m_update_projection_matrix = false;
+}
+
+void Camera::update_ui_matrix()
+{
+	m_ui_matrix = glm::ortho(0.f, m_viewport_width, 0.f, m_viewport_height, m_near_clip_plane - 10.f, m_far_clip_plane);
+	m_update_ui_matrix = false;
 }

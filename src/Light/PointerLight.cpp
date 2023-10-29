@@ -21,8 +21,8 @@ void PointerLight::update(const double delta)
 	glm::vec3 pos = getComponent<Transform>()->get_position();
 	for (const auto& curName : m_shaders_names)
 	{
-		ResourceManager::getShaderProgram(curName)->setVec3(POINTER_LIGHT_COLOR_NAME, m_light_color);
-		ResourceManager::getShaderProgram(curName)->setVec3(POINTER_LIGHT_POS_NAME, pos);
-		ResourceManager::getShaderProgram(curName)->setFloat(POINTER_LIGHT_STRENGTH_NAME, m_strength_light);
+		ResourceManager::getShaderProgram(curName)->setVec3(SS_POINTER_LIGHT_COLOR_NAME, m_light_color);
+		ResourceManager::getShaderProgram(curName)->setVec3(SS_POINTER_LIGHT_POS_NAME, pos);
+		ResourceManager::getShaderProgram(curName)->setFloat(SS_POINTER_LIGHT_STRENGTH_NAME, m_strength_light);
 	}
 }

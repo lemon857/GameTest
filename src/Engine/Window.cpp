@@ -3,8 +3,6 @@
 #include "EngineCore/Editor/UI/UImodule.h"
 #include "EngineCore/System/Log.h"
 #include "EngineCore/Renderer/Renderer.h"
-#include "EngineCore/Components/SpriteRenderer.h"
-#include "EngineCore/Renderer/Camera.h"
 #include "EngineCore/Resources/ResourceManager.h"
 
 #include <GLFW/glfw3.h>
@@ -13,7 +11,7 @@ Window::Window(std::string title, glm::ivec2& window_position, glm::ivec2& windo
     : m_data({ std::move(title), window_size, window_position, maximized, nullptr })
 {
 	init();
-    UImodule::on_window_create(m_pWindow);
+    //UImodule::on_window_create(m_pWindow);
 }
 
 Window::~Window()
@@ -51,7 +49,7 @@ void Window::set_event_callback(const EventCallback& callback)
 
 int Window::init()
 {
-    LOG_INFO("Creating window {0} size {1}x{2}", m_data.title, m_data.window_size.x, m_data.window_size.y);
+    LOG_INFO("Creating window \"{0}\" size {1}x{2}", m_data.title, m_data.window_size.x, m_data.window_size.y);
     
     if (!RenderEngine::Renderer::init(m_pWindow))
     {
@@ -83,6 +81,9 @@ int Window::init()
         return -1;
     }
 
+//#define OFF_CALLBACKS
+
+#ifndef OFF_CALLBACKS
     glfwSetWindowUserPointer(m_pWindow, &m_data);
 
     glfwSetErrorCallback( 
@@ -193,6 +194,8 @@ int Window::init()
             data.event_callback(e);
         });
 
+#endif // !OFF_CALLBACKS
+
     RenderEngine::Renderer::setClearColor(0, 0, 0, 1);
     RenderEngine::Renderer::setDepthTest(true);
 
@@ -201,7 +204,7 @@ int Window::init()
 
 void Window::shuitdown()
 {
-    UImodule::on_window_close();
+    //UImodule::on_window_close();
     glfwDestroyWindow(m_pWindow);
     glfwTerminate();
 }

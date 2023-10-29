@@ -35,6 +35,15 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/System/List.h	
 	
 	includes/Games/Tower_Defense/GameApplication.h
+  
+	includes/EngineCore/GUI/GUI_place.h
+	includes/EngineCore/GUI/GUI_element.h
+	includes/EngineCore/GUI/Button.h
+	includes/EngineCore/GUI/Sprite.h
+	includes/EngineCore/GUI/Square.h
+	includes/EngineCore/GUI/Font.h
+	includes/EngineCore/GUI/FontRenderer.h
+  
 	includes/Games/Tower_Defense/Castle.h
 	includes/Games/Tower_Defense/HealthBar.h
 	includes/Games/Tower_Defense/Enemy.h
@@ -78,7 +87,6 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Components/Highlight.h
 	
 	includes/EngineCore/Meshes/Cube.h
-	includes/EngineCore/Meshes/Sprite.h
 	includes/EngineCore/Meshes/ObjModel.h
 	includes/EngineCore/Meshes/EmptyObject.h
 	includes/EngineCore/Meshes/Plane.h	
@@ -154,13 +162,19 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Components/Highlight.cpp
 	
 	src/Meshes/Cube.cpp
-	src/Meshes/Sprite.cpp
 	src/Meshes/ObjModel.cpp
 	src/Meshes/Plane.cpp
 	src/Meshes/Grid.cpp
 		
 	src/Light/DirectionalLight.cpp
 	src/Light/PointerLight.cpp
+	
+	src/GUI/GUI_place.cpp
+	src/GUI/Button.cpp
+	src/GUI/Sprite.cpp
+	src/GUI/Square.cpp
+	src/GUI/Font.cpp
+	src/GUI/FontRenderer.cpp
 )
 
 
@@ -196,14 +210,17 @@ set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
 add_subdirectory(external/glfw)
 add_subdirectory(external/glad)
 add_subdirectory(external/spdlog)
+add_subdirectory(external/freetype)
 
 target_link_libraries(${PROJECT_NAME} glfw)
 target_link_libraries(${PROJECT_NAME} glad)
 target_link_libraries(${PROJECT_NAME} spdlog)
+target_link_libraries(${PROJECT_NAME} freetype)
 
 target_include_directories(${PROJECT_NAME} PRIVATE includes)
 include_directories(external/glm)
 include_directories(external/rapidjson/include)
+include_directories(external/freetype/include)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
 #Для игры копирование ресурсов из источника в билд

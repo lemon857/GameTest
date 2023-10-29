@@ -1,7 +1,7 @@
 #include "EngineCore/System/Stopwatch.h"
 
 Stopwatch::Stopwatch()
-	: m_timeStart()
+	: m_timeStart(std::chrono::high_resolution_clock::now())
 {
 }
 

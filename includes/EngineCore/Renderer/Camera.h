@@ -31,9 +31,11 @@ public:
 
 	glm::mat4 get_view_matrix();
 	glm::mat4 get_projection_matrix();
+	glm::mat4 get_ui_matrix();
 
 	glm::vec3 get_position() const { return m_position; };
 	glm::vec3 get_rotation() const { return m_rotation; };
+	glm::vec2 get_viewport_size() const { return glm::vec2(m_viewport_width, m_viewport_height); };
 	glm::vec3 get_world_mouse_position(glm::vec2 mouse_position, glm::vec2 window_size);
 
 	void move_forward(const float delta);
@@ -49,6 +51,7 @@ public:
 private:
 	void update_veiw_matrix();
 	void update_projection_matrix();
+	void update_ui_matrix();
 
 	glm::vec3 m_position;
 	glm::vec3 m_rotation;	
@@ -70,9 +73,11 @@ private:
 
 	glm::mat4 m_veiw_matrix;
 	glm::mat4 m_projection_matrix;
+	glm::mat4 m_ui_matrix;
 
 	ProjectionMode m_projection_mode;
 
 	bool m_update_view_matrix = false;
 	bool m_update_projection_matrix = false;
+	bool m_update_ui_matrix = true;
 };

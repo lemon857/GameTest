@@ -1,6 +1,13 @@
 {
   "shaders": [
     {
+      "name": "textShader",
+      "filePath_v": "res/shaders/textVert.glsl",
+      "filePath_f": "res/shaders/textFrag.glsl",
+      "layout": [
+      ]
+    },
+    {
       "name": "spriteShader",
       "filePath_v": "res/shaders/spriteVert.glsl",
       "filePath_f": "res/shaders/spriteFrag.glsl",
@@ -259,5 +266,17 @@
       "nameShader": "default3DShader",
       "nameTexture": "MonkeyTexture"
     }
-  ]  
+  ],
+  "fonts": [
+    {
+      "name": "calibri",
+      "path": "res/fonts/calibri.ttf",
+      "size": 48
+    },
+    {
+      "name": "agaaler",
+      "path": "res/fonts/agaaler.ttf",
+      "size": 48
+    }
+  ]
 }

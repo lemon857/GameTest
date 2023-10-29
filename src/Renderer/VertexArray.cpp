@@ -47,4 +47,8 @@ namespace RenderEngine
 	{
 		glBindVertexArray(0);
 	}
+	unsigned int VertexArray::count() const
+	{
+		return m_elementsCount;
+	}
 }

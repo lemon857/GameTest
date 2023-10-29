@@ -44,7 +44,7 @@ void DirectionalLight::update(const double delta)
 	glm::vec3 finalyRot = rotateXmat * rotateYmat * rotateZmat * glm::vec4(1.f);
 	for (const auto& curName : m_shaders_names)
 	{
-		ResourceManager::getShaderProgram(curName)->setVec3(DIRECTION_LIGHT_COLOR_NAME, m_light_color);
-		ResourceManager::getShaderProgram(curName)->setVec3(DIRECTION_LIGHT_DIR_NAME, finalyRot);
+		ResourceManager::getShaderProgram(curName)->setVec3(SS_DIRECTION_LIGHT_COLOR_NAME, m_light_color);
+		ResourceManager::getShaderProgram(curName)->setVec3(SS_DIRECTION_LIGHT_DIR_NAME, finalyRot);
 	}
 }

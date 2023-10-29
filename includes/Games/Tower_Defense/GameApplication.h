@@ -29,6 +29,7 @@ public:
 	bool init() override;
 	void on_key_update(const double delta) override;
 	void on_update(const double delta) override;
+	void on_ui_render() override;
 	bool init_events() override;
 private:
 	Scene m_scene;

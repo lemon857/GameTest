@@ -22,7 +22,6 @@
 
 #include "EngineCore/Meshes/EmptyObject.h"
 #include "EngineCore/Meshes/Cube.h"
-#include "EngineCore/Meshes/Sprite.h"
 #include "EngineCore/Meshes/ObjModel.h"
 #include "EngineCore/Meshes/EmptyObject.h"
 #include "EngineCore/Meshes/Plane.h"
@@ -54,6 +53,11 @@ bool is_grid_active = false;
 bool isKeyPressed = false;
 
 unsigned int countKills = 0;
+unsigned int fps = 0;
+unsigned int frames = 0;
+double times = 0;
+
+GUI::GUI_place* m_gui_place;
 
 GameApp::GameApp()
 	: Application()
@@ -64,7 +68,7 @@ GameApp::~GameApp()
 {
     delete m_cam;
 }
-// èíèöèàëèçàöèÿ, ñîçäàíèå îáúåêòîâ
+
 bool GameApp::init()
 {
     text = new GUI::FontRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"));
@@ -84,7 +88,7 @@ bool GameApp::init()
 
     m_gui_place->add_element(square);
 
-    m_line = new RenderEngine::Line(ResourceManager::getMaterial("default"));
+    //m_line = new RenderEngine::Line(ResourceManager::getMaterial("default"));
   
     map.fill(false);
 
@@ -147,7 +151,7 @@ bool GameApp::init()
 
     return true;
 }
-// öèêë äëÿ ïðîåðêè íàæàòèÿ êëàâèø
+
 void GameApp::on_key_update(const double delta)
 {
     glm::vec3 movement_delta{ 0,0,0 };
@@ -257,7 +261,7 @@ void GameApp::on_key_update(const double delta)
 
     m_cam->add_movement_and_rotation(movement_delta, rotation_delta);
 }
-// îñíîâíîé öèêë äâèæêà
+
 void GameApp::on_update(const double delta)
 {
     // clear screen
@@ -285,7 +289,7 @@ void GameApp::on_update(const double delta)
             std::shared_ptr<RenderEngine::ShaderProgram> shader = mesh->get_material_ptr()->get_shader_ptr();
             shader->use();
 
-            shader->setMatrix4(VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+            shader->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
         }
         if (i != 2) m_scene.at(i)->update(delta);
         if (i == 2 && is_grid_active) m_scene.at(i)->update(delta);
@@ -342,20 +346,32 @@ void GameApp::on_update(const double delta)
             }
             delete m_enemies[i];
             m_enemies.remove(i);
-            LOG_INFO("You kill {0} enemies", ++countKills);
+            countKills++;
             continue;
         }
         m_enemies[i]->update(delta);        
     }
+
+    if (frames < 5)
+    {
+        frames++;
+        times += delta;
+    }
+    else
+    {
+        fps = int((frames / times) * 1000.f);
+        frames = 0;
+        times = 0;
+    }
 }
-// îòðèñîâêà èíòåðôåéñà
+
 void GameApp::on_ui_render()
 {
-    text->render_text("HELLO, WORLD!", 500.f, 10.f, 1.f, glm::vec3(1.f, 1.f, 0.f), m_cam->get_ui_matrix());
+    text->render_text("Kills: " + std::to_string(countKills), 10.f, 950.f, 1.f, glm::vec3(1.f, 0.f, 0.f), m_cam->get_ui_matrix());
+    text->render_text("FPS: " + std::to_string(fps), 10.f, 900.f, 1.f, glm::vec3(1.f, 0.33f, 0.33f), m_cam->get_ui_matrix());
     m_gui_place->on_render();
 }
 
-// èíèöèàëèçàöèÿ ýâåíòîâ
 bool GameApp::init_events()
 {
     m_event_dispather.add_event_listener<EventWindowResize>([&](EventWindowResize& e)

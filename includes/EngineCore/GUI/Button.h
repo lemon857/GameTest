@@ -33,6 +33,7 @@ namespace GUI
 		std::string m_text;
 		Sprite* m_face;
 		glm::vec3 m_color;
+		glm::vec2 m_pos_text;
 		std::unique_ptr<FontRenderer> m_textRenderer;
 	};
 }

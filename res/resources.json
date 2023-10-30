@@ -239,6 +239,17 @@
       "subTextures": [
         "default"
       ]
+    },
+    {
+      "name": "bg_1",
+      "filePath": "res/textures/Background_1.png",
+      "width": 128,
+      "height": 128,
+      "subTexture_w": 128,
+      "subTexture_h": 128,
+      "subTextures": [
+        "default"
+      ]
     }
   ],
   "materials": [
@@ -246,6 +257,11 @@
       "name": "default",
       "nameShader": "colorShader",
       "nameTexture": "DefaultTexture"
+    },
+    {
+      "name": "defaultSprite",
+      "nameShader": "spriteShader",
+      "nameTexture": "bg_1"
     },
     {
       "name": "cube",

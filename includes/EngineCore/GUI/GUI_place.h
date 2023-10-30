@@ -32,10 +32,14 @@ namespace GUI
 		void on_mouse_release(int x, int y);
 
 		bool get_focus();
+		void set_logging_active(bool active);
+		void set_active(bool active);
 	private:
 		Camera* m_render_cam;
 		std::shared_ptr<RenderEngine::Material> m_pMaterial;
 		std::vector<GUI_element*> m_elements;
 		bool m_isFocus = false;
+		bool m_isActive = false;
+		bool m_is_event_logging_active = false;
 	};
 }

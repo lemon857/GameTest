@@ -51,8 +51,17 @@ namespace GUI
 	{
 		return m_isFocus;
 	}
+	void GUI_place::set_logging_active(bool active)
+	{
+		m_is_event_logging_active = active;
+	}
+	void GUI_place::set_active(bool active)
+	{
+		m_isActive = active;
+	}
 	void GUI_place::on_mouse_press(int x, int y)
 	{
+		if (!m_isActive) return;
 		glm::vec2 VPsize = m_render_cam->get_viewport_size();
 		y = VPsize.y - y; // set null pos in left down
 		for (auto cur : m_elements)
@@ -65,7 +74,7 @@ namespace GUI
 			{
 				cur->on_click();
 				m_isFocus = true;
-				LOG_INFO("[GUI] Click on object: {0}", cur->get_name());
+				if (m_is_event_logging_active) LOG_INFO("[GUI] Click on object: {0}", cur->get_name());
 			}
 		}
 	}

@@ -50,15 +50,13 @@ bool is_event_logging_active = false;
 
 bool is_grid_active = false;
 
+bool is_gui_active = false;
+
 bool isKeyPressed = false;
 
 unsigned int countKills = 0;
 
 GUI::GUI_place* m_gui_place;
-
-std::string text_out = "123";
-
-bool flag1 = false;
 
 GameApp::GameApp()
 	: Application()
@@ -80,21 +78,22 @@ bool GameApp::init()
 
     m_gui_place = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
 
+
     //m_gui_place->add_element(new GUI::Square(ResourceManager::getMaterial("default"), glm::vec2(100.f), glm::vec2(100.f)));
-    m_gui_place->add_element(new GUI::Sprite(ResourceManager::getMaterial("button"), "default", glm::vec2(600.f, 100.f), glm::vec2(600.f, 100.f)));
+    //m_gui_place->add_element(new GUI::Sprite(ResourceManager::getMaterial("button"), "default", 
+    //    glm::vec2(m_pWindow->get_size().x / 2, m_pWindow->get_size().y / 2), glm::vec2(300.f, 50.f)));
     //m_gui_place->add_element(new GUI::Sprite(ResourceManager::getMaterial("sprite"), "deadEagle", glm::vec2(250.f, 150.f), glm::vec2(200.f, 100.f)));
+
+    m_gui_place->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button")),
+        ResourceManager::getMaterial("button"), glm::vec2(m_pWindow->get_size().x / 2, m_pWindow->get_size().y / 2), glm::vec2(300.f, 50.f),
+        "Click me! hello how are you", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
+
+    m_gui_place->add_element(new GUI::Sprite(ResourceManager::getMaterial("defaultSprite"), "default",
+        glm::vec2(m_pWindow->get_size().x / 2, m_pWindow->get_size().y / 2), glm::vec2(m_pWindow->get_size().x / 2, m_pWindow->get_size().y / 2)));
+
     m_gui_place->get_element(0)->set_click_callback([&]()
         {
-            if (flag1)
-            {
-                text_out = "WOOOW";
-                flag1 = false;
-            }
-            else
-            {
-                text_out = "OK, it's easy";
-                flag1 = true;
-            }
+
         });
   
     map.fill(false);
@@ -160,6 +159,60 @@ void GameApp::on_key_update(const double delta)
     glm::vec3 rotation_delta{ 0,0,0 };
 
     double addSpeed = 1;
+    if (Input::isKeyPressed(KeyCode::KEY_G))
+    {
+        if (is_grid_active && !isKeyPressed)
+        {
+            is_grid_active = false;
+            isKeyPressed = true;
+        }
+        else if (!isKeyPressed)
+        {
+            is_grid_active = true;
+            isKeyPressed = true;
+        }
+    }
+    else if (Input::isKeyPressed(KeyCode::KEY_L))
+    {
+        if (is_event_logging_active && !isKeyPressed)
+        {
+            is_event_logging_active = false;
+            m_gui_place->set_logging_active(false);
+            isKeyPressed = true;
+        }
+        else if (!isKeyPressed)
+        {
+            is_event_logging_active = true;
+            m_gui_place->set_logging_active(true);
+            isKeyPressed = true;
+        }
+    }
+    else if (Input::isKeyPressed(KeyCode::KEY_J))
+    {
+        if (!isKeyPressed)
+        {
+            countEnemies++;
+            isKeyPressed = true;
+        }
+    }
+    else if (Input::isKeyPressed(KeyCode::KEY_ESCAPE))
+    {
+        if (is_gui_active && !isKeyPressed)
+        {
+            is_gui_active = false;
+            m_gui_place->set_active(false);
+            isKeyPressed = true;
+        }
+        else if (!isKeyPressed)
+        {
+            is_gui_active = true;
+            m_gui_place->set_active(true);
+            isKeyPressed = true;
+        }
+    }
+
+    if (is_gui_active) return;
+
     if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT) && !m_gui_place->get_focus())
     {
         int x = (int)floor(m_world_mouse_pos_x / 2.f);
@@ -190,62 +243,28 @@ void GameApp::on_key_update(const double delta)
             LOG_INFO("Add tower at {0}x{1}", parts[cur].x, parts[cur].z);
         }
     }
-    if (Input::isKeyPressed(KeyCode::KEY_G))
-    {
-        if (is_grid_active && !isKeyPressed)
-        {
-            is_grid_active = false;
-            isKeyPressed = true;
-        }
-        else if (!isKeyPressed)
-        {
-            is_grid_active = true;
-            isKeyPressed = true;
-        }
-    }
-    else if (Input::isKeyPressed(KeyCode::KEY_L))
-    {
-        if (is_event_logging_active && !isKeyPressed)
-        {
-            is_event_logging_active = false;
-            isKeyPressed = true;
-        }
-        else if (!isKeyPressed)
-        {
-            is_event_logging_active = true;
-            isKeyPressed = true;
-        }
-    }
-    else if (Input::isKeyPressed(KeyCode::KEY_J))
-    {
-        if (!isKeyPressed)
-        {
-            countEnemies++;
-            isKeyPressed = true;
-        }
-    }
 
     if (Input::isKeyPressed(KeyCode::KEY_W))
     {
         movement_delta.z += static_cast<float>(addSpeed * m_cam_velocity * delta);
     }
-    else if (Input::isKeyPressed(KeyCode::KEY_S))
+    if (Input::isKeyPressed(KeyCode::KEY_S))
     {
         movement_delta.z -= static_cast<float>(addSpeed * m_cam_velocity * delta);
     }
-    else if (Input::isKeyPressed(KeyCode::KEY_A))
+    if (Input::isKeyPressed(KeyCode::KEY_A))
     {
         movement_delta.x -= static_cast<float>(addSpeed * m_cam_velocity * delta);
     }
-    else if (Input::isKeyPressed(KeyCode::KEY_D))
+    if (Input::isKeyPressed(KeyCode::KEY_D))
     {
         movement_delta.x += static_cast<float>(addSpeed * m_cam_velocity * delta);
     }
-    else if (Input::isKeyPressed(KeyCode::KEY_SPACE))
+    if (Input::isKeyPressed(KeyCode::KEY_SPACE))
     {
         movement_delta.y += static_cast<float>(addSpeed * m_cam_velocity * delta);
     }
-    else if (Input::isKeyPressed(KeyCode::KEY_LEFT_SHIFT))
+    if (Input::isKeyPressed(KeyCode::KEY_LEFT_SHIFT))
     {
         movement_delta.y -= static_cast<float>(addSpeed * m_cam_velocity * delta);
     }
@@ -357,8 +376,11 @@ void GameApp::on_update(const double delta)
 // îòðèñîâêà èíòåðôåéñà
 void GameApp::on_ui_render()
 {
-    //text->render_text(text_out, 100.f, 100.f, 1.f, glm::vec3(1.f, 1.f, 0.f), m_cam->get_ui_matrix());
-    //m_gui_place->on_render();
+    if (is_gui_active)
+    {
+        text->render_text("Main menu", 850.f, 950.f, 1.f, glm::vec3(0.f, 0.f, 0.f), m_cam->get_ui_matrix());
+        m_gui_place->on_render();
+    }
 }
 // èíèöèàëèçàöèÿ ýâåíòîâ
 bool GameApp::init_events()

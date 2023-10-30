@@ -32,6 +32,7 @@ namespace GUI
 		for (auto cur : m_elements)
 		{
 			cur->on_render();
+			cur->on_render_prj(m_render_cam->get_ui_matrix());
 		}
 	}
 	void GUI_place::add_element(GUI_element* element)
@@ -42,7 +43,15 @@ namespace GUI
 	{
 		return m_elements[index];
 	}
-	void GUI_place::on_mouse_click(int x, int y)
+	void GUI_place::on_mouse_release(int x, int y)
+	{
+		m_isFocus = false;
+	}
+	bool GUI_place::get_focus()
+	{
+		return m_isFocus;
+	}
+	void GUI_place::on_mouse_press(int x, int y)
 	{
 		glm::vec2 VPsize = m_render_cam->get_viewport_size();
 		y = VPsize.y - y; // set null pos in left down
@@ -55,6 +64,7 @@ namespace GUI
 			if ((x >= pos.x && y >= pos.y && x <= pos.x + scale.x && y <= pos.y + scale.y))
 			{
 				cur->on_click();
+				m_isFocus = true;
 				LOG_INFO("[GUI] Click on object: {0}", cur->get_name());
 			}
 		}

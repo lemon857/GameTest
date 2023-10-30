@@ -28,10 +28,14 @@ namespace GUI
 
 		GUI_element* get_element(size_t index);
 
-		void on_mouse_click(int x, int y);
+		void on_mouse_press(int x, int y);
+		void on_mouse_release(int x, int y);
+
+		bool get_focus();
 	private:
 		Camera* m_render_cam;
 		std::shared_ptr<RenderEngine::Material> m_pMaterial;
 		std::vector<GUI_element*> m_elements;
+		bool m_isFocus = false;
 	};
 }

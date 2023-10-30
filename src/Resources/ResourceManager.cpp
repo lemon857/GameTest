@@ -165,7 +165,7 @@ bool ResourceManager::load_JSON_resources(const std::string & JSONpath)
 			loadGraphicsObject(name, shader, source);
 		}
 	}*/
-	LOG_INFO("Loadind data in JSON file complete");
+	LOG_INFO("Loadind data from JSON file complete");
 	/*auto animatorsIt = doc.FindMember("animators");
 	if (animatorsIt != doc.MemberEnd())
 	{

@@ -228,6 +228,17 @@
       "subTextures": [
         "default"
       ]
+    },
+    {
+      "name": "Button_1",
+      "filePath": "res/textures/button_1.png",
+      "width": 600,
+      "height": 100,
+      "subTexture_w": 600,
+      "subTexture_h": 100,
+      "subTextures": [
+        "default"
+      ]
     }
   ],
   "materials": [
@@ -265,6 +276,11 @@
       "name": "monkey",
       "nameShader": "default3DShader",
       "nameTexture": "MonkeyTexture"
+    },
+    {
+      "name": "button",
+      "nameShader": "spriteShader",
+      "nameTexture": "Button_1"
     }
   ],
   "fonts": [

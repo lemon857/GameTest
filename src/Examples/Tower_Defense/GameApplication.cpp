@@ -28,6 +28,8 @@
 #include "EngineCore/GUI/GUI_place.h"
 #include "EngineCore/GUI/Square.h"
 #include "EngineCore/GUI/FontRenderer.h"
+#include "EngineCore/GUI/Button.h"
+#include "EngineCore/GUI/Sprite.h"
 
 #include <array>
 #include <memory>
@@ -54,6 +56,10 @@ unsigned int countKills = 0;
 
 GUI::GUI_place* m_gui_place;
 
+std::string text_out = "123";
+
+bool flag1 = false;
+
 GameApp::GameApp()
 	: Application()
 {
@@ -74,14 +80,22 @@ bool GameApp::init()
 
     m_gui_place = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
 
-    auto square = new GUI::Square(ResourceManager::getMaterial("default"), glm::vec2(100.f), glm::vec2(100.f));
-
-    m_gui_place->add_element(square);
-    m_gui_place->get_element(0)->set_click_callback([]()
+    //m_gui_place->add_element(new GUI::Square(ResourceManager::getMaterial("default"), glm::vec2(100.f), glm::vec2(100.f)));
+    m_gui_place->add_element(new GUI::Sprite(ResourceManager::getMaterial("button"), "default", glm::vec2(600.f, 100.f), glm::vec2(600.f, 100.f)));
+    //m_gui_place->add_element(new GUI::Sprite(ResourceManager::getMaterial("sprite"), "deadEagle", glm::vec2(250.f, 150.f), glm::vec2(200.f, 100.f)));
+    m_gui_place->get_element(0)->set_click_callback([&]()
         {
-            LOG_INFO("EEE HELLO WORLD YEPTA");
+            if (flag1)
+            {
+                text_out = "WOOOW";
+                flag1 = false;
+            }
+            else
+            {
+                text_out = "OK, it's easy";
+                flag1 = true;
+            }
         });
-    //m_line = new RenderEngine::Line(ResourceManager::getMaterial("default"));
   
     map.fill(false);
 
@@ -94,26 +108,21 @@ bool GameApp::init()
     m_scene.add_object<Grid>(glm::vec3(size_x, 0.5f, size_y), glm::vec2(1.f), size_x, size_y, glm::vec3(1.f), ResourceManager::getMaterial("default"));
     m_scene.add_object<EmptyObject>();
     //m_scene.add_object<Cube>(ResourceManager::getMaterial("cube"));
-
-    ((float*)ResourceManager::getMaterial("cube")->get_data("ambient_factor"))[0] = 0.3f;
-
+    
     ((float*)ResourceManager::getMaterial("dirt")->get_data("ambient_factor"))[0] = 0.25f;
     ((float*)ResourceManager::getMaterial("dirt")->get_data("diffuse_factor"))[0] = 0.1f;
     ((float*)ResourceManager::getMaterial("dirt")->get_data("specular_factor"))[0] = 0.0f;
     ((float*)ResourceManager::getMaterial("dirt")->get_data("metalic_factor"))[0] = 0.0f;
-    ((float*)ResourceManager::getMaterial("dirt")->get_data("shininess"))[0] = 0.1f;
 
     ((float*)ResourceManager::getMaterial("tower")->get_data("ambient_factor"))[0] = 0.3f;
     ((float*)ResourceManager::getMaterial("tower")->get_data("diffuse_factor"))[0] = 0.4f;
     ((float*)ResourceManager::getMaterial("tower")->get_data("specular_factor"))[0] = 0.0f;
     ((float*)ResourceManager::getMaterial("tower")->get_data("metalic_factor"))[0] = 0.0f;
-    ((float*)ResourceManager::getMaterial("tower")->get_data("shininess"))[0] = 0.1f;
 
     ((float*)ResourceManager::getMaterial("castle")->get_data("ambient_factor"))[0] = 0.3f;
     ((float*)ResourceManager::getMaterial("castle")->get_data("diffuse_factor"))[0] = 0.4f;
     ((float*)ResourceManager::getMaterial("castle")->get_data("specular_factor"))[0] = 0.0f;
     ((float*)ResourceManager::getMaterial("castle")->get_data("metalic_factor"))[0] = 0.0f;
-    ((float*)ResourceManager::getMaterial("castle")->get_data("shininess"))[0] = 0.1f;
 
     ((float*)ResourceManager::getMaterial("monkey")->get_data("ambient_factor"))[0] = 0.5f;
 
@@ -151,7 +160,7 @@ void GameApp::on_key_update(const double delta)
     glm::vec3 rotation_delta{ 0,0,0 };
 
     double addSpeed = 1;
-    if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT))
+    if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT) && !m_gui_place->get_focus())
     {
         int x = (int)floor(m_world_mouse_pos_x / 2.f);
         int y = (int)floor(m_world_mouse_pos_z / 2.f);
@@ -348,10 +357,9 @@ void GameApp::on_update(const double delta)
 // îòðèñîâêà èíòåðôåéñà
 void GameApp::on_ui_render()
 {
-    text->render_text("HELLO, WORLD!", 500.f, 10.f, 1.f, glm::vec3(1.f, 1.f, 0.f), m_cam->get_ui_matrix());
-    m_gui_place->on_render();
+    //text->render_text(text_out, 100.f, 100.f, 1.f, glm::vec3(1.f, 1.f, 0.f), m_cam->get_ui_matrix());
+    //m_gui_place->on_render();
 }
-
 // èíèöèàëèçàöèÿ ýâåíòîâ
 bool GameApp::init_events()
 {
@@ -401,8 +409,6 @@ bool GameApp::init_events()
     m_event_dispather.add_event_listener<EventMouseScrolled>(
         [&](EventMouseScrolled& e)
         {
-            m_gui_place->get_element(0)->add_position(glm::vec2(0.f, e.y_offset * 2.f));
-
             if (is_event_logging_active) LOG_INFO("[EVENT] Scroll: {0}x{1}", e.x_offset, e.y_offset);
         });
     m_event_dispather.add_event_listener<EventWindowClose>([&](EventWindowClose& e)
@@ -412,7 +418,7 @@ bool GameApp::init_events()
         });
     m_event_dispather.add_event_listener<EventMouseButtonPressed>([&](EventMouseButtonPressed& e)
         {
-            m_gui_place->on_mouse_click(e.x_pos, e.y_pos);
+            m_gui_place->on_mouse_press(e.x_pos, e.y_pos);
             if (is_event_logging_active) LOG_INFO("[EVENT] Mouse button pressed at ({0}x{1})", e.x_pos, e.y_pos);
             Input::pressMouseButton(e.mouse_button);
             m_init_mouse_pos_x = e.x_pos;
@@ -420,6 +426,7 @@ bool GameApp::init_events()
         });
     m_event_dispather.add_event_listener<EventMouseButtonReleased>([&](EventMouseButtonReleased& e)
         {
+            m_gui_place->on_mouse_release(e.x_pos, e.y_pos);
             if (is_event_logging_active) LOG_INFO("[EVENT] Mouse button released at ({0}x{1})", e.x_pos, e.y_pos);
             Input::releaseMouseButton(e.mouse_button);
             m_init_mouse_pos_x = e.x_pos;

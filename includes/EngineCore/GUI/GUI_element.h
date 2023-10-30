@@ -4,7 +4,7 @@
 #include <memory>
 #include <functional>
 
-#include <glm/vec2.hpp>
+#include <glm/mat4x4.hpp>
 
 namespace RenderEngine
 {
@@ -31,6 +31,7 @@ namespace GUI
 
 		virtual void on_update(const double delta) {}
 		virtual void on_render() {}
+		virtual void on_render_prj(glm::mat4& prj) {}
 
 		void set_active(const bool state) { m_isActive = state; }
 

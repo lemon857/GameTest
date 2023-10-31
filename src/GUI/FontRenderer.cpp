@@ -13,10 +13,16 @@
 
 namespace GUI
 {
-	FontRenderer::FontRenderer(std::shared_ptr<Font> font, std::shared_ptr<RenderEngine::ShaderProgram> shader)
+	FontRenderer::FontRenderer(std::shared_ptr<Font> font, std::shared_ptr<RenderEngine::ShaderProgram> shader, std::string text, glm::vec3 color, glm::vec2 pos, glm::vec2 scale)
 		: m_font(std::move(font))
 		, m_shader(std::move(shader))
+        , m_color(color)
+        , m_text(text)
+        , GUI_element(nullptr, "Text_renderer")
 	{
+        m_position_p = pos;
+        m_scale_p = scale;
+
         RenderEngine::Renderer::setBlend(true);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -70,4 +76,8 @@ namespace GUI
         m_vertexArray->unbind();
         glBindTexture(GL_TEXTURE_2D, 0); // trash
 	}
+    void FontRenderer::on_render_prj(glm::mat4& prj)
+    {
+        render_text(m_text, m_position.x, m_position.y, m_scale_p.x, m_color, prj);
+    }
 }

@@ -233,11 +233,12 @@
       "name": "Button_1",
       "filePath": "res/textures/button_1.png",
       "width": 600,
-      "height": 100,
+      "height": 200,
       "subTexture_w": 600,
       "subTexture_h": 100,
       "subTextures": [
-        "default"
+        "static",
+        "clicked"
       ]
     },
     {
@@ -303,7 +304,7 @@
     {
       "name": "calibri",
       "path": "res/fonts/calibri.ttf",
-      "size": 48
+      "size": 96
     },
     {
       "name": "agaaler",

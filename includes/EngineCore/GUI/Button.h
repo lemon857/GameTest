@@ -29,11 +29,18 @@ namespace GUI
 
 		void on_render_prj(glm::mat4& prj) override;
 
+		void on_press() override;
+		void on_release() override;
+
+		void set_position(glm::vec2 pos) override;
+		void set_scale(glm::vec2 scale) override;
+
+
+
 	private:
-		std::string m_text;
 		Sprite* m_face;
-		glm::vec3 m_color;
-		glm::vec2 m_pos_text;
 		std::unique_ptr<FontRenderer> m_textRenderer;
+		bool m_isClicked = false;
+		int m_text_length = 0;
 	};
 }

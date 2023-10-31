@@ -31,6 +31,8 @@ namespace GUI
 		void on_mouse_press(int x, int y);
 		void on_mouse_release(int x, int y);
 
+		void on_resize();
+
 		bool get_focus();
 		void set_logging_active(bool active);
 		void set_active(bool active);

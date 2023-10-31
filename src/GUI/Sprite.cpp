@@ -17,8 +17,8 @@ namespace GUI
 		, m_textureCoordsBuffer(new RenderEngine::VertexBuffer())
 		, m_indexBuffer(new RenderEngine::IndexBuffer())
 	{
-		m_position = pos;
-		m_scale = scale;
+		m_position_p = pos;
+		m_scale_p = scale;
 		const GLfloat vertexCoords[] = {
 			//2--3  1
 			//| / /	|

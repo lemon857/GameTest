@@ -37,6 +37,11 @@ namespace GUI
 	}
 	void GUI_place::add_element(GUI_element* element)
 	{
+		glm::vec2 posp = element->get_position_p();
+		glm::vec2 scalep = element->get_scale_p();
+		glm::vec2 wsize = m_render_cam->get_viewport_size();
+		element->set_position(glm::vec2(posp.x / 100 * wsize.x, posp.y / 100 * wsize.y));
+		element->set_scale(glm::vec2(scalep.x / 100 * wsize.x, scalep.y / 100 * wsize.y));
 		m_elements.push_back(element);
 	}
 	GUI_element* GUI_place::get_element(size_t index)
@@ -46,6 +51,21 @@ namespace GUI
 	void GUI_place::on_mouse_release(int x, int y)
 	{
 		m_isFocus = false;
+		for (auto cur : m_elements)
+		{
+			cur->on_release();
+		}
+	}
+	void GUI_place::on_resize()
+	{
+		glm::vec2 wsize = m_render_cam->get_viewport_size();
+		for (auto cur : m_elements)
+		{
+			glm::vec2 posp = cur->get_position_p();
+			glm::vec2 scalep = cur->get_scale_p();
+			cur->set_position(glm::vec2(posp.x / 100 * wsize.x, posp.y / 100 * wsize.y));
+			cur->set_scale(glm::vec2(scalep.x / 100 * wsize.x, scalep.y / 100 * wsize.y));
+		}
 	}
 	bool GUI_place::get_focus()
 	{
@@ -72,7 +92,7 @@ namespace GUI
 			scale *= 2;
 			if ((x >= pos.x && y >= pos.y && x <= pos.x + scale.x && y <= pos.y + scale.y))
 			{
-				cur->on_click();
+				cur->on_press();
 				m_isFocus = true;
 				if (m_is_event_logging_active) LOG_INFO("[GUI] Click on object: {0}", cur->get_name());
 			}

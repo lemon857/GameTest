@@ -92,7 +92,7 @@ bool GameApp::init()
     //m_gui_place->add_element(new GUI::Sprite(ResourceManager::getMaterial("sprite"), "deadEagle", glm::vec2(250.f, 150.f), glm::vec2(200.f, 100.f)));
 
     m_gui_place_settings->add_element(new GUI::FontRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        "Settings", glm::vec3(0.f), glm::vec2(45.f, 80.f), glm::vec2(1.f)));
+        "Settings", glm::vec3(0.f), glm::vec2(45.f, 90.f), glm::vec2(1.f)));
 
     m_gui_place_settings->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         ResourceManager::getMaterial("button"), glm::vec2(50.f, 25.f), glm::vec2(20.f, 5.f),
@@ -118,7 +118,7 @@ bool GameApp::init()
         });
 
     m_gui_place->add_element(new GUI::FontRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        "Main menu", glm::vec3(0.f), glm::vec2(45.f, 80.f), glm::vec2(1.f)));
+        "Main menu", glm::vec3(0.f), glm::vec2(45.f, 90.f), glm::vec2(1.f)));
 
     m_gui_place->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         ResourceManager::getMaterial("button"), glm::vec2(50.f, 10.f), glm::vec2(20.f, 5.f),
@@ -246,11 +246,19 @@ void GameApp::on_key_update(const double delta)
     {
         if (is_gui_active && !isKeyPressed)
         {
-            gui_window = GUI_Active::null;
-            m_gui_place->set_active(false);
-            m_gui_place_settings->set_active(false);
-            is_gui_active = false;
-            m_gui_place->set_active(false);
+            if (gui_window != main)
+            {
+                gui_window = GUI_Active::main;
+                m_gui_place->set_active(true);
+                m_gui_place_settings->set_active(false);
+            }
+            else
+            {
+                gui_window = GUI_Active::null;
+                m_gui_place->set_active(false);
+                m_gui_place_settings->set_active(false);
+                is_gui_active = false;
+            }
             isKeyPressed = true;
         }
         else if (!isKeyPressed)

@@ -10,13 +10,15 @@
 namespace GUI
 {
 	static int g_current_sprite_ID = 0;
-	Sprite::Sprite(std::shared_ptr<RenderEngine::Material> pMaterial, std::string initSubTexture)
+	Sprite::Sprite(std::shared_ptr<RenderEngine::Material> pMaterial, std::string initSubTexture, glm::vec2 pos, glm::vec2 scale)
 		: GUI_element(pMaterial, "Sprite" + std::to_string(g_current_sprite_ID++))
 		, m_vertexArray(std::make_shared<RenderEngine::VertexArray>())
 		, m_vertexCoordsBuffer(new RenderEngine::VertexBuffer())
 		, m_textureCoordsBuffer(new RenderEngine::VertexBuffer())
 		, m_indexBuffer(new RenderEngine::IndexBuffer())
 	{
+		m_position_p = pos;
+		m_scale_p = scale;
 		const GLfloat vertexCoords[] = {
 			//2--3  1
 			//| / /	|
@@ -79,7 +81,7 @@ namespace GUI
 		m_textureCoordsBuffer->update(&textureCoords, 2 * 4 * sizeof(GLfloat));
 	}
 
-	void Sprite::on_render()
+	void Sprite::on_render_prj(glm::mat4& prj)
 	{
 		glm::mat4 scaleMat(
 			m_scale[0], 0, 0, 0,
@@ -97,6 +99,7 @@ namespace GUI
 
 		m_pMaterial->use();
 		m_pMaterial->set_model_matrix(model);
+		m_pMaterial->set_view_projection_matrix(prj);
 
 		RenderEngine::Renderer::drawTriangles(*m_vertexArray, *m_indexBuffer);
 	}

@@ -16,9 +16,7 @@
 #include "EngineCore/Renderer/Material.h"
 #include "EngineCore/Input.h"
 
-#include "EngineCore/Meshes/Cube.h"
 #include "EngineCore/Renderer3D/GraphicsObject.h"
-#include "EngineCore/Input.h"
 
 #include "EngineCore/Meshes/EmptyObject.h"
 #include "EngineCore/Meshes/Cube.h"
@@ -30,6 +28,8 @@
 #include "EngineCore/GUI/GUI_place.h"
 #include "EngineCore/GUI/Square.h"
 #include "EngineCore/GUI/FontRenderer.h"
+#include "EngineCore/GUI/Button.h"
+#include "EngineCore/GUI/Sprite.h"
 
 #include <array>
 #include <memory>
@@ -43,12 +43,13 @@ std::array <bool, size_x * size_y> map;
 int cur = 0;
 int curObj = 3;
 
-GUI::FontRenderer* text;
 int countEnemies = 0;
 
 bool is_event_logging_active = false;
 
 bool is_grid_active = false;
+
+bool is_gui_active = false;
 
 bool isKeyPressed = false;
 
@@ -58,6 +59,18 @@ unsigned int frames = 0;
 double times = 0;
 
 GUI::GUI_place* m_gui_place;
+
+GUI::GUI_place* m_gui_place;
+GUI::GUI_place* m_gui_place_settings;
+
+enum GUI_Active
+{
+    null,
+    main,
+    settings
+};
+
+GUI_Active gui_window;
 
 GameApp::GameApp()
 	: Application()
@@ -71,24 +84,69 @@ GameApp::~GameApp()
 
 bool GameApp::init()
 {
-    text = new GUI::FontRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"));
-
     m_cam = new Camera(glm::vec3(0), glm::vec3(0));
 
     m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
 
     m_gui_place = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
+    m_gui_place_settings = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
 
-    auto square = new GUI::Square(ResourceManager::getMaterial("default"), glm::vec2(100.f), glm::vec2(100.f));
+    //m_gui_place->add_element(new GUI::Square(ResourceManager::getMaterial("default"), glm::vec2(100.f), glm::vec2(100.f)));
+    //m_gui_place->add_element(new GUI::Sprite(ResourceManager::getMaterial("button"), "default", 
+    //    glm::vec2(m_pWindow->get_size().x / 2, m_pWindow->get_size().y / 2), glm::vec2(300.f, 50.f)));
+    //m_gui_place->add_element(new GUI::Sprite(ResourceManager::getMaterial("sprite"), "deadEagle", glm::vec2(250.f, 150.f), glm::vec2(200.f, 100.f)));
 
-    square->set_click_callback([]() 
+    m_gui_place_settings->add_element(new GUI::FontRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
+        "Settings", glm::vec3(0.f), glm::vec2(45.f, 90.f), glm::vec2(1.f)));
+
+    m_gui_place_settings->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        ResourceManager::getMaterial("button"), glm::vec2(50.f, 25.f), glm::vec2(20.f, 5.f),
+        "Grid", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
+
+    m_gui_place_settings->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        ResourceManager::getMaterial("button"), glm::vec2(50.f, 10.f), glm::vec2(20.f, 5.f),
+        "Back", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
+
+    m_gui_place_settings->add_element(new GUI::Sprite(ResourceManager::getMaterial("defaultSprite"), "default",
+        glm::vec2(100.f), glm::vec2(100.f)));
+
+    m_gui_place_settings->get_element(1)->set_click_callback([&]()
         {
-            LOG_INFO("EEE HELLO WORLD YEPTA");
+            is_grid_active = !is_grid_active;
         });
 
-    m_gui_place->add_element(square);
+    m_gui_place_settings->get_element(2)->set_click_callback([&]()
+        {
+            gui_window = GUI_Active::main;
+            m_gui_place_settings->set_active(false);
+            m_gui_place->set_active(true);
+        });
 
-    //m_line = new RenderEngine::Line(ResourceManager::getMaterial("default"));
+    m_gui_place->add_element(new GUI::FontRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
+        "Main menu", glm::vec3(0.f), glm::vec2(45.f, 90.f), glm::vec2(1.f)));
+
+    m_gui_place->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        ResourceManager::getMaterial("button"), glm::vec2(50.f, 10.f), glm::vec2(20.f, 5.f),
+        "Exit", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
+
+    m_gui_place->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        ResourceManager::getMaterial("button"), glm::vec2(50.f, 25.f), glm::vec2(20.f, 5.f),
+        "Settings", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
+
+    m_gui_place->add_element(new GUI::Sprite(ResourceManager::getMaterial("defaultSprite"), "default",
+        glm::vec2(100.f), glm::vec2(100.f)));
+
+    m_gui_place->get_element(1)->set_click_callback([&]()
+        {
+            m_pCloseWindow = true;
+        });
+
+    m_gui_place->get_element(2)->set_click_callback([&]()
+        {
+            gui_window = GUI_Active::settings;
+            m_gui_place->set_active(false);
+            m_gui_place_settings->set_active(true);
+        });
   
     map.fill(false);
 
@@ -101,26 +159,21 @@ bool GameApp::init()
     m_scene.add_object<Grid>(glm::vec3(size_x, 0.5f, size_y), glm::vec2(1.f), size_x, size_y, glm::vec3(1.f), ResourceManager::getMaterial("default"));
     m_scene.add_object<EmptyObject>();
     //m_scene.add_object<Cube>(ResourceManager::getMaterial("cube"));
-
-    ((float*)ResourceManager::getMaterial("cube")->get_data("ambient_factor"))[0] = 0.3f;
-
+    
     ((float*)ResourceManager::getMaterial("dirt")->get_data("ambient_factor"))[0] = 0.25f;
     ((float*)ResourceManager::getMaterial("dirt")->get_data("diffuse_factor"))[0] = 0.1f;
     ((float*)ResourceManager::getMaterial("dirt")->get_data("specular_factor"))[0] = 0.0f;
     ((float*)ResourceManager::getMaterial("dirt")->get_data("metalic_factor"))[0] = 0.0f;
-    ((float*)ResourceManager::getMaterial("dirt")->get_data("shininess"))[0] = 0.1f;
 
     ((float*)ResourceManager::getMaterial("tower")->get_data("ambient_factor"))[0] = 0.3f;
     ((float*)ResourceManager::getMaterial("tower")->get_data("diffuse_factor"))[0] = 0.4f;
     ((float*)ResourceManager::getMaterial("tower")->get_data("specular_factor"))[0] = 0.0f;
     ((float*)ResourceManager::getMaterial("tower")->get_data("metalic_factor"))[0] = 0.0f;
-    ((float*)ResourceManager::getMaterial("tower")->get_data("shininess"))[0] = 0.1f;
 
     ((float*)ResourceManager::getMaterial("castle")->get_data("ambient_factor"))[0] = 0.3f;
     ((float*)ResourceManager::getMaterial("castle")->get_data("diffuse_factor"))[0] = 0.4f;
     ((float*)ResourceManager::getMaterial("castle")->get_data("specular_factor"))[0] = 0.0f;
     ((float*)ResourceManager::getMaterial("castle")->get_data("metalic_factor"))[0] = 0.0f;
-    ((float*)ResourceManager::getMaterial("castle")->get_data("shininess"))[0] = 0.1f;
 
     ((float*)ResourceManager::getMaterial("monkey")->get_data("ambient_factor"))[0] = 0.5f;
     ((float*)ResourceManager::getMaterial("monkey")->get_data("diffuse_factor"))[0] = 0.4f;
@@ -162,12 +215,79 @@ void GameApp::on_key_update(const double delta)
     glm::vec3 rotation_delta{ 0,0,0 };
 
     double addSpeed = 1;
-    if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT))
+    if (Input::isKeyPressed(KeyCode::KEY_G))
+    {
+        if (is_grid_active && !isKeyPressed)
+        {
+            is_grid_active = false;
+            isKeyPressed = true;
+        }
+        else if (!isKeyPressed)
+        {
+            is_grid_active = true;
+            isKeyPressed = true;
+        }
+    }
+    else if (Input::isKeyPressed(KeyCode::KEY_L))
+    {
+        if (is_event_logging_active && !isKeyPressed)
+        {
+            is_event_logging_active = false;
+            m_gui_place->set_logging_active(false);
+            isKeyPressed = true;
+        }
+        else if (!isKeyPressed)
+        {
+            is_event_logging_active = true;
+            m_gui_place->set_logging_active(true);
+            isKeyPressed = true;
+        }
+    }
+    else if (Input::isKeyPressed(KeyCode::KEY_J))
+    {
+        if (!isKeyPressed)
+        {
+            countEnemies++;
+            isKeyPressed = true;
+        }
+    }
+    else if (Input::isKeyPressed(KeyCode::KEY_ESCAPE))
+    {
+        if (is_gui_active && !isKeyPressed)
+        {
+            if (gui_window != main)
+            {
+                gui_window = GUI_Active::main;
+                m_gui_place->set_active(true);
+                m_gui_place_settings->set_active(false);
+            }
+            else
+            {
+                gui_window = GUI_Active::null;
+                m_gui_place->set_active(false);
+                m_gui_place_settings->set_active(false);
+                is_gui_active = false;
+            }
+            isKeyPressed = true;
+        }
+        else if (!isKeyPressed)
+        {
+            gui_window = GUI_Active::main;
+            m_gui_place->set_active(true);
+            is_gui_active = true;
+            m_gui_place->set_active(true);
+            isKeyPressed = true;
+        }
+    }
+
+    if (is_gui_active) return;
+
+    if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT) && !m_gui_place->get_focus())
     {
         int x = (int)floor(m_world_mouse_pos_x / 2.f);
         int y = (int)floor(m_world_mouse_pos_z / 2.f);
 
-        if (x * y <= (size_x - 1) * (size_y - 1))
+        if ((x * y <= (size_x - 1) * (size_y - 1)) && (x >= 0 && y >= 0))
         {
             cur = x * size_y + y;
         }
@@ -192,62 +312,28 @@ void GameApp::on_key_update(const double delta)
             LOG_INFO("Add tower at {0}x{1}", parts[cur].x, parts[cur].z);
         }
     }
-    if (Input::isKeyPressed(KeyCode::KEY_G))
-    {
-        if (is_grid_active && !isKeyPressed)
-        {
-            is_grid_active = false;
-            isKeyPressed = true;
-        }
-        else if (!isKeyPressed)
-        {
-            is_grid_active = true;
-            isKeyPressed = true;
-        }
-    }
-    else if (Input::isKeyPressed(KeyCode::KEY_L))
-    {
-        if (is_event_logging_active && !isKeyPressed)
-        {
-            is_event_logging_active = false;
-            isKeyPressed = true;
-        }
-        else if (!isKeyPressed)
-        {
-            is_event_logging_active = true;
-            isKeyPressed = true;
-        }
-    }
-    else if (Input::isKeyPressed(KeyCode::KEY_J))
-    {
-        if (!isKeyPressed)
-        {
-            countEnemies++;
-            isKeyPressed = true;
-        }
-    }
 
     if (Input::isKeyPressed(KeyCode::KEY_W))
     {
         movement_delta.z += static_cast<float>(addSpeed * m_cam_velocity * delta);
     }
-    else if (Input::isKeyPressed(KeyCode::KEY_S))
+    if (Input::isKeyPressed(KeyCode::KEY_S))
     {
         movement_delta.z -= static_cast<float>(addSpeed * m_cam_velocity * delta);
     }
-    else if (Input::isKeyPressed(KeyCode::KEY_A))
+    if (Input::isKeyPressed(KeyCode::KEY_A))
     {
         movement_delta.x -= static_cast<float>(addSpeed * m_cam_velocity * delta);
     }
-    else if (Input::isKeyPressed(KeyCode::KEY_D))
+    if (Input::isKeyPressed(KeyCode::KEY_D))
     {
         movement_delta.x += static_cast<float>(addSpeed * m_cam_velocity * delta);
     }
-    else if (Input::isKeyPressed(KeyCode::KEY_SPACE))
+    if (Input::isKeyPressed(KeyCode::KEY_SPACE))
     {
         movement_delta.y += static_cast<float>(addSpeed * m_cam_velocity * delta);
     }
-    else if (Input::isKeyPressed(KeyCode::KEY_LEFT_SHIFT))
+    if (Input::isKeyPressed(KeyCode::KEY_LEFT_SHIFT))
     {
         movement_delta.y -= static_cast<float>(addSpeed * m_cam_velocity * delta);
     }
@@ -371,11 +457,12 @@ void GameApp::on_update(const double delta)
 
 void GameApp::on_ui_render()
 {
-    text->render_text("Kills: " + std::to_string(countKills), 10.f, 950.f, 1.f, glm::vec3(1.f, 0.f, 0.f), m_cam->get_ui_matrix());
-    text->render_text("FPS: " + std::to_string(fps), 10.f, 900.f, 1.f, glm::vec3(1.f, 0.33f, 0.33f), m_cam->get_ui_matrix());
-    m_gui_place->on_render();
+    if (is_gui_active)
+    {
+        if (gui_window == main) m_gui_place->on_render();
+        else if (gui_window == settings) m_gui_place_settings->on_render();
+    }
 }
-
 bool GameApp::init_events()
 {
     m_event_dispather.add_event_listener<EventWindowResize>([&](EventWindowResize& e)
@@ -385,6 +472,8 @@ bool GameApp::init_events()
             {
                 RenderEngine::Renderer::setViewport(e.width, e.height);
                 m_cam->set_viewport_size(e.width, e.height);
+                m_gui_place->on_resize();
+                m_gui_place_settings->on_resize();
             }
         });
     m_event_dispather.add_event_listener<EventKeyPressed>([](EventKeyPressed& e)
@@ -424,8 +513,6 @@ bool GameApp::init_events()
     m_event_dispather.add_event_listener<EventMouseScrolled>(
         [&](EventMouseScrolled& e)
         {
-            m_gui_place->get_element(0)->add_position(glm::vec2(0.f, e.y_offset * 2.f));
-
             if (is_event_logging_active) LOG_INFO("[EVENT] Scroll: {0}x{1}", e.x_offset, e.y_offset);
         });
     m_event_dispather.add_event_listener<EventWindowClose>([&](EventWindowClose& e)
@@ -435,7 +522,8 @@ bool GameApp::init_events()
         });
     m_event_dispather.add_event_listener<EventMouseButtonPressed>([&](EventMouseButtonPressed& e)
         {
-
+            m_gui_place->on_mouse_press(e.x_pos, e.y_pos);
+            m_gui_place_settings->on_mouse_press(e.x_pos, e.y_pos);
             if (is_event_logging_active) LOG_INFO("[EVENT] Mouse button pressed at ({0}x{1})", e.x_pos, e.y_pos);
             Input::pressMouseButton(e.mouse_button);
             m_init_mouse_pos_x = e.x_pos;
@@ -443,6 +531,8 @@ bool GameApp::init_events()
         });
     m_event_dispather.add_event_listener<EventMouseButtonReleased>([&](EventMouseButtonReleased& e)
         {
+            m_gui_place->on_mouse_release(e.x_pos, e.y_pos);
+            m_gui_place_settings->on_mouse_release(e.x_pos, e.y_pos);
             if (is_event_logging_active) LOG_INFO("[EVENT] Mouse button released at ({0}x{1})", e.x_pos, e.y_pos);
             Input::releaseMouseButton(e.mouse_button);
             m_init_mouse_pos_x = e.x_pos;

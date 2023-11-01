@@ -175,6 +175,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/GUI/Square.cpp
 	src/GUI/Font.cpp
 	src/GUI/FontRenderer.cpp
+	src/GUI/Button.cpp
 )
 
 
@@ -188,8 +189,8 @@ project(${PROJECT_NAME})
 		${ENGINE_PUBLIC_INCLUDES}
 		${ENGINE_PRIVATE_INCLUDES}
 		
-		${ENGINE_PUBLIC_INCLUDES_EDITOR}
-		${ENGINE_PUBLIC_SRC_EDITOR}
+		#${ENGINE_PUBLIC_INCLUDES_EDITOR}
+		#${ENGINE_PUBLIC_SRC_EDITOR}
 	)
 #else()
 #	add_executable(${PROJECT_NAME}
@@ -228,27 +229,27 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 					COMMAND ${CMAKE_COMMAND} -E copy_directory
 					${CMAKE_SOURCE_DIR}/res $<TARGET_FILE_DIR:${PROJECT_NAME}>/res)
 
-set(IMGUI_INCLUDES
-	external/imgui/imgui.h
-	external/imgui/backends/imgui_impl_opengl3.h
-	external/imgui/backends/imgui_impl_glfw.h)
-	
-set(IMGUI_SOURCES
-	external/imgui/imgui.cpp
-	external/imgui/backends/imgui_impl_opengl3.cpp
-	external/imgui/backends/imgui_impl_glfw.cpp
-	external/imgui/imgui_widgets.cpp
-	external/imgui/imgui_tables.cpp
-	external/imgui/imgui_draw.cpp
-	external/imgui/imgui_demo.cpp)
-
-add_library(ImGUI STATIC
-	${IMGUI_INCLUDES}
-	${IMGUI_SOURCES})
-	
-target_include_directories(ImGUI PUBLIC external)
-target_include_directories(ImGUI PRIVATE external/imgui)
-
-target_link_libraries(ImGUI glad glfw)
-
-target_link_libraries(${PROJECT_NAME} ImGUI)
+#set(IMGUI_INCLUDES
+#	external/imgui/imgui.h
+#	external/imgui/backends/imgui_impl_opengl3.h
+#	external/imgui/backends/imgui_impl_glfw.h)
+#	
+#set(IMGUI_SOURCES
+#	external/imgui/imgui.cpp
+#	external/imgui/backends/imgui_impl_opengl3.cpp
+#	external/imgui/backends/imgui_impl_glfw.cpp
+#	external/imgui/imgui_widgets.cpp
+#	external/imgui/imgui_tables.cpp
+#	external/imgui/imgui_draw.cpp
+#	external/imgui/imgui_demo.cpp)
+#
+#add_library(ImGUI STATIC
+#	${IMGUI_INCLUDES}
+#	${IMGUI_SOURCES})
+#	
+#target_include_directories(ImGUI PUBLIC external)
+#target_include_directories(ImGUI PRIVATE external/imgui)
+#
+#target_link_libraries(ImGUI glad glfw)
+#
+#target_link_libraries(${PROJECT_NAME} ImGUI)

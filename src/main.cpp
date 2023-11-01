@@ -14,13 +14,13 @@ int main(int argc, char** argv)
 #ifndef EDITOR_BUILD
     GameApp* gameApp = new GameApp();    
     gameApp->start(windowSize, "Tower defence", "res/resources.json", "EngineGamePreview.ini");
-    //delete gameApp;
+    delete gameApp;
 #endif // !EDITOR_BUILD
 
 #ifdef EDITOR_BUILD
     EditorApplication* editorApplication = new EditorApplication();
     editorApplication->start(windowSize, "Engine editor", "res/resources.json", "EngineTest.ini");
-    //delete editorApplication;
+    delete editorApplication;
 #endif // EDITOR_BUILD
 
     system("pause");

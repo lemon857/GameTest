@@ -6,6 +6,6 @@ uniform mat4 view_projectionMat;
 
 void main()
 {
-    gl_Position = view_projectionMat * vec4(vertex.xy, 1.0, 1.0);
+    gl_Position = view_projectionMat * vec4(vertex.xy, 0.0, 1.0);
     TexCoords = vertex.zw;
 }  

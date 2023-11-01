@@ -54,6 +54,11 @@ bool is_gui_active = false;
 bool isKeyPressed = false;
 
 unsigned int countKills = 0;
+unsigned int fps = 0;
+unsigned int frames = 0;
+double times = 0;
+
+GUI::GUI_place* m_gui_place;
 
 GUI::GUI_place* m_gui_place;
 GUI::GUI_place* m_gui_place_settings;
@@ -76,7 +81,7 @@ GameApp::~GameApp()
 {
     delete m_cam;
 }
-// èíèöèàëèçàöèÿ, ñîçäàíèå îáúåêòîâ
+
 bool GameApp::init()
 {
     m_cam = new Camera(glm::vec3(0), glm::vec3(0));
@@ -171,6 +176,10 @@ bool GameApp::init()
     ((float*)ResourceManager::getMaterial("castle")->get_data("metalic_factor"))[0] = 0.0f;
 
     ((float*)ResourceManager::getMaterial("monkey")->get_data("ambient_factor"))[0] = 0.5f;
+    ((float*)ResourceManager::getMaterial("monkey")->get_data("diffuse_factor"))[0] = 0.4f;
+    ((float*)ResourceManager::getMaterial("monkey")->get_data("specular_factor"))[0] = 0.0f;
+    ((float*)ResourceManager::getMaterial("monkey")->get_data("metalic_factor"))[0] = 0.0f;
+    ((float*)ResourceManager::getMaterial("monkey")->get_data("shininess"))[0] = 0.1f;
 
     m_scene.at(curObj)->addComponent<Transform>();
     m_scene.at(curObj)->addComponent<Highlight>(ResourceManager::getMaterial("default"), true); 
@@ -199,7 +208,7 @@ bool GameApp::init()
 
     return true;
 }
-// öèêë äëÿ ïðîåðêè íàæàòèÿ êëàâèø
+
 void GameApp::on_key_update(const double delta)
 {
     glm::vec3 movement_delta{ 0,0,0 };
@@ -342,7 +351,7 @@ void GameApp::on_key_update(const double delta)
 
     m_cam->add_movement_and_rotation(movement_delta, rotation_delta);
 }
-// îñíîâíîé öèêë äâèæêà
+
 void GameApp::on_update(const double delta)
 {
     // clear screen
@@ -427,13 +436,25 @@ void GameApp::on_update(const double delta)
             }
             delete m_enemies[i];
             m_enemies.remove(i);
-            LOG_INFO("You kill {0} enemies", ++countKills);
+            countKills++;
             continue;
         }
         m_enemies[i]->update(delta);        
     }
+
+    if (frames < 5)
+    {
+        frames++;
+        times += delta;
+    }
+    else
+    {
+        fps = int((frames / times) * 1000.f);
+        frames = 0;
+        times = 0;
+    }
 }
-// îòðèñîâêà èíòåðôåéñà
+
 void GameApp::on_ui_render()
 {
     if (is_gui_active)
@@ -442,7 +463,6 @@ void GameApp::on_ui_render()
         else if (gui_window == settings) m_gui_place_settings->on_render();
     }
 }
-// èíèöèàëèçàöèÿ ýâåíòîâ
 bool GameApp::init_events()
 {
     m_event_dispather.add_event_listener<EventWindowResize>([&](EventWindowResize& e)

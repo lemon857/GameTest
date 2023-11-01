@@ -8,6 +8,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/vector_angle.hpp>
 
+#define HALF_PLANE 30.f
+
 Enemy::Enemy(ObjModel* model, Castle* target, glm::vec3 pos, double cooldown, double velocity, const unsigned int hp, std::shared_ptr<RenderEngine::Material> pMaterial)
 	: m_cool_down(cooldown * 1000)
 	, m_target_castle(std::move(target))
@@ -33,7 +35,14 @@ void Enemy::update(const double delta)
 	if (sqrt(a.x * a.x + a.z * a.z) > MIN_DISTANCE_TO_CASTLE)
 	{
 		m_model->getComponent<Transform>()->add_position(glm::normalize(a) * (float)delta * (float)m_velocity);
-		m_model->getComponent<Transform>()->set_rotation(glm::vec3(0.f, glm::degrees(glm::angle(glm::normalize(a), glm::vec3(0.f, 0.f, -1.f))), 0.f));
+		if (m_model->getComponent<Transform>()->get_position().x > HALF_PLANE)
+		{
+			m_model->getComponent<Transform>()->set_rotation(glm::vec3(0.f, glm::degrees(glm::angle(glm::normalize(a), glm::vec3(0.f, 0.f, -1.f))), 0.f));
+		}
+		else
+		{
+			m_model->getComponent<Transform>()->set_rotation(glm::vec3(0.f, -1 * glm::degrees(glm::angle(glm::normalize(a), glm::vec3(0.f, 0.f, -1.f))), 0.f));
+		}
 		m_bar->set_pos(m_model->getComponent<Transform>()->get_position() + glm::vec3(0.f, 2.5f, 0.f));
 	}
 	else
@@ -62,4 +71,9 @@ void Enemy::damage(const unsigned int damage_hp)
 glm::vec3 Enemy::get_pos()
 {
 	return m_model->getComponent<Transform>()->get_position();
+}
+
+void Enemy::set_angle(double* angle)
+{
+	m_angle = angle;
 }

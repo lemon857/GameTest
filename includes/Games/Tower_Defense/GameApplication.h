@@ -32,6 +32,10 @@ public:
 	void on_ui_render() override;
 	bool init_events() override;
 private:
+	void init_gui();
+
+	void start_game();
+
 	Scene m_scene;
 
 	Castle* m_main_castle;

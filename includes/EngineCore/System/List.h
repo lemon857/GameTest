@@ -160,6 +160,23 @@ public:
 	{
 		return m_size;
 	}
+
+	void clear()
+	{
+		if (is_empty()) return;
+		ListNode* p = m_first->m_next;
+		ListNode* pt = m_first;
+		for (size_t i = 0; i < m_size - 1; i++) {
+			delete pt;
+			pt = p;
+			p = p->m_next;
+		}
+		delete p;
+		m_size = 0;
+		m_first = nullptr;
+		m_last = nullptr;
+	}
+
 	// This function create new array, take care and don't forget delete this array
 	_Ty* data()
 	{

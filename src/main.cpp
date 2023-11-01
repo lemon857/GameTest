@@ -3,6 +3,8 @@
 #include "EngineCore/Editor/EditorApplication.h"
 #include "Games/Tower_Defense/GameApplication.h"    
 
+#include "EngineCore/System/Log.h"
+
 //#define EDITOR_BUILD
 
 int main(int argc, char** argv)
@@ -23,7 +25,9 @@ int main(int argc, char** argv)
     delete editorApplication;
 #endif // EDITOR_BUILD
 
+#ifdef DEBUG_CONSOLE
     system("pause");
+#endif
 
     return 0;
 }

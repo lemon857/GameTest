@@ -28,6 +28,7 @@ namespace GUI
 
 		void on_render_prj(glm::mat4& prj);
 
+		void set_text(std::string text);
 	private:
 		std::shared_ptr<Font> m_font;
 		std::shared_ptr<RenderEngine::ShaderProgram> m_shader;

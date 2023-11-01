@@ -78,6 +78,11 @@ namespace GUI
 	}
     void FontRenderer::on_render_prj(glm::mat4& prj)
     {
+        if (!m_isActive) return;
         render_text(m_text, m_position.x, m_position.y, m_scale_p.x, m_color, prj);
+    }
+    void FontRenderer::set_text(std::string text)
+    {
+        m_text = text;
     }
 }

@@ -59,6 +59,12 @@ namespace GUI
 
 		void on_click() { if (m_on_click != nullptr) m_on_click(); }
 		void set_click_callback(std::function<void()> on_click) { m_on_click = on_click; }
+
+		template<class _Ty>
+		_Ty* lead()
+		{
+			return (_Ty*)this;
+		}
 	protected:
 
 		bool m_isActive;

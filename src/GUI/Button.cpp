@@ -35,6 +35,7 @@ namespace GUI
 	}
 	void Button::on_render_prj(glm::mat4& prj)
 	{
+		if (!m_isActive) return;
 		m_textRenderer->on_render_prj(prj);
 		m_face->on_render_prj(prj);
 	}

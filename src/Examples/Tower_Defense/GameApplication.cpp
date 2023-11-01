@@ -59,8 +59,6 @@ unsigned int frames = 0;
 double times = 0;
 
 GUI::GUI_place* m_gui_place;
-
-GUI::GUI_place* m_gui_place;
 GUI::GUI_place* m_gui_place_settings;
 
 enum GUI_Active

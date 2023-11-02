@@ -242,7 +242,7 @@ void GameApp::on_key_update(const double delta)
 
             bool spawn = false;
 
-            if (CHECK_AVAILABLE_POS(x + 1, y, size_x, size_y))
+            /*if (CHECK_AVAILABLE_POS(x + 1, y, size_x, size_y))
             {
                 spawn |= map[(x + 1) * size_y + y];
             }
@@ -257,7 +257,7 @@ void GameApp::on_key_update(const double delta)
             if (CHECK_AVAILABLE_POS(x, y - 1, size_x, size_y))
             {
                 spawn |= map[x * size_y + y - 1];
-            }
+            }*/
             if (!spawn)
             {
                 map[cur] = true;

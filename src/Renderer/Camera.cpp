@@ -116,7 +116,7 @@ void Camera::add_movement_and_rotation(const glm::vec3& movement_delta, const gl
 	m_position += m_direction * movement_delta.z;
 	m_position += m_right * movement_delta.x;
 	m_position += m_up * movement_delta.y;
-	m_rotation += rotation_delta;
+	if (m_rotation.x + rotation_delta.x > s_min_pitch && m_rotation.x + rotation_delta.x < s_max_pitch) m_rotation += rotation_delta;
 	m_update_view_matrix = true;
 }
 

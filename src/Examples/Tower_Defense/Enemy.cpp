@@ -72,8 +72,3 @@ glm::vec3 Enemy::get_pos()
 {
 	return m_model->getComponent<Transform>()->get_position();
 }
-
-void Enemy::set_angle(double* angle)
-{
-	m_angle = angle;
-}

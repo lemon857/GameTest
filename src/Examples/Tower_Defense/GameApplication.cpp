@@ -36,6 +36,8 @@
 
 #define MIN_DISTANCE_TO_ENEMY 7.f
 
+#define CHECK_AVAILABLE_POS(x, y, width, height) ((x > 0 && x < width) && (y > 0 && y < height))
+
 const int size_x = 30, size_y = 30;
 
 std::array <bool, size_x * size_y> map;
@@ -90,7 +92,7 @@ bool GameApp::init()
 
     m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
        
-    ((float*)ResourceManager::getMaterial("dirt")->get_data("ambient_factor"))[0] = 0.25f;
+    ((float*)ResourceManager::getMaterial("dirt")->get_data("ambient_factor"))[0] = 0.25f; 
     ((float*)ResourceManager::getMaterial("dirt")->get_data("diffuse_factor"))[0] = 0.1f;
     ((float*)ResourceManager::getMaterial("dirt")->get_data("specular_factor"))[0] = 0.0f;
     ((float*)ResourceManager::getMaterial("dirt")->get_data("metalic_factor"))[0] = 0.0f;
@@ -110,7 +112,6 @@ bool GameApp::init()
     ((float*)ResourceManager::getMaterial("monkey")->get_data("specular_factor"))[0] = 0.0f;
     ((float*)ResourceManager::getMaterial("monkey")->get_data("metalic_factor"))[0] = 0.0f;
     ((float*)ResourceManager::getMaterial("monkey")->get_data("shininess"))[0] = 0.1f;
-
 
     std::vector<std::string> names;
     names.push_back("default3DShader");
@@ -229,28 +230,52 @@ void GameApp::on_key_update(const double delta)
 
         if ((x * y <= (size_x - 1) * (size_y - 1)) && (x >= 0 && y >= 0))
         {
-            cur = x * size_y + y;
+            if (x <= (size_x - 1) && y <= (size_y - 1)) cur = x * size_y + y;
         }
     }
     else if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_RIGHT))
     {
         if (!map[cur] && !isKeyPressedmouse)
         {
-            map[cur] = true;
-            isKeyPressedmouse = true;
+            int x = cur / size_y;
+            int y = cur % size_x;
 
-            m_towers.push_back(new BaseTower("res/models/tower.obj",
-                ResourceManager::getMaterial("tower"), nullptr, parts[cur], 1, new RenderEngine::Line(ResourceManager::getMaterial("default"))));
+            bool spawn = false;
 
-            //m_scene.at(curObj)->deleteComponent<Highlight>();
-            //curObj++;
-            // 
-            //m_scene.add_object<ObjModel>("res/models/monkey.obj", ResourceManajger::getMaterial("monkey"));
-            //m_scene.add_object<Cube>(ResourceManager::getMaterial("cube"));
+            if (CHECK_AVAILABLE_POS(x + 1, y, size_x, size_y))
+            {
+                spawn |= map[(x + 1) * size_y + y];
+            }
+            if (CHECK_AVAILABLE_POS(x - 1, y, size_x, size_y))
+            {
+                spawn |= map[(x - 1) * size_y + y];
+            }
+            if (CHECK_AVAILABLE_POS(x, y + 1, size_x, size_y))
+            {
+                spawn |= map[x * size_y + y + 1];
+            }
+            if (CHECK_AVAILABLE_POS(x, y - 1, size_x, size_y))
+            {
+                spawn |= map[x * size_y + y - 1];
+            }
+            if (!spawn)
+            {
+                map[cur] = true;
+                isKeyPressedmouse = true;
 
-            //m_scene.at(curObj)->addComponent<Transform>();
-            //m_scene.at(curObj)->addComponent<Highlight>(ResourceManager::getMaterial("default"), true);
-            LOG_INFO("Add tower at {0}x{1}", parts[cur].x, parts[cur].z);
+                m_towers.push_back(new BaseTower("res/models/tower.obj",
+                    ResourceManager::getMaterial("tower"), nullptr, parts[cur], 1, new RenderEngine::Line(ResourceManager::getMaterial("default"))));
+
+                //m_scene.at(curObj)->deleteComponent<Highlight>();
+                //curObj++;
+                // 
+                //m_scene.add_object<ObjModel>("res/models/monkey.obj", ResourceManajger::getMaterial("monkey"));
+                //m_scene.add_object<Cube>(ResourceManager::getMaterial("cube"));
+
+                //m_scene.at(curObj)->addComponent<Transform>();
+                //m_scene.at(curObj)->addComponent<Highlight>(ResourceManager::getMaterial("default"), true);
+                LOG_INFO("Add tower at {0}x{1}", x, y);
+            }
         }
         /*else if (!isKeyPressedmouse)
         {
@@ -356,11 +381,8 @@ void GameApp::on_update(const double delta)
         else if (snum == 3) spawn = ((rand() % size_y) * size_x) + (size_x - 1);
         auto a = new Enemy(new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("monkey")),
             m_main_castle, parts[spawn], 1, 0.007, 50, ResourceManager::getMaterial("default"));
-        a->set_angle(&angle);
         m_enemies.push_back(a);
     }
-
-    m_gui->get_element(4)->lead<GUI::FontRenderer>()->set_text(std::to_string(angle));
 
     for (auto curTower : m_towers)
     {
@@ -540,9 +562,6 @@ void GameApp::init_gui()
     m_gui->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         ResourceManager::getMaterial("button"), glm::vec2(50.f, 37.f), glm::vec2(30.f, 5.f),
         "Restart", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
-
-    m_gui->add_element(new GUI::FontRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        "0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(10.f, 95.f), glm::vec2(1.f)));
 
     m_gui->get_element(3)->set_click_callback([&]()
         {

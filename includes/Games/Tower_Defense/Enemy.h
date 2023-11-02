@@ -5,7 +5,6 @@
 #include <glm/vec3.hpp>
 
 #include <memory>
-#include <functional>
 
 class Castle;
 class ObjModel;
@@ -31,15 +30,11 @@ public:
 
 	glm::vec3 get_pos();
 
-	void set_angle(double* angle);
-
 private:
 
 	Castle* m_target_castle;
 	ObjModel* m_model;
 	HealthBar* m_bar;
-
-	double* m_angle;
 
 	unsigned int m_hp;
 

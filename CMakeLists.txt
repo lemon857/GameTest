@@ -42,7 +42,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/GUI/Sprite.h
 	includes/EngineCore/GUI/Square.h
 	includes/EngineCore/GUI/Font.h
-	includes/EngineCore/GUI/FontRenderer.h
+	includes/EngineCore/GUI/TextRenderer.h
   
 	includes/Games/Tower_Defense/Castle.h
 	includes/Games/Tower_Defense/HealthBar.h
@@ -174,7 +174,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/GUI/Sprite.cpp
 	src/GUI/Square.cpp
 	src/GUI/Font.cpp
-	src/GUI/FontRenderer.cpp
+	src/GUI/TextRenderer.cpp
 	src/GUI/Button.cpp
 )
 

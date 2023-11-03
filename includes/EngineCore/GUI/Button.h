@@ -16,7 +16,7 @@ namespace RenderEngine
 
 namespace GUI
 {
-	class FontRenderer;
+	class TextRenderer;
 	class Font;
 	class Sprite;
 
@@ -39,7 +39,7 @@ namespace GUI
 
 	private:
 		Sprite* m_face;
-		std::unique_ptr<FontRenderer> m_textRenderer;
+		std::unique_ptr<TextRenderer> m_textRenderer;
 		bool m_isClicked = false;
 		int m_text_length = 0;
 	};

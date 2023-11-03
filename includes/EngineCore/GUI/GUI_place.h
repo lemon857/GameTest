@@ -2,6 +2,8 @@
 
 #include <vector>
 #include <memory>
+#include <string>
+#include <map>
 
 class Camera;
 
@@ -26,7 +28,7 @@ namespace GUI
 
 		void add_element(GUI_element* element);
 
-		GUI_element* get_element(size_t index);
+		GUI_element* get_element(std::string name);
 
 		void on_mouse_press(int x, int y);
 		void on_mouse_release(int x, int y);
@@ -39,7 +41,7 @@ namespace GUI
 	private:
 		Camera* m_render_cam;
 		std::shared_ptr<RenderEngine::Material> m_pMaterial;
-		std::vector<GUI_element*> m_elements;
+		std::map<std::string, GUI_element*> m_elements;
 		bool m_isFocus = false;
 		bool m_isActive = false;
 		bool m_is_event_logging_active = false;

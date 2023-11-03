@@ -1,4 +1,4 @@
-#include "EngineCore/GUI/FontRenderer.h"
+#include "EngineCore/GUI/TextRenderer.h"
 
 #include "EngineCore/GUI/Font.h"
 #include "EngineCore/Renderer/ShaderProgram.h"
@@ -11,14 +11,18 @@
 
 #include <glad/glad.h>
 
+#define SHIFT_TEXT_SYMBOL_X 20.5f
+// when you're set position, this is set center text on X coord
 namespace GUI
 {
-	FontRenderer::FontRenderer(std::shared_ptr<Font> font, std::shared_ptr<RenderEngine::ShaderProgram> shader, std::string text, glm::vec3 color, glm::vec2 pos, glm::vec2 scale)
+	TextRenderer::TextRenderer(std::shared_ptr<Font> font, std::shared_ptr<RenderEngine::ShaderProgram> shader,
+        std::string text, glm::vec3 color, glm::vec2 pos, glm::vec2 scale, std::string name, bool isCenterCoord)
 		: m_font(std::move(font))
 		, m_shader(std::move(shader))
         , m_color(color)
         , m_text(text)
-        , GUI_element(nullptr, "Text_renderer")
+        , m_isCenterCoords(isCenterCoord)
+        , GUI_element(nullptr, name)
 	{
         m_position_p = pos;
         m_scale_p = scale;
@@ -34,7 +38,7 @@ namespace GUI
 		vertexCoordsLayout.addElementLayoutFloat(4, false);
 		m_vertexArray->addBuffer(*m_vertexCoordsBuffer, vertexCoordsLayout);
 	}
-	void FontRenderer::render_text(std::string text, float x, float y, float scale, glm::vec3 color, glm::mat4& prj)
+	void TextRenderer::render_text(std::string text, float x, float y, float scale, glm::vec3 color, glm::mat4& prj)
 	{ 
         // activate corresponding render state	
         m_shader->use();
@@ -76,13 +80,17 @@ namespace GUI
         m_vertexArray->unbind();
         glBindTexture(GL_TEXTURE_2D, 0); // trash
 	}
-    void FontRenderer::on_render_prj(glm::mat4& prj)
+    void TextRenderer::on_render_prj(glm::mat4& prj)
     {
         if (!m_isActive) return;
         render_text(m_text, m_position.x, m_position.y, m_scale_p.x, m_color, prj);
     }
-    void FontRenderer::set_text(std::string text)
+    void TextRenderer::set_text(std::string text)
     {
         m_text = text;
+    }
+    void TextRenderer::set_position(glm::vec2 pos)
+    {
+        m_position = glm::vec2(m_isCenterCoords ? (pos.x - ((m_text.length() / 2) * SHIFT_TEXT_SYMBOL_X)) : pos.x, pos.y);
     }
 }

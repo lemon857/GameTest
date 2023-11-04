@@ -13,6 +13,8 @@ public:
 	void set_scale(glm::vec3 scale);
 	void set_rotation(glm::vec3 rot);
 
+	void add_position(glm::vec3 pos);
+
 	glm::vec3 get_position();
 	glm::vec3 get_scale();
 	glm::vec3 get_rotation();

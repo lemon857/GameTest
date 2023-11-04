@@ -7,8 +7,20 @@
 #include "EngineCore/Resources/Scene.h"
 
 #include <vector>
-#include <glm/vec3.hpp>
-	
+#include <glm/vec3.hpp>	
+
+#include "EngineCore/System/List.h"
+
+#include "Games/Tower_Defense/Castle.h"
+#include "Games/Tower_Defense/BaseEnemy.h"
+#include "Games/Tower_Defense/BaseTower.h"
+#include "Games/Tower_Defense/BaseEffect.h"
+
+namespace GUI
+{
+	class GUI_place;
+}
+
 class GameApp : public Application
 {
 public:
@@ -18,9 +30,20 @@ public:
 	bool init() override;
 	void on_key_update(const double delta) override;
 	void on_update(const double delta) override;
+	void on_ui_render() override;
 	bool init_events() override;
 private:
+	void init_gui();
+
+	void start_game();
+
 	Scene m_scene;
+
+	Castle* m_main_castle;
+
+	linked_list<BaseEnemy*> m_enemies;
+
+	std::vector<BaseTower*> m_towers;
 
 	Camera* m_cam;
 
@@ -33,6 +56,8 @@ private:
 	double m_init_mouse_pos_x = 0;
 	double m_init_mouse_pos_y = 0;
 
+	double m_mouse_pos_x = 0;
+	double m_mouse_pos_y = 0;
 	double m_world_mouse_pos_x = 0;
 	double m_world_mouse_pos_y = 0;
 	double m_world_mouse_pos_z = 0;
@@ -41,4 +66,5 @@ private:
 	float m_cam_sensetivity = 0.5f;
 
 	bool m_isInversiveMouseY = false;
+	bool m_isLose = false;
 };

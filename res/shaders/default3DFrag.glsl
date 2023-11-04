@@ -1,4 +1,4 @@
-#version 460
+#version 410
 in vec2 texCoord;
 in vec3 frag_normal;
 in vec3 frag_position;
@@ -38,11 +38,18 @@ void main()
 	vec3 view_dir = normalize(cam_position - frag_position);
 	vec3 reflect_dir = reflect(-light_direction, normal);
 	vec3 specular;
-	specular = (strength_light/light_distance) * specular_factor * (((light_color * (1.f - metalic_factor)) +
-	(vec3(texture(tex, texCoord) * metalic_factor))) / 2) * pow(max(dot(view_dir, reflect_dir), 0.0), shininess);
+	if (shininess == 0)
+	{
+		specular = vec3(0.0);
+	}
+	else 
+	{
+		specular = (strength_light/light_distance) * specular_factor * (((light_color * (1.f - metalic_factor)) +
+		(vec3(texture(tex, texCoord) * metalic_factor))) / 2) * pow(max(dot(view_dir, reflect_dir), 0.0), shininess);
+	}
 
-	gl_FragColor = texture(tex, texCoord) * vec4(ambient + diffuse + diffuse_direct + specular, 1.f);   
-	if (gl_FragColor == vec4(0.0))
+	frag_color = texture(tex, texCoord) * vec4(ambient + diffuse + diffuse_direct + specular, 1.f);   
+	if (frag_color == vec4(0.0))
 	{
 		discard;
 	}

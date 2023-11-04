@@ -9,18 +9,18 @@
 class Castle;
 class ObjModel;
 class HealthBar;
+class BaseEffect;
 
 namespace RenderEngine
 {
 	class Material;
 }
 
-
-class Enemy
+class BaseEnemy
 {
 public:
-	Enemy(ObjModel* model, Castle* target, glm::vec3 pos, double cooldown, double velocity, const unsigned int maxHP, std::shared_ptr<RenderEngine::Material> pMaterial);
-	~Enemy();
+	BaseEnemy(ObjModel* model, Castle* target, glm::vec3 pos, double cooldown, double velocity, const unsigned int maxHP, std::shared_ptr<RenderEngine::Material> pMaterial);
+	~BaseEnemy();
 
 	void update(const double delta);
 
@@ -30,13 +30,16 @@ public:
 
 	glm::vec3 get_pos();
 
-private:
+	void set_effect(BaseEffect* effect);
+
+protected:
 
 	Castle* m_target_castle;
 	ObjModel* m_model;
 	HealthBar* m_bar;
+	BaseEffect* m_effect;
 
-	unsigned int m_hp;
+	int m_hp;
 
 	double m_cur_time;
 

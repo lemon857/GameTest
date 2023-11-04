@@ -34,7 +34,7 @@
 #include <array>
 #include <memory>
 
-#define MIN_DISTANCE_TO_ENEMY 7.f
+#define MIN_DISTANCE_TO_BaseEnemy 7.f
 
 #define CHECK_AVAILABLE_POS(x, y, width, height) ((x > 0 && x < width) && (y > 0 && y < height))
 
@@ -54,6 +54,8 @@ bool is_grid_active = false;
 
 bool is_gui_active = false;
 
+bool is_debug_active = false;
+
 bool isKeyPressed = false;
 bool isKeyPressedmouse = false;
 
@@ -65,6 +67,7 @@ double times = 0;
 double angle = 0;
 
 GUI::GUI_place* m_gui;
+GUI::GUI_place* m_gui_debug;
 GUI::GUI_place* m_gui_place_menu;
 GUI::GUI_place* m_gui_place_settings;
 
@@ -190,7 +193,7 @@ void GameApp::on_key_update(const double delta)
         {
             countEnemies++;
             countEnemiesPerm++;
-            m_gui->get_element("enemies")->lead<GUI::TextRenderer>()->set_text("Enemies: " + std::to_string(countEnemiesPerm));
+            m_gui_debug->get_element("enemies")->lead<GUI::TextRenderer>()->set_text("Enemies: " + std::to_string(countEnemiesPerm));
             isKeyPressed = true;
         }
     }
@@ -219,6 +222,19 @@ void GameApp::on_key_update(const double delta)
             m_gui_place_menu->set_active(true);
             is_gui_active = true;
             m_gui_place_menu->set_active(true);
+            isKeyPressed = true;
+        }
+    }
+    else if (Input::isKeyPressed(KeyCode::KEY_F3))
+    {
+        if (is_debug_active && !isKeyPressed)
+        {
+            is_debug_active = false;
+            isKeyPressed = true;
+        }
+        else if (!isKeyPressed)
+        {
+            is_debug_active = true;
             isKeyPressed = true;
         }
     }
@@ -384,22 +400,27 @@ void GameApp::on_update(const double delta)
         else if (snum == 1) spawn = (rand() % size_x) + ((size_x - 1) * size_y);
         else if (snum == 2) spawn = (rand() % size_y) * size_x;
         else if (snum == 3) spawn = ((rand() % size_y) * size_x) + (size_x - 1);
-        auto a = new Enemy(new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("monkey")),
+        auto a = new BaseEnemy(new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("monkey")),
             m_main_castle, parts[spawn], 1, 0.007, 50, ResourceManager::getMaterial("default"));
         m_enemies.push_back(a);
     }
 
     for (auto curTower : m_towers)
     {
-        unsigned int distance = 100;
+        double distance = 100;
         for (size_t i = 0; i < m_enemies.size(); i++)
         {
             if (m_enemies[i] == nullptr) continue;
             glm::vec3 a = m_enemies[i]->get_pos() - curTower->get_pos();
-            if (sqrt(a.x * a.x + a.z * a.z) < MIN_DISTANCE_TO_ENEMY && sqrt(a.x * a.x + a.z * a.z) < distance)
+            double d = sqrt(a.x * a.x + a.z * a.z);
+            if (d < MIN_DISTANCE_TO_BaseEnemy && d < distance)
             {
-                distance = sqrt(a.x * a.x + a.z * a.z);
-                curTower->set_target(m_enemies[i]);
+                distance = d;
+                if (curTower->get_target() != m_enemies[i]) curTower->set_target(m_enemies[i]);
+            }
+            else 
+            {
+                curTower->set_target(nullptr);
             }
         }
         curTower->update(delta);
@@ -418,6 +439,7 @@ void GameApp::on_update(const double delta)
             delete m_enemies[i];
             m_enemies.remove(i);
             countKills++;
+            m_gui_debug->get_element("kills")->lead<GUI::TextRenderer>()->set_text("Kills: " + std::to_string(countKills));
             continue;
         }
         m_enemies[i]->update(delta);        
@@ -431,7 +453,7 @@ void GameApp::on_update(const double delta)
     else
     {
         fps = int((frames / times) * 1000.f);
-        m_gui->get_element("fps")->lead<GUI::TextRenderer>()->set_text("FPS: " + std::to_string(fps));
+        m_gui_debug->get_element("fps")->lead<GUI::TextRenderer>()->set_text("FPS: " + std::to_string(fps));
         frames = 0;
         times = 0;
     }
@@ -440,6 +462,7 @@ void GameApp::on_update(const double delta)
 void GameApp::on_ui_render()
 {
     m_gui->on_render();
+    if (is_debug_active) m_gui_debug->on_render();
     if (is_gui_active)
     {
         if (gui_window == main) m_gui_place_menu->on_render();
@@ -457,6 +480,7 @@ bool GameApp::init_events()
                 RenderEngine::Renderer::setViewport(e.width, e.height);
                 m_cam->set_viewport_size(e.width, e.height);
                 m_gui->on_resize();
+                m_gui_debug->on_resize();
                 m_gui_place_menu->on_resize();
                 m_gui_place_settings->on_resize();
             }
@@ -547,16 +571,21 @@ bool GameApp::init_events()
 void GameApp::init_gui()
 {
     m_gui = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
+    m_gui_debug = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
     m_gui_place_menu = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
     m_gui_place_settings = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
-        
-    // fps & lose window ---------------------------------------------------------------------------
-    m_gui->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
+
+    // debug window ---------------------------------------------------------------------------
+    m_gui_debug->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
         "FPS: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, 98.f), glm::vec2(0.5f), "fps", false));
 
-    m_gui->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
+    m_gui_debug->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
         "Enemies: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, 96.f), glm::vec2(0.5f), "enemies", false));
 
+    m_gui_debug->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
+        "Kills: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, 94.f), glm::vec2(0.5f), "kills", false));
+
+    // lose window ---------------------------------------------------------------------------
     m_gui->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
         "You lose!", glm::vec3(1.f, 0.1f, 0.1f), glm::vec2(41.f, 57.f), glm::vec2(2.f), "Lose text"));
 
@@ -578,19 +607,28 @@ void GameApp::init_gui()
         "Settings", glm::vec3(0.f), glm::vec2(45.f, 90.f), glm::vec2(1.f)));
 
     m_gui_place_settings->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        ResourceManager::getMaterial("button"), glm::vec2(50.f, 40.f), glm::vec2(30.f, 5.f),
+        ResourceManager::getMaterial("button"), glm::vec2(89.f, 39.f), glm::vec2(10.f, 5.f),
+        "Debug", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
+
+    m_gui_place_settings->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        ResourceManager::getMaterial("button"), glm::vec2(89.f, 28.f), glm::vec2(10.f, 5.f),
         "Add enemy", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
 
     m_gui_place_settings->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        ResourceManager::getMaterial("button"), glm::vec2(50.f, 25.f), glm::vec2(30.f, 5.f),
+        ResourceManager::getMaterial("button"), glm::vec2(89.f, 17.f), glm::vec2(10.f, 5.f),
         "Grid", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
 
     m_gui_place_settings->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        ResourceManager::getMaterial("button"), glm::vec2(50.f, 10.f), glm::vec2(30.f, 5.f),
+        ResourceManager::getMaterial("button"), glm::vec2(89.f, 6.f), glm::vec2(10.f, 5.f),
         "Back", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
 
     m_gui_place_settings->add_element(new GUI::Sprite(ResourceManager::getMaterial("defaultSprite"), "default",
         glm::vec2(100.f), glm::vec2(100.f)));
+
+    m_gui_place_settings->get_element("Debug")->set_click_callback([&]()
+        {
+            is_debug_active = !is_debug_active;
+        });
 
     m_gui_place_settings->get_element("Grid")->set_click_callback([&]()
         {
@@ -600,7 +638,7 @@ void GameApp::init_gui()
     m_gui_place_settings->get_element("Add enemy")->set_click_callback([&]()
         {
             countEnemies++; countEnemiesPerm++;
-            m_gui->get_element("enemies")->lead<GUI::TextRenderer>()->set_text("Enemies: " + std::to_string(countEnemiesPerm));
+            m_gui_debug->get_element("enemies")->lead<GUI::TextRenderer>()->set_text("Enemies: " + std::to_string(countEnemiesPerm));
         });
 
     m_gui_place_settings->get_element("Back")->set_click_callback([&]()
@@ -615,20 +653,20 @@ void GameApp::init_gui()
 
     m_gui_place_menu->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         ResourceManager::getMaterial("button"), glm::vec2(11.f, 6.f), glm::vec2(10.f, 5.f),
-        "Exit", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
+        "Quit", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
 
     m_gui_place_menu->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        ResourceManager::getMaterial("button"), glm::vec2(50.f, 25.f), glm::vec2(25.f, 5.f),
+        ResourceManager::getMaterial("button"), glm::vec2(89.f, 6.f), glm::vec2(10.f, 5.f),
         "Settings", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f))); 
     
     m_gui_place_menu->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-            ResourceManager::getMaterial("button"), glm::vec2(89.f, 6.f), glm::vec2(10.f, 5.f),
+            ResourceManager::getMaterial("button"), glm::vec2(11.f, 17.f), glm::vec2(10.f, 5.f),
             "Restart", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
 
     m_gui_place_menu->add_element(new GUI::Sprite(ResourceManager::getMaterial("defaultSprite"), "default",
         glm::vec2(100.f), glm::vec2(100.f)));
 
-    m_gui_place_menu->get_element("Exit")->set_click_callback([&]()
+    m_gui_place_menu->get_element("Quit")->set_click_callback([&]()
         {
             m_pCloseWindow = true;
         });
@@ -669,5 +707,6 @@ void GameApp::start_game()
     m_gui->get_element("Lose text")->set_active(false);
     m_gui->get_element("Lose scoreboard")->set_active(false);
 
-    m_gui->get_element("enemies")->lead<GUI::TextRenderer>()->set_text("Enemies: 0");
+    m_gui_debug->get_element("enemies")->lead<GUI::TextRenderer>()->set_text("Enemies: 0");
+    m_gui_debug->get_element("kills")->lead<GUI::TextRenderer>()->set_text("Kills: 0");
 }

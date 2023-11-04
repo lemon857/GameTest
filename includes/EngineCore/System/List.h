@@ -169,7 +169,7 @@ public:
 		for (size_t i = 0; i < m_size - 1; i++) {
 			delete pt;
 			pt = p;
-			p = p->m_next;
+			if (p != nullptr) p = p->m_next;
 		}
 		delete p;
 		m_size = 0;

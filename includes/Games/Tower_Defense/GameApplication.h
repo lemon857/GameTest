@@ -12,8 +12,9 @@
 #include "EngineCore/System/List.h"
 
 #include "Games/Tower_Defense/Castle.h"
-#include "Games/Tower_Defense/Enemy.h"
+#include "Games/Tower_Defense/BaseEnemy.h"
 #include "Games/Tower_Defense/BaseTower.h"
+#include "Games/Tower_Defense/BaseEffect.h"
 
 namespace GUI
 {
@@ -40,7 +41,7 @@ private:
 
 	Castle* m_main_castle;
 
-	linked_list<Enemy*> m_enemies;
+	linked_list<BaseEnemy*> m_enemies;
 
 	std::vector<BaseTower*> m_towers;
 

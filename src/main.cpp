@@ -14,8 +14,15 @@ int main(int argc, char** argv)
     ResourceManager::setExecutablePath(argv[0]);
 
 #ifndef EDITOR_BUILD
-    GameApp* gameApp = new GameApp();    
-    gameApp->start(windowSize, "Tower defence", "res/resources.json", "EngineGamePreview.ini");
+    GameApp* gameApp = new GameApp();
+    try
+    {
+        gameApp->start(windowSize, "Tower defence", "res/resources.json", "EngineGamePreview.ini");
+    }
+    catch (const std::exception& ex)
+    {
+        LOG_ERROR("Exception: {0}", ex.what());
+    }
     delete gameApp;
 #endif // !EDITOR_BUILD
 

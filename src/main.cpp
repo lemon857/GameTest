@@ -24,7 +24,7 @@ int main(int argc, char** argv)
         LOG_ERROR("Exception: {0}", ex.what());
     }
     delete gameApp;
-#endif // !EDITOR_BUILD
+#endif // !EDITOR_BUILD                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 
 #ifdef EDITOR_BUILD
     EditorApplication* editorApplication = new EditorApplication();

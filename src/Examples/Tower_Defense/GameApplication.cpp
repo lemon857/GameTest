@@ -1,3 +1,4 @@
+
 #include "Games/Tower_Defense/GameApplication.h"
 
 #include "EngineCore/System/Log.h"
@@ -155,6 +156,7 @@ void GameApp::on_key_update(const double delta)
 {
     if (m_isLose) return;
 
+
     glm::vec3 movement_delta{ 0,0,0 };
     glm::vec3 rotation_delta{ 0,0,0 };
 
@@ -242,6 +244,7 @@ void GameApp::on_key_update(const double delta)
     if (is_gui_active) return;
 
     if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT) && !m_gui_place_menu->get_focus())
+
     {
         int x = (int)floor(m_world_mouse_pos_x / 2.f);
         int y = (int)floor(m_world_mouse_pos_z / 2.f);
@@ -249,6 +252,7 @@ void GameApp::on_key_update(const double delta)
         if ((x * y <= (size_x - 1) * (size_y - 1)) && (x >= 0 && y >= 0))
         {
             if (x <= (size_x - 1) && y <= (size_y - 1)) cur = x * size_y + y;
+
         }
     }
     else if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_RIGHT))
@@ -325,6 +329,7 @@ void GameApp::on_key_update(const double delta)
         movement_delta.y += static_cast<float>(addSpeed * m_cam_velocity * delta);
     }
     if (Input::isKeyPressed(KeyCode::KEY_LEFT_SHIFT))
+
     {
         movement_delta.y -= static_cast<float>(addSpeed * m_cam_velocity * delta);
     }
@@ -354,6 +359,7 @@ void GameApp::on_update(const double delta)
     ResourceManager::getShaderProgram("colorShader")->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
     //ResourceManager::getShaderProgram("colorShader")->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_cam->get_ui_matrix());
 
+
     ResourceManager::getShaderProgram("default3DShader")->use();
     ResourceManager::getShaderProgram("default3DShader")->setVec3("cam_position", m_cam->get_position());
 
@@ -361,6 +367,7 @@ void GameApp::on_update(const double delta)
 
     m_scene.at(curObj)->getComponent<Transform>()->set_position(parts[cur]); 
     //m_grid_line->render(glm::vec3(0), glm::vec3(m_world_mouse_pos_x, m_world_mouse_pos_y + 0.1f, m_world_mouse_pos_z), glm::vec3(1.f));
+
 
     for (size_t i = 0; i < m_scene.get_list().size(); i++)
     {
@@ -469,12 +476,12 @@ void GameApp::on_ui_render()
         else if (gui_window == settings) m_gui_place_settings->on_render();
     }
 }
-
 bool GameApp::init_events()
 {
     m_event_dispather.add_event_listener<EventWindowResize>([&](EventWindowResize& e)
         {
             if (is_event_logging_active) LOG_INFO("[EVENT] Resize: {0}x{1}", e.width, e.height);
+
             if (e.width != 0 && e.height != 0)
             {
                 RenderEngine::Renderer::setViewport(e.width, e.height);
@@ -483,6 +490,7 @@ bool GameApp::init_events()
                 m_gui_debug->on_resize();
                 m_gui_place_menu->on_resize();
                 m_gui_place_settings->on_resize();
+
             }
         });
     m_event_dispather.add_event_listener<EventKeyPressed>([](EventKeyPressed& e)
@@ -491,12 +499,12 @@ bool GameApp::init_events()
             {
                 if (e.repeated)
                 {
-
                   if (is_event_logging_active) LOG_INFO("[EVENT] Key repeated {0}", static_cast<char>(e.key_code));
                 }
                 else
                 {
                    if (is_event_logging_active) LOG_INFO("[EVENT] Key pressed {0}", static_cast<char>(e.key_code));
+
                 }
             }
             Input::pressKey(e.key_code);
@@ -505,6 +513,7 @@ bool GameApp::init_events()
         {
             if (e.key_code <= KeyCode::KEY_Z)  if (is_event_logging_active) LOG_INFO("[EVENT] Key released {0}", static_cast<char>(e.key_code));
             isKeyPressed = false;
+
             Input::releaseKey(e.key_code);
         });
     m_event_dispather.add_event_listener<EventMouseMoved>([&](EventMouseMoved& e)
@@ -518,6 +527,7 @@ bool GameApp::init_events()
             m_mouse_pos_x = e.x;
             m_mouse_pos_y = e.y;
             if (is_event_logging_active) LOG_INFO("[EVENT] Mouse moved to {0}x{1}", e.x, e.y);
+
         });
     m_event_dispather.add_event_listener<EventMouseScrolled>(
         [&](EventMouseScrolled& e)
@@ -527,6 +537,7 @@ bool GameApp::init_events()
     m_event_dispather.add_event_listener<EventWindowClose>([&](EventWindowClose& e)
         {
             if (is_event_logging_active) LOG_INFO("[EVENT] Window close");
+
             m_pCloseWindow = true;
         });
     m_event_dispather.add_event_listener<EventMouseButtonPressed>([&](EventMouseButtonPressed& e)
@@ -535,6 +546,7 @@ bool GameApp::init_events()
             m_gui_place_menu->on_mouse_press(e.x_pos, e.y_pos);
             m_gui_place_settings->on_mouse_press(e.x_pos, e.y_pos);
             if (is_event_logging_active) LOG_INFO("[EVENT] Mouse button pressed at ({0}x{1})", e.x_pos, e.y_pos);
+
             Input::pressMouseButton(e.mouse_button);
             m_init_mouse_pos_x = e.x_pos;
             m_init_mouse_pos_y = e.y_pos;
@@ -546,6 +558,7 @@ bool GameApp::init_events()
             m_gui_place_menu->on_mouse_release(e.x_pos, e.y_pos);
             m_gui_place_settings->on_mouse_release(e.x_pos, e.y_pos);
             if (is_event_logging_active) LOG_INFO("[EVENT] Mouse button released at ({0}x{1})", e.x_pos, e.y_pos);
+
             Input::releaseMouseButton(e.mouse_button);
             m_init_mouse_pos_x = e.x_pos;
             m_init_mouse_pos_y = e.y_pos;
@@ -553,11 +566,13 @@ bool GameApp::init_events()
     m_event_dispather.add_event_listener<EventMaximizeWindow>([&](EventMaximizeWindow& e)
         {
             if (is_event_logging_active) LOG_INFO("[EVENT] Maximized window: {0}", e.isMaximized);
+
             m_maximized_window = e.isMaximized;
         });
     m_event_dispather.add_event_listener<EventMoveWindow>([&](EventMoveWindow& e)
         {
             if (is_event_logging_active) LOG_INFO("[EVENT] Move window to: {0}x{1}", e.x_pos, e.y_pos);
+
             m_window_position = glm::ivec2(e.x_pos, e.y_pos);
         });
     m_pWindow->set_event_callback(

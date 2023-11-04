@@ -6,6 +6,11 @@
 
 #include <glm/mat4x4.hpp>
 
+#define SHIFT_TEXT_SYMBOL_Y 8.2f
+
+#define NAME_TEXTURE_STATIC "static"
+#define NAME_TEXTURE_CLICKED "clicked"
+
 namespace RenderEngine
 {
 	class Material;
@@ -59,6 +64,8 @@ namespace GUI
 
 		void on_click() { if (m_on_click != nullptr) m_on_click(); }
 		void set_click_callback(std::function<void()> on_click) { m_on_click = on_click; }
+
+		std::shared_ptr < RenderEngine::Material> get_material() { return m_pMaterial; }
 
 		template<class _Ty>
 		_Ty* lead()

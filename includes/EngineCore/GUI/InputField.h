@@ -1,6 +1,9 @@
 #pragma once
 
 #include "EngineCore/GUI/GUI_element.h"
+
+#include "EngineCore/Keys.h"
+
 #include <string>
 #include <memory>
 
@@ -20,12 +23,12 @@ namespace GUI
 	class Font;
 	class Sprite;
 
-	class Button : public GUI_element
+	class InputField : public GUI_element
 	{
 	public:
-		Button(Sprite* face, glm::vec2 pos, glm::vec2 scale,
-			std::string text, std::string shaderName, std::shared_ptr<Font> font, glm::vec3 textColor);
-		~Button();
+		InputField(Sprite* face, glm::vec2 pos, glm::vec2 scale,
+			std::string name, std::string shaderName, std::shared_ptr<Font> font, glm::vec3 textColor);
+		~InputField();
 
 		void on_render_prj(glm::mat4& prj) override;
 
@@ -35,11 +38,21 @@ namespace GUI
 		void set_position(glm::vec2 pos) override;
 		void set_scale(glm::vec2 scale) override;
 
+		std::string get_text();
 
+		bool get_focus();
+		void set_focus(bool focus);
 
+		void press_button(KeyCode key);
+
+		void set_enter_callback(std::function<void(std::string text)> on_enter) { m_on_enter = on_enter; }
 	private:
+		std::function<void(std::string text)> m_on_enter;
+
 		Sprite* m_face;
 		std::unique_ptr<TextRenderer> m_textRenderer;
-		bool m_isClicked = false;
+		std::string m_text;
+
+		bool m_isFocused;
 	};
 }

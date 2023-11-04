@@ -26,6 +26,7 @@ namespace GUI
 	}
 	void GUI_place::on_render()
 	{
+		if (!m_isActive) return;
 		m_pMaterial->use();
 		m_pMaterial->get_shader_ptr()->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_render_cam->get_ui_matrix());
 		//glm::vec2 size = m_render_cam->get_viewport_size();

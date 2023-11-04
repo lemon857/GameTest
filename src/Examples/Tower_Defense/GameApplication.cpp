@@ -31,6 +31,7 @@
 #include "EngineCore/GUI/TextRenderer.h"
 #include "EngineCore/GUI/Button.h"
 #include "EngineCore/GUI/Sprite.h"
+#include "EngineCore/GUI/InputField.h"
 
 #include <array>
 #include <memory>
@@ -39,53 +40,10 @@
 
 #define CHECK_AVAILABLE_POS(x, y, width, height) ((x > 0 && x < width) && (y > 0 && y < height))
 
-const int size_x = 30, size_y = 30;
-
-std::array <bool, size_x * size_y> map;
-
-int cur = 0;
-int curObj = 3;
-
-int countEnemies = 0;
-int countEnemiesPerm = 0;
-
-bool is_event_logging_active = false;
-
-bool is_grid_active = false;
-
-bool is_gui_active = false;
-
-bool is_debug_active = false;
-
-bool isKeyPressed = false;
-bool isKeyPressedmouse = false;
-
-unsigned int countKills = 0;
-unsigned int fps = 0;
-unsigned int frames = 0;
-double times = 0;
-
-double angle = 0;
-
-GUI::GUI_place* m_gui;
-GUI::GUI_place* m_gui_debug;
-GUI::GUI_place* m_gui_place_menu;
-GUI::GUI_place* m_gui_place_settings;
-
-enum GUI_Active
-{
-    null,
-    main,
-    settings
-};
-
-GUI_Active gui_window;
-
 GameApp::GameApp()
 	: Application()
 {
 }
-
 GameApp::~GameApp()
 {
     delete m_cam;
@@ -154,8 +112,7 @@ bool GameApp::init()
 
 void GameApp::on_key_update(const double delta)
 {
-    if (m_isLose) return;
-
+    if (m_isLose || m_gui_place_settings->get_element("InputTest")->lead<GUI::InputField>()->get_focus()) return;
 
     glm::vec3 movement_delta{ 0,0,0 };
     glm::vec3 rotation_delta{ 0,0,0 };
@@ -394,9 +351,7 @@ void GameApp::on_update(const double delta)
         m_gui_place_settings->set_active(false);
         gui_window = null;
         m_gui->get_element("Lose scoreboard")->lead<GUI::TextRenderer>()->set_text("Your score: " + std::to_string(countKills));
-        m_gui->get_element("Restart")->set_active(true);
-        m_gui->get_element("Lose text")->set_active(true);
-        m_gui->get_element("Lose scoreboard")->set_active(true);
+        m_gui->set_active(true);
     }
 
     for (; countEnemies > 0; countEnemies--)
@@ -476,6 +431,7 @@ void GameApp::on_ui_render()
         else if (gui_window == settings) m_gui_place_settings->on_render();
     }
 }
+
 bool GameApp::init_events()
 {
     m_event_dispather.add_event_listener<EventWindowResize>([&](EventWindowResize& e)
@@ -493,7 +449,7 @@ bool GameApp::init_events()
 
             }
         });
-    m_event_dispather.add_event_listener<EventKeyPressed>([](EventKeyPressed& e)
+    m_event_dispather.add_event_listener<EventKeyPressed>([&](EventKeyPressed& e)
         {
             if (e.key_code <= KeyCode::KEY_Z)
             {
@@ -508,6 +464,7 @@ bool GameApp::init_events()
                 }
             }
             Input::pressKey(e.key_code);
+            m_gui_place_settings->get_element("InputTest")->lead<GUI::InputField>()->press_button(e.key_code);
         });
     m_event_dispather.add_event_listener<EventKeyReleased>([&](EventKeyReleased& e)
         {
@@ -608,7 +565,7 @@ void GameApp::init_gui()
         "Your score: 0", glm::vec3(1.f, 0.1f, 0.1f), glm::vec2(41.f, 50.f), glm::vec2(2.f), "Lose scoreboard"));
 
     m_gui->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        ResourceManager::getMaterial("button"), glm::vec2(89.f, 6.f), glm::vec2(10.f, 5.f),
+        glm::vec2(89.f, 6.f), glm::vec2(10.f, 5.f),
         "Restart", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
 
     m_gui->get_element("Restart")->set_click_callback([&]()
@@ -617,28 +574,36 @@ void GameApp::init_gui()
         });
 
     m_gui->set_active(true);
-    // Settings ------------------------------------------------------------------------------------
+    // Settings ------------------------------------------------------------------------------------    
     m_gui_place_settings->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
         "Settings", glm::vec3(0.f), glm::vec2(45.f, 90.f), glm::vec2(1.f)));
 
+    m_gui_place_settings->add_element(new GUI::InputField(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(89.f, 50.f), glm::vec2(10.f, 5.f), "InputTest", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
+
     m_gui_place_settings->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        ResourceManager::getMaterial("button"), glm::vec2(89.f, 39.f), glm::vec2(10.f, 5.f),
+        glm::vec2(89.f, 39.f), glm::vec2(10.f, 5.f),
         "Debug", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
 
     m_gui_place_settings->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        ResourceManager::getMaterial("button"), glm::vec2(89.f, 28.f), glm::vec2(10.f, 5.f),
+        glm::vec2(89.f, 28.f), glm::vec2(10.f, 5.f),
         "Add enemy", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
 
     m_gui_place_settings->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        ResourceManager::getMaterial("button"), glm::vec2(89.f, 17.f), glm::vec2(10.f, 5.f),
+        glm::vec2(89.f, 17.f), glm::vec2(10.f, 5.f),
         "Grid", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
 
     m_gui_place_settings->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        ResourceManager::getMaterial("button"), glm::vec2(89.f, 6.f), glm::vec2(10.f, 5.f),
+        glm::vec2(89.f, 6.f), glm::vec2(10.f, 5.f),
         "Back", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
 
     m_gui_place_settings->add_element(new GUI::Sprite(ResourceManager::getMaterial("defaultSprite"), "default",
         glm::vec2(100.f), glm::vec2(100.f)));
+
+    m_gui_place_settings->get_element("InputTest")->lead<GUI::InputField>()->set_enter_callback([&](std::string text)
+        {
+            LOG_INFO("Text is: {0}", text);
+        });
 
     m_gui_place_settings->get_element("Debug")->set_click_callback([&]()
         {
@@ -667,15 +632,15 @@ void GameApp::init_gui()
         "Main menu", glm::vec3(0.f), glm::vec2(45.f, 90.f), glm::vec2(1.f)));
 
     m_gui_place_menu->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        ResourceManager::getMaterial("button"), glm::vec2(11.f, 6.f), glm::vec2(10.f, 5.f),
+        glm::vec2(11.f, 6.f), glm::vec2(10.f, 5.f),
         "Quit", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
 
     m_gui_place_menu->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        ResourceManager::getMaterial("button"), glm::vec2(89.f, 6.f), glm::vec2(10.f, 5.f),
+        glm::vec2(89.f, 6.f), glm::vec2(10.f, 5.f),
         "Settings", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f))); 
     
     m_gui_place_menu->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-            ResourceManager::getMaterial("button"), glm::vec2(11.f, 17.f), glm::vec2(10.f, 5.f),
+            glm::vec2(11.f, 17.f), glm::vec2(10.f, 5.f),
             "Restart", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
 
     m_gui_place_menu->add_element(new GUI::Sprite(ResourceManager::getMaterial("defaultSprite"), "default",
@@ -718,9 +683,10 @@ void GameApp::start_game()
     m_towers.clear();
     m_enemies.clear();
 
-    m_gui->get_element("Restart")->set_active(false);
-    m_gui->get_element("Lose text")->set_active(false);
-    m_gui->get_element("Lose scoreboard")->set_active(false);
+    m_gui->set_active(false);
+    m_gui_debug->set_active(true);
+    m_gui_place_menu->set_active(false);
+    m_gui_place_settings->set_active(false);
 
     m_gui_debug->get_element("enemies")->lead<GUI::TextRenderer>()->set_text("Enemies: 0");
     m_gui_debug->get_element("kills")->lead<GUI::TextRenderer>()->set_text("Kills: 0");

@@ -40,6 +40,8 @@ namespace GUI
 		std::string m_text;
 		glm::vec3 m_color;
 
+		glm::vec2 m_p_pos;
+
 		std::unique_ptr<RenderEngine::VertexArray> m_vertexArray;
 		RenderEngine::VertexBuffer* m_vertexCoordsBuffer;
 		unsigned int VAO, VBO;

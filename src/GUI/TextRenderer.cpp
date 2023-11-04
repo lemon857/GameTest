@@ -88,9 +88,11 @@ namespace GUI
     void TextRenderer::set_text(std::string text)
     {
         m_text = text;
+        m_position = glm::vec2(m_isCenterCoords ? (m_p_pos.x - (((float)m_text.length() / 2.f) * SHIFT_TEXT_SYMBOL_X)) : m_p_pos.x, m_p_pos.y);
     }
     void TextRenderer::set_position(glm::vec2 pos)
     {
-        m_position = glm::vec2(m_isCenterCoords ? (pos.x - ((m_text.length() / 2) * SHIFT_TEXT_SYMBOL_X)) : pos.x, pos.y);
+        m_p_pos = pos;
+        m_position = glm::vec2(m_isCenterCoords ? (m_p_pos.x - (((float)m_text.length() / 2.f) * SHIFT_TEXT_SYMBOL_X)) : m_p_pos.x, m_p_pos.y);
     }
 }

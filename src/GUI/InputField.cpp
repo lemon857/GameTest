@@ -106,9 +106,5 @@ void GUI::InputField::press_button(KeyCode key)
 		m_on_enter(m_text);
 		set_focus(false);
 	}
-	else if (key == KeyCode::KEY_ESCAPE)
-	{
-		set_focus(false);
-	}
 	m_textRenderer->set_text(m_text);
 }

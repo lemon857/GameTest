@@ -44,6 +44,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/GUI/Font.h
 	includes/EngineCore/GUI/TextRenderer.h
 	includes/EngineCore/GUI/InputField.h
+	includes/EngineCore/GUI/CheckBox.h
   
 	includes/Games/Tower_Defense/Castle.h
 	includes/Games/Tower_Defense/HealthBar.h
@@ -180,6 +181,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/GUI/TextRenderer.cpp
 	src/GUI/Button.cpp
 	src/GUI/InputField.cpp
+	src/GUI/CheckBox.cpp
 )
 
 

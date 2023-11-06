@@ -10,8 +10,8 @@
 namespace GUI
 {
 	static int g_current_sprite_ID = 0;
-	Sprite::Sprite(std::shared_ptr<RenderEngine::Material> pMaterial, std::string initSubTexture, glm::vec2 pos, glm::vec2 scale)
-		: GUI_element(pMaterial, "Sprite" + std::to_string(g_current_sprite_ID++))
+	Sprite::Sprite(std::shared_ptr<RenderEngine::Material> pMaterial, std::string initSubTexture, glm::vec2 pos, glm::vec2 scale, std::string name)
+		: GUI_element(pMaterial, name == "Sprite" ? name + std::to_string(g_current_sprite_ID++) : name)
 		, m_vertexArray(std::make_shared<RenderEngine::VertexArray>())
 		, m_vertexCoordsBuffer(new RenderEngine::VertexBuffer())
 		, m_textureCoordsBuffer(new RenderEngine::VertexBuffer())

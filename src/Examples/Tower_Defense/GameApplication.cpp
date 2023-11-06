@@ -32,6 +32,7 @@
 #include "EngineCore/GUI/Button.h"
 #include "EngineCore/GUI/Sprite.h"
 #include "EngineCore/GUI/InputField.h"
+#include "EngineCore/GUI/CheckBox.h"
 
 #include <array>
 #include <memory>
@@ -112,7 +113,7 @@ bool GameApp::init()
 
 void GameApp::on_key_update(const double delta)
 {
-    if (m_isLose || m_gui_place_settings->get_element("InputTest")->lead<GUI::InputField>()->get_focus()) return;
+    if (m_isLose || m_gui_place_menu->get_element("InputTest")->lead<GUI::InputField>()->get_focus()) return;
 
     glm::vec3 movement_delta{ 0,0,0 };
     glm::vec3 rotation_delta{ 0,0,0 };
@@ -464,7 +465,7 @@ bool GameApp::init_events()
                 }
             }
             Input::pressKey(e.key_code);
-            m_gui_place_settings->get_element("InputTest")->lead<GUI::InputField>()->press_button(e.key_code);
+            m_gui_place_menu->get_element("InputTest")->lead<GUI::InputField>()->press_button(e.key_code);
         });
     m_event_dispather.add_event_listener<EventKeyReleased>([&](EventKeyReleased& e)
         {
@@ -555,7 +556,7 @@ void GameApp::init_gui()
         "Enemies: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, 96.f), glm::vec2(0.5f), "enemies", false));
 
     m_gui_debug->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        "Kills: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, 94.f), glm::vec2(0.5f), "kills", false));
+        "Kills: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, 94.f), glm::vec2(0.5f), "kills", false));        
 
     // lose window ---------------------------------------------------------------------------
     m_gui->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
@@ -576,10 +577,7 @@ void GameApp::init_gui()
     m_gui->set_active(true);
     // Settings ------------------------------------------------------------------------------------    
     m_gui_place_settings->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        "Settings", glm::vec3(0.f), glm::vec2(45.f, 90.f), glm::vec2(1.f)));
-
-    m_gui_place_settings->add_element(new GUI::InputField(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        glm::vec2(89.f, 50.f), glm::vec2(10.f, 5.f), "InputTest", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
+        "Settings", glm::vec3(0.f), glm::vec2(50.f, 90.f), glm::vec2(1.f)));    
 
     m_gui_place_settings->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, 39.f), glm::vec2(10.f, 5.f),
@@ -598,13 +596,8 @@ void GameApp::init_gui()
         "Back", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
 
     m_gui_place_settings->add_element(new GUI::Sprite(ResourceManager::getMaterial("defaultSprite"), "default",
-        glm::vec2(100.f), glm::vec2(100.f)));
-
-    m_gui_place_settings->get_element("InputTest")->lead<GUI::InputField>()->set_enter_callback([&](std::string text)
-        {
-            LOG_INFO("Text is: {0}", text);
-        });
-
+        glm::vec2(100.f), glm::vec2(100.f), "z.BG"));
+    
     m_gui_place_settings->get_element("Debug")->set_click_callback([&]()
         {
             is_debug_active = !is_debug_active;
@@ -629,7 +622,7 @@ void GameApp::init_gui()
         });
     // main menu ------------------------------------------------------------------------------------
     m_gui_place_menu->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        "Main menu", glm::vec3(0.f), glm::vec2(45.f, 90.f), glm::vec2(1.f)));
+        "Main menu", glm::vec3(0.f), glm::vec2(50.f, 90.f), glm::vec2(1.f)));
 
     m_gui_place_menu->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(11.f, 6.f), glm::vec2(10.f, 5.f),
@@ -643,8 +636,20 @@ void GameApp::init_gui()
             glm::vec2(11.f, 17.f), glm::vec2(10.f, 5.f),
             "Restart", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
 
+    m_gui_place_menu->add_element(new GUI::InputField(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(11.f, 60.f), glm::vec2(10.f, 5.f), "InputTest", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
+
+    m_gui_place_menu->add_element(new GUI::CheckBox(
+        new GUI::Sprite(ResourceManager::getMaterial("checkbox_bg")), new GUI::Sprite(ResourceManager::getMaterial("checkbox_mark")),
+        glm::vec2(11.f, 50.f), glm::vec2(5.f), "checkbox"));
+
     m_gui_place_menu->add_element(new GUI::Sprite(ResourceManager::getMaterial("defaultSprite"), "default",
-        glm::vec2(100.f), glm::vec2(100.f)));
+        glm::vec2(100.f), glm::vec2(100.f), "z.BG")); // Crutch but idk how resolve this now
+
+    m_gui_place_menu->get_element("InputTest")->lead<GUI::InputField>()->set_enter_callback([&](std::string text)
+        {
+            LOG_INFO("Text is: {0}", text);
+        });
 
     m_gui_place_menu->get_element("Quit")->set_click_callback([&]()
         {

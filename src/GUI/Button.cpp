@@ -24,7 +24,7 @@ namespace GUI
 	}
 	Button::~Button()
 	{
-		
+		delete m_face;
 	}
 	void Button::on_render_prj(glm::mat4& prj)
 	{

@@ -45,7 +45,7 @@ void BaseTower::update(const double delta)
 void BaseTower::set_target(BaseEnemy* target)
 {
 	m_target_BaseEnemy = target;
-	if (target != nullptr) m_target_BaseEnemy->set_effect(new BaseEffect(30, 1, 6));
+	//if (target != nullptr) m_target_BaseEnemy->set_effect(new BaseEffect(30, 1, 6));
 }
 
 glm::vec3 BaseTower::get_pos()

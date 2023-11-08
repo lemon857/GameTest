@@ -9,6 +9,7 @@
 #include "EngineCore/Resources/ResourceManager.h"
 
 #include "EngineCore/System/Log.h"
+#include "EngineCore/Input.h"
 
 GUI::InputField::InputField(Sprite* face, glm::vec2 pos, glm::vec2 scale,
 	std::string name, std::string shaderName,
@@ -99,9 +100,16 @@ void GUI::InputField::set_focus(bool focus)
 void GUI::InputField::press_button(KeyCode key)
 {
 	if (!m_isFocused) return;
-	if (key < KeyCode::KEY_Z)
+	if (key <= KeyCode::KEY_Z)
 	{
-		m_text += (char)key;
+		if (key >= KeyCode::KEY_A)
+		{
+			m_text += (char)((int)key + (Input::isKeyPressed(KeyCode::KEY_LEFT_SHIFT) ? 0 : 32));
+		}
+		else
+		{
+			m_text += (char)key;
+		}
 	}
 	else if (key == KeyCode::KEY_BACKSPACE && !m_text.empty())
 	{

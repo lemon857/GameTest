@@ -28,6 +28,8 @@ namespace GUI
 
 		void set_position(glm::vec2 pos) override;
 		void set_scale(glm::vec2 scale) override;
+
+		bool value();
 	private:
 		Sprite* m_backgroung;
 		Sprite* m_check;

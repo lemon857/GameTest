@@ -72,6 +72,12 @@ std::string GUI::InputField::get_text()
 	return m_text;
 }
 
+void GUI::InputField::set_text(std::string text)
+{
+	m_text = text;
+	m_textRenderer->set_text(m_text);
+}
+
 bool GUI::InputField::get_focus()
 {
 	return m_isFocused;

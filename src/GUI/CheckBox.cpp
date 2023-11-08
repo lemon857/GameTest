@@ -66,4 +66,9 @@ namespace GUI
 		m_scale = scale;
 	}
 
+	bool CheckBox::value()
+	{
+		return m_value;
+	}
+
 }

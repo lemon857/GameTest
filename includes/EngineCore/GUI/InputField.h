@@ -39,6 +39,7 @@ namespace GUI
 		void set_scale(glm::vec2 scale) override;
 
 		std::string get_text();
+		void set_text(std::string text);
 
 		bool get_focus();
 		void set_focus(bool focus);

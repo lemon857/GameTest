@@ -97,6 +97,8 @@ set(ENGINE_PRIVATE_INCLUDES
   
 	includes/EngineCore/Light/DirectionalLight.h
 	includes/EngineCore/Light/PointerLight.h
+
+	includes/EngineCore/Network/WinSock.h
 )
 
 set(ENGINE_PRIVATE_SOURCES
@@ -182,6 +184,8 @@ set(ENGINE_PRIVATE_SOURCES
 	src/GUI/Button.cpp
 	src/GUI/InputField.cpp
 	src/GUI/CheckBox.cpp
+
+	src/Network/WinSock.cpp
 )
 
 

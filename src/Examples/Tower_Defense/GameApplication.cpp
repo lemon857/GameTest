@@ -645,8 +645,8 @@ void GameApp::init_gui()
     m_gui_place_menu->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
         "-message-", glm::vec3(0.f), glm::vec2(11.f, 80.f), glm::vec2(1.f), "Message"));
 
-    WinSock::set_receive([&](std::string text) {
-        m_gui_place_menu->get_element("Message")->lead<GUI::TextRenderer>()->set_text(text);
+    WinSock::set_receive([&](WinSock::DataPacket data_pack) {
+        m_gui_place_menu->get_element("Message")->lead<GUI::TextRenderer>()->set_text(data_pack.data_buff);
         });
 
     m_gui_place_menu->add_element(new GUI::InputField(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),

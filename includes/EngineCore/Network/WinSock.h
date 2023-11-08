@@ -11,6 +11,21 @@
 class WinSock
 {
 public:
+	enum TypeDataPacket
+	{
+		text = 1,
+		binData = 2,
+		answer = 3,
+		uncorrect = 0
+	};
+
+	struct DataPacket
+	{
+		bool is_read;
+		char* data_buff;
+		TypeDataPacket type;
+	};
+	
 	WinSock() = delete;
 	~WinSock() = delete;
 
@@ -27,13 +42,16 @@ public:
 
 	static void send_text(std::string text);
 
-	static void set_receive(std::function<void(std::string)> func);
+	static int send_data(char* data, int size, TypeDataPacket type);
+
+	static void set_receive(std::function<void(DataPacket)> func);
 
 private:
-	static std::function<void(std::string)> m_receive;
+	static std::function<void(DataPacket)> m_receive;
 
 	static SOCKET m_sock;
 	static SOCKET m_client;
+
 	static bool m_isServer;
 	static bool m_isWorking;
 };

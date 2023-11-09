@@ -645,8 +645,15 @@ void GameApp::init_gui()
     m_gui_place_menu->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
         "-message-", glm::vec3(0.f), glm::vec2(11.f, 80.f), glm::vec2(1.f), "Message"));
 
-    WinSock::set_receive([&](WinSock::DataPacket data_pack) {
-        m_gui_place_menu->get_element("Message")->lead<GUI::TextRenderer>()->set_text(data_pack.data_buff);
+    m_gui_place_menu->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
+        "-ping-", glm::vec3(0.f), glm::vec2(11.f, 90.f), glm::vec2(1.f), "Ping"));
+
+    WinSock::set_receive([&](char* data, int size) {
+        m_gui_place_menu->get_element("Message")->lead<GUI::TextRenderer>()->set_text(data);
+        });
+
+    WinSock::set_ping_callback([&](double ping) {
+        m_gui_place_menu->get_element("Ping")->lead<GUI::TextRenderer>()->set_text(std::to_string(ping) + " ms");
         });
 
     m_gui_place_menu->add_element(new GUI::InputField(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
@@ -679,7 +686,7 @@ void GameApp::init_gui()
         });
 
     m_gui_place_menu->get_element("SendMessage")->lead<GUI::InputField>()->set_enter_callback([&](std::string text) {
-        WinSock::send_text(text);
+        WinSock::send_data(text.data(), text.length());
         });
 
     m_gui_place_menu->get_element("Quit")->set_click_callback([&]()

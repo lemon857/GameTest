@@ -1,15 +1,21 @@
 #include "EngineCore/Network/WinSock.h"
 
 #include "EngineCore/System/Log.h"
+#include "EngineCore/System/Stopwatch.h"
 
 #include <vector>
 #include <thread>
 
+#define WS_CODE_DATA (char)100
+#define WS_CODE_ANSW (char)112
+
+Stopwatch WinSock::m_ping_timer;
 SOCKET WinSock::m_sock;
 SOCKET WinSock::m_client;
 bool WinSock::m_isServer;
 bool WinSock::m_isWorking;
-std::function<void(WinSock::DataPacket)> WinSock::m_receive;
+std::function<void(char* data, int size)> WinSock::m_receive;
+std::function<void(double ping)> WinSock::m_ping_callback;
 
 int WinSock::init_WinSock(bool isServer)
 {
@@ -73,11 +79,15 @@ void WinSock::open_client(const char* addr, unsigned short port)
 	else
 		LOG_INFO("Connection established SUCCESSFULLY. Ready to send a message to Server");
 
+
 	
 
 	std::thread t([&]() {
 		char buff[BUFF_SIZE];							// Buffers for sending and receiving data
 		short packet_size = 0;
+		char buf[5];
+		buf[0] = WS_CODE_ANSW;
+		buf[1] = 5;
 		while (m_isWorking) {
 
 			packet_size = recv(m_sock, buff, BUFF_SIZE, 0);
@@ -89,16 +99,17 @@ void WinSock::open_client(const char* addr, unsigned short port)
 			}
 			else
 			{
-				std::string str =
-					"type:" + std::to_string((short)buff[0]) +
-					" lenght: " + std::to_string((int)buff[1]) +
-					" count: " + std::to_string((int)buff[5]) + " text: ";
-				m_receive({ false, buff, (TypeDataPacket)((char)buff[0]) });
-				for (size_t i = 0; i < (int)(buff[5]); i++)
+				if (buff[0] == WS_CODE_DATA)
 				{
-					str += buff[i + 9];
+					m_receive(&buff[5], (int)buff[1]);
+					buf[0] = WS_CODE_ANSW;
+					send(m_sock, buf, 5, 0);
+					LOG_INFO("Data: {0}", &buff[5]);
 				}
-				LOG_INFO("Receive message: {0}", str);
+				else if (buff[0] == WS_CODE_ANSW)
+				{
+					m_ping_callback(m_ping_timer.stop());
+				}
 			}
 		}
 		close_WinSock();
@@ -180,7 +191,10 @@ void WinSock::open_server(const char* addr, unsigned short port)
 		}
 
 		char buff[BUFF_SIZE];							// Buffers for sending and receiving data
-		short packet_size = 0;
+		short packet_size = 0; 
+		char buf[5];
+		buf[0] = WS_CODE_ANSW;
+		buf[1] = 5;
 		while (m_isWorking) {
 
 			packet_size = recv(m_client, buff, BUFF_SIZE, 0);
@@ -192,16 +206,16 @@ void WinSock::open_server(const char* addr, unsigned short port)
 			}
 			else
 			{
-				std::string str =
-					"type:" + std::to_string(int((char)buff[0])) +
-					" lenght: " + std::to_string((int)buff[1]) +
-					" count: " + std::to_string((int)buff[5]) + " text: ";
-				m_receive({ false, buff, (TypeDataPacket)((char)buff[0]) });
-				for (size_t i = 0; i < (int)(buff[5]); i++)
+				if (buff[0] == WS_CODE_DATA)
 				{
-					str += buff[i + 9];
+					m_receive(&buff[5], (int)buff[1]);					
+					send(m_client, buf, 5, 0);
+					LOG_INFO("Data: {0}", &buff[5]);
 				}
-				LOG_INFO("Receive message: {0}", str);
+				else if (buff[0] == WS_CODE_ANSW)
+				{
+					m_ping_callback(m_ping_timer.stop());
+				}
 			}
 		}
 		close_WinSock();
@@ -210,32 +224,21 @@ void WinSock::open_server(const char* addr, unsigned short port)
 	t.detach();
 }
 
-void WinSock::send_text(std::string text)
-{
-	char buff[BUFF_SIZE];
-
-	buff[0] = (int)text.length();
-
-	char* tempData = text.data();
-
-	for (size_t i = 0; i < text.length(); i++)
-	{
-		buff[i + 4] = tempData[i];
-	}
-
-	send_data(buff, sizeof(int) + text.length(), TypeDataPacket::text);
-}
-
-void WinSock::set_receive(std::function<void(DataPacket)> func)
+void WinSock::set_receive(std::function<void(char* data, int size)> func)
 {
 	m_receive = func;
 }
 
-int WinSock::send_data(char* data, int size, TypeDataPacket type)
+void WinSock::set_ping_callback(std::function<void(double ping)> func)
+{
+	m_ping_callback = func;
+}
+
+int WinSock::send_data(char* data, int size)
 {
 	char buff[BUFF_SIZE];
 
-	buff[0] = (char)(type);
+	buff[0] = WS_CODE_DATA;
 
 	buff[1] = size + 5;
 
@@ -249,5 +252,6 @@ int WinSock::send_data(char* data, int size, TypeDataPacket type)
 		close_WinSock();
 		return -1;
 	}
+	m_ping_timer.start();
 	return 0;
 }

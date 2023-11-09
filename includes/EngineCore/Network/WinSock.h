@@ -8,24 +8,12 @@
 #include <string>
 #include <functional>
 
+class Stopwatch;
+
 class WinSock
 {
 public:
-	enum TypeDataPacket
-	{
-		text = 1,
-		binData = 2,
-		answer = 3,
-		uncorrect = 0
-	};
 
-	struct DataPacket
-	{
-		bool is_read;
-		char* data_buff;
-		TypeDataPacket type;
-	};
-	
 	WinSock() = delete;
 	~WinSock() = delete;
 
@@ -40,18 +28,20 @@ public:
 	static void open_server(const char* addr, unsigned short port);
 	static void open_client(const char* addr, unsigned short port);
 
-	static void send_text(std::string text);
+	static int send_data(char* data, int size);
 
-	static int send_data(char* data, int size, TypeDataPacket type);
+	static void set_receive(std::function<void(char* data, int size)> func);
 
-	static void set_receive(std::function<void(DataPacket)> func);
+	static void set_ping_callback(std::function<void(double ping)> func);
 
 private:
-	static std::function<void(DataPacket)> m_receive;
+	static std::function<void(char* data, int size)> m_receive;
+	static std::function<void(double ping)> m_ping_callback;
 
 	static SOCKET m_sock;
 	static SOCKET m_client;
 
 	static bool m_isServer;
 	static bool m_isWorking;
+	static Stopwatch m_ping_timer;
 };

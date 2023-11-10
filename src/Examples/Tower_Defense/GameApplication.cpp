@@ -562,8 +562,10 @@ void GameApp::init_gui()
         "Enemies: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, 96.f), glm::vec2(0.5f), "enemies", false));
 
     m_gui_debug->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        "Kills: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, 94.f), glm::vec2(0.5f), "kills", false));        
+        "Kills: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, 94.f), glm::vec2(0.5f), "kills", false));   
 
+    m_gui_debug->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
+        "Ping: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, 92.f), glm::vec2(0.5f), "ping", false));
     // lose window ---------------------------------------------------------------------------
     m_gui->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
         "You lose!", glm::vec3(1.f, 0.1f, 0.1f), glm::vec2(41.f, 57.f), glm::vec2(2.f), "Lose text"));
@@ -645,15 +647,12 @@ void GameApp::init_gui()
     m_gui_place_menu->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
         "-message-", glm::vec3(0.f), glm::vec2(11.f, 80.f), glm::vec2(1.f), "Message"));
 
-    m_gui_place_menu->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        "-ping-", glm::vec3(0.f), glm::vec2(11.f, 90.f), glm::vec2(1.f), "Ping"));
-
     WinSock::set_receive([&](char* data, int size) {
         m_gui_place_menu->get_element("Message")->lead<GUI::TextRenderer>()->set_text(data);
         });
 
     WinSock::set_ping_callback([&](double ping) {
-        m_gui_place_menu->get_element("Ping")->lead<GUI::TextRenderer>()->set_text(std::to_string(ping) + " ms");
+        m_gui_debug->get_element("ping")->lead<GUI::TextRenderer>()->set_text(std::to_string(ping) + " ms");
         });
 
     m_gui_place_menu->add_element(new GUI::InputField(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),

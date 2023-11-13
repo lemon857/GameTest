@@ -7,7 +7,7 @@
 namespace GUI
 {
 	CheckBox::CheckBox(Sprite* backgroung, Sprite* checkFlag, glm::vec2 pos, glm::vec2 scale, std::string name)
-		: GUI_element(backgroung->get_material(), name)
+		: GUI_element(name)
 		, m_backgroung(std::move(backgroung))
 		, m_check(std::move(checkFlag))
 		, m_value(false)

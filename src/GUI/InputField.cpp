@@ -6,18 +6,20 @@
 #include "EngineCore/GUI/Sprite.h"
 
 #include "EngineCore/Renderer/ShaderProgram.h"
-#include "EngineCore/Resources/ResourceManager.h"
 
 #include "EngineCore/System/Log.h"
 #include "EngineCore/Input.h"
 
+#include "EngineCore/Keys.h"
+
 GUI::InputField::InputField(Sprite* face, glm::vec2 pos, glm::vec2 scale,
-	std::string name, std::string shaderName,
+	std::string name, std::shared_ptr<RenderEngine::ShaderProgram> shader,
 	std::shared_ptr<Font> font, glm::vec3 textColor)
-	: GUI_element(face->get_material(), name)
+	: GUI_element(name)
 	, m_face(std::move(face))
-	, m_textRenderer(std::make_unique<TextRenderer>(font, ResourceManager::getShaderProgram(shaderName), "", textColor, pos, glm::vec2(1.f)))
+	, m_textRenderer(std::make_unique<TextRenderer>(std::move(font), std::move(shader), "", textColor, pos, glm::vec2(1.f)))
 	, m_isFocused(false)
+	, m_isClicked(false)
 {
 	m_position_p = pos;
 	m_scale_p = scale;
@@ -39,6 +41,7 @@ void GUI::InputField::on_render_prj(glm::mat4& prj)
 
 void GUI::InputField::on_press()
 {
+	m_isClicked = true;
 	if (m_isFocused)
 	{
 		m_face->setSubTexture(NAME_TEXTURE_STATIC);
@@ -53,6 +56,15 @@ void GUI::InputField::on_press()
 
 void GUI::InputField::on_release()
 {
+	if (m_isClicked) // Flag for unfocus after clicking on any object
+	{
+		m_isClicked = false;
+	}
+	else
+	{
+		m_face->setSubTexture(NAME_TEXTURE_STATIC);
+		m_isFocused = false;
+	}
 }
 
 void GUI::InputField::set_position(glm::vec2 pos)

@@ -33,6 +33,7 @@
 #include "EngineCore/GUI/Sprite.h"
 #include "EngineCore/GUI/InputField.h"
 #include "EngineCore/GUI/CheckBox.h"
+#include "EngineCore/GUI/ChatBox.h"
 
 #include "EngineCore/Network/WinSock.h"
 
@@ -566,6 +567,10 @@ void GameApp::init_gui()
 
     m_gui_debug->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
         "Ping: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, 92.f), glm::vec2(0.5f), "ping", false));
+
+    m_gui_debug->add_element(new GUI::ChatBox(new GUI::Sprite(ResourceManager::getMaterial("defaultSprite")),
+        glm::vec2(49.f, 49.f), glm::vec2(15.f), "Chat", 5, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"), glm::vec3(1.f)));
+    
     // lose window ---------------------------------------------------------------------------
     m_gui->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
         "You lose!", glm::vec3(1.f, 0.1f, 0.1f), glm::vec2(41.f, 57.f), glm::vec2(2.f), "Lose text"));
@@ -643,7 +648,7 @@ void GameApp::init_gui()
     m_gui_place_menu->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
             glm::vec2(11.f, 17.f), glm::vec2(10.f, 5.f),
             "Restart", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
-    // ========================================================================================
+
     m_gui_place_menu->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
         "-message-", glm::vec3(0.f), glm::vec2(11.f, 80.f), glm::vec2(1.f), "Message"));
 
@@ -655,18 +660,19 @@ void GameApp::init_gui()
         m_gui_debug->get_element("ping")->lead<GUI::TextRenderer>()->set_text(std::to_string(ping) + " ms");
         });
 
+    // ========================================================================================
     m_gui_place_menu->add_element(new GUI::InputField(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        glm::vec2(11.f, 60.f), glm::vec2(10.f, 5.f), "InputTest", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
+        glm::vec2(11.f, 60.f), glm::vec2(10.f, 5.f), "InputTest", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f)));
 
     m_gui_place_menu->add_element(new GUI::InputField(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        glm::vec2(11.f, 71.f), glm::vec2(10.f, 5.f), "SendMessage", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
+        glm::vec2(11.f, 71.f), glm::vec2(10.f, 5.f), "SendMessage", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f)));
 
     m_gui_place_menu->add_element(new GUI::CheckBox(
         new GUI::Sprite(ResourceManager::getMaterial("checkbox_bg")), new GUI::Sprite(ResourceManager::getMaterial("checkbox_mark")),
         glm::vec2(11.f, 49.f), glm::vec2(5.f), "checkbox"));
 
     m_gui_place_menu->add_element(new GUI::Sprite(ResourceManager::getMaterial("defaultSprite"), "default",
-        glm::vec2(100.f), glm::vec2(100.f), "z.BG")); // Crutch but idk how resolve this now
+        glm::vec2(100.f), glm::vec2(100.f), "z.BG")); // Crutch but idk how resolve this now    
 
     m_gui_place_menu->get_element("InputTest")->lead<GUI::InputField>()->set_text("0.0.0.0");
 
@@ -685,9 +691,10 @@ void GameApp::init_gui()
         });
 
     m_gui_place_menu->get_element("SendMessage")->lead<GUI::InputField>()->set_enter_callback([&](std::string text) {
+        m_gui_debug->get_element("Chat")->lead<GUI::ChatBox>()->add_message(text);
         WinSock::send_data(text.data(), text.length());
         });
-
+    // =============================================================================================
     m_gui_place_menu->get_element("Quit")->set_click_callback([&]()
         {
             m_pCloseWindow = true;

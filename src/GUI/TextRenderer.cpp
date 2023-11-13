@@ -22,7 +22,7 @@ namespace GUI
         , m_color(color)
         , m_text(text)
         , m_isCenterCoords(isCenterCoord)
-        , GUI_element(nullptr, name)
+        , GUI_element(name)
 	{
         m_position_p = pos;
         m_scale_p = scale;

@@ -23,7 +23,7 @@ namespace GUI
 	{
 	public:
 		// require stay material prop first in all childrens
-		GUI_element(std::shared_ptr<RenderEngine::Material> pMaterial, std::string name)
+		GUI_element(std::string name, std::shared_ptr<RenderEngine::Material> pMaterial = nullptr)
 			: m_name(name)
 			, m_pMaterial(std::move(pMaterial))
 			, m_position_p(glm::vec2(0))

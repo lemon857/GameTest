@@ -2,8 +2,6 @@
 
 #include "EngineCore/GUI/GUI_element.h"
 
-#include "EngineCore/Keys.h"
-
 #include <string>
 #include <memory>
 
@@ -11,10 +9,12 @@
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
 
+enum class KeyCode;
+
 namespace RenderEngine
 {
 	class Material;
-	class ShaderProrgam;
+	class ShaderProgram;
 }
 
 namespace GUI
@@ -27,7 +27,7 @@ namespace GUI
 	{
 	public:
 		InputField(Sprite* face, glm::vec2 pos, glm::vec2 scale,
-			std::string name, std::string shaderName, std::shared_ptr<Font> font, glm::vec3 textColor);
+			std::string name, std::shared_ptr<RenderEngine::ShaderProgram> shader, std::shared_ptr<Font> font, glm::vec3 textColor);
 		~InputField();
 
 		void on_render_prj(glm::mat4& prj) override;
@@ -55,5 +55,6 @@ namespace GUI
 		std::string m_text;
 
 		bool m_isFocused;
+		bool m_isClicked;
 	};
 }

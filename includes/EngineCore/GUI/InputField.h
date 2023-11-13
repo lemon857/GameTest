@@ -27,7 +27,8 @@ namespace GUI
 	{
 	public:
 		InputField(Sprite* face, glm::vec2 pos, glm::vec2 scale,
-			std::string name, std::shared_ptr<RenderEngine::ShaderProgram> shader, std::shared_ptr<Font> font, glm::vec3 textColor);
+			std::string name, std::shared_ptr<RenderEngine::ShaderProgram> shader, 
+			std::shared_ptr<Font> font, glm::vec3 textColor, bool clear_after_send = false);
 		~InputField();
 
 		void on_render_prj(glm::mat4& prj) override;
@@ -56,5 +57,6 @@ namespace GUI
 
 		bool m_isFocused;
 		bool m_isClicked;
+		bool m_clear_after_send;
 	};
 }

@@ -48,13 +48,17 @@ namespace GUI
 		{
 			m_chat_messages.remove((size_t)0); // need fix memory leak
 		}
-		auto text = new TextRenderer(m_font, m_shader, message, m_color, m_position, glm::vec2(1.f));
-		text->set_position(glm::vec2(m_position.x, (m_position.y - m_scale.y) + 20.f));
+		auto text = new TextRenderer(m_font, m_shader, message, m_color, m_position, glm::vec2(1.f), "default", false);
+		text->set_position(glm::vec2(m_position.x - m_scale.x, (m_position.y - m_scale.y) + 20.f));
 		text->set_scale(m_scale);
 		for (size_t i = 0; i < m_chat_messages.size(); i++)
 		{
-			m_chat_messages[(i - m_chat_messages.size() + 1) * -1]->set_position(glm::vec2(m_position.x, (m_position.y - m_scale.y) + 20.f + ((i + 1) * 50.f)));
+			m_chat_messages[(i - m_chat_messages.size() + 1) * -1]->set_position(glm::vec2(m_position.x - m_scale.x, (m_position.y - m_scale.y) + 20.f + ((i + 1) * 50.f)));
 		}
 		m_chat_messages.push_back(text);		
+	}
+	void ChatBox::clear()
+	{
+		m_chat_messages.clear();
 	}
 }

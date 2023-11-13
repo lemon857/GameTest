@@ -14,12 +14,13 @@
 
 GUI::InputField::InputField(Sprite* face, glm::vec2 pos, glm::vec2 scale,
 	std::string name, std::shared_ptr<RenderEngine::ShaderProgram> shader,
-	std::shared_ptr<Font> font, glm::vec3 textColor)
+	std::shared_ptr<Font> font, glm::vec3 textColor, bool clear_after_send)
 	: GUI_element(name)
 	, m_face(std::move(face))
 	, m_textRenderer(std::make_unique<TextRenderer>(std::move(font), std::move(shader), "", textColor, pos, glm::vec2(1.f)))
 	, m_isFocused(false)
 	, m_isClicked(false)
+	, m_clear_after_send(clear_after_send)
 {
 	m_position_p = pos;
 	m_scale_p = scale;
@@ -130,7 +131,8 @@ void GUI::InputField::press_button(KeyCode key)
 	else if (key == KeyCode::KEY_ENTER && !m_text.empty() && m_on_enter != nullptr)
 	{
 		m_on_enter(m_text);
-		set_focus(false);
+		if (m_clear_after_send) m_text = "";
+		else set_focus(false);
 	}
 	m_textRenderer->set_text(m_text);
 }

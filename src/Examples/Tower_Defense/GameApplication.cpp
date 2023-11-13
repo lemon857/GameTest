@@ -119,7 +119,7 @@ void GameApp::on_key_update(const double delta)
 {
     if (m_isLose 
         || m_gui_place_menu->get_element("InputTest")->lead<GUI::InputField>()->get_focus() 
-        || m_gui_place_menu->get_element("SendMessage")->lead<GUI::InputField>()->get_focus()) return;
+        || m_gui_debug->get_element("SendMessage")->lead<GUI::InputField>()->get_focus()) return;
 
     glm::vec3 movement_delta{ 0,0,0 };
     glm::vec3 rotation_delta{ 0,0,0 };
@@ -432,7 +432,7 @@ void GameApp::on_ui_render()
 {
     while (!m_chat_mes.empty())
     {
-        m_gui_place_menu->get_element("Chat")->lead<GUI::ChatBox>()->add_message(m_chat_mes.front());
+        m_gui_debug->get_element("Chat")->lead<GUI::ChatBox>()->add_message(m_chat_mes.front());
         m_chat_mes.pop();
     }
     // ==============
@@ -478,7 +478,7 @@ bool GameApp::init_events()
             }
             Input::pressKey(e.key_code);
             m_gui_place_menu->get_element("InputTest")->lead<GUI::InputField>()->press_button(e.key_code);
-            m_gui_place_menu->get_element("SendMessage")->lead<GUI::InputField>()->press_button(e.key_code);
+            m_gui_debug->get_element("SendMessage")->lead<GUI::InputField>()->press_button(e.key_code);
         });
     m_event_dispather.add_event_listener<EventKeyReleased>([&](EventKeyReleased& e)
         {
@@ -514,6 +514,7 @@ bool GameApp::init_events()
     m_event_dispather.add_event_listener<EventMouseButtonPressed>([&](EventMouseButtonPressed& e)
         {
             m_gui->on_mouse_press(e.x_pos, e.y_pos);
+            m_gui_debug->on_mouse_press(e.x_pos, e.y_pos);
             m_gui_place_menu->on_mouse_press(e.x_pos, e.y_pos);
             m_gui_place_settings->on_mouse_press(e.x_pos, e.y_pos);
             if (is_event_logging_active) LOG_INFO("[EVENT] Mouse button pressed at ({0}x{1})", e.x_pos, e.y_pos);
@@ -526,6 +527,7 @@ bool GameApp::init_events()
         {
             isKeyPressedmouse = false;
             m_gui->on_mouse_release(e.x_pos, e.y_pos);
+            m_gui_debug->on_mouse_release(e.x_pos, e.y_pos);
             m_gui_place_menu->on_mouse_release(e.x_pos, e.y_pos);
             m_gui_place_settings->on_mouse_release(e.x_pos, e.y_pos);
             if (is_event_logging_active) LOG_INFO("[EVENT] Mouse button released at ({0}x{1})", e.x_pos, e.y_pos);
@@ -574,6 +576,17 @@ void GameApp::init_gui()
     m_gui_debug->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
         "Ping: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, 92.f), glm::vec2(0.5f), "ping", false));
         
+    m_gui_debug->add_element(new GUI::ChatBox(new GUI::Sprite(ResourceManager::getMaterial("defaultSprite")),
+        glm::vec2(16.f, 56.f), glm::vec2(15.f, 30.f), "Chat", 12, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"), glm::vec3(1.f)));
+
+    m_gui_debug->add_element(new GUI::InputField(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(11.f, 20.f), glm::vec2(10.f, 5.f), "SendMessage", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), true));
+    
+    m_gui_debug->get_element("SendMessage")->lead<GUI::InputField>()->set_enter_callback([&](std::string text) {
+        m_chat_mes.push("Me: " + text);
+        WinSock::send_data(text.data(), text.length());
+        });
+
     // lose window ---------------------------------------------------------------------------
     m_gui->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
         "You lose!", glm::vec3(1.f, 0.1f, 0.1f), glm::vec2(41.f, 57.f), glm::vec2(2.f), "Lose text"));
@@ -652,12 +665,7 @@ void GameApp::init_gui()
             glm::vec2(11.f, 17.f), glm::vec2(10.f, 5.f),
             "Restart", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
 
-    /*m_gui_place_menu->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        "-message-", glm::vec3(0.f), glm::vec2(11.f, 80.f), glm::vec2(1.f), "Message"));*/
-
     WinSock::set_receive([&](char* data, int size) {       
-        //m_gui_place_menu->get_element("Message")->lead<GUI::TextRenderer>()->set_text(data);
-        //m_gui_place_menu->get_element("Chat")->lead<GUI::ChatBox>()->add_message("123");
         m_chat_mes.push("He: " + std::string(data));
         });
 
@@ -668,16 +676,10 @@ void GameApp::init_gui()
     // ========================================================================================
     m_gui_place_menu->add_element(new GUI::InputField(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(11.f, 60.f), glm::vec2(10.f, 5.f), "InputTest", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f)));
-
-    m_gui_place_menu->add_element(new GUI::InputField(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        glm::vec2(11.f, 71.f), glm::vec2(10.f, 5.f), "SendMessage", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f)));
-
+    
     m_gui_place_menu->add_element(new GUI::CheckBox(
         new GUI::Sprite(ResourceManager::getMaterial("checkbox_bg")), new GUI::Sprite(ResourceManager::getMaterial("checkbox_mark")),
         glm::vec2(11.f, 49.f), glm::vec2(5.f), "checkbox"));
-
-    m_gui_place_menu->add_element(new GUI::ChatBox(new GUI::Sprite(ResourceManager::getMaterial("defaultSprite")),
-        glm::vec2(49.f, 49.f), glm::vec2(15.f), "Chat", 5, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"), glm::vec3(1.f)));
 
     m_gui_place_menu->add_element(new GUI::Sprite(ResourceManager::getMaterial("defaultSprite"), "default",
         glm::vec2(100.f), glm::vec2(100.f), "z.BG")); // Crutch but idk how resolve this now    
@@ -696,12 +698,9 @@ void GameApp::init_gui()
                 WinSock::init_WinSock(false);
                 WinSock::open_client(text.c_str(), 20746);
             }
+            m_gui_debug->get_element("Chat")->lead<GUI::ChatBox>()->clear();
         });
-
-    m_gui_place_menu->get_element("SendMessage")->lead<GUI::InputField>()->set_enter_callback([&](std::string text) {
-        m_chat_mes.push("Me: " + text);
-        WinSock::send_data(text.data(), text.length());
-        });
+        
     // =============================================================================================
     m_gui_place_menu->get_element("Quit")->set_click_callback([&]()
         {

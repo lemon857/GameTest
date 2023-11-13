@@ -32,6 +32,8 @@ namespace GUI
 		void set_scale(glm::vec2 scale) override;
 
 		void add_message(std::string message);
+
+		void clear();
 	private:
 		int m_max_count;
 

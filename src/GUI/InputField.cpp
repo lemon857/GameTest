@@ -124,6 +124,10 @@ void GUI::InputField::press_button(KeyCode key)
 			m_text += (char)key;
 		}
 	}
+	else if (key == KeyCode::KEY_ESCAPE)
+	{
+		set_focus(false);
+	}
 	else if (key == KeyCode::KEY_BACKSPACE && !m_text.empty())
 	{
 		m_text = m_text.substr(0, m_text.length() - 1);

@@ -56,6 +56,8 @@ GameApp::~GameApp()
 
 bool GameApp::init()
 {
+    WinSock::init_WinSock();
+
     m_cam = new Camera(glm::vec3(0), glm::vec3(0));
 
     m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
@@ -430,19 +432,20 @@ void GameApp::on_update(const double delta)
 
 void GameApp::on_ui_render()
 {
+    // for correct write message in other thread
     while (!m_chat_mes.empty())
     {
         m_gui_debug->get_element("Chat")->lead<GUI::ChatBox>()->add_message(m_chat_mes.front());
         m_chat_mes.pop();
     }
-    // ==============
+    // =========================================
     m_gui->on_render();
-    if (is_debug_active) m_gui_debug->on_render();
     if (is_gui_active)
     {
         if (gui_window == main) m_gui_place_menu->on_render();
         else if (gui_window == settings) m_gui_place_settings->on_render();
     }
+    else if (is_debug_active) m_gui_debug->on_render();
 }
 
 bool GameApp::init_events()
@@ -577,10 +580,10 @@ void GameApp::init_gui()
         "Ping: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, 92.f), glm::vec2(0.5f), "ping", false));
         
     m_gui_debug->add_element(new GUI::ChatBox(new GUI::Sprite(ResourceManager::getMaterial("defaultSprite")),
-        glm::vec2(16.f, 56.f), glm::vec2(15.f, 30.f), "Chat", 12, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"), glm::vec3(1.f)));
+        glm::vec2(16.f, 45.f), glm::vec2(15.f, 30.f), "Chat", 12, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"), glm::vec3(1.f)));
 
     m_gui_debug->add_element(new GUI::InputField(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        glm::vec2(11.f, 20.f), glm::vec2(10.f, 5.f), "SendMessage", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), true));
+        glm::vec2(11.f, 7.f), glm::vec2(10.f, 5.f), "SendMessage", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), true));
     
     m_gui_debug->get_element("SendMessage")->lead<GUI::InputField>()->set_enter_callback([&](std::string text) {
         m_chat_mes.push("Me: " + text);
@@ -665,7 +668,7 @@ void GameApp::init_gui()
             glm::vec2(11.f, 17.f), glm::vec2(10.f, 5.f),
             "Restart", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
 
-    WinSock::set_receive([&](char* data, int size) {       
+    WinSock::set_receive_callback([&](char* data, int size) {       
         m_chat_mes.push("He: " + std::string(data));
         });
 
@@ -673,32 +676,44 @@ void GameApp::init_gui()
         m_gui_debug->get_element("ping")->lead<GUI::TextRenderer>()->set_text(std::to_string(ping) + " ms");
         });
 
+    WinSock::set_disconnect_callback([&]() {
+        m_chat_mes.push("Disconnect!");
+        });
+
     // ========================================================================================
     m_gui_place_menu->add_element(new GUI::InputField(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(11.f, 60.f), glm::vec2(10.f, 5.f), "InputTest", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f)));
-    
+
+    m_gui_place_menu->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(11.f, 48.f), glm::vec2(10.f, 5.f),
+        "Disconnect", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
+
     m_gui_place_menu->add_element(new GUI::CheckBox(
         new GUI::Sprite(ResourceManager::getMaterial("checkbox_bg")), new GUI::Sprite(ResourceManager::getMaterial("checkbox_mark")),
-        glm::vec2(11.f, 49.f), glm::vec2(5.f), "checkbox"));
+        glm::vec2(11.f, 72.f), glm::vec2(5.f), "checkbox"));
 
     m_gui_place_menu->add_element(new GUI::Sprite(ResourceManager::getMaterial("defaultSprite"), "default",
         glm::vec2(100.f), glm::vec2(100.f), "z.BG")); // Crutch but idk how resolve this now    
+
+    m_gui_place_menu->get_element("Disconnect")->set_click_callback([&]() {
+        WinSock::disconnect();
+        m_chat_mes.push("Disconnect!");
+        });
 
     m_gui_place_menu->get_element("InputTest")->lead<GUI::InputField>()->set_text("127.0.0.1");
 
     m_gui_place_menu->get_element("InputTest")->lead<GUI::InputField>()->set_enter_callback([&](std::string text)
         {
+            m_gui_debug->get_element("Chat")->lead<GUI::ChatBox>()->clear();
             if (m_gui_place_menu->get_element("checkbox")->lead<GUI::CheckBox>()->value())
             {
-                WinSock::init_WinSock(true);
                 WinSock::open_server(text.c_str(), 20746);
             }
             else
             {
-                WinSock::init_WinSock(false);
                 WinSock::open_client(text.c_str(), 20746);
             }
-            m_gui_debug->get_element("Chat")->lead<GUI::ChatBox>()->clear();
+            m_chat_mes.push("Wait connection!");
         });
         
     // =============================================================================================

@@ -16,10 +16,11 @@ SOCKET WinSock::m_sock;
 SOCKET WinSock::m_client;
 bool WinSock::m_isServer;
 bool WinSock::m_isWorking;
-std::function<void(char* data, int size)> WinSock::m_receive;
+std::function<void()> WinSock::m_disconnect_callback;
+std::function<void(char* data, int size)> WinSock::m_receive_callback;
 std::function<void(double ping)> WinSock::m_ping_callback;
 
-int WinSock::init_WinSock(bool isServer)
+int WinSock::init_WinSock()
 {
 	// WinSock initialization
 	WSADATA wsData;
@@ -32,22 +33,30 @@ int WinSock::init_WinSock(bool isServer)
 	else
 		LOG_INFO("WinSock initialization is OK");
 
-	m_isServer = isServer;
-	m_isWorking = true;
+	m_isServer = false;
+
 	return 0;
 }
 
 void WinSock::close_WinSock()
-{
-	m_isWorking = false;
-	if (m_isServer) closesocket(m_client);
-	closesocket(m_sock);
+{	
 	WSACleanup();
 	LOG_INFO("WinSock shuit down");
 }
 
+void WinSock::disconnect()
+{
+	m_isWorking = false;
+	if (m_isServer) closesocket(m_client);
+	closesocket(m_sock);
+	m_disconnect_callback();
+	LOG_INFO("Disconnect");
+}
+
 void WinSock::open_client(const char* addr, unsigned short port)
 {
+	m_isWorking = true;
+	m_isServer = false;
 	// init ip addr
 	in_addr ip_to_num;
 
@@ -60,7 +69,7 @@ void WinSock::open_client(const char* addr, unsigned short port)
 
 	if (m_sock == INVALID_SOCKET) {
 		LOG_ERROR("Error initialization socket # {0}", WSAGetLastError());
-		close_WinSock();
+		disconnect();
 		return;
 	}
 	else
@@ -75,7 +84,7 @@ void WinSock::open_client(const char* addr, unsigned short port)
 
 	if (connect(m_sock, (sockaddr*)&Info, sizeof(Info)) != 0) {
 		LOG_ERROR("Connection to Server is FAILED. Error # {0}", WSAGetLastError());		
-		close_WinSock();
+		disconnect();
 		return;
 	}
 	else
@@ -93,7 +102,7 @@ void WinSock::open_client(const char* addr, unsigned short port)
 
 			if (packet_size == SOCKET_ERROR) {
 				LOG_ERROR("Can't receive message from Server. Error # {0}", WSAGetLastError());
-				close_WinSock();
+				disconnect();
 				return;
 			}
 			else
@@ -102,7 +111,7 @@ void WinSock::open_client(const char* addr, unsigned short port)
 				{
 					int size = (int)buff[1];
 					std::string str = std::string(&buff[WS_DATA_PACKET_INFO_SIZE]).substr(0, size - WS_DATA_PACKET_INFO_SIZE);
-					m_receive(str.data(), size);
+					m_receive_callback(str.data(), size);
 					send(m_sock, buf, WS_DATA_PACKET_INFO_SIZE, 0);
 					LOG_INFO("Data: {0}", str);
 				}
@@ -112,7 +121,7 @@ void WinSock::open_client(const char* addr, unsigned short port)
 				}
 			}
 		}
-		close_WinSock();
+		disconnect();
 		});
 	
 	t.detach();	
@@ -120,6 +129,8 @@ void WinSock::open_client(const char* addr, unsigned short port)
 
 void WinSock::open_server(const char* addr, unsigned short port)
 {
+	m_isWorking = true;
+	m_isServer = true;
 	// init ip addr
 	in_addr ip_to_num;
 
@@ -133,7 +144,7 @@ void WinSock::open_server(const char* addr, unsigned short port)
 
 	if (m_sock == INVALID_SOCKET) {
 		LOG_ERROR("Error initialization socket # {0}", WSAGetLastError());
-		close_WinSock();
+		disconnect();
 		return;
 	}
 	else
@@ -148,7 +159,7 @@ void WinSock::open_server(const char* addr, unsigned short port)
 
 	if (bind(m_sock, (sockaddr*)&Info, sizeof(Info)) != 0) {
 		LOG_ERROR("Error Socket binding to server info. Error # {0}", WSAGetLastError());
-		close_WinSock();
+		disconnect();
 		return;
 	}
 	else
@@ -160,7 +171,7 @@ void WinSock::open_server(const char* addr, unsigned short port)
 
 		if (listen(m_sock, SOMAXCONN) != 0) {
 			LOG_WARN("Can't start to listen to. Error # {0}", WSAGetLastError());
-			close_WinSock();
+			disconnect();
 			return;
 		}
 		else {
@@ -177,7 +188,7 @@ void WinSock::open_server(const char* addr, unsigned short port)
 
 		if (m_client == INVALID_SOCKET) {
 			LOG_ERROR("Client detected, but can't connect to a client. Error # {0}", WSAGetLastError());			
-			close_WinSock();
+			disconnect();
 			return;
 		}
 		else {
@@ -201,7 +212,7 @@ void WinSock::open_server(const char* addr, unsigned short port)
 
 			if (packet_size == SOCKET_ERROR) {
 				LOG_ERROR("Can't receive message from Client. Error # {0}", WSAGetLastError());
-				close_WinSock();
+				disconnect();
 				return;
 			}
 			else
@@ -210,7 +221,7 @@ void WinSock::open_server(const char* addr, unsigned short port)
 				{
 					int size = (int)buff[1];
 					std::string str = std::string(&buff[WS_DATA_PACKET_INFO_SIZE]).substr(0, size - WS_DATA_PACKET_INFO_SIZE);
-					m_receive(str.data(), size);
+					m_receive_callback(str.data(), size);
 					send(m_sock, buf, WS_DATA_PACKET_INFO_SIZE, 0);
 					LOG_INFO("Data: {0}", str);
 				}
@@ -220,17 +231,20 @@ void WinSock::open_server(const char* addr, unsigned short port)
 				}
 			}
 		}
-		close_WinSock();
+		disconnect();
 		});
 
 	t.detach();
 }
 
-void WinSock::set_receive(std::function<void(char* data, int size)> func)
+void WinSock::set_receive_callback(std::function<void(char* data, int size)> func)
 {
-	m_receive = func;
+	m_receive_callback = func;
 }
-
+void WinSock::set_disconnect_callback(std::function<void()> func)
+{
+	m_disconnect_callback = func;
+}
 void WinSock::set_ping_callback(std::function<void(double ping)> func)
 {
 	m_ping_callback = func;

@@ -5,6 +5,8 @@
 
 #include "EngineCore/System/Log.h"
 
+#pragma warning(disable:C4005)
+
 //#define EDITOR_BUILD
 
 int main(int argc, char** argv)

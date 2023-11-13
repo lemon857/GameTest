@@ -9,6 +9,8 @@
 #define WS_CODE_DATA (char)100
 #define WS_CODE_ANSW (char)112
 
+#define WS_DATA_PACKET_INFO_SIZE (sizeof(int) + sizeof(char))
+
 Stopwatch WinSock::m_ping_timer;
 SOCKET WinSock::m_sock;
 SOCKET WinSock::m_client;
@@ -78,16 +80,13 @@ void WinSock::open_client(const char* addr, unsigned short port)
 	}
 	else
 		LOG_INFO("Connection established SUCCESSFULLY. Ready to send a message to Server");
-
-
 	
-
 	std::thread t([&]() {
 		char buff[BUFF_SIZE];							// Buffers for sending and receiving data
 		short packet_size = 0;
-		char buf[5];
+		char buf[WS_DATA_PACKET_INFO_SIZE];
 		buf[0] = WS_CODE_ANSW;
-		buf[1] = 5;
+		buf[1] = WS_DATA_PACKET_INFO_SIZE;		
 		while (m_isWorking) {
 
 			packet_size = recv(m_sock, buff, BUFF_SIZE, 0);
@@ -101,10 +100,11 @@ void WinSock::open_client(const char* addr, unsigned short port)
 			{
 				if (buff[0] == WS_CODE_DATA)
 				{
-					m_receive(&buff[5], (int)buff[1]);
-					buf[0] = WS_CODE_ANSW;
-					send(m_sock, buf, 5, 0);
-					LOG_INFO("Data: {0}", &buff[5]);
+					int size = (int)buff[1];
+					std::string str = std::string(&buff[WS_DATA_PACKET_INFO_SIZE]).substr(0, size - WS_DATA_PACKET_INFO_SIZE);
+					m_receive(str.data(), size);
+					send(m_sock, buf, WS_DATA_PACKET_INFO_SIZE, 0);
+					LOG_INFO("Data: {0}", str);
 				}
 				else if (buff[0] == WS_CODE_ANSW)
 				{
@@ -208,9 +208,11 @@ void WinSock::open_server(const char* addr, unsigned short port)
 			{
 				if (buff[0] == WS_CODE_DATA)
 				{
-					m_receive(&buff[5], (int)buff[1]);					
-					send(m_client, buf, 5, 0);
-					LOG_INFO("Data: {0}", &buff[5]);
+					int size = (int)buff[1];
+					std::string str = std::string(&buff[WS_DATA_PACKET_INFO_SIZE]).substr(0, size - WS_DATA_PACKET_INFO_SIZE);
+					m_receive(str.data(), size);
+					send(m_sock, buf, WS_DATA_PACKET_INFO_SIZE, 0);
+					LOG_INFO("Data: {0}", str);
 				}
 				else if (buff[0] == WS_CODE_ANSW)
 				{
@@ -240,11 +242,11 @@ int WinSock::send_data(char* data, int size)
 
 	buff[0] = WS_CODE_DATA;
 
-	buff[1] = size + 5;
+	buff[1] = (int)(size + WS_DATA_PACKET_INFO_SIZE);
 
 	for (size_t i = 0; i < size; i++)
 	{
-		buff[i + 5] = data[i];
+		buff[i + WS_DATA_PACKET_INFO_SIZE] = data[i];
 	}
 
 	if (send(m_isServer ? m_client : m_sock, buff, BUFF_SIZE, 0) == SOCKET_ERROR) {

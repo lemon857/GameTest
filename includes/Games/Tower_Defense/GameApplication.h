@@ -8,6 +8,7 @@
 
 #include <vector>
 #include <glm/vec3.hpp>	
+#include <queue>
 
 #include "EngineCore/System/List.h"
 
@@ -46,6 +47,8 @@ private:
 	linked_list<BaseEnemy*> m_enemies;
 
 	std::vector<BaseTower*> m_towers;
+
+	std::queue<std::string> m_chat_mes;
 
 	Camera* m_cam;
 

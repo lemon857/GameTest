@@ -45,15 +45,7 @@ namespace GUI
 		element->set_scale(glm::vec2(scalep.x / 100 * wsize.x, scalep.y / 100 * wsize.y));
 		m_elements.emplace(element->get_name(), element);
 	}
-	GUI_element* GUI_place::get_element(std::string name)
-	{
-		std::map<std::string, GUI_element*>::iterator it = m_elements.find(name);
-		if (it != m_elements.end())
-		{
-			return it->second;
-		}
-		return nullptr;
-	}
+		
 	void GUI_place::on_mouse_release(int x, int y)
 	{
 		m_isFocus = false;

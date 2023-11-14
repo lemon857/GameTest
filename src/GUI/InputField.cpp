@@ -12,6 +12,8 @@
 
 #include "EngineCore/Keys.h"
 
+#include <Windows.h>
+
 GUI::InputField::InputField(Sprite* face, glm::vec2 pos, glm::vec2 scale,
 	std::string name, std::shared_ptr<RenderEngine::ShaderProgram> shader,
 	std::shared_ptr<Font> font, glm::vec3 textColor, bool clear_after_send)
@@ -113,7 +115,18 @@ void GUI::InputField::set_focus(bool focus)
 void GUI::InputField::press_button(KeyCode key)
 {
 	if (!m_isFocused) return;
-	if (key <= KeyCode::KEY_Z)
+	if (key == KeyCode::KEY_V && Input::isKeyPressed(KeyCode::KEY_LEFT_CONTROL))
+	{
+		if (IsClipboardFormatAvailable(CF_TEXT))
+		{
+			if (OpenClipboard(0))
+			{
+				m_text = (char*)GetClipboardData(CF_TEXT);
+				CloseClipboard();
+			}
+		}
+	}
+	else if (key <= KeyCode::KEY_Z)
 	{
 		if (key >= KeyCode::KEY_A)
 		{

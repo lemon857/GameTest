@@ -66,12 +66,6 @@ namespace GUI
 		void set_click_callback(std::function<void()> on_click) { m_on_click = on_click; }
 
 		std::shared_ptr < RenderEngine::Material> get_material() { return m_pMaterial; }
-
-		template<class _Ty>
-		_Ty* lead()
-		{
-			return (_Ty*)this;
-		}
 	protected:
 
 		bool m_isActive;

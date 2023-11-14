@@ -14,6 +14,7 @@ namespace GUI
 		, m_font(std::move(font))
 		, m_shader(std::move(shader))
 		, m_max_count(max_count_message)
+		, m_chat_messages()
 	{
 		m_position_p = pos;
 		m_scale_p = scale;

@@ -7,7 +7,8 @@
 #include <thread>
 
 #define WS_CODE_DATA (char)100
-#define WS_CODE_ANSW (char)112
+#define WS_CODE_ANSWER (char)112
+#define WS_CODE_DISCON (char)35
 
 #define WS_DATA_PACKET_INFO_SIZE (sizeof(int) + sizeof(char))
 
@@ -46,8 +47,21 @@ void WinSock::close_WinSock()
 
 void WinSock::disconnect()
 {
+	char buf[WS_DATA_PACKET_INFO_SIZE];
+	buf[0] = WS_CODE_DISCON;
+	buf[1] = WS_DATA_PACKET_INFO_SIZE;
+
 	m_isWorking = false;
-	if (m_isServer) closesocket(m_client);
+
+	if (m_isServer)
+	{
+		send(m_client, buf, WS_DATA_PACKET_INFO_SIZE, 0);
+		closesocket(m_client);
+	}
+	else
+	{
+		send(m_sock, buf, WS_DATA_PACKET_INFO_SIZE, 0);
+	}
 	closesocket(m_sock);
 	m_disconnect_callback();
 	LOG_INFO("Disconnect");
@@ -94,7 +108,7 @@ void WinSock::open_client(const char* addr, unsigned short port)
 		char buff[BUFF_SIZE];							// Buffers for sending and receiving data
 		short packet_size = 0;
 		char buf[WS_DATA_PACKET_INFO_SIZE];
-		buf[0] = WS_CODE_ANSW;
+		buf[0] = WS_CODE_ANSWER;
 		buf[1] = WS_DATA_PACKET_INFO_SIZE;		
 		while (m_isWorking) {
 
@@ -115,9 +129,18 @@ void WinSock::open_client(const char* addr, unsigned short port)
 					send(m_sock, buf, WS_DATA_PACKET_INFO_SIZE, 0);
 					LOG_INFO("Data: {0}", str);
 				}
-				else if (buff[0] == WS_CODE_ANSW)
+				else if (buff[0] == WS_CODE_ANSWER)
 				{
 					m_ping_callback(m_ping_timer.stop());
+				}
+				else if (buff[0] == WS_CODE_DISCON)
+				{
+					m_isWorking = false;
+					if (m_isServer) closesocket(m_client);
+					closesocket(m_sock);
+					m_disconnect_callback();
+					LOG_INFO("Disconnect request");
+					break;
 				}
 			}
 		}
@@ -204,7 +227,7 @@ void WinSock::open_server(const char* addr, unsigned short port)
 		char buff[BUFF_SIZE];							// Buffers for sending and receiving data
 		short packet_size = 0; 
 		char buf[5];
-		buf[0] = WS_CODE_ANSW;
+		buf[0] = WS_CODE_ANSWER;
 		buf[1] = 5;
 		while (m_isWorking) {
 
@@ -225,9 +248,18 @@ void WinSock::open_server(const char* addr, unsigned short port)
 					send(m_sock, buf, WS_DATA_PACKET_INFO_SIZE, 0);
 					LOG_INFO("Data: {0}", str);
 				}
-				else if (buff[0] == WS_CODE_ANSW)
+				else if (buff[0] == WS_CODE_ANSWER)
 				{
 					m_ping_callback(m_ping_timer.stop());
+				}
+				else if (buff[0] == WS_CODE_DISCON)
+				{
+					m_isWorking = false;
+					if (m_isServer) closesocket(m_client);
+					closesocket(m_sock);
+					m_disconnect_callback();
+					LOG_INFO("Disconnect request");
+					break;
 				}
 			}
 		}

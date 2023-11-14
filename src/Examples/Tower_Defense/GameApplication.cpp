@@ -157,6 +157,7 @@ void GameApp::on_key_update(const double delta)
         }
         else if (!isKeyPressed)
         {
+            //m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_focus(true);
             is_chat_active = true;
             isKeyPressed = true;
         }
@@ -273,7 +274,7 @@ void GameApp::on_key_update(const double delta)
                 isKeyPressedmouse = true;
 
                 m_towers.push_back(new BaseTower("res/models/tower.obj",
-                    ResourceManager::getMaterial("tower"), nullptr, parts[cur], 1, new RenderEngine::Line(ResourceManager::getMaterial("default"))));
+                    ResourceManager::getMaterial("tower"), nullptr, parts[cur], _set_cooldown_tower, new RenderEngine::Line(ResourceManager::getMaterial("default"))));
 
                 //m_scene.at(curObj)->deleteComponent<Highlight>();
                 //curObj++;
@@ -369,7 +370,7 @@ void GameApp::on_update(const double delta)
         if (i != 2) m_scene.at(i)->update(delta);
         if (i == 2 && is_grid_active) m_scene.at(i)->update(delta);
     }       
-
+    // ============================================================
     if (m_isLose) return;
 
     m_main_castle->update(delta);
@@ -383,7 +384,7 @@ void GameApp::on_update(const double delta)
         m_gui->get_element<GUI::TextRenderer>("Lose scoreboard")->set_text("Your score: " + std::to_string(countKills));
         m_gui->set_active(true);
     }
-
+    // spawn enemy
     for (; countEnemies > 0; countEnemies--)
     {
         short snum = rand() % 4;
@@ -393,7 +394,7 @@ void GameApp::on_update(const double delta)
         else if (snum == 2) spawn = (rand() % size_y) * size_x;
         else if (snum == 3) spawn = ((rand() % size_y) * size_x) + (size_x - 1);
         auto a = new BaseEnemy(new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("monkey")),
-            m_main_castle, parts[spawn], 1, 0.007, 50, ResourceManager::getMaterial("default"));
+            m_main_castle, parts[spawn], 1, _set_velosity * 0.001, _set_max_hp_enemy, ResourceManager::getMaterial("default"));
         m_enemies.push_back(a);
     }
 
@@ -405,14 +406,15 @@ void GameApp::on_update(const double delta)
             if (m_enemies[i] == nullptr) continue;
             glm::vec3 a = m_enemies[i]->get_pos() - curTower->get_pos();
             double d = sqrt(a.x * a.x + a.z * a.z);
-            if (d < MIN_DISTANCE_TO_BaseEnemy && d < distance)
+            if (d < _set_min_distance && d < distance)
             {
                 distance = d;
-                if (curTower->get_target() != m_enemies[i]) curTower->set_target(m_enemies[i]);
+                if (curTower->get_target() == nullptr) curTower->set_target(m_enemies[i]);
+                //if (curTower->get_target() != m_enemies[i]) curTower->set_target(m_enemies[i]);
             }
             else 
             {
-                curTower->set_target(nullptr);
+                //curTower->set_target(nullptr);
             }
         }
         curTower->update(delta);
@@ -436,7 +438,7 @@ void GameApp::on_update(const double delta)
         }
         m_enemies[i]->update(delta);        
     }
-
+    // fps counter
     if (frames < 5)
     {
         frames++;
@@ -614,8 +616,76 @@ void GameApp::init_gui()
         ResourceManager::get_font("calibri"), glm::vec3(1.f), true);
     
     m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_enter_callback([&](std::string text) {
-        m_chat_mes.push("Me: " + text);
-        WinSock::send_data(text.data(), text.length());
+        if (text[0] == '/') // need finalize
+        {
+            if (ResourceManager::start_with(text, "/dis")) // distance tower attack
+            {
+                if (text == "/dis")
+                {
+                    m_chat_mes.push("Min distance: " + std::to_string(_set_min_distance));
+                }
+                else
+                {
+                    _set_min_distance = std::stod(text.substr(5));
+                    m_chat_mes.push("Set min distance: " + std::to_string(_set_min_distance));
+                }
+            }
+            else if (ResourceManager::start_with(text, "/vel")) // velosity enemy
+            {
+                if (text == "/vel")
+                {
+                    m_chat_mes.push("Velocity: " + std::to_string(_set_velosity));             
+                }
+                else
+                {
+                    _set_velosity = std::stod(text.substr(5));
+                    m_chat_mes.push("Set velocity: " + std::to_string(_set_velosity));
+                }
+            }
+            else if (ResourceManager::start_with(text, "/mhpcas")) // max hp castle
+            {
+                if (text == "/mhpcas")
+                {
+                    m_chat_mes.push("Max hp castle: " + std::to_string(_set_max_hp_castle));
+                }
+                else
+                {
+                    _set_max_hp_castle = std::stod(text.substr(8));
+                    m_chat_mes.push("Set max hp castle: " + std::to_string(_set_max_hp_castle));
+                    m_chat_mes.push("Need restart");
+                }
+            }
+            else if (ResourceManager::start_with(text, "/mhpen")) // max hp enemy
+            {
+                if (text == "/mhpen")
+                {
+                    m_chat_mes.push("Max hp enemy: " + std::to_string(_set_max_hp_enemy));
+                }
+                else
+                {
+                    _set_max_hp_enemy = std::stod(text.substr(7));
+                    m_chat_mes.push("Set max hp enemy: " + std::to_string(_set_max_hp_enemy));
+                }
+            }
+            else if (ResourceManager::start_with(text, "/cdtow")) // cooldown tower attack
+            {
+                if (text == "/cdtow")
+                {
+                    m_chat_mes.push("Cooldown tower: " + std::to_string(_set_cooldown_tower));
+                }
+                else
+                {
+                    _set_cooldown_tower = std::stod(text.substr(7));
+                    m_chat_mes.push("Set cooldown tower: " + std::to_string(_set_cooldown_tower));
+                    m_chat_mes.push("Need restart");
+                }
+            }
+        }
+        else
+        {
+            m_chat_mes.push("Me: " + text);
+            WinSock::send_data(text.data(), text.length());
+        }
         });
 
     // lose window ---------------------------------------------------------------------------
@@ -738,7 +808,7 @@ void GameApp::init_gui()
 
     m_gui_place_menu->get_element<GUI::InputField>("InputTest")->set_enter_callback([&](std::string text)
         {
-            m_gui_debug->get_element<GUI::ChatBox>("Chat")->clear();
+            m_gui_chat->get_element<GUI::ChatBox>("Chat")->clear();
             if (m_gui_place_menu->get_element<GUI::CheckBox>("checkbox")->value())
             {
                 WinSock::open_server(text.c_str(), 20746);
@@ -762,7 +832,7 @@ void GameApp::start_game()
     cur = 0;
     gui_window = null;
 
-    m_main_castle = new Castle(parts[int((size_x * size_y) / 2) + int(size_x / 2)], 100,
+    m_main_castle = new Castle(parts[int((size_x * size_y) / 2) + int(size_x / 2)], _set_max_hp_castle,
         "res/models/castle.obj", ResourceManager::getMaterial("castle"), ResourceManager::getMaterial("default"));
     map[int((size_x * size_y) / 2) + int(size_x / 2)] = true;
 

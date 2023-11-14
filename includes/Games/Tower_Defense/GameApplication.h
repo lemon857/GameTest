@@ -87,7 +87,7 @@ private:
 
 	bool is_gui_active = false;
 
-	bool is_chat_active = true;
+	bool is_chat_active = false;
 
 	bool is_debug_active = false;
 
@@ -100,6 +100,12 @@ private:
 	double times = 0;
 
 	double angle = 0;
+	// settings
+	double _set_min_distance = 7;
+	double _set_velosity = 7;
+	double _set_max_hp_castle = 100;
+	double _set_max_hp_enemy = 50;
+	double _set_cooldown_tower = 7;
 
 	GUI::GUI_place* m_gui;
 	GUI::GUI_place* m_gui_chat;

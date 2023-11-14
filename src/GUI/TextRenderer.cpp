@@ -11,8 +11,6 @@
 
 #include <glad/glad.h>
 
-#define SHIFT_TEXT_SYMBOL_X 20.5f
-// when you're set position, this is set center text on X coord
 namespace GUI
 {
 	TextRenderer::TextRenderer(std::shared_ptr<Font> font, std::shared_ptr<RenderEngine::ShaderProgram> shader,
@@ -93,6 +91,6 @@ namespace GUI
     void TextRenderer::set_position(glm::vec2 pos)
     {
         m_p_pos = pos;
-        m_position = glm::vec2(m_isCenterCoords ? (m_p_pos.x - (((float)m_text.length() / 2.f) * SHIFT_TEXT_SYMBOL_X)) : m_p_pos.x, m_p_pos.y);
+        m_position = glm::vec2(m_isCenterCoords ? (m_p_pos.x - (((float)m_text.length() / 2.f) * SHIFT_TEXT_SYMBOL_R_X)) : m_p_pos.x, m_p_pos.y);
     }
 }

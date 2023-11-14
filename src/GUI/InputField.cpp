@@ -19,7 +19,8 @@ GUI::InputField::InputField(Sprite* face, glm::vec2 pos, glm::vec2 scale,
 	std::shared_ptr<Font> font, glm::vec3 textColor, bool clear_after_send)
 	: GUI_element(name)
 	, m_face(std::move(face))
-	, m_textRenderer(std::make_unique<TextRenderer>(std::move(font), std::move(shader), "", textColor, pos, glm::vec2(1.f)))
+	, m_textRenderer(std::make_unique<TextRenderer>(std::move(font), std::move(shader), "",
+		textColor, pos, glm::vec2(1.f), "default", false))
 	, m_isFocused(false)
 	, m_isClicked(false)
 	, m_clear_after_send(clear_after_send)
@@ -81,6 +82,7 @@ void GUI::InputField::set_scale(glm::vec2 scale)
 {
 	m_face->set_scale(scale);
 	m_scale = scale;
+	m_textRenderer->set_position(glm::vec2(m_position.x - m_scale.x + SHIFT_TEXT_SYMBOL_X, m_position.y - SHIFT_TEXT_SYMBOL_Y));
 }
 
 std::string GUI::InputField::get_text()
@@ -136,10 +138,6 @@ void GUI::InputField::press_button(KeyCode key)
 		{
 			m_text += (char)key;
 		}
-	}
-	else if (key == KeyCode::KEY_ESCAPE)
-	{
-		set_focus(false);
 	}
 	else if (key == KeyCode::KEY_BACKSPACE && !m_text.empty())
 	{

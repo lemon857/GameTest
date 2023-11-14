@@ -6,6 +6,10 @@
 
 #include <glm/mat4x4.hpp>
 
+// when you're set position, this is set center text on X coord
+#define SHIFT_TEXT_SYMBOL_R_X 20.5f
+
+#define SHIFT_TEXT_SYMBOL_X 6.f
 #define SHIFT_TEXT_SYMBOL_Y 8.2f
 
 #define NAME_TEXTURE_STATIC "static"

@@ -87,6 +87,8 @@ private:
 
 	bool is_gui_active = false;
 
+	bool is_chat_active = true;
+
 	bool is_debug_active = false;
 
 	bool isKeyPressed = false;
@@ -100,6 +102,7 @@ private:
 	double angle = 0;
 
 	GUI::GUI_place* m_gui;
+	GUI::GUI_place* m_gui_chat;
 	GUI::GUI_place* m_gui_debug;
 	GUI::GUI_place* m_gui_place_menu;
 	GUI::GUI_place* m_gui_place_settings;

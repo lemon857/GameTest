@@ -119,9 +119,17 @@ bool GameApp::init()
 
 void GameApp::on_key_update(const double delta)
 {
-    if (m_isLose 
+    if (m_isLose
         || m_gui_place_menu->get_element<GUI::InputField>("InputTest")->get_focus()
-        || m_gui_debug->get_element<GUI::InputField>("SendMessage")->get_focus()) return;
+        || m_gui_chat->get_element<GUI::InputField>("SendMessage")->get_focus())
+    {
+        if (Input::isKeyPressed(KeyCode::KEY_ESCAPE))
+        {
+            m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_focus(false);
+            isKeyPressed = true;
+        }
+        return;
+    }
 
     glm::vec3 movement_delta{ 0,0,0 };
     glm::vec3 rotation_delta{ 0,0,0 };
@@ -137,6 +145,19 @@ void GameApp::on_key_update(const double delta)
         else if (!isKeyPressed)
         {
             is_grid_active = true;
+            isKeyPressed = true;
+        }
+    } 
+    else if (Input::isKeyPressed(KeyCode::KEY_T))
+    {
+        if (is_chat_active && !isKeyPressed)
+        {
+            is_chat_active = false;
+            isKeyPressed = true;
+        }
+        else if (!isKeyPressed)
+        {
+            is_chat_active = true;
             isKeyPressed = true;
         }
     }
@@ -435,7 +456,7 @@ void GameApp::on_ui_render()
     // for correct write message in other thread
     while (!m_chat_mes.empty())
     {
-        m_gui_debug->get_element<GUI::ChatBox>("Chat")->add_message(m_chat_mes.front());
+        m_gui_chat->get_element<GUI::ChatBox>("Chat")->add_message(m_chat_mes.front());
         m_chat_mes.pop();
     }
     // =========================================
@@ -444,8 +465,10 @@ void GameApp::on_ui_render()
     {
         if (gui_window == main) m_gui_place_menu->on_render();
         else if (gui_window == settings) m_gui_place_settings->on_render();
+        return;
     }
-    else if (is_debug_active) m_gui_debug->on_render();
+    if (is_debug_active) m_gui_debug->on_render();
+    if (is_chat_active) m_gui_chat->on_render();
 }
 
 bool GameApp::init_events()
@@ -459,6 +482,7 @@ bool GameApp::init_events()
                 RenderEngine::Renderer::setViewport(e.width, e.height);
                 m_cam->set_viewport_size(e.width, e.height);
                 m_gui->on_resize();
+                m_gui_chat->on_resize();
                 m_gui_debug->on_resize();
                 m_gui_place_menu->on_resize();
                 m_gui_place_settings->on_resize();
@@ -481,7 +505,7 @@ bool GameApp::init_events()
             }
             Input::pressKey(e.key_code);
             m_gui_place_menu->get_element<GUI::InputField>("InputTest")->press_button(e.key_code);
-            m_gui_debug->get_element<GUI::InputField>("SendMessage")->press_button(e.key_code);
+            m_gui_chat->get_element<GUI::InputField>("SendMessage")->press_button(e.key_code);
         });
     m_event_dispather.add_event_listener<EventKeyReleased>([&](EventKeyReleased& e)
         {
@@ -517,6 +541,7 @@ bool GameApp::init_events()
     m_event_dispather.add_event_listener<EventMouseButtonPressed>([&](EventMouseButtonPressed& e)
         {
             m_gui->on_mouse_press(e.x_pos, e.y_pos);
+            m_gui_chat->on_mouse_press(e.x_pos, e.y_pos);
             m_gui_debug->on_mouse_press(e.x_pos, e.y_pos);
             m_gui_place_menu->on_mouse_press(e.x_pos, e.y_pos);
             m_gui_place_settings->on_mouse_press(e.x_pos, e.y_pos);
@@ -562,6 +587,7 @@ bool GameApp::init_events()
 void GameApp::init_gui()
 {
     m_gui = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
+    m_gui_chat = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
     m_gui_debug = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
     m_gui_place_menu = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
     m_gui_place_settings = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
@@ -578,15 +604,16 @@ void GameApp::init_gui()
 
     m_gui_debug->add_element<GUI::TextRenderer>(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
         "Ping: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, 92.f), glm::vec2(0.5f), "ping", false);
-        
-    m_gui_debug->add_element<GUI::ChatBox>(new GUI::Sprite(ResourceManager::getMaterial("defaultSprite")),
-        glm::vec2(16.f, 45.f), glm::vec2(15.f, 30.f), "Chat", 12, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"), glm::vec3(1.f));
 
-    m_gui_debug->add_element<GUI::InputField>(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        glm::vec2(11.f, 7.f), glm::vec2(10.f, 5.f), "SendMessage", ResourceManager::getShaderProgram("textShader"),
+    // chat ---------------------------------------------------------------------------
+    m_gui_chat->add_element<GUI::ChatBox>(new GUI::Sprite(ResourceManager::getMaterial("defaultSprite")),
+        glm::vec2(13.f, 41.f), glm::vec2(12.f, 30.f), "Chat", 12, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"), glm::vec3(1.f));
+
+    m_gui_chat->add_element<GUI::InputField>(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(13.f, 5.f), glm::vec2(12.f, 5.f), "SendMessage", ResourceManager::getShaderProgram("textShader"),
         ResourceManager::get_font("calibri"), glm::vec3(1.f), true);
     
-    m_gui_debug->get_element<GUI::InputField>("SendMessage")->set_enter_callback([&](std::string text) {
+    m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_enter_callback([&](std::string text) {
         m_chat_mes.push("Me: " + text);
         WinSock::send_data(text.data(), text.length());
         });
@@ -743,6 +770,7 @@ void GameApp::start_game()
     m_enemies.clear();
 
     m_gui->set_active(false);
+    m_gui_chat->set_active(true);
     m_gui_debug->set_active(true);
     m_gui_place_menu->set_active(false);
     m_gui_place_settings->set_active(false);

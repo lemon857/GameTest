@@ -10,11 +10,12 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-BaseTower::BaseTower(std::string objPath, std::shared_ptr<RenderEngine::Material> pMaterial, BaseEnemy* target, glm::vec3 pos, double cooldown, RenderEngine::Line* line)
+BaseTower::BaseTower(std::string objPath, std::shared_ptr<RenderEngine::Material> pMaterial, BaseEnemy* target, glm::vec3 pos, double cooldown, unsigned int damage, RenderEngine::Line* line)
 	: m_target_BaseEnemy(std::move(target))
 	, m_line(std::move(line))
 	, m_cool_down(cooldown * 1000)
 	, m_cur_time(0)	
+	, m_damage(damage)
 	, IGameObject("Tower")
 {
 	addComponent<Transform>(pos);
@@ -36,7 +37,7 @@ void BaseTower::update(const double delta)
 	if (m_cur_time < m_cool_down) m_cur_time += delta;
 	else
 	{
-		if (m_target_BaseEnemy != nullptr) m_target_BaseEnemy->damage(5);
+		if (m_target_BaseEnemy != nullptr) m_target_BaseEnemy->damage(m_damage);
 		m_cur_time = 0;
 	}
 	m_line->render_from_to(getComponent<Transform>()->get_position() + glm::vec3(0.f, 2.f, 0.f), m_target_BaseEnemy->get_pos(), glm::vec3(1.f));

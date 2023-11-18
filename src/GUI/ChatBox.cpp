@@ -15,6 +15,7 @@ namespace GUI
 		, m_shader(std::move(shader))
 		, m_max_count(max_count_message)
 		, m_chat_messages()
+		, m_isOpen(false)
 	{
 		m_position_p = pos;
 		m_scale_p = scale;
@@ -31,7 +32,7 @@ namespace GUI
 		{
 			m_chat_messages[i]->on_render_prj(prj);
 		}
-		m_background->on_render_prj(prj);
+		if (m_isOpen) m_background->on_render_prj(prj);
 	}
 	void ChatBox::set_position(glm::vec2 pos)
 	{

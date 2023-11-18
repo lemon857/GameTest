@@ -33,7 +33,7 @@ namespace GUI
 		if (m_value)
 		{
 			m_check->on_render_prj(prj);
-		}
+		}		
 		m_backgroung->on_render_prj(prj);		
 	}
 
@@ -49,6 +49,7 @@ namespace GUI
 			m_value = !m_value;
 			m_isClicked = false;
 			LOG_INFO("Value: {0}", m_value);
+			on_click();
 		}
 	}
 

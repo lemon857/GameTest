@@ -33,11 +33,15 @@ namespace GUI
 
 		void add_message(std::string message);
 
+		void set_open(bool isOpen) { m_isOpen = isOpen; }
+
 		void clear();
 	private:
 		int m_max_count;
 
 		Sprite* m_background;
+
+		bool m_isOpen;
 
 		linked_list<TextRenderer*> m_chat_messages;
 		std::shared_ptr<Font> m_font;

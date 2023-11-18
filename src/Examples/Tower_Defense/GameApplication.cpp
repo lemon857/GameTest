@@ -126,13 +126,19 @@ bool GameApp::init()
 void GameApp::on_key_update(const double delta)
 {
     if (m_isLose
-        || m_gui_place_menu->get_element<GUI::InputField>("InputTest")->get_focus()
+        || m_gui_place_menu->get_element<GUI::InputField>("InputIP")->get_focus()
         || m_gui_chat->get_element<GUI::InputField>("SendMessage")->get_focus())
     {
         if (Input::isKeyPressed(KeyCode::KEY_ESCAPE))
         {
             m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_focus(false);
             isKeyPressed = true;
+            if (is_chat_active)
+            {
+                m_gui_chat->get_element<GUI::ChatBox>("Chat")->set_open(false);
+                m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_active(false);
+                is_chat_active = false;
+            }
         }
         return;
     }
@@ -158,12 +164,16 @@ void GameApp::on_key_update(const double delta)
     {
         if (is_chat_active && !isKeyPressed)
         {
+            m_gui_chat->get_element<GUI::ChatBox>("Chat")->set_open(false);
+            m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_active(false);
             is_chat_active = false;
             isKeyPressed = true;
         }
         else if (!isKeyPressed)
         {
-            //m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_focus(true);
+            m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_focus(true);
+            m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_active(true);
+            m_gui_chat->get_element<GUI::ChatBox>("Chat")->set_open(true);
             is_chat_active = true;
             isKeyPressed = true;
         }
@@ -422,7 +432,7 @@ void GameApp::on_update(const double delta)
     while (!m_spawn_towers.empty())
     {
         m_towers.push_back(new BaseTower("res/models/tower.obj",
-            ResourceManager::getMaterial("tower"), nullptr, parts[m_spawn_towers.front()], _set_cooldown_tower, new RenderEngine::Line(ResourceManager::getMaterial("default"))));
+            ResourceManager::getMaterial("tower"), nullptr, parts[m_spawn_towers.front()], _set_cooldown_tower, 10, new RenderEngine::Line(ResourceManager::getMaterial("default"))));
         m_spawn_towers.pop();
     }
     while (!m_spawn_enemies.empty()) // spawn enemies
@@ -505,7 +515,7 @@ void GameApp::on_ui_render()
         return;
     }
     if (is_debug_active) m_gui_debug->on_render();
-    if (is_chat_active) m_gui_chat->on_render();
+    m_gui_chat->on_render();
 }
 
 bool GameApp::init_events()
@@ -541,7 +551,7 @@ bool GameApp::init_events()
                 }
             }
             Input::pressKey(e.key_code);
-            m_gui_place_menu->get_element<GUI::InputField>("InputTest")->press_button(e.key_code);
+            m_gui_place_menu->get_element<GUI::InputField>("InputIP")->press_button(e.key_code);
             m_gui_chat->get_element<GUI::InputField>("SendMessage")->press_button(e.key_code);
         });
     m_event_dispather.add_event_listener<EventKeyReleased>([&](EventKeyReleased& e)
@@ -648,81 +658,79 @@ void GameApp::init_gui()
 
     m_gui_chat->add_element<GUI::InputField>(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(13.f, 5.f), glm::vec2(12.f, 5.f), "SendMessage", ResourceManager::getShaderProgram("textShader"),
-        ResourceManager::get_font("calibri"), glm::vec3(1.f), true);
+        ResourceManager::get_font("calibri"), glm::vec3(1.f), true)->set_enter_callback([&](std::string text) {
+            //if (text[0] == '/') // need finalize
+            //{
+            //    if (ResourceManager::start_with(text, "/dis")) // distance tower attack
+            //    {
+            //        if (text == "/dis")
+            //        {
+            //            m_chat_mes.push("Min distance: " + std::to_string(_set_min_distance));
+            //        }
+            //        else
+            //        {
+            //            _set_min_distance = std::stod(text.substr(5));
+            //            m_chat_mes.push("Set min distance: " + std::to_string(_set_min_distance));
+            //        }
+            //    }
+            //    else if (ResourceManager::start_with(text, "/vel")) // velosity enemy
+            //    {
+            //        if (text == "/vel")
+            //        {
+            //            m_chat_mes.push("Velocity: " + std::to_string(_set_velosity));             
+            //        }
+            //        else
+            //        {
+            //            _set_velosity = std::stod(text.substr(5));
+            //            m_chat_mes.push("Set velocity: " + std::to_string(_set_velosity));
+            //        }
+            //    }
+            //    else if (ResourceManager::start_with(text, "/mhpcas")) // max hp castle
+            //    {
+            //        if (text == "/mhpcas")
+            //        {
+            //            m_chat_mes.push("Max hp castle: " + std::to_string(_set_max_hp_castle));
+            //        }
+            //        else
+            //        {
+            //            _set_max_hp_castle = std::stod(text.substr(8));
+            //            m_chat_mes.push("Set max hp castle: " + std::to_string(_set_max_hp_castle));
+            //            m_chat_mes.push("Need restart");
+            //        }
+            //    }
+            //    else if (ResourceManager::start_with(text, "/mhpen")) // max hp enemy
+            //    {
+            //        if (text == "/mhpen")
+            //        {
+            //            m_chat_mes.push("Max hp enemy: " + std::to_string(_set_max_hp_enemy));
+            //        }
+            //        else
+            //        {
+            //            _set_max_hp_enemy = std::stod(text.substr(7));
+            //            m_chat_mes.push("Set max hp enemy: " + std::to_string(_set_max_hp_enemy));
+            //        }
+            //    }
+            //    else if (ResourceManager::start_with(text, "/cdtow")) // cooldown tower attack
+            //    {
+            //        if (text == "/cdtow")
+            //        {
+            //            m_chat_mes.push("Cooldown tower: " + std::to_string(_set_cooldown_tower));
+            //        }
+            //        else
+            //        {
+            //            _set_cooldown_tower = std::stod(text.substr(7));
+            //            m_chat_mes.push("Set cooldown tower: " + std::to_string(_set_cooldown_tower));
+            //            m_chat_mes.push("Need restart");
+            //        }
+            //    }
+            //}
+            //else
+            {
+                m_chat_mes.push("Me: " + text);
+                WinSock::send_data(('m' + text).data(), text.length() + 1); // =========================== message flag first
+            }
+            });
     
-    m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_enter_callback([&](std::string text) {
-        //if (text[0] == '/') // need finalize
-        //{
-        //    if (ResourceManager::start_with(text, "/dis")) // distance tower attack
-        //    {
-        //        if (text == "/dis")
-        //        {
-        //            m_chat_mes.push("Min distance: " + std::to_string(_set_min_distance));
-        //        }
-        //        else
-        //        {
-        //            _set_min_distance = std::stod(text.substr(5));
-        //            m_chat_mes.push("Set min distance: " + std::to_string(_set_min_distance));
-        //        }
-        //    }
-        //    else if (ResourceManager::start_with(text, "/vel")) // velosity enemy
-        //    {
-        //        if (text == "/vel")
-        //        {
-        //            m_chat_mes.push("Velocity: " + std::to_string(_set_velosity));             
-        //        }
-        //        else
-        //        {
-        //            _set_velosity = std::stod(text.substr(5));
-        //            m_chat_mes.push("Set velocity: " + std::to_string(_set_velosity));
-        //        }
-        //    }
-        //    else if (ResourceManager::start_with(text, "/mhpcas")) // max hp castle
-        //    {
-        //        if (text == "/mhpcas")
-        //        {
-        //            m_chat_mes.push("Max hp castle: " + std::to_string(_set_max_hp_castle));
-        //        }
-        //        else
-        //        {
-        //            _set_max_hp_castle = std::stod(text.substr(8));
-        //            m_chat_mes.push("Set max hp castle: " + std::to_string(_set_max_hp_castle));
-        //            m_chat_mes.push("Need restart");
-        //        }
-        //    }
-        //    else if (ResourceManager::start_with(text, "/mhpen")) // max hp enemy
-        //    {
-        //        if (text == "/mhpen")
-        //        {
-        //            m_chat_mes.push("Max hp enemy: " + std::to_string(_set_max_hp_enemy));
-        //        }
-        //        else
-        //        {
-        //            _set_max_hp_enemy = std::stod(text.substr(7));
-        //            m_chat_mes.push("Set max hp enemy: " + std::to_string(_set_max_hp_enemy));
-        //        }
-        //    }
-        //    else if (ResourceManager::start_with(text, "/cdtow")) // cooldown tower attack
-        //    {
-        //        if (text == "/cdtow")
-        //        {
-        //            m_chat_mes.push("Cooldown tower: " + std::to_string(_set_cooldown_tower));
-        //        }
-        //        else
-        //        {
-        //            _set_cooldown_tower = std::stod(text.substr(7));
-        //            m_chat_mes.push("Set cooldown tower: " + std::to_string(_set_cooldown_tower));
-        //            m_chat_mes.push("Need restart");
-        //        }
-        //    }
-        //}
-        //else
-        {
-            m_chat_mes.push("Me: " + text);
-            WinSock::send_data(('m' + text).data(), text.length() + 1); // =========================== message flag first
-        }
-        });
-
     // lose window ---------------------------------------------------------------------------
     m_gui->add_element<GUI::TextRenderer>(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
         "You lose!", glm::vec3(1.f, 0.1f, 0.1f), glm::vec2(41.f, 57.f), glm::vec2(2.f), "Lose text");
@@ -860,13 +868,27 @@ void GameApp::init_gui()
 
     WinSock::set_disconnect_callback([&]() {
         m_chat_mes.push("Disconnect!");
+        m_gui_place_menu->get_element<GUI::Button>("Disconnect")->set_active(false);
         m_gui_place_menu->get_element<GUI::Button>("Restart")->set_active(true);
         m_gui->get_element<GUI::Button>("Restart")->set_active(true);
-        });
+        }); 
+    WinSock::set_connect_callback([&]() {
+            m_chat_mes.push("Connect!");
+            m_gui_place_menu->get_element<GUI::Button>("Disconnect")->set_active(true);
+            if (!isServer)
+            {
+                m_gui_place_menu->get_element<GUI::Button>("Restart")->set_active(false);
+                m_gui->get_element<GUI::Button>("Restart")->set_active(false);
+            }
+            start_game();
+            });
 
     // ========================================================================================
+    m_gui_place_menu->add_element<GUI::TextRenderer>(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
+        "Enter IP", glm::vec3(1.f), glm::vec2(11.f, 68.f), glm::vec2(1.f), "m");
+
     m_gui_place_menu->add_element<GUI::InputField>(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        glm::vec2(11.f, 60.f), glm::vec2(10.f, 5.f), "InputTest", ResourceManager::getShaderProgram("textShader"),
+        glm::vec2(11.f, 60.f), glm::vec2(10.f, 5.f), "InputIP", ResourceManager::getShaderProgram("textShader"),
         ResourceManager::get_font("calibri"), glm::vec3(1.f));
 
     m_gui_place_menu->add_element<GUI::Button>(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
@@ -874,7 +896,16 @@ void GameApp::init_gui()
         "Disconnect", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f));
 
     m_gui_place_menu->add_element<GUI::CheckBox>(new GUI::Sprite(ResourceManager::getMaterial("checkbox_bg")), new GUI::Sprite(ResourceManager::getMaterial("checkbox_mark")),
-        glm::vec2(11.f, 72.f), glm::vec2(5.f), "checkbox");
+        glm::vec2(27.f, 60.f), glm::vec2(5.f), "checkbox")->set_click_callback([&]() {
+            if (m_gui_place_menu->get_element<GUI::CheckBox>("checkbox")->value())
+            {
+                m_gui_place_menu->get_element<GUI::InputField>("InputIP")->set_text("0.0.0.0");
+            }
+            else
+            {
+                m_gui_place_menu->get_element<GUI::InputField>("InputIP")->set_text("127.0.0.1");
+            }
+            });
 
     m_gui_place_menu->add_element<GUI::Sprite>(ResourceManager::getMaterial("defaultSprite"), "default",
         glm::vec2(100.f), glm::vec2(100.f), "z.BG"); // Crutch but idk how resolve this now    
@@ -884,23 +915,19 @@ void GameApp::init_gui()
         m_chat_mes.push("Disconnect!");
         });
 
-    m_gui_place_menu->get_element<GUI::InputField>("InputTest")->set_text("127.0.0.1");
+    m_gui_place_menu->get_element<GUI::InputField>("InputIP")->set_text("127.0.0.1");
 
-    m_gui_place_menu->get_element<GUI::InputField>("InputTest")->set_enter_callback([&](std::string text)
+    m_gui_place_menu->get_element<GUI::InputField>("InputIP")->set_enter_callback([&](std::string text)
         {
             m_gui_chat->get_element<GUI::ChatBox>("Chat")->clear();
             if (m_gui_place_menu->get_element<GUI::CheckBox>("checkbox")->value())
             {
                 WinSock::open_server(text.c_str(), 20746);
-                m_gui_place_menu->get_element<GUI::Button>("Restart")->set_active(true);
-                m_gui->get_element<GUI::Button>("Restart")->set_active(true);
                 isServer = true;
             }
             else
             {
                 WinSock::open_client(text.c_str(), 20746);
-                m_gui_place_menu->get_element<GUI::Button>("Restart")->set_active(false);
-                m_gui->get_element<GUI::Button>("Restart")->set_active(false);
                 isServer = false;
             }
             m_chat_mes.push("Wait connection!");
@@ -930,6 +957,11 @@ void GameApp::start_game()
     m_gui_debug->set_active(true);
     m_gui_place_menu->set_active(false);
     m_gui_place_settings->set_active(false);
+
+    m_gui_place_menu->get_element<GUI::Button>("Disconnect")->set_active(false);
+
+    m_gui_chat->get_element<GUI::ChatBox>("Chat")->set_open(false);
+    m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_active(false);
 
     m_gui_debug->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: 0");
     m_gui_debug->get_element<GUI::TextRenderer>("kills")->set_text("Kills: 0");

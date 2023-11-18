@@ -12,6 +12,7 @@ SOCKET WinSock::m_client;
 bool WinSock::m_isServer;
 bool WinSock::m_isWorking;
 std::function<void()> WinSock::m_disconnect_callback;
+std::function<void()> WinSock::m_connect_callback;
 std::function<void(char* data, int size)> WinSock::m_receive_callback;
 std::function<void(double ping)> WinSock::m_ping_callback;
 
@@ -103,7 +104,8 @@ void WinSock::open_client(const char* addr, unsigned short port)
 		short packet_size = 0;
 		char buf[WS_DATA_PACKET_INFO_SIZE];
 		buf[0] = WS_CODE_ANSWER;
-		buf[1] = WS_DATA_PACKET_INFO_SIZE;		
+		buf[1] = WS_DATA_PACKET_INFO_SIZE;
+		m_connect_callback();
 		while (m_isWorking) {
 
 			memset(buff, 0, BUFF_SIZE);
@@ -224,6 +226,7 @@ void WinSock::open_server(const char* addr, unsigned short port)
 		char buf[5];
 		buf[0] = WS_CODE_ANSWER;
 		buf[1] = 5;
+		m_connect_callback();
 		while (m_isWorking) {
 
 			memset(buff, 0, BUFF_SIZE);
@@ -272,6 +275,10 @@ void WinSock::set_receive_callback(std::function<void(char* data, int size)> fun
 void WinSock::set_disconnect_callback(std::function<void()> func)
 {
 	m_disconnect_callback = func;
+}
+void WinSock::set_connect_callback(std::function<void()> func)
+{
+	m_connect_callback = func;
 }
 void WinSock::set_ping_callback(std::function<void(double ping)> func)
 {

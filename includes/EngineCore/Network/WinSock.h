@@ -42,11 +42,15 @@ public:
 	static void set_ping_callback(std::function<void(double ping)> func);
 
 	static void set_disconnect_callback(std::function<void()> func);
+
+	static void set_connect_callback(std::function<void()> func);
 	
 private:
+	// need sure fill
 	static std::function<void(char* data, int size)> m_receive_callback;
 	static std::function<void(double ping)> m_ping_callback;
 	static std::function<void()> m_disconnect_callback;
+	static std::function<void()> m_connect_callback;
 
 	static SOCKET m_sock;
 	static SOCKET m_client;

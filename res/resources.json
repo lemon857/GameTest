@@ -251,6 +251,28 @@
       "subTextures": [
         "default"
       ]
+    },
+    {
+      "name": "CheckBox_bg",
+      "filePath": "res/textures/CheckBox_bg.png",
+      "width": 128,
+      "height": 128,
+      "subTexture_w": 128,
+      "subTexture_h": 128,
+      "subTextures": [
+        "default"
+      ]
+    },
+    {
+      "name": "CheckBox_mark",
+      "filePath": "res/textures/CheckBox_mark.png",
+      "width": 128,
+      "height": 128,
+      "subTexture_w": 128,
+      "subTexture_h": 128,
+      "subTextures": [
+        "default"
+      ]
     }
   ],
   "materials": [
@@ -298,6 +320,16 @@
       "name": "button",
       "nameShader": "spriteShader",
       "nameTexture": "Button_1"
+    },
+    {
+      "name": "checkbox_bg",
+      "nameShader": "spriteShader",
+      "nameTexture": "CheckBox_bg"
+    },
+    {
+      "name": "checkbox_mark",
+      "nameShader": "spriteShader",
+      "nameTexture": "CheckBox_mark"
     }
   ],
   "fonts": [

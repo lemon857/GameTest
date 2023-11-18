@@ -8,29 +8,23 @@
 #include "EngineCore/Renderer/ShaderProgram.h"
 #include "EngineCore/Resources/ResourceManager.h"
 
-#define SHIFT_TEXT_SYMBOL_Y 8.f
-
-#define NAME_TEXTURE_STATIC "static"
-#define NAME_TEXTURE_CLICKED "clicked"
-
 namespace GUI
 {
-	Button::Button(Sprite* face, std::shared_ptr<RenderEngine::Material> pMaterial, glm::vec2 pos, glm::vec2 scale,
+	Button::Button(Sprite* face, glm::vec2 pos, glm::vec2 scale,
 		std::string text, std::string shaderName, std::shared_ptr<Font> font, glm::vec3 textColor)
-		: GUI_element(std::move(pMaterial), text)
+		: GUI_element(text)
 		, m_textRenderer(std::make_unique<TextRenderer>(font, ResourceManager::getShaderProgram(shaderName), text, textColor, pos, glm::vec2(1.f)))
 		, m_face(std::move(face))
 	{
 		m_position_p = pos;
 		m_scale_p = scale;
-		m_text_length = text.length();
 		m_face->set_position_p(pos);
 		m_face->set_scale_p(scale);
 		m_textRenderer->set_position(glm::vec2(pos.x, pos.y - SHIFT_TEXT_SYMBOL_Y));
 	}
 	Button::~Button()
 	{
-		
+		delete m_face;
 	}
 	void Button::on_render_prj(glm::mat4& prj)
 	{

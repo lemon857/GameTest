@@ -6,6 +6,15 @@
 
 #include <glm/mat4x4.hpp>
 
+// when you're set position, this is set center text on X coord
+#define SHIFT_TEXT_SYMBOL_R_X 20.5f
+
+#define SHIFT_TEXT_SYMBOL_X 6.f
+#define SHIFT_TEXT_SYMBOL_Y 8.2f
+
+#define NAME_TEXTURE_STATIC "static"
+#define NAME_TEXTURE_CLICKED "clicked"
+
 namespace RenderEngine
 {
 	class Material;
@@ -18,7 +27,7 @@ namespace GUI
 	{
 	public:
 		// require stay material prop first in all childrens
-		GUI_element(std::shared_ptr<RenderEngine::Material> pMaterial, std::string name)
+		GUI_element(std::string name, std::shared_ptr<RenderEngine::Material> pMaterial = nullptr)
 			: m_name(name)
 			, m_pMaterial(std::move(pMaterial))
 			, m_position_p(glm::vec2(0))
@@ -60,11 +69,7 @@ namespace GUI
 		void on_click() { if (m_on_click != nullptr) m_on_click(); }
 		void set_click_callback(std::function<void()> on_click) { m_on_click = on_click; }
 
-		template<class _Ty>
-		_Ty* lead()
-		{
-			return (_Ty*)this;
-		}
+		std::shared_ptr < RenderEngine::Material> get_material() { return m_pMaterial; }
 	protected:
 
 		bool m_isActive;

@@ -146,5 +146,3 @@ enum class MouseButton
     MOUSE_BUTTON_RIGHT = MOUSE_BUTTON_2,
     MOUSE_BUTTON_MIDDLE = MOUSE_BUTTON_3
 };
-
-

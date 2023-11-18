@@ -23,7 +23,7 @@ namespace GUI
 	class Button : public GUI_element
 	{
 	public:
-		Button(Sprite* face, std::shared_ptr<RenderEngine::Material> pMaterial, glm::vec2 pos, glm::vec2 scale,
+		Button(Sprite* face, glm::vec2 pos, glm::vec2 scale,
 			std::string text, std::string shaderName, std::shared_ptr<Font> font, glm::vec3 textColor);
 		~Button();
 
@@ -41,6 +41,5 @@ namespace GUI
 		Sprite* m_face;
 		std::unique_ptr<TextRenderer> m_textRenderer;
 		bool m_isClicked = false;
-		int m_text_length = 0;
 	};
 }

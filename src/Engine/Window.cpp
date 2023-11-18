@@ -72,8 +72,8 @@ int Window::init()
     }
 
     glfwMakeContextCurrent(m_pWindow);
-    if (m_data.maximized) maximize();
     set_pos(m_data.window_position);
+    if (m_data.maximized) maximize();
     
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {

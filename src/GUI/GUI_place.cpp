@@ -26,6 +26,7 @@ namespace GUI
 	}
 	void GUI_place::on_render()
 	{
+		if (!m_isActive) return;
 		m_pMaterial->use();
 		m_pMaterial->get_shader_ptr()->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_render_cam->get_ui_matrix());
 		//glm::vec2 size = m_render_cam->get_viewport_size();
@@ -44,15 +45,7 @@ namespace GUI
 		element->set_scale(glm::vec2(scalep.x / 100 * wsize.x, scalep.y / 100 * wsize.y));
 		m_elements.emplace(element->get_name(), element);
 	}
-	GUI_element* GUI_place::get_element(std::string name)
-	{
-		std::map<std::string, GUI_element*>::iterator it = m_elements.find(name);
-		if (it != m_elements.end())
-		{
-			return it->second;
-		}
-		return nullptr;
-	}
+		
 	void GUI_place::on_mouse_release(int x, int y)
 	{
 		m_isFocus = false;

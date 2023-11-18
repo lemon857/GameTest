@@ -33,6 +33,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/System/TemplateTimer.h
 	includes/EngineCore/System/Stopwatch.h
 	includes/EngineCore/System/List.h	
+	includes/EngineCore/System/SysFunc.h	
 	
 	includes/Games/Tower_Defense/GameApplication.h
   
@@ -43,6 +44,9 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/GUI/Square.h
 	includes/EngineCore/GUI/Font.h
 	includes/EngineCore/GUI/TextRenderer.h
+	includes/EngineCore/GUI/InputField.h
+	includes/EngineCore/GUI/CheckBox.h
+	includes/EngineCore/GUI/ChatBox.h
   
 	includes/Games/Tower_Defense/Castle.h
 	includes/Games/Tower_Defense/HealthBar.h
@@ -95,6 +99,8 @@ set(ENGINE_PRIVATE_INCLUDES
   
 	includes/EngineCore/Light/DirectionalLight.h
 	includes/EngineCore/Light/PointerLight.h
+
+	includes/EngineCore/Network/WinSock.h
 )
 
 set(ENGINE_PRIVATE_SOURCES
@@ -178,6 +184,11 @@ set(ENGINE_PRIVATE_SOURCES
 	src/GUI/Font.cpp
 	src/GUI/TextRenderer.cpp
 	src/GUI/Button.cpp
+	src/GUI/InputField.cpp
+	src/GUI/CheckBox.cpp
+	src/GUI/ChatBox.cpp
+
+	src/Network/WinSock.cpp
 )
 
 

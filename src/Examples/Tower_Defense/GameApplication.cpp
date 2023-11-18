@@ -31,6 +31,13 @@
 #include "EngineCore/GUI/TextRenderer.h"
 #include "EngineCore/GUI/Button.h"
 #include "EngineCore/GUI/Sprite.h"
+#include "EngineCore/GUI/InputField.h"
+#include "EngineCore/GUI/CheckBox.h"
+#include "EngineCore/GUI/ChatBox.h"
+
+#include "EngineCore/Network/WinSock.h"
+
+#include "EngineCore/System/sysfunc.h"
 
 #include <array>
 #include <memory>
@@ -39,60 +46,20 @@
 
 #define CHECK_AVAILABLE_POS(x, y, width, height) ((x > 0 && x < width) && (y > 0 && y < height))
 
-const int size_x = 30, size_y = 30;
-
-std::array <bool, size_x * size_y> map;
-
-int cur = 0;
-int curObj = 3;
-
-int countEnemies = 0;
-int countEnemiesPerm = 0;
-
-bool is_event_logging_active = false;
-
-bool is_grid_active = false;
-
-bool is_gui_active = false;
-
-bool is_debug_active = false;
-
-bool isKeyPressed = false;
-bool isKeyPressedmouse = false;
-
-unsigned int countKills = 0;
-unsigned int fps = 0;
-unsigned int frames = 0;
-double times = 0;
-
-double angle = 0;
-
-GUI::GUI_place* m_gui;
-GUI::GUI_place* m_gui_debug;
-GUI::GUI_place* m_gui_place_menu;
-GUI::GUI_place* m_gui_place_settings;
-
-enum GUI_Active
-{
-    null,
-    main,
-    settings
-};
-
-GUI_Active gui_window;
-
 GameApp::GameApp()
 	: Application()
 {
 }
-
 GameApp::~GameApp()
 {
     delete m_cam;
+    WinSock::close_WinSock();
 }
 
 bool GameApp::init()
 {
+    WinSock::init_WinSock();
+
     m_cam = new Camera(glm::vec3(0), glm::vec3(0));
 
     m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
@@ -125,9 +92,13 @@ bool GameApp::init()
     m_scene.add_object<DirectionalLight>(names);
     m_scene.add_object<Grid>(glm::vec3(size_x, 0.5f, size_y), glm::vec2(1.f), size_x, size_y, glm::vec3(1.f), ResourceManager::getMaterial("default"));
     m_scene.add_object<EmptyObject>();
+    m_scene.add_object<EmptyObject>();
 
     m_scene.at(curObj)->addComponent<Transform>();
-    m_scene.at(curObj)->addComponent<Highlight>(ResourceManager::getMaterial("default"), true); 
+    m_scene.at(curObj)->addComponent<Highlight>(ResourceManager::getMaterial("default"), true);
+
+    m_scene.at(4)->addComponent<Transform>();
+    m_scene.at(4)->addComponent<Highlight>(ResourceManager::getMaterial("default"), true, false, glm::vec3(1.f, 0.f, 0.f));
 
     const auto& transform = m_scene.at(0)->getComponent<Transform>();
 
@@ -154,8 +125,23 @@ bool GameApp::init()
 
 void GameApp::on_key_update(const double delta)
 {
-    if (m_isLose) return;
-
+    if (m_isLose
+        || m_gui_place_menu->get_element<GUI::InputField>("InputIP")->get_focus()
+        || m_gui_chat->get_element<GUI::InputField>("SendMessage")->get_focus())
+    {
+        if (Input::isKeyPressed(KeyCode::KEY_ESCAPE))
+        {
+            m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_focus(false);
+            isKeyPressed = true;
+            if (is_chat_active)
+            {
+                m_gui_chat->get_element<GUI::ChatBox>("Chat")->set_open(false);
+                m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_active(false);
+                is_chat_active = false;
+            }
+        }
+        return;
+    }
 
     glm::vec3 movement_delta{ 0,0,0 };
     glm::vec3 rotation_delta{ 0,0,0 };
@@ -171,6 +157,24 @@ void GameApp::on_key_update(const double delta)
         else if (!isKeyPressed)
         {
             is_grid_active = true;
+            isKeyPressed = true;
+        }
+    } 
+    else if (Input::isKeyPressed(KeyCode::KEY_T))
+    {
+        if (is_chat_active && !isKeyPressed)
+        {
+            m_gui_chat->get_element<GUI::ChatBox>("Chat")->set_open(false);
+            m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_active(false);
+            is_chat_active = false;
+            isKeyPressed = true;
+        }
+        else if (!isKeyPressed)
+        {
+            m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_focus(true);
+            m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_active(true);
+            m_gui_chat->get_element<GUI::ChatBox>("Chat")->set_open(true);
+            is_chat_active = true;
             isKeyPressed = true;
         }
     }
@@ -193,9 +197,21 @@ void GameApp::on_key_update(const double delta)
     {
         if (!isKeyPressed)
         {
-            countEnemies++;
             countEnemiesPerm++;
-            m_gui_debug->get_element("enemies")->lead<GUI::TextRenderer>()->set_text("Enemies: " + std::to_string(countEnemiesPerm));
+            short snum = rand() % 4;
+            unsigned int spawn = 0;
+            if (snum == 0) spawn = rand() % size_x;
+            else if (snum == 1) spawn = (rand() % size_x) + ((size_x - 1) * size_y);
+            else if (snum == 2) spawn = (rand() % size_y) * size_x;
+            else if (snum == 3) spawn = ((rand() % size_y) * size_x) + (size_x - 1);
+            m_spawn_enemies.push(spawn);
+
+            char buff[sizeof(unsigned int) + 1];
+            buff[0] = 's';
+            sysfunc::type_to_char(&spawn, buff, 1);
+            WinSock::send_data(buff, sizeof(unsigned int) + 1);
+
+            m_gui_debug->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));
             isKeyPressed = true;
         }
     }
@@ -241,7 +257,7 @@ void GameApp::on_key_update(const double delta)
         }
     }
 
-    if (is_gui_active) return;
+    if (is_gui_active) return; // block move in menu
 
     if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT) && !m_gui_place_menu->get_focus())
 
@@ -251,8 +267,17 @@ void GameApp::on_key_update(const double delta)
 
         if ((x * y <= (size_x - 1) * (size_y - 1)) && (x >= 0 && y >= 0))
         {
-            if (x <= (size_x - 1) && y <= (size_y - 1)) cur = x * size_y + y;
-
+            if (x <= (size_x - 1) && y <= (size_y - 1))
+            {
+                if (cur != x * size_y + y)
+                {
+                    cur = x * size_y + y;
+                    char buff[sizeof(unsigned int) + 1];
+                    buff[0] = 'd';
+                    sysfunc::type_to_char(&cur, buff, 1);
+                    WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                }
+            }
         }
     }
     else if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_RIGHT))
@@ -284,9 +309,13 @@ void GameApp::on_key_update(const double delta)
             {
                 map[cur] = true;
                 isKeyPressedmouse = true;
+                m_spawn_towers.push(cur);
+                char buff[sizeof(unsigned int) + 1];
 
-                m_towers.push_back(new BaseTower("res/models/tower.obj",
-                    ResourceManager::getMaterial("tower"), nullptr, parts[cur], 1, new RenderEngine::Line(ResourceManager::getMaterial("default"))));
+                buff[0] = 't';
+                sysfunc::type_to_char(&cur, buff, 1);
+
+                WinSock::send_data(buff, sizeof(unsigned int) + 1);
 
                 //m_scene.at(curObj)->deleteComponent<Highlight>();
                 //curObj++;
@@ -307,7 +336,7 @@ void GameApp::on_key_update(const double delta)
             LOG_INFO("Add tower on tower at {0}x{1}", parts[cur].x, parts[cur].z);
         }*/
     }
-
+    // movement
     if (Input::isKeyPressed(KeyCode::KEY_W))
     {
         movement_delta.z += static_cast<float>(addSpeed * m_cam_velocity * delta);
@@ -365,7 +394,8 @@ void GameApp::on_update(const double delta)
 
     m_gui_place_menu->on_update(delta);
 
-    m_scene.at(curObj)->getComponent<Transform>()->set_position(parts[cur]); 
+    m_scene.at(curObj)->getComponent<Transform>()->set_position(parts[cur]);
+    m_scene.at(4)->getComponent<Transform>()->set_position(parts[cur_player]);
     //m_grid_line->render(glm::vec3(0), glm::vec3(m_world_mouse_pos_x, m_world_mouse_pos_y + 0.1f, m_world_mouse_pos_z), glm::vec3(1.f));
 
 
@@ -382,7 +412,7 @@ void GameApp::on_update(const double delta)
         if (i != 2) m_scene.at(i)->update(delta);
         if (i == 2 && is_grid_active) m_scene.at(i)->update(delta);
     }       
-
+    // ============================================================
     if (m_isLose) return;
 
     m_main_castle->update(delta);
@@ -393,23 +423,24 @@ void GameApp::on_update(const double delta)
         m_gui_place_menu->set_active(false);
         m_gui_place_settings->set_active(false);
         gui_window = null;
-        m_gui->get_element("Lose scoreboard")->lead<GUI::TextRenderer>()->set_text("Your score: " + std::to_string(countKills));
-        m_gui->get_element("Restart")->set_active(true);
-        m_gui->get_element("Lose text")->set_active(true);
-        m_gui->get_element("Lose scoreboard")->set_active(true);
+        m_gui->get_element<GUI::TextRenderer>("Lose scoreboard")->set_text("Your score: " + std::to_string(countKills));
+        m_gui->set_active(true);
+        if (isServer) WinSock::send_data("l", 1);
     }
+    // sync
 
-    for (; countEnemies > 0; countEnemies--)
+    while (!m_spawn_towers.empty())
     {
-        short snum = rand() % 4;
-        int spawn = 0;        
-        if (snum == 0) spawn = rand() % size_x;
-        else if (snum == 1) spawn = (rand() % size_x) + ((size_x - 1) * size_y);
-        else if (snum == 2) spawn = (rand() % size_y) * size_x;
-        else if (snum == 3) spawn = ((rand() % size_y) * size_x) + (size_x - 1);
+        m_towers.push_back(new BaseTower("res/models/tower.obj",
+            ResourceManager::getMaterial("tower"), nullptr, parts[m_spawn_towers.front()], _set_cooldown_tower, 10, new RenderEngine::Line(ResourceManager::getMaterial("default"))));
+        m_spawn_towers.pop();
+    }
+    while (!m_spawn_enemies.empty()) // spawn enemies
+    {
         auto a = new BaseEnemy(new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("monkey")),
-            m_main_castle, parts[spawn], 1, 0.007, 50, ResourceManager::getMaterial("default"));
+            m_main_castle, parts[m_spawn_enemies.front()], 1, _set_velosity * 0.001, _set_max_hp_enemy, ResourceManager::getMaterial("default"));
         m_enemies.push_back(a);
+        m_spawn_enemies.pop();
     }
 
     for (auto curTower : m_towers)
@@ -420,14 +451,15 @@ void GameApp::on_update(const double delta)
             if (m_enemies[i] == nullptr) continue;
             glm::vec3 a = m_enemies[i]->get_pos() - curTower->get_pos();
             double d = sqrt(a.x * a.x + a.z * a.z);
-            if (d < MIN_DISTANCE_TO_BaseEnemy && d < distance)
+            if (d < _set_min_distance && d < distance)
             {
                 distance = d;
-                if (curTower->get_target() != m_enemies[i]) curTower->set_target(m_enemies[i]);
+                if (curTower->get_target() == nullptr) curTower->set_target(m_enemies[i]);
+                //if (curTower->get_target() != m_enemies[i]) curTower->set_target(m_enemies[i]);
             }
             else 
             {
-                curTower->set_target(nullptr);
+                //curTower->set_target(nullptr);
             }
         }
         curTower->update(delta);
@@ -446,12 +478,12 @@ void GameApp::on_update(const double delta)
             delete m_enemies[i];
             m_enemies.remove(i);
             countKills++;
-            m_gui_debug->get_element("kills")->lead<GUI::TextRenderer>()->set_text("Kills: " + std::to_string(countKills));
+            m_gui_debug->get_element<GUI::TextRenderer>("kills")->set_text("Kills: " + std::to_string(countKills));
             continue;
         }
         m_enemies[i]->update(delta);        
     }
-
+    // fps counter
     if (frames < 5)
     {
         frames++;
@@ -460,7 +492,7 @@ void GameApp::on_update(const double delta)
     else
     {
         fps = int((frames / times) * 1000.f);
-        m_gui_debug->get_element("fps")->lead<GUI::TextRenderer>()->set_text("FPS: " + std::to_string(fps));
+        m_gui_debug->get_element<GUI::TextRenderer>("fps")->set_text("FPS: " + std::to_string(fps));
         frames = 0;
         times = 0;
     }
@@ -468,14 +500,24 @@ void GameApp::on_update(const double delta)
 
 void GameApp::on_ui_render()
 {
+    // for correct write message in other thread
+    while (!m_chat_mes.empty())
+    {
+        m_gui_chat->get_element<GUI::ChatBox>("Chat")->add_message(m_chat_mes.front());
+        m_chat_mes.pop();
+    }
+    // =========================================
     m_gui->on_render();
-    if (is_debug_active) m_gui_debug->on_render();
     if (is_gui_active)
     {
         if (gui_window == main) m_gui_place_menu->on_render();
         else if (gui_window == settings) m_gui_place_settings->on_render();
+        return;
     }
+    if (is_debug_active) m_gui_debug->on_render();
+    m_gui_chat->on_render();
 }
+
 bool GameApp::init_events()
 {
     m_event_dispather.add_event_listener<EventWindowResize>([&](EventWindowResize& e)
@@ -487,13 +529,14 @@ bool GameApp::init_events()
                 RenderEngine::Renderer::setViewport(e.width, e.height);
                 m_cam->set_viewport_size(e.width, e.height);
                 m_gui->on_resize();
+                m_gui_chat->on_resize();
                 m_gui_debug->on_resize();
                 m_gui_place_menu->on_resize();
                 m_gui_place_settings->on_resize();
 
             }
         });
-    m_event_dispather.add_event_listener<EventKeyPressed>([](EventKeyPressed& e)
+    m_event_dispather.add_event_listener<EventKeyPressed>([&](EventKeyPressed& e)
         {
             if (e.key_code <= KeyCode::KEY_Z)
             {
@@ -508,6 +551,8 @@ bool GameApp::init_events()
                 }
             }
             Input::pressKey(e.key_code);
+            m_gui_place_menu->get_element<GUI::InputField>("InputIP")->press_button(e.key_code);
+            m_gui_chat->get_element<GUI::InputField>("SendMessage")->press_button(e.key_code);
         });
     m_event_dispather.add_event_listener<EventKeyReleased>([&](EventKeyReleased& e)
         {
@@ -543,6 +588,8 @@ bool GameApp::init_events()
     m_event_dispather.add_event_listener<EventMouseButtonPressed>([&](EventMouseButtonPressed& e)
         {
             m_gui->on_mouse_press(e.x_pos, e.y_pos);
+            m_gui_chat->on_mouse_press(e.x_pos, e.y_pos);
+            m_gui_debug->on_mouse_press(e.x_pos, e.y_pos);
             m_gui_place_menu->on_mouse_press(e.x_pos, e.y_pos);
             m_gui_place_settings->on_mouse_press(e.x_pos, e.y_pos);
             if (is_event_logging_active) LOG_INFO("[EVENT] Mouse button pressed at ({0}x{1})", e.x_pos, e.y_pos);
@@ -555,6 +602,7 @@ bool GameApp::init_events()
         {
             isKeyPressedmouse = false;
             m_gui->on_mouse_release(e.x_pos, e.y_pos);
+            m_gui_debug->on_mouse_release(e.x_pos, e.y_pos);
             m_gui_place_menu->on_mouse_release(e.x_pos, e.y_pos);
             m_gui_place_settings->on_mouse_release(e.x_pos, e.y_pos);
             if (is_event_logging_active) LOG_INFO("[EVENT] Mouse button released at ({0}x{1})", e.x_pos, e.y_pos);
@@ -586,118 +634,304 @@ bool GameApp::init_events()
 void GameApp::init_gui()
 {
     m_gui = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
+    m_gui_chat = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
     m_gui_debug = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
     m_gui_place_menu = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
     m_gui_place_settings = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
 
     // debug window ---------------------------------------------------------------------------
-    m_gui_debug->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        "FPS: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, 98.f), glm::vec2(0.5f), "fps", false));
+    m_gui_debug->add_element<GUI::TextRenderer>(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
+        "FPS: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, 98.f), glm::vec2(0.5f), "fps", false);
 
-    m_gui_debug->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        "Enemies: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, 96.f), glm::vec2(0.5f), "enemies", false));
+    m_gui_debug->add_element<GUI::TextRenderer>(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
+        "Enemies: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, 96.f), glm::vec2(0.5f), "enemies", false);
 
-    m_gui_debug->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        "Kills: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, 94.f), glm::vec2(0.5f), "kills", false));
+    m_gui_debug->add_element<GUI::TextRenderer>(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
+        "Kills: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, 94.f), glm::vec2(0.5f), "kills", false);   
 
+    m_gui_debug->add_element<GUI::TextRenderer>(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
+        "Ping: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, 92.f), glm::vec2(0.5f), "ping", false);
+
+    // chat ---------------------------------------------------------------------------
+    m_gui_chat->add_element<GUI::ChatBox>(new GUI::Sprite(ResourceManager::getMaterial("defaultSprite")),
+        glm::vec2(13.f, 41.f), glm::vec2(12.f, 30.f), "Chat", 12, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"), glm::vec3(1.f));
+
+    m_gui_chat->add_element<GUI::InputField>(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(13.f, 5.f), glm::vec2(12.f, 5.f), "SendMessage", ResourceManager::getShaderProgram("textShader"),
+        ResourceManager::get_font("calibri"), glm::vec3(1.f), true)->set_enter_callback([&](std::string text) {
+            //if (text[0] == '/') // need finalize
+            //{
+            //    if (ResourceManager::start_with(text, "/dis")) // distance tower attack
+            //    {
+            //        if (text == "/dis")
+            //        {
+            //            m_chat_mes.push("Min distance: " + std::to_string(_set_min_distance));
+            //        }
+            //        else
+            //        {
+            //            _set_min_distance = std::stod(text.substr(5));
+            //            m_chat_mes.push("Set min distance: " + std::to_string(_set_min_distance));
+            //        }
+            //    }
+            //    else if (ResourceManager::start_with(text, "/vel")) // velosity enemy
+            //    {
+            //        if (text == "/vel")
+            //        {
+            //            m_chat_mes.push("Velocity: " + std::to_string(_set_velosity));             
+            //        }
+            //        else
+            //        {
+            //            _set_velosity = std::stod(text.substr(5));
+            //            m_chat_mes.push("Set velocity: " + std::to_string(_set_velosity));
+            //        }
+            //    }
+            //    else if (ResourceManager::start_with(text, "/mhpcas")) // max hp castle
+            //    {
+            //        if (text == "/mhpcas")
+            //        {
+            //            m_chat_mes.push("Max hp castle: " + std::to_string(_set_max_hp_castle));
+            //        }
+            //        else
+            //        {
+            //            _set_max_hp_castle = std::stod(text.substr(8));
+            //            m_chat_mes.push("Set max hp castle: " + std::to_string(_set_max_hp_castle));
+            //            m_chat_mes.push("Need restart");
+            //        }
+            //    }
+            //    else if (ResourceManager::start_with(text, "/mhpen")) // max hp enemy
+            //    {
+            //        if (text == "/mhpen")
+            //        {
+            //            m_chat_mes.push("Max hp enemy: " + std::to_string(_set_max_hp_enemy));
+            //        }
+            //        else
+            //        {
+            //            _set_max_hp_enemy = std::stod(text.substr(7));
+            //            m_chat_mes.push("Set max hp enemy: " + std::to_string(_set_max_hp_enemy));
+            //        }
+            //    }
+            //    else if (ResourceManager::start_with(text, "/cdtow")) // cooldown tower attack
+            //    {
+            //        if (text == "/cdtow")
+            //        {
+            //            m_chat_mes.push("Cooldown tower: " + std::to_string(_set_cooldown_tower));
+            //        }
+            //        else
+            //        {
+            //            _set_cooldown_tower = std::stod(text.substr(7));
+            //            m_chat_mes.push("Set cooldown tower: " + std::to_string(_set_cooldown_tower));
+            //            m_chat_mes.push("Need restart");
+            //        }
+            //    }
+            //}
+            //else
+            {
+                m_chat_mes.push("Me: " + text);
+                WinSock::send_data(('m' + text).data(), text.length() + 1); // =========================== message flag first
+            }
+            });
+    
     // lose window ---------------------------------------------------------------------------
-    m_gui->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        "You lose!", glm::vec3(1.f, 0.1f, 0.1f), glm::vec2(41.f, 57.f), glm::vec2(2.f), "Lose text"));
+    m_gui->add_element<GUI::TextRenderer>(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
+        "You lose!", glm::vec3(1.f, 0.1f, 0.1f), glm::vec2(41.f, 57.f), glm::vec2(2.f), "Lose text");
 
-    m_gui->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        "Your score: 0", glm::vec3(1.f, 0.1f, 0.1f), glm::vec2(41.f, 50.f), glm::vec2(2.f), "Lose scoreboard"));
+    m_gui->add_element<GUI::TextRenderer>(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
+        "Your score: 0", glm::vec3(1.f, 0.1f, 0.1f), glm::vec2(41.f, 50.f), glm::vec2(2.f), "Lose scoreboard");
 
-    m_gui->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        ResourceManager::getMaterial("button"), glm::vec2(89.f, 6.f), glm::vec2(10.f, 5.f),
-        "Restart", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
+    m_gui->add_element<GUI::Button>(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(89.f, 6.f), glm::vec2(10.f, 5.f),
+        "Restart", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f));
 
-    m_gui->get_element("Restart")->set_click_callback([&]()
+    m_gui->get_element<GUI::GUI_element>("Restart")->set_click_callback([&]()
         {
+            if (isServer) WinSock::send_data("r", 1);
             start_game();
         });
 
     m_gui->set_active(true);
-    // Settings ------------------------------------------------------------------------------------
-    m_gui_place_settings->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        "Settings", glm::vec3(0.f), glm::vec2(45.f, 90.f), glm::vec2(1.f)));
+    // Settings ------------------------------------------------------------------------------------    
+    m_gui_place_settings->add_element<GUI::TextRenderer>(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
+        "Settings", glm::vec3(0.f), glm::vec2(50.f, 90.f), glm::vec2(1.f));
 
-    m_gui_place_settings->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        ResourceManager::getMaterial("button"), glm::vec2(89.f, 39.f), glm::vec2(10.f, 5.f),
-        "Debug", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
+    m_gui_place_settings->add_element<GUI::Button>(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(89.f, 39.f), glm::vec2(10.f, 5.f),
+        "Debug", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
+            {
+                is_debug_active = !is_debug_active;
+            });;
 
-    m_gui_place_settings->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        ResourceManager::getMaterial("button"), glm::vec2(89.f, 28.f), glm::vec2(10.f, 5.f),
-        "Add enemy", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
+    m_gui_place_settings->add_element<GUI::Button>(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(89.f, 28.f), glm::vec2(10.f, 5.f),
+        "Add enemy", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
+            {
+                countEnemiesPerm++;
+                short snum = rand() % 4;
+                int spawn = 0;
+                if (snum == 0) spawn = rand() % size_x;
+                else if (snum == 1) spawn = (rand() % size_x) + ((size_x - 1) * size_y);
+                else if (snum == 2) spawn = (rand() % size_y) * size_x;
+                else if (snum == 3) spawn = ((rand() % size_y) * size_x) + (size_x - 1);
+                m_spawn_enemies.push(spawn);
 
-    m_gui_place_settings->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        ResourceManager::getMaterial("button"), glm::vec2(89.f, 17.f), glm::vec2(10.f, 5.f),
-        "Grid", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
+                char buff[sizeof(unsigned int) + 1];
+                buff[0] = 's';
+                buff[1] = (unsigned int)spawn;
+                WinSock::send_data(buff, sizeof(unsigned int) + 1);
 
-    m_gui_place_settings->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        ResourceManager::getMaterial("button"), glm::vec2(89.f, 6.f), glm::vec2(10.f, 5.f),
-        "Back", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
+                m_gui_debug->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));                
+            });;
 
-    m_gui_place_settings->add_element(new GUI::Sprite(ResourceManager::getMaterial("defaultSprite"), "default",
-        glm::vec2(100.f), glm::vec2(100.f)));
+    m_gui_place_settings->add_element<GUI::Button>(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(89.f, 17.f), glm::vec2(10.f, 5.f),
+        "Grid", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
+            {
+                is_grid_active = !is_grid_active;
+            });;
 
-    m_gui_place_settings->get_element("Debug")->set_click_callback([&]()
-        {
-            is_debug_active = !is_debug_active;
-        });
+    m_gui_place_settings->add_element<GUI::Button>(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(89.f, 6.f), glm::vec2(10.f, 5.f),
+        "Back", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
+            {
+                gui_window = GUI_Active::main;
+                m_gui_place_settings->set_active(false);
+                m_gui_place_menu->set_active(true);
+            });
 
-    m_gui_place_settings->get_element("Grid")->set_click_callback([&]()
-        {
-            is_grid_active = !is_grid_active;
-        });
-
-    m_gui_place_settings->get_element("Add enemy")->set_click_callback([&]()
-        {
-            countEnemies++; countEnemiesPerm++;
-            m_gui_debug->get_element("enemies")->lead<GUI::TextRenderer>()->set_text("Enemies: " + std::to_string(countEnemiesPerm));
-        });
-
-    m_gui_place_settings->get_element("Back")->set_click_callback([&]()
-        {
-            gui_window = GUI_Active::main;
-            m_gui_place_settings->set_active(false);
-            m_gui_place_menu->set_active(true);
-        });
-    // main menu ------------------------------------------------------------------------------------
-    m_gui_place_menu->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        "Main menu", glm::vec3(0.f), glm::vec2(45.f, 90.f), glm::vec2(1.f)));
-
-    m_gui_place_menu->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        ResourceManager::getMaterial("button"), glm::vec2(11.f, 6.f), glm::vec2(10.f, 5.f),
-        "Quit", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
-
-    m_gui_place_menu->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        ResourceManager::getMaterial("button"), glm::vec2(89.f, 6.f), glm::vec2(10.f, 5.f),
-        "Settings", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f))); 
+    m_gui_place_settings->add_element<GUI::Sprite>(ResourceManager::getMaterial("defaultSprite"), "default",
+        glm::vec2(100.f), glm::vec2(100.f), "z.BG");
     
-    m_gui_place_menu->add_element(new GUI::Button(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-            ResourceManager::getMaterial("button"), glm::vec2(11.f, 17.f), glm::vec2(10.f, 5.f),
-            "Restart", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f)));
+    // main menu ------------------------------------------------------------------------------------
+    m_gui_place_menu->add_element<GUI::TextRenderer>(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
+        "Main menu", glm::vec3(0.f), glm::vec2(50.f, 90.f), glm::vec2(1.f));
 
-    m_gui_place_menu->add_element(new GUI::Sprite(ResourceManager::getMaterial("defaultSprite"), "default",
-        glm::vec2(100.f), glm::vec2(100.f)));
+    m_gui_place_menu->add_element<GUI::Button>(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(11.f, 6.f), glm::vec2(10.f, 5.f),
+        "Quit", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
+            {
+                m_pCloseWindow = true;
+            });;
 
-    m_gui_place_menu->get_element("Quit")->set_click_callback([&]()
+    m_gui_place_menu->add_element<GUI::Button>(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(89.f, 6.f), glm::vec2(10.f, 5.f),
+        "Settings", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
+            {
+                gui_window = GUI_Active::settings;
+                m_gui_place_menu->set_active(false);
+                m_gui_place_settings->set_active(true);
+            });;
+    
+    m_gui_place_menu->add_element<GUI::Button>(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+            glm::vec2(11.f, 17.f), glm::vec2(10.f, 5.f),
+            "Restart", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
+                {
+                    if (isServer) WinSock::send_data("r", 1);
+                    start_game();
+                    is_gui_active = false;
+                    m_gui_place_menu->set_active(false);
+                });;
+    // WinSock callbacks ====================================================================
+    WinSock::set_receive_callback([&](char* data, int size) {           
+        if (data[WS_DATA_PACKET_INFO_SIZE] == 'm')
         {
-            m_pCloseWindow = true;
-        });
-
-    m_gui_place_menu->get_element("Settings")->set_click_callback([&]()
+            std::string str = std::string(&data[WS_DATA_PACKET_INFO_SIZE + 1]).substr(0, size - (WS_DATA_PACKET_INFO_SIZE));
+            m_chat_mes.push("He: " + str);            
+        }
+        else if (data[WS_DATA_PACKET_INFO_SIZE] == 'l')
         {
-            gui_window = GUI_Active::settings;
-            m_gui_place_menu->set_active(false);
-            m_gui_place_settings->set_active(true);
-        });
-    m_gui_place_menu->get_element("Restart")->set_click_callback([&]()
+            m_main_castle->damage(_set_max_hp_castle + 1);
+        }
+        else if (data[WS_DATA_PACKET_INFO_SIZE] == 'r')
         {
             start_game();
-            is_gui_active = false;
-            m_gui_place_menu->set_active(false);
+        }
+        else if (data[WS_DATA_PACKET_INFO_SIZE] == 't') 
+        {
+            unsigned int cur_buf;
+            sysfunc::char_to_type(&cur_buf, data, WS_DATA_PACKET_INFO_SIZE + 1);
+            m_spawn_towers.push(cur_buf);
+        }
+        else if (data[WS_DATA_PACKET_INFO_SIZE] == 's')
+        {
+            unsigned int spawn = 0;
+            sysfunc::char_to_type(&spawn, data, WS_DATA_PACKET_INFO_SIZE + 1);
+            m_spawn_enemies.push(spawn);
+        }
+        else if (data[WS_DATA_PACKET_INFO_SIZE] == 'd')
+        {
+            sysfunc::char_to_type(&cur_player, data, WS_DATA_PACKET_INFO_SIZE + 1);
+        }
         });
+
+    WinSock::set_ping_callback([&](double ping) {
+        m_gui_debug->get_element<GUI::TextRenderer>("ping")->set_text(std::to_string(ping) + " ms");
+        });
+
+    WinSock::set_disconnect_callback([&]() {
+        m_chat_mes.push("Disconnect!");
+        m_gui_place_menu->get_element<GUI::Button>("Disconnect")->set_active(false);
+        m_gui_place_menu->get_element<GUI::Button>("Restart")->set_active(true);
+        m_gui->get_element<GUI::Button>("Restart")->set_active(true);
+        }); 
+    WinSock::set_connect_callback([&]() {
+            m_chat_mes.push("Connect!");
+            m_gui_place_menu->get_element<GUI::Button>("Disconnect")->set_active(true);
+            if (!isServer)
+            {
+                m_gui_place_menu->get_element<GUI::Button>("Restart")->set_active(false);
+                m_gui->get_element<GUI::Button>("Restart")->set_active(false);
+            }
+            start_game();
+            });
+
+    // ========================================================================================
+    m_gui_place_menu->add_element<GUI::TextRenderer>(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
+        "Enter IP", glm::vec3(1.f), glm::vec2(11.f, 68.f), glm::vec2(1.f), "m");
+
+    m_gui_place_menu->add_element<GUI::InputField>(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(11.f, 60.f), glm::vec2(10.f, 5.f), "InputIP", ResourceManager::getShaderProgram("textShader"),
+        ResourceManager::get_font("calibri"), glm::vec3(1.f));
+
+    m_gui_place_menu->add_element<GUI::Button>(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(11.f, 48.f), glm::vec2(10.f, 5.f),
+        "Disconnect", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f));
+
+    m_gui_place_menu->add_element<GUI::CheckBox>(new GUI::Sprite(ResourceManager::getMaterial("checkbox_bg")), new GUI::Sprite(ResourceManager::getMaterial("checkbox_mark")),
+        glm::vec2(27.f, 60.f), glm::vec2(5.f), "checkbox")->set_click_callback([&]() {
+            if (m_gui_place_menu->get_element<GUI::CheckBox>("checkbox")->value())
+            {
+                m_gui_place_menu->get_element<GUI::InputField>("InputIP")->set_text("0.0.0.0");
+            }
+            else
+            {
+                m_gui_place_menu->get_element<GUI::InputField>("InputIP")->set_text("127.0.0.1");
+            }
+            });
+
+    m_gui_place_menu->add_element<GUI::Sprite>(ResourceManager::getMaterial("defaultSprite"), "default",
+        glm::vec2(100.f), glm::vec2(100.f), "z.BG"); // Crutch but idk how resolve this now    
+
+    m_gui_place_menu->get_element<GUI::GUI_element>("Disconnect")->set_click_callback([&]() {
+        WinSock::disconnect();
+        m_chat_mes.push("Disconnect!");
+        });
+
+    m_gui_place_menu->get_element<GUI::InputField>("InputIP")->set_text("127.0.0.1");
+
+    m_gui_place_menu->get_element<GUI::InputField>("InputIP")->set_enter_callback([&](std::string text)
+        {
+            m_gui_chat->get_element<GUI::ChatBox>("Chat")->clear();
+            if (m_gui_place_menu->get_element<GUI::CheckBox>("checkbox")->value())
+            {
+                WinSock::open_server(text.c_str(), 20746);
+                isServer = true;
+            }
+            else
+            {
+                WinSock::open_client(text.c_str(), 20746);
+                isServer = false;
+            }
+            m_chat_mes.push("Wait connection!");
+        });        
 }
 
 void GameApp::start_game()
@@ -711,17 +945,24 @@ void GameApp::start_game()
     cur = 0;
     gui_window = null;
 
-    m_main_castle = new Castle(parts[int((size_x * size_y) / 2) + int(size_x / 2)], 100,
+    m_main_castle = new Castle(parts[int((size_x * size_y) / 2) + int(size_x / 2)], _set_max_hp_castle,
         "res/models/castle.obj", ResourceManager::getMaterial("castle"), ResourceManager::getMaterial("default"));
     map[int((size_x * size_y) / 2) + int(size_x / 2)] = true;
 
     m_towers.clear();
     m_enemies.clear();
 
-    m_gui->get_element("Restart")->set_active(false);
-    m_gui->get_element("Lose text")->set_active(false);
-    m_gui->get_element("Lose scoreboard")->set_active(false);
+    m_gui->set_active(false);
+    m_gui_chat->set_active(true);
+    m_gui_debug->set_active(true);
+    m_gui_place_menu->set_active(false);
+    m_gui_place_settings->set_active(false);
 
-    m_gui_debug->get_element("enemies")->lead<GUI::TextRenderer>()->set_text("Enemies: 0");
-    m_gui_debug->get_element("kills")->lead<GUI::TextRenderer>()->set_text("Kills: 0");
+    m_gui_place_menu->get_element<GUI::Button>("Disconnect")->set_active(false);
+
+    m_gui_chat->get_element<GUI::ChatBox>("Chat")->set_open(false);
+    m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_active(false);
+
+    m_gui_debug->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: 0");
+    m_gui_debug->get_element<GUI::TextRenderer>("kills")->set_text("Kills: 0");
 }

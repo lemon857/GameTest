@@ -12,6 +12,7 @@ namespace RenderEngine
 	class Material;
 }
 
+
 namespace GUI
 {
 	class GUI_element;
@@ -28,7 +29,29 @@ namespace GUI
 
 		void add_element(GUI_element* element);
 
-		GUI_element* get_element(std::string name);
+		template <class _Ty, class... _Types>
+		_Ty* add_element(_Types&&... _Args)
+		{
+			GUI_element* element = (GUI_element*)(new _Ty(std::forward<_Types>(_Args)...));
+			glm::vec2 posp = element->get_position_p();
+			glm::vec2 scalep = element->get_scale_p();
+			glm::vec2 wsize = m_render_cam->get_viewport_size();
+			element->set_position(glm::vec2(posp.x / 100 * wsize.x, posp.y / 100 * wsize.y));
+			element->set_scale(glm::vec2(scalep.x / 100 * wsize.x, scalep.y / 100 * wsize.y));
+			m_elements.emplace(element->get_name(), element);
+			return (_Ty*)element;
+		}
+
+		template<class _Ty>
+		_Ty* get_element(std::string name) 
+		{
+			std::map<std::string, GUI_element*>::iterator it = m_elements.find(name);
+			if (it != m_elements.end())
+			{
+				return (_Ty*)(it->second);
+			}
+			return nullptr;
+		}
 
 		void on_mouse_press(int x, int y);
 		void on_mouse_release(int x, int y);

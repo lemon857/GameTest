@@ -37,6 +37,8 @@
 
 #include "EngineCore/Network/WinSock.h"
 
+#include "EngineCore/System/sysfunc.h"
+
 #include <array>
 #include <memory>
 
@@ -90,9 +92,13 @@ bool GameApp::init()
     m_scene.add_object<DirectionalLight>(names);
     m_scene.add_object<Grid>(glm::vec3(size_x, 0.5f, size_y), glm::vec2(1.f), size_x, size_y, glm::vec3(1.f), ResourceManager::getMaterial("default"));
     m_scene.add_object<EmptyObject>();
+    m_scene.add_object<EmptyObject>();
 
     m_scene.at(curObj)->addComponent<Transform>();
-    m_scene.at(curObj)->addComponent<Highlight>(ResourceManager::getMaterial("default"), true); 
+    m_scene.at(curObj)->addComponent<Highlight>(ResourceManager::getMaterial("default"), true);
+
+    m_scene.at(4)->addComponent<Transform>();
+    m_scene.at(4)->addComponent<Highlight>(ResourceManager::getMaterial("default"), true, false, glm::vec3(1.f, 0.f, 0.f));
 
     const auto& transform = m_scene.at(0)->getComponent<Transform>();
 
@@ -181,8 +187,20 @@ void GameApp::on_key_update(const double delta)
     {
         if (!isKeyPressed)
         {
-            countEnemies++;
             countEnemiesPerm++;
+            short snum = rand() % 4;
+            unsigned int spawn = 0;
+            if (snum == 0) spawn = rand() % size_x;
+            else if (snum == 1) spawn = (rand() % size_x) + ((size_x - 1) * size_y);
+            else if (snum == 2) spawn = (rand() % size_y) * size_x;
+            else if (snum == 3) spawn = ((rand() % size_y) * size_x) + (size_x - 1);
+            m_spawn_enemies.push(spawn);
+
+            char buff[sizeof(unsigned int) + 1];
+            buff[0] = 's';
+            sysfunc::type_to_char(&spawn, buff, 1);
+            WinSock::send_data(buff, sizeof(unsigned int) + 1);
+
             m_gui_debug->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));
             isKeyPressed = true;
         }
@@ -229,7 +247,7 @@ void GameApp::on_key_update(const double delta)
         }
     }
 
-    if (is_gui_active) return;
+    if (is_gui_active) return; // block move in menu
 
     if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT) && !m_gui_place_menu->get_focus())
 
@@ -239,8 +257,17 @@ void GameApp::on_key_update(const double delta)
 
         if ((x * y <= (size_x - 1) * (size_y - 1)) && (x >= 0 && y >= 0))
         {
-            if (x <= (size_x - 1) && y <= (size_y - 1)) cur = x * size_y + y;
-
+            if (x <= (size_x - 1) && y <= (size_y - 1))
+            {
+                if (cur != x * size_y + y)
+                {
+                    cur = x * size_y + y;
+                    char buff[sizeof(unsigned int) + 1];
+                    buff[0] = 'd';
+                    sysfunc::type_to_char(&cur, buff, 1);
+                    WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                }
+            }
         }
     }
     else if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_RIGHT))
@@ -272,9 +299,13 @@ void GameApp::on_key_update(const double delta)
             {
                 map[cur] = true;
                 isKeyPressedmouse = true;
+                m_spawn_towers.push(cur);
+                char buff[sizeof(unsigned int) + 1];
 
-                m_towers.push_back(new BaseTower("res/models/tower.obj",
-                    ResourceManager::getMaterial("tower"), nullptr, parts[cur], _set_cooldown_tower, new RenderEngine::Line(ResourceManager::getMaterial("default"))));
+                buff[0] = 't';
+                sysfunc::type_to_char(&cur, buff, 1);
+
+                WinSock::send_data(buff, sizeof(unsigned int) + 1);
 
                 //m_scene.at(curObj)->deleteComponent<Highlight>();
                 //curObj++;
@@ -295,7 +326,7 @@ void GameApp::on_key_update(const double delta)
             LOG_INFO("Add tower on tower at {0}x{1}", parts[cur].x, parts[cur].z);
         }*/
     }
-
+    // movement
     if (Input::isKeyPressed(KeyCode::KEY_W))
     {
         movement_delta.z += static_cast<float>(addSpeed * m_cam_velocity * delta);
@@ -353,7 +384,8 @@ void GameApp::on_update(const double delta)
 
     m_gui_place_menu->on_update(delta);
 
-    m_scene.at(curObj)->getComponent<Transform>()->set_position(parts[cur]); 
+    m_scene.at(curObj)->getComponent<Transform>()->set_position(parts[cur]);
+    m_scene.at(4)->getComponent<Transform>()->set_position(parts[cur_player]);
     //m_grid_line->render(glm::vec3(0), glm::vec3(m_world_mouse_pos_x, m_world_mouse_pos_y + 0.1f, m_world_mouse_pos_z), glm::vec3(1.f));
 
 
@@ -383,19 +415,22 @@ void GameApp::on_update(const double delta)
         gui_window = null;
         m_gui->get_element<GUI::TextRenderer>("Lose scoreboard")->set_text("Your score: " + std::to_string(countKills));
         m_gui->set_active(true);
+        if (isServer) WinSock::send_data("l", 1);
     }
-    // spawn enemy
-    for (; countEnemies > 0; countEnemies--)
+    // sync
+
+    while (!m_spawn_towers.empty())
     {
-        short snum = rand() % 4;
-        int spawn = 0;        
-        if (snum == 0) spawn = rand() % size_x;
-        else if (snum == 1) spawn = (rand() % size_x) + ((size_x - 1) * size_y);
-        else if (snum == 2) spawn = (rand() % size_y) * size_x;
-        else if (snum == 3) spawn = ((rand() % size_y) * size_x) + (size_x - 1);
+        m_towers.push_back(new BaseTower("res/models/tower.obj",
+            ResourceManager::getMaterial("tower"), nullptr, parts[m_spawn_towers.front()], _set_cooldown_tower, new RenderEngine::Line(ResourceManager::getMaterial("default"))));
+        m_spawn_towers.pop();
+    }
+    while (!m_spawn_enemies.empty()) // spawn enemies
+    {
         auto a = new BaseEnemy(new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("monkey")),
-            m_main_castle, parts[spawn], 1, _set_velosity * 0.001, _set_max_hp_enemy, ResourceManager::getMaterial("default"));
+            m_main_castle, parts[m_spawn_enemies.front()], 1, _set_velosity * 0.001, _set_max_hp_enemy, ResourceManager::getMaterial("default"));
         m_enemies.push_back(a);
+        m_spawn_enemies.pop();
     }
 
     for (auto curTower : m_towers)
@@ -616,75 +651,75 @@ void GameApp::init_gui()
         ResourceManager::get_font("calibri"), glm::vec3(1.f), true);
     
     m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_enter_callback([&](std::string text) {
-        if (text[0] == '/') // need finalize
-        {
-            if (ResourceManager::start_with(text, "/dis")) // distance tower attack
-            {
-                if (text == "/dis")
-                {
-                    m_chat_mes.push("Min distance: " + std::to_string(_set_min_distance));
-                }
-                else
-                {
-                    _set_min_distance = std::stod(text.substr(5));
-                    m_chat_mes.push("Set min distance: " + std::to_string(_set_min_distance));
-                }
-            }
-            else if (ResourceManager::start_with(text, "/vel")) // velosity enemy
-            {
-                if (text == "/vel")
-                {
-                    m_chat_mes.push("Velocity: " + std::to_string(_set_velosity));             
-                }
-                else
-                {
-                    _set_velosity = std::stod(text.substr(5));
-                    m_chat_mes.push("Set velocity: " + std::to_string(_set_velosity));
-                }
-            }
-            else if (ResourceManager::start_with(text, "/mhpcas")) // max hp castle
-            {
-                if (text == "/mhpcas")
-                {
-                    m_chat_mes.push("Max hp castle: " + std::to_string(_set_max_hp_castle));
-                }
-                else
-                {
-                    _set_max_hp_castle = std::stod(text.substr(8));
-                    m_chat_mes.push("Set max hp castle: " + std::to_string(_set_max_hp_castle));
-                    m_chat_mes.push("Need restart");
-                }
-            }
-            else if (ResourceManager::start_with(text, "/mhpen")) // max hp enemy
-            {
-                if (text == "/mhpen")
-                {
-                    m_chat_mes.push("Max hp enemy: " + std::to_string(_set_max_hp_enemy));
-                }
-                else
-                {
-                    _set_max_hp_enemy = std::stod(text.substr(7));
-                    m_chat_mes.push("Set max hp enemy: " + std::to_string(_set_max_hp_enemy));
-                }
-            }
-            else if (ResourceManager::start_with(text, "/cdtow")) // cooldown tower attack
-            {
-                if (text == "/cdtow")
-                {
-                    m_chat_mes.push("Cooldown tower: " + std::to_string(_set_cooldown_tower));
-                }
-                else
-                {
-                    _set_cooldown_tower = std::stod(text.substr(7));
-                    m_chat_mes.push("Set cooldown tower: " + std::to_string(_set_cooldown_tower));
-                    m_chat_mes.push("Need restart");
-                }
-            }
-        }
-        else
+        //if (text[0] == '/') // need finalize
+        //{
+        //    if (ResourceManager::start_with(text, "/dis")) // distance tower attack
+        //    {
+        //        if (text == "/dis")
+        //        {
+        //            m_chat_mes.push("Min distance: " + std::to_string(_set_min_distance));
+        //        }
+        //        else
+        //        {
+        //            _set_min_distance = std::stod(text.substr(5));
+        //            m_chat_mes.push("Set min distance: " + std::to_string(_set_min_distance));
+        //        }
+        //    }
+        //    else if (ResourceManager::start_with(text, "/vel")) // velosity enemy
+        //    {
+        //        if (text == "/vel")
+        //        {
+        //            m_chat_mes.push("Velocity: " + std::to_string(_set_velosity));             
+        //        }
+        //        else
+        //        {
+        //            _set_velosity = std::stod(text.substr(5));
+        //            m_chat_mes.push("Set velocity: " + std::to_string(_set_velosity));
+        //        }
+        //    }
+        //    else if (ResourceManager::start_with(text, "/mhpcas")) // max hp castle
+        //    {
+        //        if (text == "/mhpcas")
+        //        {
+        //            m_chat_mes.push("Max hp castle: " + std::to_string(_set_max_hp_castle));
+        //        }
+        //        else
+        //        {
+        //            _set_max_hp_castle = std::stod(text.substr(8));
+        //            m_chat_mes.push("Set max hp castle: " + std::to_string(_set_max_hp_castle));
+        //            m_chat_mes.push("Need restart");
+        //        }
+        //    }
+        //    else if (ResourceManager::start_with(text, "/mhpen")) // max hp enemy
+        //    {
+        //        if (text == "/mhpen")
+        //        {
+        //            m_chat_mes.push("Max hp enemy: " + std::to_string(_set_max_hp_enemy));
+        //        }
+        //        else
+        //        {
+        //            _set_max_hp_enemy = std::stod(text.substr(7));
+        //            m_chat_mes.push("Set max hp enemy: " + std::to_string(_set_max_hp_enemy));
+        //        }
+        //    }
+        //    else if (ResourceManager::start_with(text, "/cdtow")) // cooldown tower attack
+        //    {
+        //        if (text == "/cdtow")
+        //        {
+        //            m_chat_mes.push("Cooldown tower: " + std::to_string(_set_cooldown_tower));
+        //        }
+        //        else
+        //        {
+        //            _set_cooldown_tower = std::stod(text.substr(7));
+        //            m_chat_mes.push("Set cooldown tower: " + std::to_string(_set_cooldown_tower));
+        //            m_chat_mes.push("Need restart");
+        //        }
+        //    }
+        //}
+        //else
         {
             m_chat_mes.push("Me: " + text);
-            WinSock::send_data(text.data(), text.length());
+            WinSock::send_data(('m' + text).data(), text.length() + 1); // =========================== message flag first
         }
         });
 
@@ -701,6 +736,7 @@ void GameApp::init_gui()
 
     m_gui->get_element<GUI::GUI_element>("Restart")->set_click_callback([&]()
         {
+            if (isServer) WinSock::send_data("r", 1);
             start_game();
         });
 
@@ -720,8 +756,21 @@ void GameApp::init_gui()
         glm::vec2(89.f, 28.f), glm::vec2(10.f, 5.f),
         "Add enemy", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
             {
-                countEnemies++; countEnemiesPerm++;
-                m_gui_debug->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));
+                countEnemiesPerm++;
+                short snum = rand() % 4;
+                int spawn = 0;
+                if (snum == 0) spawn = rand() % size_x;
+                else if (snum == 1) spawn = (rand() % size_x) + ((size_x - 1) * size_y);
+                else if (snum == 2) spawn = (rand() % size_y) * size_x;
+                else if (snum == 3) spawn = ((rand() % size_y) * size_x) + (size_x - 1);
+                m_spawn_enemies.push(spawn);
+
+                char buff[sizeof(unsigned int) + 1];
+                buff[0] = 's';
+                buff[1] = (unsigned int)spawn;
+                WinSock::send_data(buff, sizeof(unsigned int) + 1);
+
+                m_gui_debug->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));                
             });;
 
     m_gui_place_settings->add_element<GUI::Button>(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
@@ -767,13 +816,42 @@ void GameApp::init_gui()
             glm::vec2(11.f, 17.f), glm::vec2(10.f, 5.f),
             "Restart", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
                 {
+                    if (isServer) WinSock::send_data("r", 1);
                     start_game();
                     is_gui_active = false;
                     m_gui_place_menu->set_active(false);
                 });;
     // WinSock callbacks ====================================================================
-    WinSock::set_receive_callback([&](char* data, int size) {       
-        m_chat_mes.push("He: " + std::string(data));
+    WinSock::set_receive_callback([&](char* data, int size) {           
+        if (data[WS_DATA_PACKET_INFO_SIZE] == 'm')
+        {
+            std::string str = std::string(&data[WS_DATA_PACKET_INFO_SIZE + 1]).substr(0, size - (WS_DATA_PACKET_INFO_SIZE));
+            m_chat_mes.push("He: " + str);            
+        }
+        else if (data[WS_DATA_PACKET_INFO_SIZE] == 'l')
+        {
+            m_main_castle->damage(_set_max_hp_castle + 1);
+        }
+        else if (data[WS_DATA_PACKET_INFO_SIZE] == 'r')
+        {
+            start_game();
+        }
+        else if (data[WS_DATA_PACKET_INFO_SIZE] == 't') 
+        {
+            unsigned int cur_buf;
+            sysfunc::char_to_type(&cur_buf, data, WS_DATA_PACKET_INFO_SIZE + 1);
+            m_spawn_towers.push(cur_buf);
+        }
+        else if (data[WS_DATA_PACKET_INFO_SIZE] == 's')
+        {
+            unsigned int spawn = 0;
+            sysfunc::char_to_type(&spawn, data, WS_DATA_PACKET_INFO_SIZE + 1);
+            m_spawn_enemies.push(spawn);
+        }
+        else if (data[WS_DATA_PACKET_INFO_SIZE] == 'd')
+        {
+            sysfunc::char_to_type(&cur_player, data, WS_DATA_PACKET_INFO_SIZE + 1);
+        }
         });
 
     WinSock::set_ping_callback([&](double ping) {
@@ -782,6 +860,8 @@ void GameApp::init_gui()
 
     WinSock::set_disconnect_callback([&]() {
         m_chat_mes.push("Disconnect!");
+        m_gui_place_menu->get_element<GUI::Button>("Restart")->set_active(true);
+        m_gui->get_element<GUI::Button>("Restart")->set_active(true);
         });
 
     // ========================================================================================
@@ -812,10 +892,16 @@ void GameApp::init_gui()
             if (m_gui_place_menu->get_element<GUI::CheckBox>("checkbox")->value())
             {
                 WinSock::open_server(text.c_str(), 20746);
+                m_gui_place_menu->get_element<GUI::Button>("Restart")->set_active(true);
+                m_gui->get_element<GUI::Button>("Restart")->set_active(true);
+                isServer = true;
             }
             else
             {
                 WinSock::open_client(text.c_str(), 20746);
+                m_gui_place_menu->get_element<GUI::Button>("Restart")->set_active(false);
+                m_gui->get_element<GUI::Button>("Restart")->set_active(false);
+                isServer = false;
             }
             m_chat_mes.push("Wait connection!");
         });        

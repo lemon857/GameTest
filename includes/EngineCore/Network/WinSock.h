@@ -2,6 +2,12 @@
 
 #define BUFF_SIZE 1024
 
+#define WS_CODE_DATA (char)100
+#define WS_CODE_ANSWER (char)112
+#define WS_CODE_DISCON (char)35
+
+#define WS_DATA_PACKET_INFO_SIZE (sizeof(int) + sizeof(char))
+
 #pragma comment(lib, "Ws2_32.lib")
 #include <WinSock2.h>
 #include <WS2tcpip.h>
@@ -29,14 +35,14 @@ public:
 	static void open_server(const char* addr, unsigned short port);
 	static void open_client(const char* addr, unsigned short port);
 
-	static int send_data(char* data, int size);
+	static int send_data(const char* data, int size);
 
 	static void set_receive_callback(std::function<void(char* data, int size)> func);
 
 	static void set_ping_callback(std::function<void(double ping)> func);
 
 	static void set_disconnect_callback(std::function<void()> func);
-
+	
 private:
 	static std::function<void(char* data, int size)> m_receive_callback;
 	static std::function<void(double ping)> m_ping_callback;

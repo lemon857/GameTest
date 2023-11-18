@@ -6,12 +6,6 @@
 #include <vector>
 #include <thread>
 
-#define WS_CODE_DATA (char)100
-#define WS_CODE_ANSWER (char)112
-#define WS_CODE_DISCON (char)35
-
-#define WS_DATA_PACKET_INFO_SIZE (sizeof(int) + sizeof(char))
-
 Stopwatch WinSock::m_ping_timer;
 SOCKET WinSock::m_sock;
 SOCKET WinSock::m_client;
@@ -112,6 +106,7 @@ void WinSock::open_client(const char* addr, unsigned short port)
 		buf[1] = WS_DATA_PACKET_INFO_SIZE;		
 		while (m_isWorking) {
 
+			memset(buff, 0, BUFF_SIZE);
 			packet_size = recv(m_sock, buff, BUFF_SIZE, 0);
 
 			if (packet_size == SOCKET_ERROR) {
@@ -124,10 +119,10 @@ void WinSock::open_client(const char* addr, unsigned short port)
 				if (buff[0] == WS_CODE_DATA)
 				{
 					int size = (int)buff[1];
-					std::string str = std::string(&buff[WS_DATA_PACKET_INFO_SIZE]).substr(0, size - WS_DATA_PACKET_INFO_SIZE);
-					m_receive_callback(str.data(), size);
+					std::string str = std::string(&buff[WS_DATA_PACKET_INFO_SIZE]).substr(0, size - WS_DATA_PACKET_INFO_SIZE + 1);
+					m_receive_callback(buff, size);
 					send(m_sock, buf, WS_DATA_PACKET_INFO_SIZE, 0);
-					LOG_INFO("Data: {0}", str);
+					LOG_INFO("Data: {0} Size: {1}", str, size);
 				}
 				else if (buff[0] == WS_CODE_ANSWER)
 				{
@@ -231,6 +226,7 @@ void WinSock::open_server(const char* addr, unsigned short port)
 		buf[1] = 5;
 		while (m_isWorking) {
 
+			memset(buff, 0, BUFF_SIZE);
 			packet_size = recv(m_client, buff, BUFF_SIZE, 0);
 
 			if (packet_size == SOCKET_ERROR) {
@@ -243,10 +239,10 @@ void WinSock::open_server(const char* addr, unsigned short port)
 				if (buff[0] == WS_CODE_DATA)
 				{
 					int size = (int)buff[1];
-					std::string str = std::string(&buff[WS_DATA_PACKET_INFO_SIZE]).substr(0, size - WS_DATA_PACKET_INFO_SIZE);
-					m_receive_callback(str.data(), size);
+					std::string str = std::string(&buff[WS_DATA_PACKET_INFO_SIZE]).substr(0, size - WS_DATA_PACKET_INFO_SIZE + 1);
+					m_receive_callback(buff, size);
 					send(m_sock, buf, WS_DATA_PACKET_INFO_SIZE, 0);
-					LOG_INFO("Data: {0}", str);
+					LOG_INFO("Data: {0} Size: {1}", str, size);
 				}
 				else if (buff[0] == WS_CODE_ANSWER)
 				{
@@ -282,13 +278,14 @@ void WinSock::set_ping_callback(std::function<void(double ping)> func)
 	m_ping_callback = func;
 }
 
-int WinSock::send_data(char* data, int size)
+int WinSock::send_data(const char* data, int size)
 {
+	if (!m_isWorking) return -1;
 	char buff[BUFF_SIZE];
 
 	buff[0] = WS_CODE_DATA;
 
-	buff[1] = (int)(size + WS_DATA_PACKET_INFO_SIZE);
+	buff[1] = (int)(size + WS_DATA_PACKET_INFO_SIZE); // need addition
 
 	for (size_t i = 0; i < size; i++)
 	{
@@ -298,8 +295,10 @@ int WinSock::send_data(char* data, int size)
 	if (send(m_isServer ? m_client : m_sock, buff, BUFF_SIZE, 0) == SOCKET_ERROR) {
 		LOG_ERROR("Can't send message. Error # {0}", WSAGetLastError());
 		close_WinSock();
-		return -1;
+		return -2;
 	}
+	//std::string str = std::string(&buff[WS_DATA_PACKET_INFO_SIZE]).substr(0, size - WS_DATA_PACKET_INFO_SIZE + 1);
+	//LOG_INFO("SendData: {0} Size: {1}", str, size);
 	m_ping_timer.start();
 	return 0;
 }

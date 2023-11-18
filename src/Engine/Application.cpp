@@ -44,6 +44,8 @@ int Application::start(glm::ivec2& window_size, const char* title, const char* j
     
     LOG_INFO("Time initialization: {0}", m_watch->stop());
 
+    delete m_watch;
+
     auto lastTime = std::chrono::high_resolution_clock::now();
 
     while (!m_pCloseWindow)

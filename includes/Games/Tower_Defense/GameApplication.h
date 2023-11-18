@@ -50,6 +50,9 @@ private:
 
 	std::queue<std::string> m_chat_mes;
 
+	std::queue<unsigned int> m_spawn_towers;
+	std::queue<unsigned int> m_spawn_enemies;
+
 	Camera* m_cam;
 
 	RenderEngine::Line* m_grid_line;
@@ -75,7 +78,8 @@ private:
 
 	std::array <bool, size_x * size_y> map;
 
-	int cur = 0;
+	unsigned int cur = 0;
+	unsigned int cur_player = 0;
 	int curObj = 3;
 
 	int countEnemies = 0;
@@ -94,6 +98,8 @@ private:
 	bool isKeyPressed = false;
 	bool isKeyPressedmouse = false;
 
+	bool isServer = false;
+
 	unsigned int countKills = 0;
 	unsigned int fps = 0;
 	unsigned int frames = 0;
@@ -105,7 +111,7 @@ private:
 	double _set_velosity = 7;
 	double _set_max_hp_castle = 100;
 	double _set_max_hp_enemy = 50;
-	double _set_cooldown_tower = 7;
+	double _set_cooldown_tower = 3;
 
 	GUI::GUI_place* m_gui;
 	GUI::GUI_place* m_gui_chat;

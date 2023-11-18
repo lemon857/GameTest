@@ -123,7 +123,7 @@ void GUI::InputField::press_button(KeyCode key)
 		{
 			if (OpenClipboard(0))
 			{
-				m_text = (char*)GetClipboardData(CF_TEXT);
+				m_text += (char*)GetClipboardData(CF_TEXT);
 				CloseClipboard();
 			}
 		}

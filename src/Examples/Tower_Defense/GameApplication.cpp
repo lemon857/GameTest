@@ -34,6 +34,7 @@
 #include "EngineCore/GUI/InputField.h"
 #include "EngineCore/GUI/CheckBox.h"
 #include "EngineCore/GUI/ChatBox.h"
+#include "EngineCore/GUI/ScrollBox.h"
 
 #include "EngineCore/Network/WinSock.h"
 
@@ -120,6 +121,17 @@ bool GameApp::init()
     init_gui();
     start_game();
 
+    m_gui->set_active(false);
+    m_gui_chat->set_active(true);
+    m_gui_debug->set_active(true);
+    m_gui_place_menu->set_active(false);
+    m_gui_place_settings->set_active(false);
+
+    m_gui_place_menu->get_element<GUI::Button>("Disconnect")->set_active(false);
+
+    m_gui_chat->get_element<GUI::ChatBox>("Chat")->set_open(false);
+    m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_active(false);
+
     return true;
 }
 
@@ -197,7 +209,6 @@ void GameApp::on_key_update(const double delta)
     {
         if (!isKeyPressed)
         {
-            countEnemiesPerm++;
             short snum = rand() % 4;
             unsigned int spawn = 0;
             if (snum == 0) spawn = rand() % size_x;
@@ -211,7 +222,6 @@ void GameApp::on_key_update(const double delta)
             sysfunc::type_to_char(&spawn, buff, 1);
             WinSock::send_data(buff, sizeof(unsigned int) + 1);
 
-            m_gui_debug->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));
             isKeyPressed = true;
         }
     }
@@ -437,10 +447,12 @@ void GameApp::on_update(const double delta)
     }
     while (!m_spawn_enemies.empty()) // spawn enemies
     {
+        countEnemiesPerm++;
         auto a = new BaseEnemy(new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("monkey")),
             m_main_castle, parts[m_spawn_enemies.front()], 1, _set_velosity * 0.001, _set_max_hp_enemy, ResourceManager::getMaterial("default"));
         m_enemies.push_back(a);
         m_spawn_enemies.pop();
+        m_gui_debug->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));
     }
 
     for (auto curTower : m_towers)
@@ -470,7 +482,8 @@ void GameApp::on_update(const double delta)
         if (m_enemies[i] == nullptr) continue;        
         if (m_enemies[i]->is_destroy())
         {
-            countEnemies++;
+            //countEnemies++;
+            countEnemiesPerm--;
             for (auto curTower : m_towers)
             {
                 if (curTower->get_target() == m_enemies[i]) curTower->set_target(nullptr);
@@ -479,6 +492,7 @@ void GameApp::on_update(const double delta)
             m_enemies.remove(i);
             countKills++;
             m_gui_debug->get_element<GUI::TextRenderer>("kills")->set_text("Kills: " + std::to_string(countKills));
+            m_gui_debug->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));
             continue;
         }
         m_enemies[i]->update(delta);        
@@ -574,9 +588,9 @@ bool GameApp::init_events()
             if (is_event_logging_active) LOG_INFO("[EVENT] Mouse moved to {0}x{1}", e.x, e.y);
 
         });
-    m_event_dispather.add_event_listener<EventMouseScrolled>(
-        [&](EventMouseScrolled& e)
+    m_event_dispather.add_event_listener<EventMouseScrolled>([&](EventMouseScrolled& e)
         {
+            m_gui_chat->get_element<GUI::ChatBox>("Chat")->on_scroll(e.y_offset);
             if (is_event_logging_active) LOG_INFO("[EVENT] Scroll: {0}x{1}", e.x_offset, e.y_offset);
         });
     m_event_dispather.add_event_listener<EventWindowClose>([&](EventWindowClose& e)
@@ -654,7 +668,7 @@ void GameApp::init_gui()
 
     // chat ---------------------------------------------------------------------------
     m_gui_chat->add_element<GUI::ChatBox>(new GUI::Sprite(ResourceManager::getMaterial("defaultSprite")),
-        glm::vec2(13.f, 41.f), glm::vec2(12.f, 30.f), "Chat", 12, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"), glm::vec3(1.f));
+        glm::vec2(13.f, 41.f), glm::vec2(12.f, 30.f), "Chat", 128, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"), glm::vec3(1.f));
 
     m_gui_chat->add_element<GUI::InputField>(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(13.f, 5.f), glm::vec2(12.f, 5.f), "SendMessage", ResourceManager::getShaderProgram("textShader"),
@@ -731,6 +745,15 @@ void GameApp::init_gui()
             }
             });
     
+    //m_gui_chat->add_element<GUI::ScrollBox>(new GUI::Sprite(ResourceManager::getMaterial("defaultSprite")),
+     //   glm::vec2(40.f, 41.f), glm::vec2(20.f, 30.f), "Scroll", 10);
+
+   // m_gui_chat->get_element<GUI::ScrollBox>("Scroll")->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
+    //    "Settings", glm::vec3(0.f), glm::vec2(50.f, 90.f), glm::vec2(1.f)));
+
+   // m_gui_chat->get_element<GUI::ScrollBox>("Scroll")->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
+    //    "Settings", glm::vec3(0.f), glm::vec2(50.f, 90.f), glm::vec2(1.f)));
+
     // lose window ---------------------------------------------------------------------------
     m_gui->add_element<GUI::TextRenderer>(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
         "You lose!", glm::vec3(1.f, 0.1f, 0.1f), glm::vec2(41.f, 57.f), glm::vec2(2.f), "Lose text");
@@ -764,7 +787,6 @@ void GameApp::init_gui()
         glm::vec2(89.f, 28.f), glm::vec2(10.f, 5.f),
         "Add enemy", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
             {
-                countEnemiesPerm++;
                 short snum = rand() % 4;
                 int spawn = 0;
                 if (snum == 0) spawn = rand() % size_x;
@@ -776,9 +798,7 @@ void GameApp::init_gui()
                 char buff[sizeof(unsigned int) + 1];
                 buff[0] = 's';
                 buff[1] = (unsigned int)spawn;
-                WinSock::send_data(buff, sizeof(unsigned int) + 1);
-
-                m_gui_debug->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));                
+                WinSock::send_data(buff, sizeof(unsigned int) + 1);          
             });;
 
     m_gui_place_settings->add_element<GUI::Button>(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
@@ -863,7 +883,7 @@ void GameApp::init_gui()
         });
 
     WinSock::set_ping_callback([&](double ping) {
-        m_gui_debug->get_element<GUI::TextRenderer>("ping")->set_text(std::to_string(ping) + " ms");
+        m_gui_debug->get_element<GUI::TextRenderer>("ping")->set_text(std::to_string((float)ping) + " ms");
         });
 
     WinSock::set_disconnect_callback([&]() {
@@ -951,18 +971,7 @@ void GameApp::start_game()
 
     m_towers.clear();
     m_enemies.clear();
-
-    m_gui->set_active(false);
-    m_gui_chat->set_active(true);
-    m_gui_debug->set_active(true);
-    m_gui_place_menu->set_active(false);
-    m_gui_place_settings->set_active(false);
-
-    m_gui_place_menu->get_element<GUI::Button>("Disconnect")->set_active(false);
-
-    m_gui_chat->get_element<GUI::ChatBox>("Chat")->set_open(false);
-    m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_active(false);
-
+    
     m_gui_debug->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: 0");
     m_gui_debug->get_element<GUI::TextRenderer>("kills")->set_text("Kills: 0");
 }

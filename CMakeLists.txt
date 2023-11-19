@@ -47,6 +47,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/GUI/InputField.h
 	includes/EngineCore/GUI/CheckBox.h
 	includes/EngineCore/GUI/ChatBox.h
+	includes/EngineCore/GUI/ScrollBox.h
   
 	includes/Games/Tower_Defense/Castle.h
 	includes/Games/Tower_Defense/HealthBar.h
@@ -187,6 +188,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/GUI/InputField.cpp
 	src/GUI/CheckBox.cpp
 	src/GUI/ChatBox.cpp
+	src/GUI/ScrollBox.cpp
 
 	src/Network/WinSock.cpp
 )

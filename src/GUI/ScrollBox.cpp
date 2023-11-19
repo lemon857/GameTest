@@ -12,6 +12,7 @@ namespace GUI
 		: GUI_element(name)
 		, m_max_count_elements(max_count_elements)
 		, m_background(std::move(backgrond))
+		, m_isRenderBackground(false)
 	{
 		m_position_p = pos;
 		m_scale_p = scale;
@@ -31,7 +32,7 @@ namespace GUI
 				cur->on_render_prj(prj);
 			}
 		}
-		m_background->on_render_prj(prj);
+		if (m_isRenderBackground) m_background->on_render_prj(prj);
 	}
 	void ScrollBox::set_position(glm::vec2 pos)
 	{

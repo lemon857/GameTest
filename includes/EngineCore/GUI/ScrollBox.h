@@ -26,8 +26,12 @@ namespace GUI
 		void add_element(GUI_element* element);
 
 		void clear();
+
+		void set_open(bool isOpen) { m_isRenderBackground = isOpen; }
 	private:
 		unsigned int m_max_count_elements;
+
+		bool m_isRenderBackground;
 
 		linked_list<GUI_element*> m_elements;
 		Sprite* m_background;

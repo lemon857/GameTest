@@ -34,16 +34,13 @@ namespace GUI
 
 		void add_message(std::string message);
 
-		void set_open(bool isOpen) { m_isOpen = isOpen; }
+		void set_open(bool isOpen);
 
 		void clear();
 
 		void on_scroll(int offset);
 	private:
-		Sprite* m_background;
 		ScrollBox* m_scrollbox;
-
-		bool m_isOpen;
 
 		std::shared_ptr<Font> m_font;
 		std::shared_ptr<RenderEngine::ShaderProgram> m_shader;

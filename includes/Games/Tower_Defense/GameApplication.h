@@ -93,6 +93,8 @@ private:
 
 	bool is_chat_active = false;
 
+	bool is_chat_full_hide = false;
+
 	bool is_debug_active = false;
 
 	bool isKeyPressed = false;

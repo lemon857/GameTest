@@ -174,14 +174,14 @@ void GameApp::on_key_update(const double delta)
     } 
     else if (Input::isKeyPressed(KeyCode::KEY_T))
     {
-        if (is_chat_active && !isKeyPressed)
+        if (is_chat_active && !isKeyPressed && !is_chat_full_hide)
         {
             m_gui_chat->get_element<GUI::ChatBox>("Chat")->set_open(false);
             m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_active(false);
             is_chat_active = false;
             isKeyPressed = true;
         }
-        else if (!isKeyPressed)
+        else if (!isKeyPressed && !is_chat_full_hide)
         {
             m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_focus(true);
             m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_active(true);
@@ -253,6 +253,19 @@ void GameApp::on_key_update(const double delta)
             isKeyPressed = true;
         }
     }
+    else if (Input::isKeyPressed(KeyCode::KEY_F1))
+    {
+        if (is_chat_full_hide && !isKeyPressed)
+        {
+            is_chat_full_hide = false;
+            isKeyPressed = true;
+        }
+        else if (!isKeyPressed)
+        {
+            is_chat_full_hide = true;
+            isKeyPressed = true;
+        }
+    }
     else if (Input::isKeyPressed(KeyCode::KEY_F3))
     {
         if (is_debug_active && !isKeyPressed)
@@ -265,7 +278,7 @@ void GameApp::on_key_update(const double delta)
             is_debug_active = true;
             isKeyPressed = true;
         }
-    }
+        }
 
     if (is_gui_active) return; // block move in menu
 
@@ -529,7 +542,7 @@ void GameApp::on_ui_render()
         return;
     }
     if (is_debug_active) m_gui_debug->on_render();
-    m_gui_chat->on_render();
+    if (!is_chat_full_hide) m_gui_chat->on_render();
 }
 
 bool GameApp::init_events()
@@ -590,7 +603,7 @@ bool GameApp::init_events()
         });
     m_event_dispather.add_event_listener<EventMouseScrolled>([&](EventMouseScrolled& e)
         {
-            m_gui_chat->get_element<GUI::ChatBox>("Chat")->on_scroll(e.y_offset);
+            if (is_chat_active) m_gui_chat->get_element<GUI::ChatBox>("Chat")->on_scroll(-e.y_offset);
             if (is_event_logging_active) LOG_INFO("[EVENT] Scroll: {0}x{1}", e.x_offset, e.y_offset);
         });
     m_event_dispather.add_event_listener<EventWindowClose>([&](EventWindowClose& e)

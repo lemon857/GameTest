@@ -40,6 +40,9 @@ private:
 
 	void start_game();
 
+	std::string m_nickname;
+	std::string m_nickname_connect;
+
 	Scene m_scene;
 
 	Castle* m_main_castle;
@@ -114,6 +117,7 @@ private:
 	double _set_max_hp_castle = 100;
 	double _set_max_hp_enemy = 50;
 	double _set_cooldown_tower = 3;
+	unsigned int _set_damage_tower = 10;
 
 	GUI::GUI_place* m_gui;
 	GUI::GUI_place* m_gui_chat;

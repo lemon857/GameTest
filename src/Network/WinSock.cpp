@@ -42,6 +42,7 @@ void WinSock::close_WinSock()
 
 void WinSock::disconnect()
 {
+	if (!m_isWorking) return;
 	char buf[WS_DATA_PACKET_INFO_SIZE];
 	buf[0] = WS_CODE_DISCON;
 	buf[1] = WS_DATA_PACKET_INFO_SIZE;
@@ -62,16 +63,15 @@ void WinSock::disconnect()
 	LOG_INFO("Disconnect");
 }
 
-void WinSock::open_client(const char* addr, unsigned short port)
+int WinSock::open_client(const char* addr, unsigned short port)
 {
-	m_isWorking = true;
 	m_isServer = false;
 	// init ip addr
 	in_addr ip_to_num;
 
 	if (inet_pton(AF_INET, addr, &ip_to_num) <= 0) {
 		LOG_ERROR("Error in IP translation to special numeric format");
-		return;
+		return InitCodes::IP_ERR;
 	}
 	// Server socket initialization
 	m_sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -79,7 +79,7 @@ void WinSock::open_client(const char* addr, unsigned short port)
 	if (m_sock == INVALID_SOCKET) {
 		LOG_ERROR("Error initialization socket # {0}", WSAGetLastError());
 		disconnect();
-		return;
+		return InitCodes::INIT_SOCK_ERR;
 	}
 	else
 		LOG_INFO("Socket initialization is OK");
@@ -94,11 +94,12 @@ void WinSock::open_client(const char* addr, unsigned short port)
 	if (connect(m_sock, (sockaddr*)&Info, sizeof(Info)) != 0) {
 		LOG_ERROR("Connection to Server is FAILED. Error # {0}", WSAGetLastError());		
 		disconnect();
-		return;
+		return InitCodes::CONNECT_ERR;
 	}
 	else
 		LOG_INFO("Connection established SUCCESSFULLY. Ready to send a message to Server");
-	
+
+	m_isWorking = true;
 	std::thread t([&]() {
 		char buff[BUFF_SIZE];							// Buffers for sending and receiving data
 		short packet_size = 0;
@@ -145,18 +146,18 @@ void WinSock::open_client(const char* addr, unsigned short port)
 		});
 	
 	t.detach();	
+	return InitCodes::OK;
 }
 
-void WinSock::open_server(const char* addr, unsigned short port)
+int WinSock::open_server(const char* addr, unsigned short port)
 {
-	m_isWorking = true;
 	m_isServer = true;
 	// init ip addr
 	in_addr ip_to_num;
 
 	if (inet_pton(AF_INET, addr, &ip_to_num) <= 0) {
 		LOG_ERROR("Error in IP translation to special numeric format");
-		return;
+		return InitCodes::IP_ERR;
 	}
 
 	// Server socket initialization
@@ -165,7 +166,7 @@ void WinSock::open_server(const char* addr, unsigned short port)
 	if (m_sock == INVALID_SOCKET) {
 		LOG_ERROR("Error initialization socket # {0}", WSAGetLastError());
 		disconnect();
-		return;
+		return InitCodes::INIT_SOCK_ERR;
 	}
 	else
 		LOG_INFO("Socket initialization is OK");
@@ -180,12 +181,13 @@ void WinSock::open_server(const char* addr, unsigned short port)
 	if (bind(m_sock, (sockaddr*)&Info, sizeof(Info)) != 0) {
 		LOG_ERROR("Error Socket binding to server info. Error # {0}", WSAGetLastError());
 		disconnect();
-		return;
+		return InitCodes::CONNECT_ERR;
 	}
 	else
 		LOG_INFO("Binding socket to Server info is OK");
 	
-		
+
+	m_isWorking = true;
 	std::thread t([&]() {
 		//Starting to listen to any Clients
 
@@ -266,6 +268,7 @@ void WinSock::open_server(const char* addr, unsigned short port)
 		});
 
 	t.detach();
+	return 0;
 }
 
 void WinSock::set_receive_callback(std::function<void(char* data, int size)> func)

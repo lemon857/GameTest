@@ -20,6 +20,14 @@ class WinSock
 {
 public:
 
+	enum InitCodes
+	{
+		OK = 0,
+		IP_ERR = -1,
+		INIT_SOCK_ERR = -2,
+		CONNECT_ERR = -3
+	};
+
 	WinSock() = delete;
 	~WinSock() = delete;
 
@@ -32,8 +40,8 @@ public:
 	static void close_WinSock();
 	static void disconnect();
 
-	static void open_server(const char* addr, unsigned short port);
-	static void open_client(const char* addr, unsigned short port);
+	static int open_server(const char* addr, unsigned short port);
+	static int open_client(const char* addr, unsigned short port);
 
 	static int send_data(const char* data, int size);
 

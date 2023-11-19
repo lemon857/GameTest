@@ -1,6 +1,9 @@
 #pragma once
 
+#ifdef DEBUG
 #define DEBUG_CONSOLE
+#endif // DEBUG
+
 //#define DEBUG_CONSOLE_OBJ_LOAD
 
 #ifdef DEBUG_CONSOLE

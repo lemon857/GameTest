@@ -17,6 +17,11 @@ class Scene;
 
 struct GraphicsObject;
 
+namespace GUI
+{
+	class Font;
+}
+
 namespace RenderEngine
 {
 	class ShaderProgram;
@@ -56,6 +61,10 @@ namespace RenderEngine
 		static bool save_scene(std::string relativePath, const Scene& scene);
 
 		static std::shared_ptr<GraphicsObject> load_OBJ_file(const std::string& OBJrelativePath, bool is_reload = false);
+
+		static std::shared_ptr<GUI::Font> load_font(std::string relativePath, std::string font_name, unsigned int font_size);
+
+		static std::shared_ptr<GUI::Font> get_font(std::string font_name);
 
 		static std::shared_ptr<RenderEngine::ShaderProgram> loadShaders(
 			const std::string& shaderName, 
@@ -125,6 +134,9 @@ namespace RenderEngine
 
 		typedef std::map<const std::string, std::shared_ptr<GraphicsObject>> CacheOBJMap;
 		static CacheOBJMap m_obj_files;
+
+		typedef std::map<const std::string, std::shared_ptr<GUI::Font>> FontsMap;
+		static FontsMap m_fonts_map;
 
 		//typedef std::map<const std::string, std::shared_ptr<RenderEngine::SpriteRenderer>> SpriteRenderersMap;
 		//static SpriteRenderersMap m_SpriteRenderers;

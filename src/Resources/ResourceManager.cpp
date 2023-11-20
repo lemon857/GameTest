@@ -1,4 +1,4 @@
-#include "EngineCore/Resources/ResourceManager.h";
+﻿#include "EngineCore/Resources/ResourceManager.h";
 #include "EngineCore/Renderer/ShaderProgram.h"
 #include "EngineCore/Renderer/Texture2D.h"
 #include "EngineCore/Renderer/Material.h"
@@ -12,11 +12,15 @@
 #include "EngineCore/Renderer/ShaderProgramLayout.h"
 #include "EngineCore/System/Log.h"
 #include "EngineCore/Resources/Scene.h"
+#include "EngineCore/GUI/Font.h"
 
 #include <sstream>
 #include <fstream>
 #include <iostream>
 #include <filesystem>
+
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 #include <rapidjson/document.h>
 #include <rapidjson/error/en.h>
@@ -29,11 +33,11 @@ ResourceManager::ShaderProgramsMap ResourceManager::m_ShaderPrograms;
 ResourceManager::TexturesMap ResourceManager::m_textures;
 ResourceManager::MaterialsMap ResourceManager::m_materials;
 ResourceManager::CacheOBJMap ResourceManager::m_obj_files;
+ResourceManager::FontsMap ResourceManager::m_fonts_map;
 //ResourceManager::SpriteRenderersMap ResourceManager::m_SpriteRenderers;
 //ResourceManager::GraphObjMap ResourceManager::m_graph_objs;
 //ResourceManager::AnimatorsMap ResourceManager::m_animators;
 std::string ResourceManager::m_path;
-
 
 void ResourceManager::unloadAllResources()
 {
@@ -41,6 +45,7 @@ void ResourceManager::unloadAllResources()
 	m_textures.clear();
 	m_materials.clear();
 	m_obj_files.clear();
+	m_fonts_map.clear();
 	//m_SpriteRenderers.clear();
 }
 void ResourceManager::setExecutablePath(const std::string& executablePath)
@@ -124,6 +129,17 @@ bool ResourceManager::load_JSON_resources(const std::string & JSONpath)
 			loadMaterial(name, textureName, shaderName);
 		}
 	}
+	auto fontsIt = doc.FindMember("fonts");
+	if (fontsIt != doc.MemberEnd())
+	{
+		for (const auto& currentFont : fontsIt->value.GetArray())
+		{
+			const std::string name = currentFont["name"].GetString();
+			const std::string path = currentFont["path"].GetString();
+			const unsigned int size = currentFont["size"].GetUint();
+			load_font(path, name, size);
+		}
+	}
 	/*auto SpriteRenderersIt = doc.FindMember("SpriteRenderers");
 	if (SpriteRenderersIt != doc.MemberEnd())
 	{
@@ -149,7 +165,7 @@ bool ResourceManager::load_JSON_resources(const std::string & JSONpath)
 			loadGraphicsObject(name, shader, source);
 		}
 	}*/
-	LOG_INFO("Loadind data in JSON file complete");
+	LOG_INFO("Loadind data from JSON file complete");
 	/*auto animatorsIt = doc.FindMember("animators");
 	if (animatorsIt != doc.MemberEnd())
 	{
@@ -241,6 +257,33 @@ bool ResourceManager::load_INI_settings(const std::string& INIpath, INIdata& dat
 		writeStream.close();
 		return false;
 	}
+}
+std::shared_ptr<GUI::Font> ResourceManager::load_font(std::string relativePath, std::string font_name, unsigned int font_size)
+{
+	std::shared_ptr<GUI::Font> font = std::make_shared<GUI::Font>();
+
+	if (font->load(m_path + "/" + relativePath, font_size))
+	{
+		m_fonts_map.emplace(font_name, font);
+
+		LOG_INFO("Success load font: {0}", font_name);
+
+		return font;
+	}
+
+	LOG_INFO("Error load font: {0}", font_name);
+
+	return nullptr;
+}
+std::shared_ptr<GUI::Font> ResourceManager::get_font(std::string font_name)
+{
+	FontsMap::const_iterator it = m_fonts_map.find(font_name);
+	if (it != m_fonts_map.end())
+	{
+		return it->second;
+	}
+	LOG_ERROR("Can't find font: {0}", font_name);
+	return nullptr;
 }
 bool ResourceManager::load_scene(std::string relativePath, Scene& scene)
 {

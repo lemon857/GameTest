@@ -6,15 +6,24 @@
 #include "EngineCore/Renderer/Line.h"
 #include "EngineCore/Resources/Scene.h"
 
+#include <vector>
+#include <glm/vec3.hpp>	
+#include <queue>
+
 #include "EngineCore/System/List.h"
 
 #include "Games/Tower_Defense/Castle.h"
-#include "Games/Tower_Defense/Enemy.h"
+#include "Games/Tower_Defense/BaseEnemy.h"
 #include "Games/Tower_Defense/BaseTower.h"
+#include "Games/Tower_Defense/BaseEffect.h"
 
-#include <vector>
-#include <glm/vec3.hpp>
-	
+const int size_x = 30, size_y = 30;
+
+namespace GUI
+{
+	class GUI_place;
+}
+
 class GameApp : public Application
 {
 public:
@@ -24,15 +33,28 @@ public:
 	bool init() override;
 	void on_key_update(const double delta) override;
 	void on_update(const double delta) override;
+	void on_ui_render() override;
 	bool init_events() override;
 private:
+	void init_gui();
+
+	void start_game();
+
+	std::string m_nickname;
+	std::string m_nickname_connect;
+
 	Scene m_scene;
 
 	Castle* m_main_castle;
 
-	linked_list<Enemy*> m_enemies;
+	linked_list<BaseEnemy*> m_enemies;
 
 	std::vector<BaseTower*> m_towers;
+
+	std::queue<std::string> m_chat_mes;
+
+	std::queue<unsigned int> m_spawn_towers;
+	std::queue<unsigned int> m_spawn_enemies;
 
 	Camera* m_cam;
 
@@ -45,6 +67,8 @@ private:
 	double m_init_mouse_pos_x = 0;
 	double m_init_mouse_pos_y = 0;
 
+	double m_mouse_pos_x = 0;
+	double m_mouse_pos_y = 0;
 	double m_world_mouse_pos_x = 0;
 	double m_world_mouse_pos_y = 0;
 	double m_world_mouse_pos_z = 0;
@@ -53,6 +77,60 @@ private:
 	float m_cam_sensetivity = 0.5f;
 
 	bool m_isInversiveMouseY = false;
-
 	bool m_isLose = false;
+
+	std::array <bool, size_x * size_y> map;
+
+	unsigned int cur = 0;
+	unsigned int cur_player = 0;
+	int curObj = 3;
+
+	int countEnemies = 0;
+	int countEnemiesPerm = 0;
+
+	bool is_event_logging_active = false;
+
+	bool is_grid_active = false;
+
+	bool is_gui_active = false;
+
+	bool is_chat_active = false;
+
+	bool is_chat_full_hide = false;
+
+	bool is_debug_active = false;
+
+	bool isKeyPressed = false;
+	bool isKeyPressedmouse = false;
+
+	bool isServer = false;
+
+	unsigned int countKills = 0;
+	unsigned int fps = 0;
+	unsigned int frames = 0;
+	double times = 0;
+
+	double angle = 0;
+	// settings
+	double _set_min_distance = 7;
+	double _set_velosity = 7;
+	double _set_max_hp_castle = 100;
+	double _set_max_hp_enemy = 50;
+	double _set_cooldown_tower = 3;
+	unsigned int _set_damage_tower = 10;
+
+	GUI::GUI_place* m_gui;
+	GUI::GUI_place* m_gui_chat;
+	GUI::GUI_place* m_gui_debug;
+	GUI::GUI_place* m_gui_place_menu;
+	GUI::GUI_place* m_gui_place_settings;
+
+	enum GUI_Active
+	{
+		null,
+		main,
+		settings
+	};
+
+	GUI_Active gui_window;
 };

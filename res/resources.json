@@ -1,6 +1,13 @@
 {
   "shaders": [
     {
+      "name": "textShader",
+      "filePath_v": "res/shaders/textVert.glsl",
+      "filePath_f": "res/shaders/textFrag.glsl",
+      "layout": [
+      ]
+    },
+    {
       "name": "spriteShader",
       "filePath_v": "res/shaders/spriteVert.glsl",
       "filePath_f": "res/shaders/spriteFrag.glsl",
@@ -221,6 +228,51 @@
       "subTextures": [
         "default"
       ]
+    },
+    {
+      "name": "Button_1",
+      "filePath": "res/textures/button_1.png",
+      "width": 600,
+      "height": 200,
+      "subTexture_w": 600,
+      "subTexture_h": 100,
+      "subTextures": [
+        "static",
+        "clicked"
+      ]
+    },
+    {
+      "name": "bg_1",
+      "filePath": "res/textures/Background_1.png",
+      "width": 128,
+      "height": 128,
+      "subTexture_w": 128,
+      "subTexture_h": 128,
+      "subTextures": [
+        "default"
+      ]
+    },
+    {
+      "name": "CheckBox_bg",
+      "filePath": "res/textures/CheckBox_bg.png",
+      "width": 128,
+      "height": 128,
+      "subTexture_w": 128,
+      "subTexture_h": 128,
+      "subTextures": [
+        "default"
+      ]
+    },
+    {
+      "name": "CheckBox_mark",
+      "filePath": "res/textures/CheckBox_mark.png",
+      "width": 128,
+      "height": 128,
+      "subTexture_w": 128,
+      "subTexture_h": 128,
+      "subTextures": [
+        "default"
+      ]
     }
   ],
   "materials": [
@@ -228,6 +280,11 @@
       "name": "default",
       "nameShader": "colorShader",
       "nameTexture": "DefaultTexture"
+    },
+    {
+      "name": "defaultSprite",
+      "nameShader": "spriteShader",
+      "nameTexture": "bg_1"
     },
     {
       "name": "cube",
@@ -258,6 +315,33 @@
       "name": "monkey",
       "nameShader": "default3DShader",
       "nameTexture": "MonkeyTexture"
+    },
+    {
+      "name": "button",
+      "nameShader": "spriteShader",
+      "nameTexture": "Button_1"
+    },
+    {
+      "name": "checkbox_bg",
+      "nameShader": "spriteShader",
+      "nameTexture": "CheckBox_bg"
+    },
+    {
+      "name": "checkbox_mark",
+      "nameShader": "spriteShader",
+      "nameTexture": "CheckBox_mark"
     }
-  ]  
+  ],
+  "fonts": [
+    {
+      "name": "calibri",
+      "path": "res/fonts/calibri.ttf",
+      "size": 96
+    },
+    {
+      "name": "agaaler",
+      "path": "res/fonts/agaaler.ttf",
+      "size": 96
+    }
+  ]
 }

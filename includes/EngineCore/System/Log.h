@@ -1,6 +1,9 @@
 #pragma once
 
+#ifdef DEBUG
 #define DEBUG_CONSOLE
+#endif // DEBUG
+
 //#define DEBUG_CONSOLE_OBJ_LOAD
 
 #ifdef DEBUG_CONSOLE
@@ -18,4 +21,4 @@
 #define LOG_WARN(...)
 #define LOG_ERROR(...)
 #define LOG_CRIT(...)
-#endif
+#endif // DEBUG_CONSOLE

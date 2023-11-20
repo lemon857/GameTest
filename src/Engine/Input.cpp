@@ -2,6 +2,7 @@
 
 bool Input::keysPressed[] = {};
 bool Input::buttonsPressed[] = {};
+KeyCode Input::lastKeyPressed = KeyCode::KEY_UNKNOWN;
 
 bool Input::isKeyPressed(KeyCode key)
 {
@@ -11,6 +12,7 @@ bool Input::isKeyPressed(KeyCode key)
 void Input::pressKey(KeyCode key)
 {
 	keysPressed[static_cast<size_t>(key)] = true;
+	lastKeyPressed = key;
 }
 
 void Input::releaseKey(KeyCode key)
@@ -31,4 +33,9 @@ void Input::pressMouseButton(MouseButton key)
 void Input::releaseMouseButton(MouseButton key)
 {
 	buttonsPressed[static_cast<size_t>(key)] = false;
+}
+
+KeyCode Input::getLastKeyPressed()
+{
+	return lastKeyPressed;
 }

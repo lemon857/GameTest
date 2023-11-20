@@ -102,11 +102,11 @@ namespace RenderEngine
 
 	void Material::set_model_matrix(glm::mat4& model)
 	{
-		m_pShaderProgram->setMatrix4(MODEL_MATRIX_NAME, model);
+		m_pShaderProgram->setMatrix4(SS_MODEL_MATRIX_NAME, model);
 	}
 	void Material::set_view_projection_matrix(glm::mat4& vp)
 	{
-		m_pShaderProgram->setMatrix4(VIEW_PROJECTION_MATRIX_NAME, vp);
+		m_pShaderProgram->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, vp);
 	}
 	std::shared_ptr<Texture2D> Material::get_texture_ptr()
 	{

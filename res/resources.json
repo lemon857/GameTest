@@ -338,6 +338,11 @@
       "path": "res/fonts/calibri.ttf",
       "size": 96
     },
+    { 
+      "name": "calibriChat",
+      "path": "res/fonts/calibri.ttf",
+      "size": 96
+    },
     {
       "name": "agaaler",
       "path": "res/fonts/agaaler.ttf",

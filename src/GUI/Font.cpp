@@ -37,7 +37,8 @@ namespace GUI
 			LOG_ERROR("FREETYPE: Failed to load font");
 			return false;
 		}
-		FT_Set_Pixel_Sizes(face, 0, 48);
+
+		FT_Set_Pixel_Sizes(face, 0, font_size);
 
 		// disable byte-alignment restriction
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -82,6 +83,8 @@ namespace GUI
 		}
 
 		glBindTexture(GL_TEXTURE_2D, 0);
+		
+		m_scale = 1.f;
 
 		FT_Done_Face(face);
 		FT_Done_FreeType(ft);

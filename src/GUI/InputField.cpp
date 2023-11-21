@@ -20,7 +20,7 @@ GUI::InputField::InputField(Sprite* face, glm::vec2 pos, glm::vec2 scale,
 	: GUI_element(name)
 	, m_face(std::move(face))
 	, m_textRenderer(std::make_unique<TextRenderer>(std::move(font), std::move(shader), "",
-		textColor, pos, glm::vec2(1.f), "default", false))
+		textColor, pos, glm::vec2(0.5f), "default", false)) // font sclae here
 	, m_isFocused(false)
 	, m_isClicked(false)
 	, m_clear_after_send(clear_after_send)

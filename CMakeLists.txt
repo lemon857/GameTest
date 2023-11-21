@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 
-set(PROJECT_NAME EngineTest)
+set(PROJECT_NAME Engine)
 
 set(EDITOR_BUILD)
 

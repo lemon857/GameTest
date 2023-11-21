@@ -271,7 +271,7 @@ std::shared_ptr<GUI::Font> ResourceManager::load_font(std::string relativePath, 
 		return font;
 	}
 
-	LOG_INFO("Error load font: {0}", font_name);
+	LOG_ERROR("Error load font: {0}", font_name);
 
 	return nullptr;
 }

@@ -13,7 +13,7 @@ namespace GUI
 	Button::Button(Sprite* face, glm::vec2 pos, glm::vec2 scale,
 		std::string text, std::string shaderName, std::shared_ptr<Font> font, glm::vec3 textColor)
 		: GUI_element(text)
-		, m_textRenderer(std::make_unique<TextRenderer>(font, ResourceManager::getShaderProgram(shaderName), text, textColor, pos, glm::vec2(1.f)))
+		, m_textRenderer(std::make_unique<TextRenderer>(font, ResourceManager::getShaderProgram(shaderName), text, textColor, pos, glm::vec2(0.5f)))  // font sclae here
 		, m_face(std::move(face))
 	{
 		m_position_p = pos;

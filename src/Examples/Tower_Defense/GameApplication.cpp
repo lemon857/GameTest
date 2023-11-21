@@ -1,4 +1,3 @@
-
 #include "Games/Tower_Defense/GameApplication.h"
 
 #include "EngineCore/System/Log.h"
@@ -35,6 +34,7 @@
 #include "EngineCore/GUI/CheckBox.h"
 #include "EngineCore/GUI/ChatBox.h"
 #include "EngineCore/GUI/ScrollBox.h"
+#include "EngineCore/GUI/Font.h"
 
 #include "EngineCore/Network/WinSock.h"
 
@@ -55,6 +55,7 @@ GameApp::~GameApp()
 {
     delete m_cam;
     WinSock::close_WinSock();
+    chat_last.clear();
 }
 
 bool GameApp::init()
@@ -151,6 +152,21 @@ void GameApp::on_key_update(const double delta)
                 m_gui_chat->get_element<GUI::ChatBox>("Chat")->set_open(false);
                 m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_active(false);
                 is_chat_active = false;
+            }
+        }
+        if (m_gui_chat->get_element<GUI::InputField>("SendMessage")->get_focus())
+        {
+            if (Input::isKeyPressed(KeyCode::KEY_UP) && !isKeyPressed)
+            {
+                if (cur_chat_index < chat_last.size() - 1) cur_chat_index++;
+                if (!chat_last.empty()) m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_text(chat_last[cur_chat_index]);
+                isKeyPressed = true;
+            }
+            else if (Input::isKeyPressed(KeyCode::KEY_DOWN) && !isKeyPressed)
+            {
+                if (cur_chat_index > 0) cur_chat_index--;
+                if (!chat_last.empty()) m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_text(chat_last[cur_chat_index]);
+                isKeyPressed = true;
             }
         }
         return;
@@ -662,6 +678,9 @@ bool GameApp::init_events()
 
 void GameApp::init_gui()
 {
+    ResourceManager::get_font("calibri")->set_scale(0.5f);
+    ResourceManager::get_font("calibriChat")->set_scale(0.3f);
+
     m_gui = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
     m_gui_chat = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
     m_gui_debug = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
@@ -669,25 +688,34 @@ void GameApp::init_gui()
     m_gui_place_settings = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
 
     // debug window ---------------------------------------------------------------------------
-    m_gui_debug->add_element<GUI::TextRenderer>(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        "FPS: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, 98.f), glm::vec2(0.5f), "fps", false);
+    float offset = 98.f;
 
-    m_gui_debug->add_element<GUI::TextRenderer>(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        "Enemies: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, 96.f), glm::vec2(0.5f), "enemies", false);
+    m_gui_debug->add_element<GUI::TextRenderer>(ResourceManager::get_font("calibriChat"), ResourceManager::getShaderProgram("textShader"),
+        BUILD_NAME, glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, offset), glm::vec2(0.5f), "version_build", false);
+    offset -= 2.5f;
 
-    m_gui_debug->add_element<GUI::TextRenderer>(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        "Kills: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, 94.f), glm::vec2(0.5f), "kills", false);   
+    m_gui_debug->add_element<GUI::TextRenderer>(ResourceManager::get_font("calibriChat"), ResourceManager::getShaderProgram("textShader"),
+        "FPS: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, offset), glm::vec2(0.5f), "fps", false);
+    offset -= 2.5f;
 
-    m_gui_debug->add_element<GUI::TextRenderer>(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        "Ping: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, 92.f), glm::vec2(0.5f), "ping", false);
+    m_gui_debug->add_element<GUI::TextRenderer>(ResourceManager::get_font("calibriChat"), ResourceManager::getShaderProgram("textShader"),
+        "Enemies: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, offset), glm::vec2(0.5f), "enemies", false);
+    offset -= 2.5f;
+
+    m_gui_debug->add_element<GUI::TextRenderer>(ResourceManager::get_font("calibriChat"), ResourceManager::getShaderProgram("textShader"),
+        "Kills: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, offset), glm::vec2(0.5f), "kills", false);
+    offset -= 2.5f;
+
+    m_gui_debug->add_element<GUI::TextRenderer>(ResourceManager::get_font("calibriChat"), ResourceManager::getShaderProgram("textShader"),
+        "Ping: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, offset), glm::vec2(0.5f), "ping", false);
 
     // chat ---------------------------------------------------------------------------
     m_gui_chat->add_element<GUI::ChatBox>(new GUI::Sprite(ResourceManager::getMaterial("defaultSprite")),
-        glm::vec2(13.f, 41.f), glm::vec2(12.f, 30.f), "Chat", 128, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"), glm::vec3(1.f));
+        glm::vec2(13.f, 36.f), glm::vec2(12.f, 30.f), "Chat", 128, ResourceManager::get_font("calibriChat"), ResourceManager::getShaderProgram("textShader"), glm::vec3(1.f));
 
     m_gui_chat->add_element<GUI::InputField>(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        glm::vec2(13.f, 5.f), glm::vec2(12.f, 5.f), "SendMessage", ResourceManager::getShaderProgram("textShader"),
-        ResourceManager::get_font("calibri"), glm::vec3(1.f), true)->set_enter_callback([&](std::string text) {
+        glm::vec2(13.f, 3.f), glm::vec2(12.f, 3.f), "SendMessage", ResourceManager::getShaderProgram("textShader"),
+        ResourceManager::get_font("calibriChat"), glm::vec3(1.f), true)->set_enter_callback([&](std::string text) {
             if (text[0] == '/') // need finalize
             {
                 char buff[sizeof(double) + 2];
@@ -794,6 +822,7 @@ void GameApp::init_gui()
                 m_chat_mes.push(m_nickname + ": " + text);
                 WinSock::send_data(('m' + text).data(), text.length() + 1); // =========================== message flag first
             }
+            chat_last.push_back(text);
             });
     
     //m_gui_chat->add_element<GUI::ScrollBox>(new GUI::Sprite(ResourceManager::getMaterial("defaultSprite")),
@@ -997,7 +1026,7 @@ void GameApp::init_gui()
 
     // ========================================================================================
     m_gui_place_menu->add_element<GUI::TextRenderer>(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        "Enter Nickname", glm::vec3(1.f), glm::vec2(88.f, 88.f), glm::vec2(1.f), "m1");
+        "Enter Nickname", glm::vec3(1.f), glm::vec2(88.f, 88.f), glm::vec2(1.f), "m1"); 
 
     m_gui_place_menu->add_element<GUI::InputField>(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(88.f, 80.f), glm::vec2(10.f, 5.f), "InputNick", ResourceManager::getShaderProgram("textShader"),

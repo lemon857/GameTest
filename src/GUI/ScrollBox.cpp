@@ -4,7 +4,8 @@
 
 #define SCROLL_MYLTIPLIER 10
 
-#define DISPLACEMENT_ELEMENT_Y 17.f
+#define DISPLACEMENT_ELEMENT_Y 11.f
+#define SHIFT_ELEMENT_Y 30.f
 
 namespace GUI
 {
@@ -55,12 +56,12 @@ namespace GUI
 	}
 	void ScrollBox::add_element(GUI_element* element)
 	{
-		element->set_position(glm::vec2(m_position.x - m_scale.x, m_position.y - m_scale.y + 50.f)); // displacement X here
+		element->set_position(glm::vec2(m_position.x - m_scale.x, m_position.y - m_scale.y + SHIFT_ELEMENT_Y)); // displacement X here
 		element->set_scale(m_scale);
 		for (size_t i = 0; i < m_elements.size(); i++)
 		{
 			m_elements[(i - m_elements.size() + 1) * -1]->set_position(
-				glm::vec2(m_position.x - m_scale.x, (m_position.y - m_scale.y + 50.f) + ((i + 1) * 50.f))); // and here
+				glm::vec2(m_position.x - m_scale.x, (m_position.y - m_scale.y + SHIFT_ELEMENT_Y) + ((i + 1) * SHIFT_ELEMENT_Y))); // and here
 		}
 		m_elements.push_back(element);
 		if (m_elements.size() > m_max_count_elements) m_elements.remove((size_t)0);

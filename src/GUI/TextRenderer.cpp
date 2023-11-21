@@ -81,7 +81,7 @@ namespace GUI
     void TextRenderer::on_render_prj(glm::mat4& prj)
     {
         if (!m_isActive) return;
-        render_text(m_text, m_position.x, m_position.y, m_scale_p.x, m_color, prj);
+        render_text(m_text, m_position.x, m_position.y, m_font->get_scale(), m_color, prj);
     }
     void TextRenderer::set_text(std::string text)
     {

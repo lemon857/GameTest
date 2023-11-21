@@ -1,5 +1,7 @@
 #pragma once 
 
+#define BUILD_NAME "Tower_defense_0.0.3_alfa"
+
 #include "EngineCore/Application.h"
 
 #include "EngineCore/Renderer/Camera.h"
@@ -111,6 +113,13 @@ private:
 	double times = 0;
 
 	double angle = 0;
+
+	std::vector<std::string> chat_last; // need optimization
+
+	size_t cur_chat_index = 0;
+
+	const unsigned int max_buffer_chat_last = 32;
+
 	// settings
 	double _set_min_distance = 7;
 	double _set_velosity = 7;

@@ -19,15 +19,17 @@ set(ENGINE_PUBLIC_SRC_EDITOR
 )
 
 set(ENGINE_PUBLIC_INCLUDES
-	includes/EngineCore/Engine.h
-	includes/EngineCore/Application.h
+	includes/EngineCore/Engine/Engine.h
+	includes/EngineCore/Engine/Application.h
+
 	includes/EngineCore/IComponent.h
 	includes/EngineCore/IGameObject.h
 	includes/EngineCore/IGame.h
-	includes/EngineCore/Event.h
-	includes/EngineCore/Keys.h
-	includes/EngineCore/Input.h
+	includes/EngineCore/System/Event.h
+	includes/EngineCore/System/Keys.h
+	includes/EngineCore/System/Input.h
 		   
+	includes/EngineCore/System/LogSystem.h
 	includes/EngineCore/System/Log.h
 	includes/EngineCore/System/Timer.h
 	includes/EngineCore/System/TemplateTimer.h
@@ -57,7 +59,7 @@ set(ENGINE_PUBLIC_INCLUDES
 )
 
 set(ENGINE_PRIVATE_INCLUDES
-	includes/EngineCore/Window.h
+	includes/EngineCore/Engine/Window.h
 	
 	includes/EngineCore/Resources/ResourceManager.h
 	includes/EngineCore/Resources/stb_image.h
@@ -164,6 +166,7 @@ set(ENGINE_PRIVATE_SOURCES
 	
 	src/System/Timer.cpp
 	src/System/Stopwatch.cpp	
+	src/System/LogSystem.cpp	
 	
 	src/Components/MeshRenderer.cpp	
 	src/Components/Transform.cpp
@@ -225,12 +228,10 @@ set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(external/glfw)
 add_subdirectory(external/glad)
-add_subdirectory(external/spdlog)
 add_subdirectory(external/freetype)
 
 target_link_libraries(${PROJECT_NAME} glfw)
 target_link_libraries(${PROJECT_NAME} glad)
-target_link_libraries(${PROJECT_NAME} spdlog)
 target_link_libraries(${PROJECT_NAME} freetype)
 
 target_include_directories(${PROJECT_NAME} PRIVATE includes)

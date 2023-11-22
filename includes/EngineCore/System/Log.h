@@ -1,21 +1,14 @@
 #pragma once
 
-#define DEBUG_CONSOLE
 //#define DEBUG_CONSOLE_OBJ_LOAD
 
-#ifdef DEBUG_CONSOLE
-#include <spdlog/spdlog.h>
+#include "EngineCore/System/LogSystem.h"
 
-#define LOG_INFO(...)	spdlog::info(__VA_ARGS__)
-#define LOG_WARN(...)	spdlog::warn(__VA_ARGS__)
-#define LOG_ERROR(...)	spdlog::error(__VA_ARGS__)
-#define LOG_CRIT(...)	spdlog::critical(__VA_ARGS__)
-#endif // DEBUG_CONSOLE
+#define LOG_INFO(...)	LogSystem::info(__VA_ARGS__)
+#define LOG_WARN(...)	LogSystem::warn(__VA_ARGS__)
+#define LOG_ERROR(...)	LogSystem::error(__VA_ARGS__)
+#define LOG_CRIT(...)	LogSystem::critical(__VA_ARGS__)
 
-#ifndef DEBUG_CONSOLE
+#ifndef DEBUG_CONSOLE 
 #pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
-#define LOG_INFO(...)
-#define LOG_WARN(...)
-#define LOG_ERROR(...)
-#define LOG_CRIT(...)
 #endif // DEBUG_CONSOLE

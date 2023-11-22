@@ -315,9 +315,7 @@ bool ResourceManager::load_scene(std::string relativePath, Scene& scene)
 bool ResourceManager::save_scene(std::string relativePath, const Scene& scene)
 {
 	std::ofstream fout;
-
 	
-
 	fout.open(m_path + "/" + relativePath, std::ofstream::app);
 
 	if (!fout.is_open())

@@ -22,8 +22,7 @@ int WinSock::init_WinSock()
 	WSADATA wsData;
 
 	if (WSAStartup(MAKEWORD(2, 2), &wsData) != 0) {
-		LOG_ERROR("Error WinSock version initializaion #");
-		LOG_ERROR(WSAGetLastError());
+		LOG_ERROR("Error WinSock version initializaion # {0}", WSAGetLastError());
 		return 2;
 	}
 	else

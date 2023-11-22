@@ -9,12 +9,12 @@
 #include "EngineCore/Light/PointerLight.h"
 #include "EngineCore/System/ShadersSettings.h"
 
-#include "EngineCore/Window.h"
+#include "EngineCore/Engine/Window.h"
 
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Renderer/Renderer.h"
 #include "EngineCore/Renderer/Material.h"
-#include "EngineCore/Input.h"
+#include "EngineCore/System/Input.h"
 
 #include "EngineCore/Renderer3D/GraphicsObject.h"
 
@@ -39,6 +39,8 @@
 #include "EngineCore/Network/WinSock.h"
 
 #include "EngineCore/System/sysfunc.h"
+
+#include "EngineCore/System/LogSystem.h"
 
 #include <array>
 #include <memory>
@@ -65,7 +67,12 @@ bool GameApp::init()
     m_cam = new Camera(glm::vec3(0), glm::vec3(0));
 
     m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
-       
+
+    ((float*)ResourceManager::getMaterial("cube")->get_data("ambient_factor"))[0] = 0.25f;
+    ((float*)ResourceManager::getMaterial("cube")->get_data("diffuse_factor"))[0] = 0.1f;
+    ((float*)ResourceManager::getMaterial("cube")->get_data("specular_factor"))[0] = 0.0f;
+    ((float*)ResourceManager::getMaterial("cube")->get_data("metalic_factor"))[0] = 0.0f;
+
     ((float*)ResourceManager::getMaterial("dirt")->get_data("ambient_factor"))[0] = 0.25f; 
     ((float*)ResourceManager::getMaterial("dirt")->get_data("diffuse_factor"))[0] = 0.1f;
     ((float*)ResourceManager::getMaterial("dirt")->get_data("specular_factor"))[0] = 0.0f;
@@ -118,7 +125,7 @@ bool GameApp::init()
     ResourceManager::load_OBJ_file("res/models/castle.obj");
     ResourceManager::load_OBJ_file("res/models/tower.obj");
     ResourceManager::load_OBJ_file("res/models/monkey.obj");
-    
+
     init_gui();
     start_game();
 
@@ -203,6 +210,7 @@ void GameApp::on_key_update(const double delta)
             m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_focus(true);
             m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_active(true);
             m_gui_chat->get_element<GUI::ChatBox>("Chat")->set_open(true);
+            m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_text("");
             is_chat_active = true;
             isKeyPressed = true;
         }
@@ -548,6 +556,7 @@ void GameApp::on_ui_render()
     while (!m_chat_mes.empty())
     {
         m_gui_chat->get_element<GUI::ChatBox>("Chat")->add_message(m_chat_mes.front());
+        LOG_INFO("[CHAT] {0}", m_chat_mes.front());
         m_chat_mes.pop();
     }
     // =========================================

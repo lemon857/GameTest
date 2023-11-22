@@ -8,9 +8,9 @@
 #include "EngineCore/Renderer/ShaderProgram.h"
 
 #include "EngineCore/System/Log.h"
-#include "EngineCore/Input.h"
+#include "EngineCore/System/Input.h"
 
-#include "EngineCore/Keys.h"
+#include "EngineCore/System/Keys.h"
 
 #include <Windows.h>
 

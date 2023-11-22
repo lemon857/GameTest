@@ -1,5 +1,5 @@
-#include "EngineCore/Application.h"
-#include "EngineCore/Window.h"
+#include "EngineCore/Engine/Application.h"
+#include "EngineCore/Engine/Window.h"
 #include "EngineCore/System/Log.h"
 #include "EngineCore/System/Stopwatch.h"
 #include "EngineCore/Resources/ResourceManager.h"
@@ -9,6 +9,7 @@
 
 Application::Application()
 {
+    LogSystem::open_log_file("lastest.log");
     LOG_INFO("Starting Application");
 }
 

@@ -2,7 +2,7 @@
 
 #define BUILD_NAME "Tower_defense_0.0.3_alfa"
 
-#include "EngineCore/Application.h"
+#include "EngineCore/Engine/Application.h"
 
 #include "EngineCore/Renderer/Camera.h"
 #include "EngineCore/Renderer/Line.h"

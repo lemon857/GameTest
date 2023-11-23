@@ -1,4 +1,4 @@
-#include "EngineCore/Input.h"
+#include "EngineCore/System/Input.h"
 
 bool Input::keysPressed[] = {};
 bool Input::buttonsPressed[] = {};

@@ -106,6 +106,7 @@ bool GameApp::init()
 
     m_scene.at(4)->addComponent<Transform>();
     m_scene.at(4)->addComponent<Highlight>(ResourceManager::getMaterial("default"), true, false, glm::vec3(1.f, 0.f, 0.f));
+    m_scene.at(4)->getComponent<Highlight>()->set_active(false);
 
     const auto& transform = m_scene.at(0)->getComponent<Transform>();
 
@@ -599,7 +600,7 @@ void GameApp::on_update(const double delta)
         gui_window = null;
         m_gui->get_element<GUI::TextRenderer>("Lose scoreboard")->set_text("Your score: " + std::to_string(countKills));
         m_gui->set_active(true);
-        if (isServer) WinSock::send_data("l", 1);
+        //if (isServer) WinSock::send_data("l", 1);
     }
     // sync
 
@@ -1197,7 +1198,13 @@ void GameApp::init_winSock()
             std::string str = std::string(&data[WS_DATA_PACKET_INFO_SIZE + 1]).substr(0, size - (WS_DATA_PACKET_INFO_SIZE));
             m_chat_mes.push(m_nickname_connect + ": " + str);
         }
-        else if (data[WS_DATA_PACKET_INFO_SIZE] == 'w') // damage (not working now)
+        else if (data[WS_DATA_PACKET_INFO_SIZE] == 'q') // kill enemy (not working now)
+        {
+            unsigned int dmg = 0;
+            sysfunc::char_to_type(&dmg, data, WS_DATA_PACKET_INFO_SIZE + 1);
+            //m_main_castle->damage(dmg);
+        }
+        else if (data[WS_DATA_PACKET_INFO_SIZE] == 'w') // damage castle (not working now)
         {
             unsigned int dmg = 0;
             sysfunc::char_to_type(&dmg, data, WS_DATA_PACKET_INFO_SIZE + 1);
@@ -1278,12 +1285,14 @@ void GameApp::init_winSock()
 
     WinSock::set_disconnect_callback([&]() {
         m_chat_mes.push("Disconnect!");
+        m_scene.at(4)->getComponent<Highlight>()->set_active(false);
         m_gui_place_menu->get_element<GUI::Button>("Disconnect")->set_active(false);
         m_gui_place_menu->get_element<GUI::Button>("Restart")->set_active(true);
         m_gui->get_element<GUI::Button>("Restart")->set_active(true);
         });
     WinSock::set_connect_callback([&]() {
         WinSock::send_data(('n' + m_nickname).data(), m_nickname.length() + 1); // =========================== message flag first
+        m_scene.at(4)->getComponent<Highlight>()->set_active(true);
         m_gui_place_menu->get_element<GUI::Button>("Disconnect")->set_active(true);
         if (!isServer)
         {

@@ -63,14 +63,26 @@ void WinSock::disconnect()
 }
 
 int WinSock::open_client(const char* addr, unsigned short port)
-{
+{	
 	m_isServer = false;
 	// init ip addr
 	in_addr ip_to_num;
 
-	if (inet_pton(AF_INET, addr, &ip_to_num) <= 0) {
-		LOG_ERROR("Error in IP translation to special numeric format");
-		return InitCodes::IP_ERR;
+	if (inet_pton(AF_INET, addr, &ip_to_num) <= 0) { // if can't translate string to ip, trying translate domain name to IP
+		auto hst = gethostbyname(addr);
+		if (hst)
+		{
+			if (inet_pton(AF_INET, inet_ntoa(*(struct in_addr*)hst->h_addr_list[0]), &ip_to_num) <= 0)
+			{
+				LOG_ERROR("Error in IP translation to special numeric format");
+				return InitCodes::IP_ERR;
+			}
+		}
+		else
+		{
+			LOG_ERROR("Error domain name");
+			return InitCodes::IP_ERR;
+		}
 	}
 	// Server socket initialization
 	m_sock = socket(AF_INET, SOCK_STREAM, 0);

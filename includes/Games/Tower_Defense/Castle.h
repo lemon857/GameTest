@@ -17,7 +17,8 @@ namespace RenderEngine
 class Castle : public IGameObject
 {
 public:
-	Castle(glm::vec3 initPos, const unsigned int hp, std::string objPath, std::shared_ptr<RenderEngine::Material> pMaterial, std::shared_ptr<RenderEngine::Material> pMaterialBar);
+	Castle(glm::vec3 initPos, const unsigned int hp, std::string objPath,
+		std::shared_ptr<RenderEngine::Material> pMaterial, std::shared_ptr<RenderEngine::Material> pMaterialBar, glm::vec3 colorBar = glm::vec3(1.f, 0.f, 0.f));
 
 	~Castle() = default;
 

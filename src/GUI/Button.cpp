@@ -11,8 +11,8 @@
 namespace GUI
 {
 	Button::Button(Sprite* face, glm::vec2 pos, glm::vec2 scale,
-		std::string text, std::string shaderName, std::shared_ptr<Font> font, glm::vec3 textColor)
-		: GUI_element(text)
+		std::string text, std::string shaderName, std::shared_ptr<Font> font, glm::vec3 textColor, std::string name)
+		: GUI_element(name == "default" ? text : name)
 		, m_textRenderer(std::make_unique<TextRenderer>(font, ResourceManager::getShaderProgram(shaderName), text, textColor, pos, glm::vec2(0.5f)))  // font sclae here
 		, m_face(std::move(face))
 	{
@@ -56,5 +56,10 @@ namespace GUI
 	{
 		m_face->set_scale(scale);
 		m_scale = scale;
+	}
+	void Button::set_text(std::string text)
+	{
+		m_textRenderer->set_text(text);
+		m_textRenderer->set_position(glm::vec2(m_position.x, m_position.y - SHIFT_TEXT_SYMBOL_Y));
 	}
 }

@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-//#define DEBUG_CONSOLE // chanage on release build here
+#define DEBUG_CONSOLE // chanage on release build here
 
 #ifdef DEBUG_CONSOLE
 #define DEBUG_CONSOLE_LOG

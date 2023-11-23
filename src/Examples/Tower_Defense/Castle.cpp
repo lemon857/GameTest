@@ -7,10 +7,11 @@
 
 #include "EngineCore/Resources/ResourceManager.h"
 
-Castle::Castle(glm::vec3 initPos, const unsigned int hp, std::string objPath, std::shared_ptr<RenderEngine::Material> pMaterial, std::shared_ptr<RenderEngine::Material> pMaterialBar)
+Castle::Castle(glm::vec3 initPos, const unsigned int hp, std::string objPath,
+	std::shared_ptr<RenderEngine::Material> pMaterial, std::shared_ptr<RenderEngine::Material> pMaterialBar, glm::vec3 colorBar)
 	: m_hp(hp)
 	, m_isDestroyed(false)
-	, m_bar(new HealthBar(pMaterialBar, initPos + glm::vec3(0.f, 3.f, 0.f), 25, 2, hp, glm::vec3(1.f), glm::vec3(1.f, 0.f, 0.f)))
+	, m_bar(new HealthBar(pMaterialBar, initPos + glm::vec3(0.f, 3.f, 0.f), 25, 2, hp, glm::vec3(1.f), colorBar))
 	, IGameObject("MainCastle")
 {
 	addComponent<Transform>(initPos);

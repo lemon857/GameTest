@@ -26,6 +26,12 @@ namespace GUI
 	class GUI_place;
 }
 
+enum GameMode
+{
+	Single,
+	Multi
+};
+
 class GameApp : public Application
 {
 public:
@@ -40,7 +46,8 @@ public:
 private:
 	void init_gui();
 
-	void start_game();
+	void start_game_single();
+	void start_game_multi();
 
 	void init_winSock();
 
@@ -50,6 +57,7 @@ private:
 	Scene m_scene;
 
 	Castle* m_main_castle;
+	Castle* m_adv_castle;
 
 	linked_list<BaseEnemy*> m_enemies;
 
@@ -65,6 +73,8 @@ private:
 	RenderEngine::Line* m_grid_line;
 
 	std::vector<glm::vec3> parts;
+	
+	GameMode m_mode = GameMode::Single;
 
 	float m_colors[4] = { 0.33f, 0.33f, 0.33f, 0.f };
 
@@ -93,25 +103,20 @@ private:
 	int countEnemiesPerm = 0;
 
 	bool is_event_logging_active = false;
-
 	bool is_grid_active = false;
-
 	bool is_gui_active = false;
-
 	bool is_chat_active = false;
-
 	bool is_chat_full_hide = false;
-
 	bool is_debug_active = false;
-
 	bool is_spawn_enemy = false;
-
 	bool is_spawn_mode = false;
+	bool is_lock_move = true;
 
 	bool isKeyPressed = false;
 	bool isKeyPressedmouse = false;
 
 	bool isServer = false;
+	bool restart_querry = false;
 		
 	unsigned int countKills = 0;
 	unsigned int fps = 0;

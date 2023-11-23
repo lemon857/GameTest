@@ -22,6 +22,11 @@ namespace GUI
 	}
 	ScrollBox::~ScrollBox()
 	{
+		for (size_t i = 0; i < m_elements.size(); i++)
+		{
+			delete m_elements.at(i);
+		}
+		m_elements.clear();
 	}
 	void ScrollBox::on_render_prj(glm::mat4& prj)
 	{
@@ -68,6 +73,10 @@ namespace GUI
 	}
 	void ScrollBox::clear()
 	{
+		for (size_t i = 0; i < m_elements.size(); i++)
+		{
+			delete m_elements.at(i);
+		}
 		m_elements.clear();
 	}
 }

@@ -124,7 +124,7 @@ int WinSock::open_client(const char* addr, unsigned short port)
 					std::string str = std::string(&buff[WS_DATA_PACKET_INFO_SIZE]).substr(0, size - WS_DATA_PACKET_INFO_SIZE + 1);
 					m_receive_callback(buff, size);
 					send(m_sock, buf, WS_DATA_PACKET_INFO_SIZE, 0);
-					LOG_INFO("Data: {0} Size: {1}", str, size);
+					//LOG_INFO("Data: {0} Size: {1}", str, size); problem
 				}
 				else if (buff[0] == WS_CODE_ANSWER)
 				{
@@ -137,7 +137,7 @@ int WinSock::open_client(const char* addr, unsigned short port)
 					closesocket(m_sock);
 					m_disconnect_callback();
 					LOG_INFO("Disconnect request");
-					break;
+					return;
 				}
 			}
 		}
@@ -246,9 +246,9 @@ int WinSock::open_server(const char* addr, unsigned short port)
 					std::string str = std::string(&buff[WS_DATA_PACKET_INFO_SIZE]).substr(0, size - WS_DATA_PACKET_INFO_SIZE + 1);
 					m_receive_callback(buff, size);
 					send(m_sock, buf, WS_DATA_PACKET_INFO_SIZE, 0);
-					LOG_INFO("Data: {0} Size: {1}", str, size);
+					//LOG_INFO("Data: {0} Size: {1}", str, size); problem
 				}
-				else if (buff[0] == WS_CODE_ANSWER)
+				if (buff[0] == WS_CODE_ANSWER)
 				{
 					m_ping_callback(m_ping_timer.stop());
 				}

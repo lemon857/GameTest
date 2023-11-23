@@ -48,7 +48,7 @@ namespace GUI
 		{
 			m_value = !m_value;
 			m_isClicked = false;
-			LOG_INFO("Value: {0}", m_value);
+			//LOG_INFO("Value: {0}", m_value);
 			on_click();
 		}
 	}

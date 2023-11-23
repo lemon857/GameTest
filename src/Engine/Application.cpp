@@ -5,8 +5,6 @@
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Renderer/Renderer.h"
 
-#include <chrono>
-
 Application::Application()
 {
     LogSystem::open_log_file("lastest.log");

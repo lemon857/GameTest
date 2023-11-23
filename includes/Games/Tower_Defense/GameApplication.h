@@ -42,6 +42,8 @@ private:
 
 	void start_game();
 
+	void init_winSock();
+
 	std::string m_nickname;
 	std::string m_nickname_connect;
 
@@ -102,11 +104,15 @@ private:
 
 	bool is_debug_active = false;
 
+	bool is_spawn_enemy = false;
+
+	bool is_spawn_mode = false;
+
 	bool isKeyPressed = false;
 	bool isKeyPressedmouse = false;
 
 	bool isServer = false;
-
+		
 	unsigned int countKills = 0;
 	unsigned int fps = 0;
 	unsigned int frames = 0;

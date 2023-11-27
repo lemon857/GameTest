@@ -19,7 +19,8 @@ namespace RenderEngine
 class BaseEnemy
 {
 public:
-	BaseEnemy(ObjModel* model, Castle* target, glm::vec3 pos, double cooldown, double velocity, const unsigned int maxHP, std::shared_ptr<RenderEngine::Material> pMaterial);
+	BaseEnemy(ObjModel* model, Castle* target, glm::vec3 pos, double cooldown, double velocity,
+		const unsigned int maxHP, std::shared_ptr<RenderEngine::Material> pMaterial, glm::vec3 color = glm::vec3(1.f, 0.f, 0.f));
 	~BaseEnemy();
 
 	void update(const double delta);

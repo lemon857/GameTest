@@ -60,13 +60,18 @@ private:
 	Castle* m_adv_castle;
 
 	linked_list<BaseEnemy*> m_enemies;
+	linked_list<BaseEnemy*> m_enemies_self;
 
 	std::vector<BaseTower*> m_towers;
+	std::vector<BaseTower*> m_towers_self;
 
 	std::queue<std::string> m_chat_mes;
 
 	std::queue<unsigned int> m_spawn_towers;
+	std::queue<unsigned int> m_spawn_towers_self;
+
 	std::queue<unsigned int> m_spawn_enemies;
+	std::queue<unsigned int> m_spawn_enemies_self;
 
 	Camera* m_cam;
 

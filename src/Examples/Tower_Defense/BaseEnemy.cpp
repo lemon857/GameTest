@@ -11,13 +11,14 @@
 
 #define HALF_PLANE 30.f
 
-BaseEnemy::BaseEnemy(ObjModel* model, Castle* target, glm::vec3 pos, double cooldown, double velocity, const unsigned int hp, std::shared_ptr<RenderEngine::Material> pMaterial)
+BaseEnemy::BaseEnemy(ObjModel* model, Castle* target, glm::vec3 pos, double cooldown, double velocity, const unsigned int hp,
+	std::shared_ptr<RenderEngine::Material> pMaterial, glm::vec3 color)
 	: m_cool_down(cooldown * 1000)
 	, m_target_castle(std::move(target))
 	, m_cur_time(0)
 	, m_velocity(velocity)
 	, m_model(std::move(model))
-	, m_bar(new HealthBar(pMaterial, pos + glm::vec3(0.f, 2.5f, 0.f), 25, 2, hp, glm::vec3(1.f), glm::vec3(1.f, 0.f, 0.f)))
+	, m_bar(new HealthBar(pMaterial, pos + glm::vec3(0.f, 2.5f, 0.f), 25, 2, hp, glm::vec3(1.f), color))
 	, m_isDestroyed(false)
 	, m_hp(hp)
 	, m_effect(nullptr)

@@ -372,105 +372,6 @@ void GameApp::on_key_update(const double delta)
                         int x = cur / size_y;
                         int y = cur % size_x;
 
-                        bool spawn = false;
-
-                        /*if (CHECK_AVAILABLE_POS(x + 1, y, size_x, size_y))
-                        {
-                            spawn |= map[(x + 1) * size_y + y];
-                        }
-                        if (CHECK_AVAILABLE_POS(x - 1, y, size_x, size_y))
-                        {
-                            spawn |= map[(x - 1) * size_y + y];
-                        }
-                        if (CHECK_AVAILABLE_POS(x, y + 1, size_x, size_y))
-                        {
-                            spawn |= map[x * size_y + y + 1];
-                        }
-                        if (CHECK_AVAILABLE_POS(x, y - 1, size_x, size_y))
-                        {
-                            spawn |= map[x * size_y + y - 1];
-                        }*/
-                        if (!spawn)
-                        {
-                            isKeyPressedmouse = true;
-
-                            char buff[sizeof(unsigned int) + 1];
-
-                            if (m_mode == GameMode::Single) 
-                            {
-                                if (is_spawn_enemy)
-                                {
-                                    m_spawn_enemies.push(cur);
-                                    buff[0] = 's';
-                                    sysfunc::type_to_char(&cur, buff, 1);
-
-                                    WinSock::send_data(buff, sizeof(unsigned int) + 1);
-                                }
-                                else if (!map[cur])
-                                {
-                                    map[cur] = true;
-                                    m_spawn_towers.push(cur);
-                                    buff[0] = 't';
-                                    sysfunc::type_to_char(&cur, buff, 1);
-
-                                    WinSock::send_data(buff, sizeof(unsigned int) + 1);
-                                    LOG_INFO("Add tower at {0}x{1}", x, y);
-                                }
-                            }
-                            else 
-                            {
-                                if (is_spawn_enemy && x > 25 && y < 14 && y > 1)
-                                {
-                                    m_spawn_enemies.push(cur);
-                                    buff[0] = 's';
-                                    sysfunc::type_to_char(&cur, buff, 1);
-
-                                    WinSock::send_data(buff, sizeof(unsigned int) + 1);
-                                    LOG_INFO("Add enemy at {0}x{1}", x, y);
-                                }
-                                LOG_INFO("Pos {0}x{1}", x, y);
-                            }
-
-                            //m_scene.at(curObj)->deleteComponent<Highlight>();
-                            //curObj++;
-                            // 
-                            //m_scene.add_object<ObjModel>("res/models/monkey.obj", ResourceManajger::getMaterial("monkey"));
-                            //m_scene.add_object<Cube>(ResourceManager::getMaterial("cube"));
-                            //m_scene.at(curObj)->addComponent<Transform>();
-                            //m_scene.at(curObj)->addComponent<Highlight>(ResourceManager::getMaterial("default"), true);
-                        }
-                    }
-
-                    char buff[sizeof(unsigned int) + 1];
-                    buff[0] = 'd';
-                    sysfunc::type_to_char(&cur, buff, 1);
-                    WinSock::send_data(buff, sizeof(unsigned int) + 1);
-                }
-                else if (!is_spawn_mode && !isKeyPressedmouse)
-                {
-                    int x = cur / size_y;
-                    int y = cur % size_x;
-
-                    bool spawn = false;
-
-                    /*if (CHECK_AVAILABLE_POS(x + 1, y, size_x, size_y))
-                    {
-                        spawn |= map[(x + 1) * size_y + y];
-                    }
-                    if (CHECK_AVAILABLE_POS(x - 1, y, size_x, size_y))
-                    {
-                        spawn |= map[(x - 1) * size_y + y];
-                    }
-                    if (CHECK_AVAILABLE_POS(x, y + 1, size_x, size_y))
-                    {
-                        spawn |= map[x * size_y + y + 1];
-                    }
-                    if (CHECK_AVAILABLE_POS(x, y - 1, size_x, size_y))
-                    {
-                        spawn |= map[x * size_y + y - 1];
-                    }*/
-                    if (!spawn)
-                    {
                         isKeyPressedmouse = true;
 
                         char buff[sizeof(unsigned int) + 1];
@@ -498,26 +399,155 @@ void GameApp::on_key_update(const double delta)
                         }
                         else
                         {
-                            if (is_spawn_enemy && x > 25 && y < 14 && y > 1)
+                            if (is_spawn_enemy)
                             {
-                                m_spawn_enemies.push(cur);
-                                buff[0] = 's';
-                                sysfunc::type_to_char(&cur, buff, 1);
+                                if (isServer)
+                                {
+                                    if (x < 5 && y > 16 && y < 30)
+                                    {
+                                        m_spawn_enemies_self.push(cur);
+                                        buff[0] = 's';
+                                        sysfunc::type_to_char(&cur, buff, 1);
 
-                                WinSock::send_data(buff, sizeof(unsigned int) + 1);
-                                LOG_INFO("Add enemy at {0}x{1}", x, y);
+                                        WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                                    }
+                                }
+                                else
+                                {
+                                    if (x > 25 && y < 14 && y > 1)
+                                    {
+                                        m_spawn_enemies_self.push(cur);
+                                        buff[0] = 's';
+                                        sysfunc::type_to_char(&cur, buff, 1);
+
+                                        WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                                    }
+                                }
                             }
-                            LOG_INFO("Pos {0}x{1}", x, y);
+                            else if (!map[cur])
+                            {
+                                if (isServer)
+                                {
+                                    if ((x > 6 && x < 25) && ((y > 0 && y < 3) || (y > 8 && y < 16)))
+                                    {
+                                        map[cur] = true;
+                                        m_spawn_towers.push(cur);
+                                        buff[0] = 't';
+                                        sysfunc::type_to_char(&cur, buff, 1);
+
+                                        WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                                    }
+                                }
+                                else
+                                {
+                                    if ((x > 6 && x < 25) && ((y > 16 && y < 19) || (y > 22 && y < 30)))
+                                    {
+                                        map[cur] = true;
+                                        m_spawn_towers.push(cur);
+                                        buff[0] = 't';
+                                        sysfunc::type_to_char(&cur, buff, 1);
+
+                                        WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                                    }
+                                }
+                            }
                         }
 
-                        //m_scene.at(curObj)->deleteComponent<Highlight>();
-                        //curObj++;
-                        // 
-                        //m_scene.add_object<ObjModel>("res/models/monkey.obj", ResourceManajger::getMaterial("monkey"));
-                        //m_scene.add_object<Cube>(ResourceManager::getMaterial("cube"));
-                        //m_scene.at(curObj)->addComponent<Transform>();
-                        //m_scene.at(curObj)->addComponent<Highlight>(ResourceManager::getMaterial("default"), true);
+                        LOG_INFO("Pos: X:{0} Y:{1}", x, y);
                     }
+
+                    char buff[sizeof(unsigned int) + 1];
+                    buff[0] = 'd';
+                    sysfunc::type_to_char(&cur, buff, 1);
+                    WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                }
+                else if (!is_spawn_mode && !isKeyPressedmouse)
+                {
+                    int x = cur / size_y;
+                    int y = cur % size_x;
+
+                    isKeyPressedmouse = true;
+
+                    char buff[sizeof(unsigned int) + 1];
+
+                    if (m_mode == GameMode::Single)
+                    {
+                        if (is_spawn_enemy)
+                        {
+                            m_spawn_enemies.push(cur);
+                            buff[0] = 's';
+                            sysfunc::type_to_char(&cur, buff, 1);
+
+                            WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                        }
+                        else if (!map[cur])
+                        {
+                            map[cur] = true;
+                            m_spawn_towers.push(cur);
+                            buff[0] = 't';
+                            sysfunc::type_to_char(&cur, buff, 1);
+
+                            WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                            LOG_INFO("Add tower at {0}x{1}", x, y);
+                        }
+                    }
+                    else
+                    {
+                        if (is_spawn_enemy)
+                        {
+                            if (isServer)
+                            {
+                                if (x < 5 && y > 16 && y < 30)
+                                {
+                                    m_spawn_enemies_self.push(cur);
+                                    buff[0] = 's';
+                                    sysfunc::type_to_char(&cur, buff, 1);
+
+                                    WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                                }
+                            }
+                            else
+                            {
+                                if (x > 25 && y < 14 && y > 1)
+                                {
+                                    m_spawn_enemies_self.push(cur);
+                                    buff[0] = 's';
+                                    sysfunc::type_to_char(&cur, buff, 1);
+
+                                    WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                                }
+                            }
+                        }
+                        else if (!map[cur])
+                        {
+                            if (isServer)
+                            {
+                                if ((x > 6 && x < 25) && ((y > 0 && y < 3) || (y > 8 && y < 16)))
+                                {
+                                    map[cur] = true;
+                                    m_spawn_towers.push(cur);
+                                    buff[0] = 't';
+                                    sysfunc::type_to_char(&cur, buff, 1);
+
+                                    WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                                }
+                            }
+                            else
+                            {
+                                if ((x > 6 && x < 25) && ((y > 16 && y < 19) || (y > 22 && y < 30)))
+                                {
+                                    map[cur] = true;
+                                    m_spawn_towers.push(cur);
+                                    buff[0] = 't';
+                                    sysfunc::type_to_char(&cur, buff, 1);
+
+                                    WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                                }
+                            }
+                        }
+                    }
+
+                    LOG_INFO("Pos: X:{0} Y:{1}", x, y);
                 }
             }
         }
@@ -676,7 +706,7 @@ void GameApp::on_update(const double delta)
 
         for (auto curTower : m_towers)
         {
-            double distance = 100;
+            double distance = 100; // <-------
             for (size_t i = 0; i < m_enemies.size(); i++)
             {
                 if (m_enemies[i] == nullptr) continue;
@@ -725,17 +755,80 @@ void GameApp::on_update(const double delta)
         while (!m_spawn_towers.empty())
         {
             m_towers.push_back(new BaseTower("res/models/tower.obj",
-                ResourceManager::getMaterial("tower"), nullptr, parts[m_spawn_towers.front()], _set_cooldown_tower, _set_damage_tower, new RenderEngine::Line(ResourceManager::getMaterial("default"))));
+                ResourceManager::getMaterial("tower"), nullptr, parts[m_spawn_towers.front()],
+                _set_cooldown_tower, _set_damage_tower, new RenderEngine::Line(ResourceManager::getMaterial("default"))));
             m_spawn_towers.pop();
         }
-        while (!m_spawn_enemies.empty()) // spawn enemies
+        while (!m_spawn_towers_self.empty())
+        {
+            m_towers_self.push_back(new BaseTower("res/models/tower.obj",
+                ResourceManager::getMaterial("tower"), nullptr, parts[m_spawn_towers_self.front()],
+                _set_cooldown_tower, _set_damage_tower, new RenderEngine::Line(ResourceManager::getMaterial("default"))));
+            m_spawn_towers_self.pop();
+        }
+
+        while (!m_spawn_enemies.empty()) // spawn enemies adv
         {
             countEnemiesPerm++;
             auto a = new BaseEnemy(new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("monkey")),
-                m_main_castle, parts[m_spawn_enemies.front()], 1, _set_velosity * 0.001, _set_max_hp_enemy, ResourceManager::getMaterial("default"));
+                isServer ? m_adv_castle : m_main_castle, parts[m_spawn_enemies.front()], 1, _set_velosity * 0.001, 
+                _set_max_hp_enemy, ResourceManager::getMaterial("default"), isServer ? glm::vec3(0.f, 0.f, 1.f) : glm::vec3(1.f, 0.f, 0.f));
             m_enemies.push_back(a);
             m_spawn_enemies.pop();
             m_gui_debug->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));
+        }
+        while (!m_spawn_enemies_self.empty()) // spawn enemies adv
+        {
+            countEnemiesPerm++;
+            auto a = new BaseEnemy(new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("monkey")),
+                isServer ? m_main_castle : m_adv_castle, parts[m_spawn_enemies_self.front()], 1, _set_velosity * 0.001,
+                _set_max_hp_enemy, ResourceManager::getMaterial("default"), isServer ? glm::vec3(1.f, 0.f, 0.f) : glm::vec3(0.f, 0.f, 1.f));
+            m_enemies_self.push_back(a);
+            m_spawn_enemies_self.pop();
+            m_gui_debug->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));
+        }
+
+        for (auto curTower : m_towers)
+        {
+            double distance = 100; // <-------
+            for (size_t i = 0; i < m_enemies_self.size(); i++)
+            {
+                if (m_enemies_self[i] == nullptr) continue;
+                glm::vec3 a = m_enemies_self[i]->get_pos() - curTower->get_pos();
+                double d = sqrt(a.x * a.x + a.z * a.z);
+                if (d < _set_min_distance && d < distance)
+                {
+                    distance = d;
+                    if (curTower->get_target() == nullptr) curTower->set_target(m_enemies_self[i]);
+                    //if (curTower->get_target() != m_enemies[i]) curTower->set_target(m_enemies[i]);
+                }
+                else
+                {
+                    //curTower->set_target(nullptr);
+                }
+            }
+            curTower->update(delta);
+        }
+        for (auto curTower1 : m_towers_self)
+        {
+            double distance = 100; // <-------
+            for (size_t i = 0; i < m_enemies.size(); i++)
+            {
+                if (m_enemies[i] == nullptr) continue;
+                glm::vec3 a = m_enemies[i]->get_pos() - curTower1->get_pos();
+                double d = sqrt(a.x * a.x + a.z * a.z);
+                if (d < _set_min_distance && d < distance)
+                {
+                    distance = d;
+                    if (curTower1->get_target() == nullptr) curTower1->set_target(m_enemies[i]);
+                    //if (curTower->get_target() != m_enemies[i]) curTower->set_target(m_enemies[i]);
+                }
+                else
+                {
+                    //curTower->set_target(nullptr);
+                }
+            }
+            curTower1->update(delta);
         }
 
         for (size_t i = 0; i < m_enemies.size(); i++)
@@ -757,6 +850,26 @@ void GameApp::on_update(const double delta)
                 continue;
             }
             m_enemies[i]->update(delta);
+        }
+        for (size_t i = 0; i < m_enemies_self.size(); i++)
+        {
+            if (m_enemies_self[i] == nullptr) continue;
+            if (m_enemies_self[i]->is_destroy())
+            {
+                //countEnemies++;
+                countEnemiesPerm--;
+                for (auto curTower : m_towers)
+                {
+                    if (curTower->get_target() == m_enemies_self[i]) curTower->set_target(nullptr);
+                }
+                delete m_enemies_self[i];
+                m_enemies_self.remove(i);
+                countKills++;
+                m_gui_debug->get_element<GUI::TextRenderer>("kills")->set_text("Kills: " + std::to_string(countKills));
+                m_gui_debug->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));
+                continue;
+            }
+            m_enemies_self[i]->update(delta);
         }
     }
 
@@ -1289,6 +1402,15 @@ void GameApp::start_game_single()
         "res/models/castle.obj", ResourceManager::getMaterial("castle"), ResourceManager::getMaterial("default"));
     map[int((size_x * size_y) / 2) + int(size_x / 2)] = true;
 
+    for (size_t i = 0; i < m_towers.size(); i++)
+    {
+        delete m_towers[i];
+    }
+    for (size_t i = 0; i < m_enemies.size(); i++)
+    {
+        delete m_enemies[i];
+    }
+
     m_towers.clear();
     m_enemies.clear();
     
@@ -1302,6 +1424,7 @@ void GameApp::start_game_single()
     m_gui_debug->get_element<GUI::TextRenderer>("kills")->set_text("Kills: 0");
 
     m_gui->set_active(false);
+    m_gui_place_settings->set_active(false);
 
     // crutch, but now is the best solve (reset settings when connect)
     //_set_min_distance = 7;
@@ -1323,8 +1446,27 @@ void GameApp::start_game_multi()
     cur = 0;
     gui_window = null;
 
+    for (size_t i = 0; i < m_towers.size(); i++)
+    {
+        delete m_towers[i];
+    }
+    for (size_t i = 0; i < m_towers_self.size(); i++)
+    {
+        delete m_towers_self[i];
+    }
+    for (size_t i = 0; i < m_enemies.size(); i++)
+    {
+        delete m_enemies[i];
+    }
+    for (size_t i = 0; i < m_enemies_self.size(); i++)
+    {
+        delete m_enemies_self[i];
+    }
     m_towers.clear();
     m_enemies.clear();
+
+    m_towers_self.clear();
+    m_enemies_self.clear();
 
     is_gui_active = false;
 
@@ -1334,31 +1476,25 @@ void GameApp::start_game_multi()
 
     m_gui_debug->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: 0");
     m_gui_debug->get_element<GUI::TextRenderer>("kills")->set_text("Kills: 0");
+    m_gui_place_menu->get_element<GUI::InputField>("InputIP")->set_focus(false);
 
     m_gui->set_active(false);
+    m_gui_place_settings->set_active(false);
+
+    m_adv_castle = new Castle(parts[int(size_x * (size_y / 8)) + int(size_x / 4)], _set_max_hp_castle,
+        "res/models/castle.obj", ResourceManager::getMaterial("castle"), ResourceManager::getMaterial("default"));
+    map[int(size_x * (size_y / 8)) + int(size_x / 8)] = true;
+
+    m_main_castle = new Castle(parts[int(size_x * ((size_y * 7) / 8)) + int((size_x * 3) / 4)], _set_max_hp_castle,
+        "res/models/castle.obj", ResourceManager::getMaterial("castle"), ResourceManager::getMaterial("default"), glm::vec3(0.f, 0.f, 1.f));
+    map[int(size_x * ((size_y * 7) / 8)) + int((size_x * 7) / 8)] = true;
 
     if (isServer)
     {
-        m_adv_castle = new Castle(parts[int(size_x * (size_y / 8)) + int(size_x / 4)], _set_max_hp_castle,
-            "res/models/castle.obj", ResourceManager::getMaterial("castle"), ResourceManager::getMaterial("default"));
-        map[int(size_x * (size_y / 8)) + int(size_x / 8)] = true;
-
-        m_main_castle = new Castle(parts[int(size_x * ((size_y * 7) / 8)) + int((size_x * 3) / 4)], _set_max_hp_castle,
-            "res/models/castle.obj", ResourceManager::getMaterial("castle"), ResourceManager::getMaterial("default"), glm::vec3(0.f, 0.f, 1.f));
-        map[int(size_x * ((size_y * 7) / 8)) + int((size_x * 7) / 8)] = true;
-
         m_cam->set_position_rotation(glm::vec3(12.5f, 55.f, 30.f), glm::vec3(-75.f, -90.f, 0.f));
     }   
     else
     {
-        m_main_castle = new Castle(parts[int(size_x * (size_y / 8)) + int(size_x / 8)], _set_max_hp_castle,
-            "res/models/castle.obj", ResourceManager::getMaterial("castle"), ResourceManager::getMaterial("default"));
-        map[int(size_x * (size_y / 8)) + int(size_x / 8)] = true;
-
-        m_adv_castle = new Castle(parts[int(size_x * ((size_y * 7) / 8)) + int((size_x * 7) / 8)], _set_max_hp_castle,
-            "res/models/castle.obj", ResourceManager::getMaterial("castle"), ResourceManager::getMaterial("default"), glm::vec3(0.f, 0.f, 1.f));
-        map[int(size_x * ((size_y * 7) / 8)) + int((size_x * 7) / 8)] = true;
-
         m_cam->set_position_rotation(glm::vec3(45.5f, 55.f, 30.f), glm::vec3(-75.f, -270.f, 0.f));
     }
 }

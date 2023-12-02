@@ -46,6 +46,7 @@ namespace GUI
 		void set_focus(bool focus);
 
 		void press_button(KeyCode key);
+		void press_char(char key_char);
 
 		void set_enter_callback(std::function<void(std::string text)> on_enter) { m_on_enter = on_enter; }
 	private:

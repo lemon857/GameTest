@@ -21,6 +21,8 @@ enum class EventType
     MaximizeWindow,
     MoveWindow,
 
+    CharSet,
+
     EventsCount
 };
 
@@ -105,6 +107,24 @@ struct EventWindowClose : public BaseEvent
 
     static const EventType type = EventType::WindowClose;
 };
+
+struct EventCharSet : public BaseEvent
+{
+    EventCharSet(const char key_char)
+        : key_char(key_char)
+    {
+    }
+
+    virtual EventType get_type() const override
+    {
+        return type;
+    }
+
+    char key_char;
+
+    static const EventType type = EventType::CharSet;
+};
+
 
 struct EventKeyPressed : public BaseEvent
 {

@@ -140,6 +140,13 @@ int Window::init()
                 break;
             }
             }
+            //LOG_INFO("Key: {0} - {1} - {2} - {3}", key, scancode, action, mods);
+        });
+
+    glfwSetCharCallback(m_pWindow, [](GLFWwindow* pWindow, unsigned int codepoint) {
+        WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(pWindow));
+        EventCharSet e(static_cast<char>(codepoint));
+        data.event_callback(e);
         });
 
     glfwSetWindowSizeCallback(m_pWindow, 

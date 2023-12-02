@@ -127,18 +127,7 @@ void GUI::InputField::press_button(KeyCode key)
 				CloseClipboard();
 			}
 		}
-	}
-	else if (key <= KeyCode::KEY_Z)
-	{
-		if (key >= KeyCode::KEY_A)
-		{
-			m_text += (char)((int)key + (Input::isKeyPressed(KeyCode::KEY_LEFT_SHIFT) ? 0 : 32));
-		}
-		else
-		{
-			m_text += (char)key;
-		}
-	}
+	}	
 	else if (key == KeyCode::KEY_BACKSPACE && !m_text.empty())
 	{
 		m_text = m_text.substr(0, m_text.length() - 1);
@@ -149,5 +138,12 @@ void GUI::InputField::press_button(KeyCode key)
 		if (m_clear_after_send) m_text = "";
 		else set_focus(false);
 	}
+	m_textRenderer->set_text(m_text);
+}
+
+void GUI::InputField::press_char(char key_char)
+{
+	if (!m_isFocused) return;
+	m_text += key_char;
 	m_textRenderer->set_text(m_text);
 }

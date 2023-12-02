@@ -947,6 +947,12 @@ bool GameApp::init_events()
             m_gui_place_menu->get_element<GUI::InputField>("InputIP")->press_button(e.key_code);
             m_gui_chat->get_element<GUI::InputField>("SendMessage")->press_button(e.key_code);
         });
+    m_event_dispather.add_event_listener<EventCharSet>([&](EventCharSet& e)
+        {
+            m_gui_place_menu->get_element<GUI::InputField>("InputNick")->press_char(e.key_char);
+            m_gui_place_menu->get_element<GUI::InputField>("InputIP")->press_char(e.key_char);
+            m_gui_chat->get_element<GUI::InputField>("SendMessage")->press_char(e.key_char);
+        });
     m_event_dispather.add_event_listener<EventKeyReleased>([&](EventKeyReleased& e)
         {
             if (e.key_code <= KeyCode::KEY_Z)  if (is_event_logging_active) LOG_INFO("[EVENT] Key released {0}", static_cast<char>(e.key_code));

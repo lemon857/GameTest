@@ -242,6 +242,18 @@
       ]
     },
     {
+      "name": "console_input",
+      "filePath": "res/textures/console_input.png",
+      "width": 600,
+      "height": 200,
+      "subTexture_w": 600,
+      "subTexture_h": 100,
+      "subTextures": [
+        "static",
+        "clicked"
+      ]
+    },
+    {
       "name": "bg_1",
       "filePath": "res/textures/Background_1.png",
       "width": 128,
@@ -320,6 +332,11 @@
       "name": "button",
       "nameShader": "spriteShader",
       "nameTexture": "Button_1"
+    },
+    {
+      "name": "console_i",
+      "nameShader": "spriteShader",
+      "nameTexture": "console_input"
     },
     {
       "name": "checkbox_bg",

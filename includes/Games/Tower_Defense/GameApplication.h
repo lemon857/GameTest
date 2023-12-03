@@ -122,7 +122,9 @@ private:
 
 	bool isServer = false;
 	bool restart_querry = false;
-		
+	
+	bool* lock_key_update;
+
 	unsigned int countKills = 0;
 	unsigned int fps = 0;
 	unsigned int frames = 0;

@@ -16,14 +16,14 @@
 
 GUI::InputField::InputField(Sprite* face, glm::vec2 pos, glm::vec2 scale,
 	std::string name, std::shared_ptr<RenderEngine::ShaderProgram> shader,
-	std::shared_ptr<Font> font, glm::vec3 textColor, bool clear_after_send)
+	std::shared_ptr<Font> font, glm::vec3 textColor, bool clear_after_send, bool* focus_trigger)
 	: GUI_element(name)
 	, m_face(std::move(face))
 	, m_textRenderer(std::make_unique<TextRenderer>(std::move(font), std::move(shader), "",
 		textColor, pos, glm::vec2(0.5f), "default", false)) // font sclae here
-	, m_isFocused(false)
 	, m_isClicked(false)
 	, m_clear_after_send(clear_after_send)
+	, m_focus_trigger(std::move(focus_trigger))
 {
 	m_position_p = pos;
 	m_scale_p = scale;
@@ -49,12 +49,12 @@ void GUI::InputField::on_press()
 	if (m_isFocused)
 	{
 		m_face->setSubTexture(NAME_TEXTURE_STATIC);
-		m_isFocused = false;
+		set_focus(false);
 	}
 	else
 	{
 		m_face->setSubTexture(NAME_TEXTURE_CLICKED);
-		m_isFocused = true;
+		set_focus(true);
 	}
 }
 
@@ -67,7 +67,7 @@ void GUI::InputField::on_release()
 	else
 	{
 		m_face->setSubTexture(NAME_TEXTURE_STATIC);
-		m_isFocused = false;
+		set_focus(false);
 	}
 }
 
@@ -107,10 +107,12 @@ void GUI::InputField::set_focus(bool focus)
 	if (m_isFocused)
 	{
 		m_face->setSubTexture(NAME_TEXTURE_CLICKED);
+		if (m_focus_trigger != nullptr) *m_focus_trigger = *m_focus_trigger || m_isFocused;
 	}
 	else
 	{
 		m_face->setSubTexture(NAME_TEXTURE_STATIC);
+		if (m_focus_trigger != nullptr) *m_focus_trigger = *m_focus_trigger && m_isFocused;
 	}
 }
 

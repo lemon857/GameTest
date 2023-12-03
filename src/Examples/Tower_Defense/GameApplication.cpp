@@ -54,6 +54,7 @@ GameApp::GameApp()
 GameApp::~GameApp()
 {
     delete m_cam;
+    delete lock_key_update;
     WinSock::close_WinSock();
     chat_last.clear();
 }
@@ -61,6 +62,8 @@ GameApp::~GameApp()
 bool GameApp::init()
 {
     WinSock::init_WinSock();
+
+    lock_key_update = new bool(false);
 
     m_cam = new Camera(glm::vec3(12.5f, 55.f, 30.f), glm::vec3(-75.f, -90.f, 0.f));
 
@@ -146,11 +149,8 @@ bool GameApp::init()
 }
 
 void GameApp::on_key_update(const double delta)
-{
-    if (m_isLose
-        || m_gui_place_menu->get_element<GUI::InputField>("InputIP")->get_focus()
-        || m_gui_place_menu->get_element<GUI::InputField>("InputNick")->get_focus()
-        || m_gui_chat->get_element<GUI::InputField>("SendMessage")->get_focus())
+{// need more additions
+    if (m_isLose || *lock_key_update)
     {
         if (Input::isKeyPressed(KeyCode::KEY_ESCAPE))
         {
@@ -180,7 +180,7 @@ void GameApp::on_key_update(const double delta)
         }
         return;
     }
-
+    
     glm::vec3 movement_delta{ 0,0,0 };
     glm::vec3 rotation_delta{ 0,0,0 };
 
@@ -946,12 +946,14 @@ bool GameApp::init_events()
             m_gui_place_menu->get_element<GUI::InputField>("InputNick")->press_button(e.key_code);
             m_gui_place_menu->get_element<GUI::InputField>("InputIP")->press_button(e.key_code);
             m_gui_chat->get_element<GUI::InputField>("SendMessage")->press_button(e.key_code);
+            m_gui_place_settings->get_element<GUI::InputField>("ConsoleInput")->press_button(e.key_code);
         });
     m_event_dispather.add_event_listener<EventCharSet>([&](EventCharSet& e)
         {
             m_gui_place_menu->get_element<GUI::InputField>("InputNick")->press_char(e.key_char);
             m_gui_place_menu->get_element<GUI::InputField>("InputIP")->press_char(e.key_char);
             m_gui_chat->get_element<GUI::InputField>("SendMessage")->press_char(e.key_char);
+            m_gui_place_settings->get_element<GUI::InputField>("ConsoleInput")->press_char(e.key_char);
         });
     m_event_dispather.add_event_listener<EventKeyReleased>([&](EventKeyReleased& e)
         {
@@ -1069,7 +1071,7 @@ void GameApp::init_gui()
 
     m_gui_chat->add_element<GUI::InputField>(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(13.f, 3.f), glm::vec2(12.f, 3.f), "SendMessage", ResourceManager::getShaderProgram("textShader"),
-        ResourceManager::get_font("calibriChat"), glm::vec3(1.f), true)->set_enter_callback([&](std::string text) {
+        ResourceManager::get_font("calibriChat"), glm::vec3(1.f), true, lock_key_update)->set_enter_callback([&](std::string text) {
             if (text[0] == '/') // need finalize
             {
                 char buff[sizeof(double) + 2];
@@ -1238,6 +1240,12 @@ void GameApp::init_gui()
                 m_gui_chat->get_element<GUI::ChatBox>("Chat")->clear();
             });
 
+    m_gui_place_settings->add_element<GUI::InputField>(new GUI::Sprite(ResourceManager::getMaterial("console_i"), "static"),
+        glm::vec2(50.f, 50.f), glm::vec2(12.f, 3.f), "ConsoleInput", ResourceManager::getShaderProgram("textShader"),
+        ResourceManager::get_font("calibriChat"), glm::vec3(1.f), true, lock_key_update)->set_enter_callback([&](std::string text) {
+
+            });
+
     m_gui_place_settings->add_element<GUI::Button>(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, 28.f), glm::vec2(10.f, 5.f),
         "Add enemy", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
@@ -1311,7 +1319,7 @@ void GameApp::init_gui()
 
     m_gui_place_menu->add_element<GUI::InputField>(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(88.f, 80.f), glm::vec2(10.f, 5.f), "InputNick", ResourceManager::getShaderProgram("textShader"),
-        ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_enter_callback([&](std::string nick)
+        ResourceManager::get_font("calibri"), glm::vec3(1.f), false, lock_key_update)->set_enter_callback([&](std::string nick)
             {
                 if (nick.empty())
                 {
@@ -1328,7 +1336,7 @@ void GameApp::init_gui()
 
     m_gui_place_menu->add_element<GUI::InputField>(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(88.f, 60.f), glm::vec2(10.f, 5.f), "InputIP", ResourceManager::getShaderProgram("textShader"),
-        ResourceManager::get_font("calibri"), glm::vec3(1.f));
+        ResourceManager::get_font("calibri"), glm::vec3(1.f), false, lock_key_update);
 
     m_gui_place_menu->add_element<GUI::Button>(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(88.f, 48.f), glm::vec2(10.f, 5.f),

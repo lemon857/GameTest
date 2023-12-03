@@ -26,6 +26,7 @@ namespace GUI
 	class GUI_element
 	{
 	public:
+
 		// require stay material prop first in all childrens
 		GUI_element(std::string name, std::shared_ptr<RenderEngine::Material> pMaterial = nullptr)
 			: m_name(name)
@@ -35,6 +36,7 @@ namespace GUI
 			, m_position(glm::vec2(0))
 			, m_scale(glm::vec2(0))
 			, m_isActive(true)
+			, m_isFocused(false)
 		{
 		}
 
@@ -64,7 +66,9 @@ namespace GUI
 		glm::vec2 get_scale_p() { return m_scale_p; }
 
 		std::string get_name() { return m_name; }
+
 		bool get_active() { return m_isActive; }
+		bool get_focus() { return m_isFocused; }
 
 		void on_click() { if (m_on_click != nullptr) m_on_click(); }
 		void set_click_callback(std::function<void()> on_click) { m_on_click = on_click; }
@@ -72,6 +76,7 @@ namespace GUI
 		std::shared_ptr < RenderEngine::Material> get_material() { return m_pMaterial; }
 	protected:
 
+		bool m_isFocused;
 		bool m_isActive;
 
 		std::function<void()> m_on_click;

@@ -141,7 +141,7 @@ void Highlight::set_color(glm::vec3 color)
 {
 	m_color = color;
 
-	((float*)m_pMaterial->get_data(SS_COLOR_PROP_NAME))[0] = m_color.x;
-	((float*)m_pMaterial->get_data(SS_COLOR_PROP_NAME))[1] = m_color.y;
-	((float*)m_pMaterial->get_data(SS_COLOR_PROP_NAME))[2] = m_color.z;
+	m_pMaterial->get_data<float>(SS_COLOR_PROP_NAME)[1] = m_color.y;
+	m_pMaterial->get_data<float>(SS_COLOR_PROP_NAME)[2] = m_color.z;
+	m_pMaterial->get_data<float>(SS_COLOR_PROP_NAME)[0] = m_color.x;
 }

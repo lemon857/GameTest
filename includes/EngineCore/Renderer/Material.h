@@ -34,7 +34,16 @@ namespace RenderEngine
 
 		void set_texture(std::shared_ptr<Texture2D> pTexture);
 
-		void* get_data(std::string name);
+		template<typename _Ty>
+		_Ty* get_data(std::string name)
+		{
+			std::map<std::string, void*>::const_iterator it = m_shader_data_map.find(name);
+			if (it != m_shader_data_map.end())
+			{
+				return (_Ty*)it->second;
+			}
+			return nullptr;
+		}
 
 	private:
 		std::shared_ptr<ShaderProgram> m_pShaderProgram;

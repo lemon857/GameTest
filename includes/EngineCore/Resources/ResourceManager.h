@@ -54,6 +54,12 @@ namespace RenderEngine
 
 		static bool load_JSON_resources(const std::string& JSONrelativePath);
 
+		static bool load_JSON_shaders(const std::string& JSONpath);
+
+		static bool load_JSON_textures(const std::string& JSONpath);
+
+		static bool load_JSON_fonts(const std::string& JSONpath);
+
 		static bool load_INI_settings(const std::string& INIrelativePath, INIdata& data, const bool isWrite);
 
 		static bool load_scene(std::string relativePath, Scene& scene);

@@ -43,6 +43,8 @@
 #include <array>
 #include <memory>
 
+#define GET_DATA_MATERIAL(name_material, type, name_data, index) ResourceManager::getMaterial(name_material)->get_data<type>(name_data)[index]
+
 //#define CHECK_AVAILABLE_POS(x, y, width, height) ((x > 0 && x < width) && (y > 0 && y < height))
 
 GameApp::GameApp()
@@ -69,31 +71,31 @@ bool GameApp::init()
 
     m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
 
-    ((float*)ResourceManager::getMaterial("cube")->get_data("ambient_factor"))[0] = 0.25f;
-    ((float*)ResourceManager::getMaterial("cube")->get_data("diffuse_factor"))[0] = 0.1f;
-    ((float*)ResourceManager::getMaterial("cube")->get_data("specular_factor"))[0] = 0.0f;
-    ((float*)ResourceManager::getMaterial("cube")->get_data("metalic_factor"))[0] = 0.0f;
+    GET_DATA_MATERIAL("cube", float, "ambient_factor", 0) = 0.25f;
+    GET_DATA_MATERIAL("cube", float, "diffuse_factor", 0) = 0.1f;
+    GET_DATA_MATERIAL("cube", float, "specular_factor", 0) = 0.0f;
+    GET_DATA_MATERIAL("cube", float, "metalic_factor", 0) = 0.0f;
 
-    ((float*)ResourceManager::getMaterial("dirt")->get_data("ambient_factor"))[0] = 0.25f; 
-    ((float*)ResourceManager::getMaterial("dirt")->get_data("diffuse_factor"))[0] = 0.1f;
-    ((float*)ResourceManager::getMaterial("dirt")->get_data("specular_factor"))[0] = 0.0f;
-    ((float*)ResourceManager::getMaterial("dirt")->get_data("metalic_factor"))[0] = 0.0f;
+    GET_DATA_MATERIAL("dirt", float, "ambient_factor", 0) = 0.25f;
+    GET_DATA_MATERIAL("dirt", float, "diffuse_factor", 0) = 0.1f;
+    GET_DATA_MATERIAL("dirt", float, "specular_factor", 0) = 0.0f;
+    GET_DATA_MATERIAL("dirt", float, "metalic_factor", 0) = 0.0f;
 
-    ((float*)ResourceManager::getMaterial("tower")->get_data("ambient_factor"))[0] = 0.3f;
-    ((float*)ResourceManager::getMaterial("tower")->get_data("diffuse_factor"))[0] = 0.4f;
-    ((float*)ResourceManager::getMaterial("tower")->get_data("specular_factor"))[0] = 0.0f;
-    ((float*)ResourceManager::getMaterial("tower")->get_data("metalic_factor"))[0] = 0.0f;
+    GET_DATA_MATERIAL("tower", float, "ambient_factor", 0) = 0.3f;
+    GET_DATA_MATERIAL("tower", float, "diffuse_factor", 0) = 0.4f;
+    GET_DATA_MATERIAL("tower", float, "specular_factor", 0) = 0.0f;
+    GET_DATA_MATERIAL("tower", float, "metalic_factor", 0) = 0.0f;
 
-    ((float*)ResourceManager::getMaterial("castle")->get_data("ambient_factor"))[0] = 0.3f;
-    ((float*)ResourceManager::getMaterial("castle")->get_data("diffuse_factor"))[0] = 0.4f;
-    ((float*)ResourceManager::getMaterial("castle")->get_data("specular_factor"))[0] = 0.0f;
-    ((float*)ResourceManager::getMaterial("castle")->get_data("metalic_factor"))[0] = 0.0f;
+    GET_DATA_MATERIAL("castle", float, "ambient_factor", 0) = 0.3f;
+    GET_DATA_MATERIAL("castle", float, "diffuse_factor", 0) = 0.4f;
+    GET_DATA_MATERIAL("castle", float, "specular_factor", 0) = 0.0f;
+    GET_DATA_MATERIAL("castle", float, "metalic_factor", 0) = 0.0f;
 
-    ((float*)ResourceManager::getMaterial("monkey")->get_data("ambient_factor"))[0] = 0.5f;
-    ((float*)ResourceManager::getMaterial("monkey")->get_data("diffuse_factor"))[0] = 0.4f;
-    ((float*)ResourceManager::getMaterial("monkey")->get_data("specular_factor"))[0] = 0.0f;
-    ((float*)ResourceManager::getMaterial("monkey")->get_data("metalic_factor"))[0] = 0.0f;
-    ((float*)ResourceManager::getMaterial("monkey")->get_data("shininess"))[0] = 0.1f;
+    GET_DATA_MATERIAL("monkey", float, "ambient_factor", 0) = 0.5f;
+    GET_DATA_MATERIAL("monkey", float, "diffuse_factor", 0) = 0.4f;
+    GET_DATA_MATERIAL("monkey", float, "specular_factor", 0) = 0.0f;
+    GET_DATA_MATERIAL("monkey", float, "metalic_factor", 0) = 0.0f;
+    GET_DATA_MATERIAL("monkey", float, "shininess", 0) = 0.1f;
 
     std::vector<std::string> names;
     names.push_back("default3DShader");
@@ -158,9 +160,9 @@ void GameApp::on_key_update(const double delta)
             isKeyPressed = true;
             if (is_chat_active)
             {
-                m_gui_chat->get_element<GUI::ChatBox>("Chat")->set_open(false);
-                m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_active(false);
                 is_chat_active = false;
+                m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_focus(false);
+                m_gui_chat->get_element<GUI::ChatBox>("Chat")->set_open(false);
             }
         }
         if (m_gui_chat->get_element<GUI::InputField>("SendMessage")->get_focus())
@@ -453,7 +455,7 @@ void GameApp::on_key_update(const double delta)
                             }
                         }
 
-                        LOG_INFO("Pos: X:{0} Y:{1}", x, y);
+                        //LOG_INFO("Pos: X:{0} Y:{1}", x, y);
                     }
 
                     char buff[sizeof(unsigned int) + 1];
@@ -547,7 +549,7 @@ void GameApp::on_key_update(const double delta)
                         }
                     }
 
-                    LOG_INFO("Pos: X:{0} Y:{1}", x, y);
+                    //LOG_INFO("Pos: X:{0} Y:{1}", x, y);
                 }
             }
         }
@@ -1170,6 +1172,27 @@ void GameApp::init_gui()
                         buff1[1] = 'h';
                         sysfunc::type_to_char(&_set_damage_tower, buff1, 2);
                         WinSock::send_data(buff1, sizeof(unsigned int) + 2);
+                    }
+                }
+                else if (ResourceManager::start_with(text, "/reload")) // test ===================== !!!
+                {
+                    std::string second = text.substr(7);
+
+                    if (second.empty())
+                    {
+                        ResourceManager::load_JSON_resources("res/resources.json");
+                    }
+                    else if (second == " shaders")
+                    {
+                        ResourceManager::load_JSON_shaders("res/resources.json");
+                    }
+                    else if (second == " textures")
+                    {
+                        ResourceManager::load_JSON_textures("res/resources.json");
+                    }
+                    else if (second == " fonts")
+                    {
+                        ResourceManager::load_JSON_fonts("res/resources.json");
                     }
                 }
             }

@@ -17,7 +17,7 @@ int main(int argc, char** argv)
     GameApp* gameApp = new GameApp();
     try
     {
-        gameApp->start(windowSize, "Tower defence", "res/resources.json", "EngineGamePreview.ini");
+        gameApp->start(windowSize, "Tower defence", "res/resources.json", "Engine.ini");
     }
     catch (const std::exception& ex)
     {
@@ -35,6 +35,5 @@ int main(int argc, char** argv)
 #ifdef DEBUG_CONSOLE
     system("pause");
 #endif
-
     return 0;
 }

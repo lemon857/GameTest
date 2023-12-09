@@ -60,7 +60,7 @@ namespace RenderEngine
 
 		for (const auto& curElements : m_shader_layout_elemrnts)
 		{
-			data = get_data(curElements.name);
+			data = get_data<void>(curElements.name);
 			switch (curElements.type)
 			{
 			case Int:
@@ -158,15 +158,5 @@ namespace RenderEngine
 				break;
 			}
 		}
-	}
-
-	void* Material::get_data(std::string name)
-	{
-		std::map<std::string, void*>::const_iterator it = m_shader_data_map.find(name);
-		if (it != m_shader_data_map.end())
-		{
-			return it->second;
-		}
-		return nullptr;
-	}
+	}	
 }

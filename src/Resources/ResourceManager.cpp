@@ -69,6 +69,7 @@ bool ResourceManager::load_JSON_resources(const std::string & JSONpath)
 		LOG_CRIT("In JSON file: ", JSONpath);
 		return false;
 	}
+
 	auto shadersIt = doc.FindMember("shaders");
 	if (shadersIt != doc.MemberEnd())
 	{
@@ -140,67 +141,144 @@ bool ResourceManager::load_JSON_resources(const std::string & JSONpath)
 			load_font(path, name, size);
 		}
 	}
-	/*auto SpriteRenderersIt = doc.FindMember("SpriteRenderers");
-	if (SpriteRenderersIt != doc.MemberEnd())
-	{
-		for (const auto& currenSpriteRenderer : SpriteRenderersIt->value.GetArray())
-		{
-			const std::string name = currenSpriteRenderer["name"].GetString();
-			const std::string shader = currenSpriteRenderer["shader"].GetString();
-			const std::string atlas = currenSpriteRenderer["textureAtlas"].GetString();
-			const std::string initSubTexture = currenSpriteRenderer["initialSubTexture"].GetString();
-
-			loadSpriteRenderer(name, atlas, shader, initSubTexture);			
-		}
-	}
-	auto objectsIt = doc.FindMember("objects");
-	if (objectsIt != doc.MemberEnd())
-	{
-		for (const auto& currenObject : objectsIt->value.GetArray())
-		{
-			const std::string name = currenObject["name"].GetString();
-			const std::string shader = currenObject["shader"].GetString();
-			const std::string source = currenObject["source"].GetString();
-			
-			loadGraphicsObject(name, shader, source);
-		}
-	}*/
 	LOG_INFO("Loadind data from JSON file complete");
-	/*auto animatorsIt = doc.FindMember("animators");
-	if (animatorsIt != doc.MemberEnd())
-	{
-		for (const auto& currenAnimator : animatorsIt->value.GetArray())
-		{
-			const std::string name = currenAnimator["name"].GetString();
-			const std::string SpriteRendererName = currenAnimator["SpriteRendererName"].GetString();
-			auto pAnimator = loadAnimator(name, SpriteRendererName);
-
-			const auto animationsArray = currenAnimator["Animations"].GetArray();
-
-			for (const auto& currentAnimation : animationsArray)
-			{
-				const std::string animationName = currentAnimation["name"].GetString();
-				const int callbackAction = currentAnimation["callbackAction"].GetInt();
-				const int typeAnimation = currentAnimation["typeAnimation"].GetInt();
-				const auto subTextureNamesArray = currentAnimation["subTextureNames"].GetArray();
-				const auto durationsArray = currentAnimation["durations"].GetArray();
-
-				std::vector<std::string> subTextureNames;
-				std::vector<double> durations;
-				
-				for (size_t i = 0; i < subTextureNamesArray.Size(); i++)
-				{
-					subTextureNames.push_back(subTextureNamesArray[i].GetString());
-					durations.push_back(durationsArray[i].GetDouble());
-				}
-				
-				pAnimator->addAnimation(animationName, std::make_shared<RenderEngine::Animation>(subTextureNames, durations, 
-					RenderEngine::ECallbackAction(callbackAction), RenderEngine::ETypeAnimation(typeAnimation)));
-			}
-		}
-	}*/
 	return true;
 }
+bool ResourceManager::load_JSON_shaders(const std::string& JSONpath)
+{
+	const std::string JSONstr = getFileString(JSONpath);
+	if (JSONstr.empty())
+	{
+		LOG_CRIT("No JSON file: {0}", JSONpath);
+		return false;
+	}
+	rapidjson::Document doc;
+	rapidjson::ParseResult result = doc.Parse(JSONstr.c_str());
+	if (!result)
+	{
+		LOG_CRIT("JSON parse error: {0} ({1})", rapidjson::GetParseError_En(result.Code()), result.Offset());
+		LOG_CRIT("In JSON file: ", JSONpath);
+		return false;
+	}
+	
+	//m_ShaderPrograms.clear();
+	//m_materials.clear();
+
+	auto shadersIt = doc.FindMember("shaders");
+	if (shadersIt != doc.MemberEnd())
+	{
+		for (const auto& currentShader : shadersIt->value.GetArray())
+		{
+			const std::string name = currentShader["name"].GetString();
+			const std::string vertShader = currentShader["filePath_v"].GetString();
+			const std::string fragShader = currentShader["filePath_f"].GetString();
+			const auto layoutArray = currentShader["layout"].GetArray();
+
+			std::shared_ptr<RenderEngine::ShaderProgramLayout> layout = std::make_shared<RenderEngine::ShaderProgramLayout>();
+
+			for (const auto& currentLayoutElement : layoutArray)
+			{
+				const std::string name = currentLayoutElement["name"].GetString();
+				const int type = currentLayoutElement["typeInt"].GetInt();
+				const double min = currentLayoutElement["minVal"].GetDouble();
+				const double max = currentLayoutElement["maxVal"].GetDouble();
+				layout->addElementLayout(name, (ETypeData)type, min, max);
+			}
+
+			loadShaders(name, vertShader, fragShader, layout);
+		}
+	}
+	auto materialsIt = doc.FindMember("materials");
+	if (materialsIt != doc.MemberEnd())
+	{
+		for (const auto& currentMaterial : materialsIt->value.GetArray())
+		{
+			const std::string name = currentMaterial["name"].GetString();
+			const std::string shaderName = currentMaterial["nameShader"].GetString();
+			const std::string textureName = currentMaterial["nameTexture"].GetString();
+
+			loadMaterial(name, textureName, shaderName);
+		}
+	}
+	LOG_INFO("Reloadind shaders from JSON file complete");
+	return true;
+}
+bool ResourceManager::load_JSON_textures(const std::string& JSONpath)
+{
+	const std::string JSONstr = getFileString(JSONpath);
+	if (JSONstr.empty())
+	{
+		LOG_CRIT("No JSON file: {0}", JSONpath);
+		return false;
+	}
+	rapidjson::Document doc;
+	rapidjson::ParseResult result = doc.Parse(JSONstr.c_str());
+	if (!result)
+	{
+		LOG_CRIT("JSON parse error: {0} ({1})", rapidjson::GetParseError_En(result.Code()), result.Offset());
+		LOG_CRIT("In JSON file: ", JSONpath);
+		return false;
+	}
+
+	auto atlasesIt = doc.FindMember("textureAtlases");
+	if (atlasesIt != doc.MemberEnd())
+	{
+		for (const auto& currentAtlas : atlasesIt->value.GetArray())
+		{
+			const std::string name = currentAtlas["name"].GetString();
+			const std::string path = currentAtlas["filePath"].GetString();
+			const unsigned int width = currentAtlas["width"].GetUint();
+			const unsigned int height = currentAtlas["height"].GetUint();
+			const unsigned int subTextureWidth = currentAtlas["subTexture_w"].GetUint();
+			const unsigned int subTextureHeight = currentAtlas["subTexture_h"].GetUint();
+
+			const auto subTexturesArray = currentAtlas["subTextures"].GetArray();
+			std::vector<std::string> subTextures;
+			subTextures.reserve(subTexturesArray.Size());
+
+			for (const auto& currentSubTexture : subTexturesArray)
+			{
+				subTextures.emplace_back(currentSubTexture.GetString());
+			}
+
+			loadTextureAtlas(name, subTextures, path, width, height, subTextureWidth, subTextureHeight);
+		}
+	}	
+	LOG_INFO("Reloadind textures from JSON file complete");
+	return true;
+}
+bool ResourceManager::load_JSON_fonts(const std::string& JSONpath)
+{
+	const std::string JSONstr = getFileString(JSONpath);
+	if (JSONstr.empty())
+	{
+		LOG_CRIT("No JSON file: {0}", JSONpath);
+		return false;
+	}
+	rapidjson::Document doc;
+	rapidjson::ParseResult result = doc.Parse(JSONstr.c_str());
+	if (!result)
+	{
+		LOG_CRIT("JSON parse error: {0} ({1})", rapidjson::GetParseError_En(result.Code()), result.Offset());
+		LOG_CRIT("In JSON file: ", JSONpath);
+		return false;
+	}
+
+	auto fontsIt = doc.FindMember("fonts");
+	if (fontsIt != doc.MemberEnd())
+	{
+		for (const auto& currentFont : fontsIt->value.GetArray())
+		{
+			const std::string name = currentFont["name"].GetString();
+			const std::string path = currentFont["path"].GetString();
+			const unsigned int size = currentFont["size"].GetUint();
+			load_font(path, name, size);
+		}
+	}
+	LOG_INFO("Reloadind fonts from JSON file complete");
+	return true;
+}
+
 bool ResourceManager::load_INI_settings(const std::string& INIpath, INIdata& data, const bool isWrite)
 {
 	std::ifstream f;
@@ -525,15 +603,28 @@ std::shared_ptr<RenderEngine::ShaderProgram> ResourceManager::loadShaders(const 
 		LOG_ERROR("Fragment shader file is empty");
 		return nullptr;
 	}
-
-	std::shared_ptr<RenderEngine::ShaderProgram>& newShader = 
-		m_ShaderPrograms.emplace(shaderName, std::make_shared<RenderEngine::ShaderProgram>(vertexString, fragmentString, std::move(layout))).first->second;
-	if (newShader->isCompiled())
+	auto shader = getShaderProgram(shaderName);
+	if (shader == nullptr)
 	{
-		return newShader;
+		std::shared_ptr<RenderEngine::ShaderProgram>& newShader =
+			m_ShaderPrograms.emplace(shaderName, std::make_shared<RenderEngine::ShaderProgram>(vertexString, fragmentString, std::move(layout))).first->second;
+
+		if (newShader->isCompiled())
+		{
+			LOG_INFO("Complete load & compile shader program: {0}", shaderName);
+			return newShader;
+		}
+		else
+		{
+			LOG_ERROR("Can't load shader program: \nVertex: {0} \nFragment: {1}", vertexPath, fragmentPath);
+			return nullptr;
+		}
+	}
+	else
+	{
+		// hot reload resourses here ------------------------------	
 	}
 
-	LOG_ERROR("Can't load shader program: \nVertex: {0} \nFragment: {1}", vertexPath, fragmentPath);
 	return nullptr;
 }
 std::shared_ptr<RenderEngine::ShaderProgram> ResourceManager::getShaderProgram(const std::string& shaderName)

@@ -75,8 +75,6 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Renderer/Point.h
 	includes/EngineCore/Renderer/Line.h
 	includes/EngineCore/Renderer/Camera.h
-	includes/EngineCore/Renderer/Animator.h
-	includes/EngineCore/Renderer/Animation.h
 	includes/EngineCore/Renderer/Material.h
 	includes/EngineCore/Renderer/ShaderProgramLayout.h
 	
@@ -154,8 +152,6 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Renderer/Point.cpp
 	src/Renderer/Line.cpp
 	src/Renderer/Camera.cpp	
-	src/Renderer/Animator.cpp
-	src/Renderer/Animation.cpp
 	src/Renderer/Material.cpp
 	src/Renderer/ShaderProgramLayout.cpp
 	

@@ -17,26 +17,20 @@ namespace GUI
 	{
 		m_position_p = pos;
 		m_scale_p = scale;
-		m_scrollbox->set_position_p(pos);
-		m_scrollbox->set_scale_p(scale);
 	}
 	ChatBox::~ChatBox()
 	{
-		delete m_scrollbox;		
+
 	}
 	void ChatBox::on_render_prj(glm::mat4& prj)
 	{
-		m_scrollbox->on_render_prj(prj);
+
 	}
-	void ChatBox::set_position(glm::vec2 pos)
+	std::vector<GUI_element*> ChatBox::get_elements()
 	{
-		m_scrollbox->set_position(pos);
-		m_position = pos;
-	}
-	void ChatBox::set_scale(glm::vec2 scale)
-	{
-		m_scrollbox->set_scale(scale);
-		m_scale = scale;
+		std::vector<GUI_element*> vec;
+		vec.push_back(m_scrollbox);
+		return vec;
 	}
 	void ChatBox::add_message(std::string message)
 	{

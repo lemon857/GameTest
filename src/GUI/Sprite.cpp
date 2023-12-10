@@ -83,6 +83,7 @@ namespace GUI
 
 	void Sprite::on_render_prj(glm::mat4& prj)
 	{
+		if (!m_isActive) return;
 		glm::mat4 scaleMat(
 			m_scale[0], 0, 0, 0,
 			0, m_scale[1], 0, 0,

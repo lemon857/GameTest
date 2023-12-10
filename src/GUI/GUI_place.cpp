@@ -27,13 +27,12 @@ namespace GUI
 	void GUI_place::on_render()
 	{
 		if (!m_isActive) return;
-		m_pMaterial->use();
-		m_pMaterial->get_shader_ptr()->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_render_cam->get_ui_matrix());
+		//m_pMaterial->use();
+		//m_pMaterial->get_shader_ptr()->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_render_cam->get_ui_matrix());
 		//glm::vec2 size = m_render_cam->get_viewport_size();
-		for (auto cur : m_elements)
+		for (auto cur : m_render_list)
 		{
-			cur.second->on_render();
-			cur.second->on_render_prj(m_render_cam->get_ui_matrix());
+			cur->on_render_prj(m_render_cam->get_ui_matrix());
 		}
 	}
 	void GUI_place::add_element(GUI_element* element)
@@ -43,6 +42,8 @@ namespace GUI
 		glm::vec2 wsize = m_render_cam->get_viewport_size();
 		element->set_position(glm::vec2(posp.x / 100 * wsize.x, posp.y / 100 * wsize.y));
 		element->set_scale(glm::vec2(scalep.x / 100 * wsize.x, scalep.y / 100 * wsize.y));
+		m_render_list.push_back(element);
+		add_elements(element->get_elements(), wsize);
 		m_elements.emplace(element->get_name(), element);
 	}
 		
@@ -57,12 +58,12 @@ namespace GUI
 	void GUI_place::on_resize()
 	{
 		glm::vec2 wsize = m_render_cam->get_viewport_size();
-		for (auto cur : m_elements)
+		for (auto cur : m_render_list)
 		{
-			glm::vec2 posp = cur.second->get_position_p();
-			glm::vec2 scalep = cur.second->get_scale_p();
-			cur.second->set_position(glm::vec2(posp.x / 100 * wsize.x, posp.y / 100 * wsize.y));
-			cur.second->set_scale(glm::vec2(scalep.x / 100 * wsize.x, scalep.y / 100 * wsize.y));
+			glm::vec2 posp = cur->get_position_p();
+			glm::vec2 scalep = cur->get_scale_p();
+			cur->set_position(glm::vec2(posp.x / 100 * wsize.x, posp.y / 100 * wsize.y));
+			cur->set_scale(glm::vec2(scalep.x / 100 * wsize.x, scalep.y / 100 * wsize.y));
 		}
 	}
 	bool GUI_place::get_focus()
@@ -76,6 +77,20 @@ namespace GUI
 	void GUI_place::set_active(bool active)
 	{
 		m_isActive = active;
+	}
+	void GUI_place::add_elements(std::vector<GUI_element*> elements, glm::vec2 wsize)
+	{
+		if (elements.empty()) return;
+		for (auto cur : elements)
+		{
+			glm::vec2 posp = cur->get_position_p();
+			glm::vec2 scalep = cur->get_scale_p();
+			cur->set_position(glm::vec2(posp.x / 100 * wsize.x, posp.y / 100 * wsize.y));
+			cur->set_scale(glm::vec2(scalep.x / 100 * wsize.x, scalep.y / 100 * wsize.y));
+			m_render_list.push_back(cur); // need sort with layers
+			add_elements(cur->get_elements(), wsize);
+		}
+
 	}
 	void GUI_place::on_mouse_press(int x, int y)
 	{

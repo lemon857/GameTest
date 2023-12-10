@@ -52,7 +52,7 @@ namespace GUI
 		delete m_vertexCoordsBuffer;
 		delete m_vertexArray.get();
 	}
-	void Square::on_render()
+	void Square::on_render_prj(glm::mat4& prj)
 	{
 		glm::mat4 scaleMat(
 			m_scale[0], 0, 0, 0,
@@ -70,6 +70,7 @@ namespace GUI
 
 		m_pMaterial->use();
 		m_pMaterial->set_model_matrix(model);
+		m_pMaterial->set_view_projection_matrix(prj);
 		m_pMaterial->get_shader_ptr()->setVec4(SS_COLOR_PROP_NAME, glm::vec4(m_color, 1.f));
 
 		RenderEngine::Renderer::drawTriangles(*m_vertexArray, *m_indexBuffer);

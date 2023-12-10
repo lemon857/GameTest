@@ -36,8 +36,9 @@ namespace GUI
 		void on_press() override;
 		void on_release() override;
 
-		void set_position(glm::vec2 pos) override;
-		void set_scale(glm::vec2 scale) override;
+		void set_active(const bool state) override;
+
+		std::vector<GUI_element*> get_elements() override;
 
 		std::string get_text();
 		void set_text(std::string text);
@@ -53,7 +54,7 @@ namespace GUI
 		std::function<void(std::string text)> m_on_enter;
 
 		Sprite* m_face;
-		std::unique_ptr<TextRenderer> m_textRenderer;
+		TextRenderer* m_textRenderer;
 		std::string m_text;
 
 		bool* m_focus_trigger;

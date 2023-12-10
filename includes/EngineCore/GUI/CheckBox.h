@@ -26,8 +26,7 @@ namespace GUI
 		void on_press() override;
 		void on_release() override;
 
-		void set_position(glm::vec2 pos) override;
-		void set_scale(glm::vec2 scale) override;
+		std::vector<GUI_element*> get_elements() override;
 
 		bool value();
 	private:

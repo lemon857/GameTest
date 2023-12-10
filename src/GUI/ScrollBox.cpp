@@ -13,7 +13,6 @@ namespace GUI
 		: GUI_element(name)
 		, m_max_count_elements(max_count_elements)
 		, m_background(std::move(backgrond))
-		, m_isRenderBackground(false)
 	{
 		m_position_p = pos;
 		m_scale_p = scale;
@@ -38,17 +37,13 @@ namespace GUI
 				cur->on_render_prj(prj);
 			}
 		}
-		if (m_isRenderBackground) m_background->on_render_prj(prj);
 	}
-	void ScrollBox::set_position(glm::vec2 pos)
+	// need fix for add elements in render list in gui place
+	std::vector<GUI_element*> ScrollBox::get_elements()
 	{
-		m_background->set_position(pos);
-		m_position = pos;
-	}
-	void ScrollBox::set_scale(glm::vec2 scale)
-	{
-		m_background->set_scale(scale);
-		m_scale = scale;
+		std::vector<GUI_element*> vec;
+		vec.push_back(m_background);
+		return vec;
 	}
 	// need fix overscrolling
 	void ScrollBox::on_scroll(int offset)
@@ -78,5 +73,9 @@ namespace GUI
 			delete m_elements.at(i);
 		}
 		m_elements.clear();
+	}
+	void ScrollBox::set_open(bool isOpen)
+	{
+		m_background->set_active(isOpen);
 	}
 }

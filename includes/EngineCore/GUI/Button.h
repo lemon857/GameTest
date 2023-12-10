@@ -32,14 +32,13 @@ namespace GUI
 		void on_press() override;
 		void on_release() override;
 
-		void set_position(glm::vec2 pos) override;
-		void set_scale(glm::vec2 scale) override;
+		std::vector<GUI_element*> get_elements() override;
 
 		void set_text(std::string text);
 
 	private:
 		Sprite* m_face;
-		std::unique_ptr<TextRenderer> m_textRenderer;
+		TextRenderer* m_textRenderer;
 		bool m_isClicked = false;
 	};
 }

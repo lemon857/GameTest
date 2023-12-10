@@ -13,24 +13,21 @@ namespace GUI
 	Button::Button(Sprite* face, glm::vec2 pos, glm::vec2 scale,
 		std::string text, std::string shaderName, std::shared_ptr<Font> font, glm::vec3 textColor, std::string name)
 		: GUI_element(name == "default" ? text : name)
-		, m_textRenderer(std::make_unique<TextRenderer>(font, ResourceManager::getShaderProgram(shaderName), text, textColor, pos, glm::vec2(0.5f)))  // font sclae here
+		, m_textRenderer(new TextRenderer(font, ResourceManager::getShaderProgram(shaderName), text, textColor, glm::vec2(pos.x, pos.y - SHIFT_TEXT_SYMBOL_Y), glm::vec2(0.5f)))  // font sclae here
 		, m_face(std::move(face))
 	{
 		m_position_p = pos;
 		m_scale_p = scale;
 		m_face->set_position_p(pos);
 		m_face->set_scale_p(scale);
-		m_textRenderer->set_position(glm::vec2(pos.x, pos.y - SHIFT_TEXT_SYMBOL_Y));
 	}
 	Button::~Button()
 	{
-		delete m_face;
+
 	}
 	void Button::on_render_prj(glm::mat4& prj)
 	{
-		if (!m_isActive) return;
-		m_textRenderer->on_render_prj(prj);
-		m_face->on_render_prj(prj);
+
 	}
 	void Button::on_press()
 	{
@@ -46,17 +43,14 @@ namespace GUI
 			m_isClicked = false;
 		}
 	}
-	void Button::set_position(glm::vec2 pos)
+	std::vector<GUI_element*> Button::get_elements()
 	{
-		m_face->set_position(pos);
-		m_textRenderer->set_position(glm::vec2(pos.x, pos.y - SHIFT_TEXT_SYMBOL_Y));
-		m_position = pos;
+		std::vector<GUI_element*> vec;
+		vec.push_back(m_textRenderer);
+		vec.push_back(m_face);
+		return vec;
 	}
-	void Button::set_scale(glm::vec2 scale)
-	{
-		m_face->set_scale(scale);
-		m_scale = scale;
-	}
+
 	void Button::set_text(std::string text)
 	{
 		m_textRenderer->set_text(text);

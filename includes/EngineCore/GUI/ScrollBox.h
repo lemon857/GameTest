@@ -18,8 +18,7 @@ namespace GUI
 
 		void on_render_prj(glm::mat4& prj) override;
 
-		void set_position(glm::vec2 pos) override;
-		void set_scale(glm::vec2 scale) override;
+		std::vector<GUI_element*> get_elements() override;
 
 		void on_scroll(int offset);
 
@@ -27,11 +26,9 @@ namespace GUI
 
 		void clear();
 
-		void set_open(bool isOpen) { m_isRenderBackground = isOpen; }
+		void set_open(bool isOpen);
 	private:
 		unsigned int m_max_count_elements;
-
-		bool m_isRenderBackground;
 
 		linked_list<GUI_element*> m_elements;
 		Sprite* m_background;

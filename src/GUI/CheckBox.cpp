@@ -53,18 +53,12 @@ namespace GUI
 		}
 	}
 
-	void CheckBox::set_position(glm::vec2 pos)
+	std::vector<GUI_element*> CheckBox::get_elements()
 	{
-		m_backgroung->set_position(pos);
-		m_check->set_position(pos);
-		m_position = pos;
-	}
-
-	void CheckBox::set_scale(glm::vec2 scale)
-	{
-		m_backgroung->set_scale(scale);
-		m_check->set_scale(scale);
-		m_scale = scale;
+		std::vector<GUI_element*> vec;
+		vec.push_back(m_backgroung);
+		vec.push_back(m_check);
+		return vec;
 	}
 
 	bool CheckBox::value()

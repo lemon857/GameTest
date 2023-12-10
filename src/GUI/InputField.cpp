@@ -19,8 +19,9 @@ GUI::InputField::InputField(Sprite* face, glm::vec2 pos, glm::vec2 scale,
 	std::shared_ptr<Font> font, glm::vec3 textColor, bool clear_after_send, bool* focus_trigger)
 	: GUI_element(name)
 	, m_face(std::move(face))
-	, m_textRenderer(std::make_unique<TextRenderer>(std::move(font), std::move(shader), "",
-		textColor, pos, glm::vec2(0.5f), "default", false)) // font sclae here
+	, m_textRenderer(new TextRenderer(std::move(font), std::move(shader), "",
+		textColor, glm::vec2(pos.x - scale.x + SHIFT_TEXT_SYMBOL_X_P, pos.y - SHIFT_TEXT_SYMBOL_Y_P),
+		scale, "default", false)) // font sclae here
 	, m_isClicked(false)
 	, m_clear_after_send(clear_after_send)
 	, m_focus_trigger(std::move(focus_trigger))
@@ -29,7 +30,6 @@ GUI::InputField::InputField(Sprite* face, glm::vec2 pos, glm::vec2 scale,
 	m_scale_p = scale;
 	m_face->set_position_p(pos);
 	m_face->set_scale_p(scale);
-	m_textRenderer->set_position(glm::vec2(pos.x, pos.y - SHIFT_TEXT_SYMBOL_Y));
 }
 
 GUI::InputField::~InputField()
@@ -38,9 +38,7 @@ GUI::InputField::~InputField()
 
 void GUI::InputField::on_render_prj(glm::mat4& prj)
 {
-	if (!m_isActive) return;
-	m_textRenderer->on_render_prj(prj);
-	m_face->on_render_prj(prj);
+
 }
 
 void GUI::InputField::on_press()
@@ -48,12 +46,10 @@ void GUI::InputField::on_press()
 	m_isClicked = true;
 	if (m_isFocused)
 	{
-		m_face->setSubTexture(NAME_TEXTURE_STATIC);
 		set_focus(false);
 	}
 	else
 	{
-		m_face->setSubTexture(NAME_TEXTURE_CLICKED);
 		set_focus(true);
 	}
 }
@@ -66,23 +62,23 @@ void GUI::InputField::on_release()
 	}
 	else
 	{
-		m_face->setSubTexture(NAME_TEXTURE_STATIC);
 		set_focus(false);
 	}
 }
-
-void GUI::InputField::set_position(glm::vec2 pos)
+// need fix 
+void GUI::InputField::set_active(const bool state)
 {
-	m_face->set_position(pos);
-	m_textRenderer->set_position(glm::vec2(pos.x, pos.y - SHIFT_TEXT_SYMBOL_Y));
-	m_position = pos;
+	m_textRenderer->set_active(state);
+	m_face->set_active(state);
+	m_isActive = state;
 }
 
-void GUI::InputField::set_scale(glm::vec2 scale)
+std::vector<GUI::GUI_element*> GUI::InputField::get_elements()
 {
-	m_face->set_scale(scale);
-	m_scale = scale;
-	m_textRenderer->set_position(glm::vec2(m_position.x - m_scale.x + SHIFT_TEXT_SYMBOL_X, m_position.y - SHIFT_TEXT_SYMBOL_Y));
+	std::vector<GUI_element*> vec;
+	vec.push_back(m_textRenderer);
+	vec.push_back(m_face);
+	return vec;
 }
 
 std::string GUI::InputField::get_text()
@@ -107,12 +103,12 @@ void GUI::InputField::set_focus(bool focus)
 	if (m_isFocused)
 	{
 		m_face->setSubTexture(NAME_TEXTURE_CLICKED);
-		if (m_focus_trigger != nullptr) *m_focus_trigger = *m_focus_trigger || m_isFocused;
+		if (m_focus_trigger != nullptr) *m_focus_trigger = true;
 	}
 	else
 	{
 		m_face->setSubTexture(NAME_TEXTURE_STATIC);
-		if (m_focus_trigger != nullptr) *m_focus_trigger = *m_focus_trigger && m_isFocused;
+		if (m_focus_trigger != nullptr) *m_focus_trigger = false;
 	}
 }
 

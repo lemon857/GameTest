@@ -157,11 +157,11 @@ void GameApp::on_key_update(const double delta)
         if (Input::isKeyPressed(KeyCode::KEY_ESCAPE))
         {
             m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_focus(false);
+            m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_active(false);
             isKeyPressed = true;
             if (is_chat_active)
             {
                 is_chat_active = false;
-                m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_focus(false);
                 m_gui_chat->get_element<GUI::ChatBox>("Chat")->set_open(false);
             }
         }

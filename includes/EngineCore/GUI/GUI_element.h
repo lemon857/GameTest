@@ -9,8 +9,11 @@
 // when you're set position, this is set center text on X coord
 #define SHIFT_TEXT_SYMBOL_R_X 20.5f
 
-#define SHIFT_TEXT_SYMBOL_X 6.f
-#define SHIFT_TEXT_SYMBOL_Y 8.2f
+#define SHIFT_TEXT_SYMBOL_X 10.0f
+#define SHIFT_TEXT_SYMBOL_Y 1.2f
+
+#define SHIFT_TEXT_SYMBOL_X_P 1.0f
+#define SHIFT_TEXT_SYMBOL_Y_P 1.0f
 
 #define NAME_TEXTURE_STATIC "static"
 #define NAME_TEXTURE_CLICKED "clicked"
@@ -37,19 +40,19 @@ namespace GUI
 			, m_scale(glm::vec2(0))
 			, m_isActive(true)
 			, m_isFocused(false)
+			, m_layer(0)
 		{
 		}
 
 		~GUI_element() = default;
 
 		virtual void on_update(const double delta) {}
-		virtual void on_render() {}
 		virtual void on_render_prj(glm::mat4& prj) {}
 
 		virtual void on_press() {};
 		virtual void on_release() {};
 
-		void set_active(const bool state) { m_isActive = state; }
+		virtual void set_active(const bool state) { m_isActive = state; }
 
 		void add_position(glm::vec2 pos) { m_position += pos; }
 
@@ -74,10 +77,14 @@ namespace GUI
 		void set_click_callback(std::function<void()> on_click) { m_on_click = on_click; }
 
 		std::shared_ptr < RenderEngine::Material> get_material() { return m_pMaterial; }
+
+		virtual std::vector<GUI_element*> get_elements() { return std::vector<GUI_element*>(); }
 	protected:
 
 		bool m_isFocused;
 		bool m_isActive;
+
+		unsigned int m_layer;
 
 		std::function<void()> m_on_click;
 		// Real coords

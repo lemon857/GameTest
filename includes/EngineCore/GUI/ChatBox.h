@@ -29,8 +29,7 @@ namespace GUI
 
 		void on_render_prj(glm::mat4& prj) override;
 
-		void set_position(glm::vec2 pos) override;
-		void set_scale(glm::vec2 scale) override;
+		std::vector<GUI_element*> get_elements() override;
 
 		void add_message(std::string message);
 

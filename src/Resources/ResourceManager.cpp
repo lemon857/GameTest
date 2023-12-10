@@ -601,7 +601,10 @@ std::shared_ptr<RenderEngine::ShaderProgram> ResourceManager::loadShaders(const 
 		LOG_ERROR("Fragment shader file is empty");
 		return nullptr;
 	}
-	auto shader = getShaderProgram(shaderName);
+	std::shared_ptr<RenderEngine::ShaderProgram> shader;
+	ShaderProgramsMap::const_iterator it = m_ShaderPrograms.find(shaderName);
+	if (it != m_ShaderPrograms.end()) shader = it->second;
+	else shader = nullptr;
 	if (shader == nullptr)
 	{
 		std::shared_ptr<RenderEngine::ShaderProgram>& newShader =

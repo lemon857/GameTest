@@ -8,6 +8,7 @@
 #include "EngineCore/Light/DirectionalLight.h"
 #include "EngineCore/Light/PointerLight.h"
 #include "EngineCore/System/ShadersSettings.h"
+#include "EngineCore/System/CommandManager.h"
 
 #include "EngineCore/Engine/Window.h"
 
@@ -63,14 +64,12 @@ GameApp::~GameApp()
 
 bool GameApp::init()
 {
-    WinSock::init_WinSock();
-
     lock_key_update = new bool(false);
 
     m_cam = new Camera(glm::vec3(12.5f, 55.f, 30.f), glm::vec3(-75.f, -90.f, 0.f));
 
     m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
-
+    // init materials
     GET_DATA_MATERIAL("cube", float, "ambient_factor", 0) = 0.25f;
     GET_DATA_MATERIAL("cube", float, "diffuse_factor", 0) = 0.1f;
     GET_DATA_MATERIAL("cube", float, "specular_factor", 0) = 0.0f;
@@ -126,10 +125,11 @@ bool GameApp::init()
             parts.push_back(startPos + glm::vec3((float)i * size.x, 0, (float)j * size.z));
         }
     }
+    // cache obj files
     ResourceManager::load_OBJ_file("res/models/castle.obj");
     ResourceManager::load_OBJ_file("res/models/tower.obj");
     ResourceManager::load_OBJ_file("res/models/monkey.obj");
-
+    // system init
     init_gui();
     start_game_single();
     init_winSock();
@@ -146,6 +146,115 @@ bool GameApp::init()
     m_gui_chat->get_element<GUI::InputField>("SendMessage")->set_active(false);
 
     m_scene.at(curObj)->getComponent<Transform>()->set_position(parts[0]);
+    // commands init ----------------------------------------------------------------
+    CommandManager::add_command("dis", [&](std::vector<std::string> args) {
+        if (args.empty())
+        {
+            m_chat_mes.push("Min distance: " + std::to_string(_set_min_distance));
+            return;
+        }
+        _set_min_distance = std::stod(args[0]);
+        m_chat_mes.push("Set min distance: " + std::to_string(_set_min_distance));
+        //buff[1] = 'a';
+        //sysfunc::type_to_char(&_set_min_distance, buff, 2);
+        //WinSock::send_data(buff, sizeof(double) + 2);
+        });
+    CommandManager::add_command("vel", [&](std::vector<std::string> args) {
+        if (args.empty())
+        {
+            m_chat_mes.push("Velocity: " + std::to_string(_set_velosity));
+            return;
+        }
+        _set_velosity = std::stod(args[0]);
+        m_chat_mes.push("Set velocity: " + std::to_string(_set_velosity));
+        //buff[1] = 'a';
+        //sysfunc::type_to_char(&_set_min_distance, buff, 2);
+        //WinSock::send_data(buff, sizeof(double) + 2);
+        });
+    CommandManager::add_command("mhpcas", [&](std::vector<std::string> args) {
+        if (args.empty())
+        {
+            m_chat_mes.push("Max hp castle: " + std::to_string(_set_max_hp_castle));
+            return;
+        }
+        _set_max_hp_castle = std::stod(args[0]);
+        m_chat_mes.push("Set max hp castle: " + std::to_string(_set_max_hp_castle));
+        m_chat_mes.push("Need restart");
+        //buff[1] = 'a';
+        //sysfunc::type_to_char(&_set_min_distance, buff, 2);
+        //WinSock::send_data(buff, sizeof(double) + 2);
+        });
+    CommandManager::add_command("mhpen", [&](std::vector<std::string> args) {
+        if (args.empty())
+        {
+            m_chat_mes.push("Max hp enemy: " + std::to_string(_set_max_hp_enemy));
+            return;
+        }
+        _set_max_hp_enemy = std::stod(args[0]);
+        m_chat_mes.push("Set max hp enemy: " + std::to_string(_set_max_hp_enemy));
+        //buff[1] = 'a';
+        //sysfunc::type_to_char(&_set_min_distance, buff, 2);
+        //WinSock::send_data(buff, sizeof(double) + 2);
+        });
+    CommandManager::add_command("cdtow", [&](std::vector<std::string> args) {
+        if (args.empty())
+        {
+            m_chat_mes.push("Cooldown tower: " + std::to_string(_set_cooldown_tower));
+            return;
+        }
+        _set_cooldown_tower = std::stod(args[0]);
+        m_chat_mes.push("Set cooldown tower: " + std::to_string(_set_cooldown_tower));
+        m_chat_mes.push("Need restart");
+        //buff[1] = 'a';
+        //sysfunc::type_to_char(&_set_min_distance, buff, 2);
+        //WinSock::send_data(buff, sizeof(double) + 2);
+        });
+    CommandManager::add_command("dmgtow", [&](std::vector<std::string> args) {
+        if (args.empty())
+        {
+            m_chat_mes.push("Damage tower: " + std::to_string(_set_damage_tower));
+            return;
+        }
+        _set_cooldown_tower = std::stod(args[0]);
+        m_chat_mes.push("Set damage tower: " + std::to_string(_set_damage_tower));
+        m_chat_mes.push("Need restart");
+        //buff[1] = 'a';
+        //sysfunc::type_to_char(&_set_min_distance, buff, 2);
+        //WinSock::send_data(buff, sizeof(double) + 2);
+        });
+    CommandManager::add_command("reload", [&](std::vector<std::string> args) {
+        if (args.empty())
+        {
+            ResourceManager::load_JSON_resources("res/resources.json");
+        }
+        else if (args[0] == " shaders")
+        {
+            ResourceManager::load_JSON_shaders("res/resources.json");
+        }
+        else if (args[0] == " textures")
+        {
+            ResourceManager::load_JSON_textures("res/resources.json");
+        }
+        else if (args[0] == " fonts")
+        {
+            ResourceManager::load_JSON_fonts("res/resources.json");
+        }
+        });
+    CommandManager::add_command("cls", [&](std::vector<std::string> args) {
+        m_gui_chat->get_element<GUI::ChatBox>("Chat")->clear();
+        });
+    CommandManager::add_command("help", [&](std::vector<std::string> args) {
+        m_chat_mes.push("/<command> - for get value");
+        m_chat_mes.push("/<command> <arg1> ... - for use command");
+        m_chat_mes.push("/cls - clear chat");
+        m_chat_mes.push("/dis - distance attack towers");
+        m_chat_mes.push("/vel - velosity enemies");
+        m_chat_mes.push("/mhpcas - max HP castle");
+        m_chat_mes.push("/mhpen - max HP enemies");
+        m_chat_mes.push("/cdtow - cooldown tower attacks");
+        m_chat_mes.push("/dmgtow - damage tower attacks");
+        m_chat_mes.push("/reload <shaders/textures/fonts> - reload resources");
+        });
 
     return true;
 }
@@ -948,14 +1057,12 @@ bool GameApp::init_events()
             m_gui_place_menu->get_element<GUI::InputField>("InputNick")->press_button(e.key_code);
             m_gui_place_menu->get_element<GUI::InputField>("InputIP")->press_button(e.key_code);
             m_gui_chat->get_element<GUI::InputField>("SendMessage")->press_button(e.key_code);
-            m_gui_place_settings->get_element<GUI::InputField>("ConsoleInput")->press_button(e.key_code);
         });
     m_event_dispather.add_event_listener<EventCharSet>([&](EventCharSet& e)
         {
             m_gui_place_menu->get_element<GUI::InputField>("InputNick")->press_char(e.key_char);
             m_gui_place_menu->get_element<GUI::InputField>("InputIP")->press_char(e.key_char);
             m_gui_chat->get_element<GUI::InputField>("SendMessage")->press_char(e.key_char);
-            m_gui_place_settings->get_element<GUI::InputField>("ConsoleInput")->press_char(e.key_char);
         });
     m_event_dispather.add_event_listener<EventKeyReleased>([&](EventKeyReleased& e)
         {
@@ -1076,125 +1183,22 @@ void GameApp::init_gui()
         ResourceManager::get_font("calibriChat"), glm::vec3(1.f), true, lock_key_update)->set_enter_callback([&](std::string text) {
             if (text[0] == '/') // need finalize
             {
-                char buff[sizeof(double) + 2];
-                buff[0] = 'c';
+                //char buff[sizeof(double) + 2];
+                //buff[0] = 'c';
+                
+                std::vector<std::string> args;
 
-                if (ResourceManager::start_with(text, "/dis")) // distance tower attack a
-                {
-                    if (text == "/dis")
-                    {
-                        m_chat_mes.push("Min distance: " + std::to_string(_set_min_distance));
-                    }
-                    else
-                    {
-                        _set_min_distance = std::stod(text.substr(5));
-                        m_chat_mes.push("Set min distance: " + std::to_string(_set_min_distance));
-                        buff[1] = 'a';
-                        sysfunc::type_to_char(&_set_min_distance, buff, 2);
-                        WinSock::send_data(buff, sizeof(double) + 2);
-                    }
-                }
-                else if (ResourceManager::start_with(text, "/vel")) // velosity enemy s
-                {
-                    if (text == "/vel")
-                    {
-                        m_chat_mes.push("Velocity: " + std::to_string(_set_velosity));             
-                    }
-                    else
-                    {
-                        _set_velosity = std::stod(text.substr(5));
-                        m_chat_mes.push("Set velocity: " + std::to_string(_set_velosity));
-                        buff[1] = 's';
-                        sysfunc::type_to_char(&_set_velosity, buff, 2);
-                        WinSock::send_data(buff, sizeof(double) + 2);
-                    }
-                }
-                else if (ResourceManager::start_with(text, "/mhpcas")) // max hp castle d
-                {
-                    if (text == "/mhpcas")
-                    {
-                        m_chat_mes.push("Max hp castle: " + std::to_string(_set_max_hp_castle));
-                    }
-                    else
-                    {
-                        _set_max_hp_castle = std::stod(text.substr(8));
-                        m_chat_mes.push("Set max hp castle: " + std::to_string(_set_max_hp_castle));
-                        m_chat_mes.push("Need restart");
-                        buff[1] = 'd';
-                        sysfunc::type_to_char(&_set_max_hp_castle, buff, 2);
-                        WinSock::send_data(buff, sizeof(double) + 2);
-                    }
-                }
-                else if (ResourceManager::start_with(text, "/mhpen")) // max hp enemy f
-                {
-                    if (text == "/mhpen")
-                    {
-                        m_chat_mes.push("Max hp enemy: " + std::to_string(_set_max_hp_enemy));
-                    }
-                    else
-                    {
-                        _set_max_hp_enemy = std::stod(text.substr(7));
-                        m_chat_mes.push("Set max hp enemy: " + std::to_string(_set_max_hp_enemy));
-                        buff[1] = 'f';
-                        sysfunc::type_to_char(&_set_max_hp_enemy, buff, 2);
-                        WinSock::send_data(buff, sizeof(double) + 2);
-                    }
-                }
-                else if (ResourceManager::start_with(text, "/cdtow")) // cooldown tower attack g
-                {
-                    if (text == "/cdtow")
-                    {
-                        m_chat_mes.push("Cooldown tower: " + std::to_string(_set_cooldown_tower));
-                    }
-                    else
-                    {
-                        _set_cooldown_tower = std::stod(text.substr(7));
-                        m_chat_mes.push("Set cooldown tower: " + std::to_string(_set_cooldown_tower));
-                        m_chat_mes.push("Need restart");
-                        buff[1] = 'g';
-                        sysfunc::type_to_char(&_set_cooldown_tower, buff, 2);
-                        WinSock::send_data(buff, sizeof(double) + 2);
-                    }
-                }
-                else if (ResourceManager::start_with(text, "/dmgtow")) // damage tower attack h
-                {
-                    if (text == "/dmgtow")
-                    {
-                        m_chat_mes.push("Damage tower: " + std::to_string(_set_damage_tower));
-                    }
-                    else
-                    {
-                        char buff1[sizeof(unsigned int) + 2];
-                        buff1[0] = 'c';
-                        _set_cooldown_tower = std::stod(text.substr(8));
-                        m_chat_mes.push("Set damage tower: " + std::to_string(_set_damage_tower));
-                        m_chat_mes.push("Need restart");
-                        buff1[1] = 'h';
-                        sysfunc::type_to_char(&_set_damage_tower, buff1, 2);
-                        WinSock::send_data(buff1, sizeof(unsigned int) + 2);
-                    }
-                }
-                else if (ResourceManager::start_with(text, "/reload")) // test ===================== !!!
-                {
-                    std::string second = text.substr(7);
+                std::string name = text.substr(1, text.find(' '));                            
+                std::string argsStr = text.substr(name.length() + 1);
+                if (name.find(' ') != -1) name.pop_back();
 
-                    if (second.empty())
-                    {
-                        ResourceManager::load_JSON_resources("res/resources.json");
-                    }
-                    else if (second == " shaders")
-                    {
-                        ResourceManager::load_JSON_shaders("res/resources.json");
-                    }
-                    else if (second == " textures")
-                    {
-                        ResourceManager::load_JSON_textures("res/resources.json");
-                    }
-                    else if (second == " fonts")
-                    {
-                        ResourceManager::load_JSON_fonts("res/resources.json");
-                    }
+                while (argsStr.find(' ') != -1)
+                {
+                    args.push_back(argsStr.substr(0, argsStr.find(' ')));
+                    argsStr = argsStr.substr(argsStr.find(' ') + 1);
                 }
+                if (!argsStr.empty()) args.push_back(argsStr);
+                if (!CommandManager::call_command(name, args))  m_chat_mes.push("Invalid command: " + name);
             }
             else
             {
@@ -1261,13 +1265,7 @@ void GameApp::init_gui()
         "Clear chat", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
             {
                 m_gui_chat->get_element<GUI::ChatBox>("Chat")->clear();
-            });
-
-    m_gui_place_settings->add_element<GUI::InputField>(new GUI::Sprite(ResourceManager::getMaterial("console_i"), "static"),
-        glm::vec2(50.f, 50.f), glm::vec2(12.f, 3.f), "ConsoleInput", ResourceManager::getShaderProgram("textShader"),
-        ResourceManager::get_font("calibriChat"), glm::vec3(1.f), true, lock_key_update)->set_enter_callback([&](std::string text) {
-
-            });
+            });   
 
     m_gui_place_settings->add_element<GUI::Button>(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, 28.f), glm::vec2(10.f, 5.f),
@@ -1538,6 +1536,8 @@ void GameApp::start_game_multi()
 
 void GameApp::init_winSock()
 {
+    WinSock::init_WinSock();
+
     WinSock::set_receive_callback([&](char* data, int size) {
         if (data[WS_DATA_PACKET_INFO_SIZE] == 'm') // message for chat
         {

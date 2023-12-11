@@ -80,7 +80,7 @@ private:
 
 	ProjectionMode m_projection_mode;
 
-	bool m_update_view_matrix = false;
-	bool m_update_projection_matrix = false;
+	bool m_update_view_matrix = true;
+	bool m_update_projection_matrix = true;
 	bool m_update_ui_matrix = true;
 };

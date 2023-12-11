@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 
 set(PROJECT_NAME Engine)
 
-set(EDITOR_BUILD)
+#set(EDITOR_BUILD)
 
 set(ENGINE_PUBLIC_INCLUDES_EDITOR	
 	includes/EngineCore/Editor/EditorApplication.h	
@@ -83,6 +83,10 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Physics/Collider.h
 	includes/EngineCore/Physics/MoveController.h		
 	includes/EngineCore/Physics/Ray.h	
+		
+	includes/EngineCore/Sound/SoundEngine.h	
+	includes/EngineCore/Sound/Sound.h	
+	includes/EngineCore/Sound/miniaudio.h
 	
 	includes/EngineCore/Renderer3D/GraphicsObject.h
 	
@@ -160,6 +164,10 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Physics/Collider.cpp
 	src/Physics/MoveController.cpp
 	src/Physics/Ray.cpp
+
+	src/Sound/SoundEngine.cpp
+	src/Sound/Sound.cpp	
+	src/Sound/miniaudio.c	
 	
 	src/System/Timer.cpp
 	src/System/Stopwatch.cpp	
@@ -198,24 +206,16 @@ set(ENGINE_PRIVATE_SOURCES
 project(${PROJECT_NAME})
 
 
-#if (DEFINED EDITOR_BUILD)
 	add_executable(${PROJECT_NAME}
 		src/main.cpp
 		${ENGINE_PRIVATE_SOURCES}
 		${ENGINE_PUBLIC_INCLUDES}
-		${ENGINE_PRIVATE_INCLUDES}
-		
-		#${ENGINE_PUBLIC_INCLUDES_EDITOR}
-		#${ENGINE_PUBLIC_SRC_EDITOR}
-	)
-#else()
-#	add_executable(${PROJECT_NAME}
-#		src/main.cpp
-#		${ENGINE_PRIVATE_SOURCES}
-#		${ENGINE_PUBLIC_INCLUDES}
-#		${ENGINE_PRIVATE_INCLUDES}
-#		)
+		${ENGINE_PRIVATE_INCLUDES}	
+#if (DEFINED EDITOR_BUILD)				
+#		${ENGINE_PUBLIC_INCLUDES_EDITOR}
+#		${ENGINE_PUBLIC_SRC_EDITOR}
 #endif()
+	)
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
@@ -243,27 +243,29 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 					COMMAND ${CMAKE_COMMAND} -E copy_directory
 					${CMAKE_SOURCE_DIR}/res $<TARGET_FILE_DIR:${PROJECT_NAME}>/res)
 
-#set(IMGUI_INCLUDES
-#	external/imgui/imgui.h
-#	external/imgui/backends/imgui_impl_opengl3.h
-#	external/imgui/backends/imgui_impl_glfw.h)
-#	
-#set(IMGUI_SOURCES
-#	external/imgui/imgui.cpp
-#	external/imgui/backends/imgui_impl_opengl3.cpp
-#	external/imgui/backends/imgui_impl_glfw.cpp
-#	external/imgui/imgui_widgets.cpp
-#	external/imgui/imgui_tables.cpp
-#	external/imgui/imgui_draw.cpp
-#	external/imgui/imgui_demo.cpp)
-#
-#add_library(ImGUI STATIC
-#	${IMGUI_INCLUDES}
-#	${IMGUI_SOURCES})
-#	
-#target_include_directories(ImGUI PUBLIC external)
-#target_include_directories(ImGUI PRIVATE external/imgui)
-#
-#target_link_libraries(ImGUI glad glfw)
-#
-#target_link_libraries(${PROJECT_NAME} ImGUI)
+if (DEFINED EDITOR_BUILD)
+	set(IMGUI_INCLUDES
+	external/imgui/imgui.h
+	external/imgui/backends/imgui_impl_opengl3.h
+	external/imgui/backends/imgui_impl_glfw.h)
+	
+	set(IMGUI_SOURCES
+	external/imgui/imgui.cpp
+	external/imgui/backends/imgui_impl_opengl3.cpp
+	external/imgui/backends/imgui_impl_glfw.cpp
+	external/imgui/imgui_widgets.cpp
+	external/imgui/imgui_tables.cpp
+	external/imgui/imgui_draw.cpp
+	external/imgui/imgui_demo.cpp)
+
+	add_library(ImGUI STATIC
+	${IMGUI_INCLUDES}
+	${IMGUI_SOURCES})
+	
+	target_include_directories(ImGUI PUBLIC external)
+	target_include_directories(ImGUI PRIVATE external/imgui)
+
+	target_link_libraries(ImGUI glad glfw)
+
+	target_link_libraries(${PROJECT_NAME} ImGUI)	
+endif()

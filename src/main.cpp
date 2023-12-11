@@ -1,11 +1,15 @@
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Renderer/ShaderProgram.h"
-#include "EngineCore/Editor/EditorApplication.h"
 #include "Games/Tower_Defense/GameApplication.h"    
 
 #include "EngineCore/System/Log.h"
 
 //#define EDITOR_BUILD
+
+#ifdef EDITOR_BUILD
+//#include "EngineCore/Editor/EditorApplication.h"
+#endif // EDITOR_BUILD
+
 
 int main(int argc, char** argv)
 {

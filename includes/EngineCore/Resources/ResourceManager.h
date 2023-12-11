@@ -15,6 +15,8 @@ struct INIdata
 
 class Scene;
 
+class Sound;
+
 struct GraphicsObject;
 
 namespace GUI
@@ -71,6 +73,11 @@ namespace RenderEngine
 		static std::shared_ptr<GUI::Font> load_font(std::string relativePath, std::string font_name, unsigned int font_size);
 
 		static std::shared_ptr<GUI::Font> get_font(std::string font_name);
+
+
+		static std::shared_ptr<Sound> load_sound(std::string relativePath, std::string name);
+
+		static std::shared_ptr<Sound> get_sound(std::string name);
 
 		static std::shared_ptr<RenderEngine::ShaderProgram> loadShaders(
 			const std::string& shaderName, 
@@ -143,6 +150,9 @@ namespace RenderEngine
 
 		typedef std::map<const std::string, std::shared_ptr<GUI::Font>> FontsMap;
 		static FontsMap m_fonts_map;
+
+		typedef std::map<const std::string, std::shared_ptr<Sound>> SoundsMap;
+		static SoundsMap m_sounds_map;
 
 		//typedef std::map<const std::string, std::shared_ptr<RenderEngine::SpriteRenderer>> SpriteRenderersMap;
 		//static SpriteRenderersMap m_SpriteRenderers;

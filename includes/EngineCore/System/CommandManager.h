@@ -13,6 +13,8 @@ public:
 	static void add_command(std::string name, command_callback callback);
 	static bool call_command(std::string name, std::vector<std::string> args);
 
+	static std::vector<std::string> get_commands();
+
 	~CommandManager() = delete;
 	CommandManager() = delete;
 

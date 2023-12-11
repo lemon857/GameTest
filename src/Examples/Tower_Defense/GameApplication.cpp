@@ -41,6 +41,8 @@
 
 #include "EngineCore/System/sysfunc.h"
 
+#include "EngineCore/Sound/Sound.h"
+
 #include <array>
 #include <memory>
 
@@ -64,6 +66,10 @@ GameApp::~GameApp()
 
 bool GameApp::init()
 {
+    ResourceManager::get_sound("click")->set_looping(true);
+    ResourceManager::get_sound("click")->set_positioning(true);
+    ResourceManager::get_sound("click")->play();
+
     lock_key_update = new bool(false);
 
     m_cam = new Camera(glm::vec3(12.5f, 55.f, 30.f), glm::vec3(-75.f, -90.f, 0.f));
@@ -244,16 +250,23 @@ bool GameApp::init()
         m_gui_chat->get_element<GUI::ChatBox>("Chat")->clear();
         });
     CommandManager::add_command("help", [&](std::vector<std::string> args) {
-        m_chat_mes.push("/<command> - for get value");
-        m_chat_mes.push("/<command> <arg1> ... - for use command");
-        m_chat_mes.push("/cls - clear chat");
-        m_chat_mes.push("/dis - distance attack towers");
-        m_chat_mes.push("/vel - velosity enemies");
-        m_chat_mes.push("/mhpcas - max HP castle");
-        m_chat_mes.push("/mhpen - max HP enemies");
-        m_chat_mes.push("/cdtow - cooldown tower attacks");
-        m_chat_mes.push("/dmgtow - damage tower attacks");
-        m_chat_mes.push("/reload <shaders/textures/fonts> - reload resources");
+        std::vector<std::string> commands = CommandManager::get_commands();
+        std::string cmds = "";
+        for (const auto cur : commands)
+        {
+            cmds += cur + " ";
+        }
+        m_chat_mes.push(cmds);
+        //m_chat_mes.push("/<command> - for get value");
+        //m_chat_mes.push("/<command> <arg1> ... - for use command");
+        //m_chat_mes.push("/cls - clear chat");
+        //m_chat_mes.push("/dis - distance attack towers");
+        //m_chat_mes.push("/vel - velosity enemies");
+        //m_chat_mes.push("/mhpcas - max HP castle");
+        //m_chat_mes.push("/mhpen - max HP enemies");
+        //m_chat_mes.push("/cdtow - cooldown tower attacks");
+        //m_chat_mes.push("/dmgtow - damage tower attacks");
+        //m_chat_mes.push("/reload <shaders/textures/fonts> - reload resources");
         });
 
     return true;
@@ -1235,7 +1248,7 @@ void GameApp::init_gui()
     m_gui->set_active(true);
     // Settings ------------------------------------------------------------------------------------    
     m_gui_place_settings->add_element<GUI::TextRenderer>(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        "Settings", glm::vec3(1.f), glm::vec2(50.f, 90.f), glm::vec2(1.f));
+        "Settings", glm::vec3(1.f), glm::vec2(50.f, 90.f), glm::vec2(1.f));       
 
     m_gui_place_settings->add_element<GUI::Button>(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, 61.f), glm::vec2(10.f, 5.f),

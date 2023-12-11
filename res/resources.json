@@ -355,7 +355,7 @@
       "path": "res/fonts/calibri.ttf",
       "size": 96
     },
-    { 
+    {
       "name": "calibriChat",
       "path": "res/fonts/calibri.ttf",
       "size": 96
@@ -364,6 +364,16 @@
       "name": "agaaler",
       "path": "res/fonts/agaaler.ttf",
       "size": 96
+    }
+  ],
+  "sounds": [
+    {
+      "name": "test",
+      "path": "res/sounds/test.flac"
+    },
+    {
+      "name": "click",
+      "path": "res/sounds/click.flac"
     }
   ]
 }

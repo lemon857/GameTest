@@ -12,6 +12,8 @@
 #include "EngineCore/Resources/Scene.h"
 #include "EngineCore/GUI/Font.h"
 
+#include "EngineCore/Sound/Sound.h"
+
 #include <sstream>
 #include <fstream>
 #include <iostream>
@@ -32,6 +34,7 @@ ResourceManager::TexturesMap ResourceManager::m_textures;
 ResourceManager::MaterialsMap ResourceManager::m_materials;
 ResourceManager::CacheOBJMap ResourceManager::m_obj_files;
 ResourceManager::FontsMap ResourceManager::m_fonts_map;
+ResourceManager::SoundsMap ResourceManager::m_sounds_map;
 //ResourceManager::SpriteRenderersMap ResourceManager::m_SpriteRenderers;
 //ResourceManager::GraphObjMap ResourceManager::m_graph_objs;
 //ResourceManager::AnimatorsMap ResourceManager::m_animators;
@@ -137,6 +140,16 @@ bool ResourceManager::load_JSON_resources(const std::string & JSONpath)
 			const std::string path = currentFont["path"].GetString();
 			const unsigned int size = currentFont["size"].GetUint();
 			load_font(path, name, size);
+		}
+	}
+	auto soundsIt = doc.FindMember("sounds");
+	if (soundsIt != doc.MemberEnd())
+	{
+		for (const auto& currentSound : soundsIt->value.GetArray())
+		{
+			const std::string name = currentSound["name"].GetString();
+			const std::string path = currentSound["path"].GetString();
+			load_sound(path, name);
 		}
 	}
 	LOG_INFO("Loadind data from JSON file complete");
@@ -359,6 +372,27 @@ std::shared_ptr<GUI::Font> ResourceManager::get_font(std::string font_name)
 		return it->second;
 	}
 	LOG_ERROR("Can't find font: {0}", font_name);
+	return nullptr;
+}
+std::shared_ptr<Sound> ResourceManager::load_sound(std::string relativePath, std::string name)
+{
+	std::shared_ptr<Sound> sound = std::make_shared<Sound>();
+	if (sound->init((m_path + "/" + relativePath).c_str()) != 0)
+	{
+		LOG_ERROR("Error load sound: {0}", name);
+		return nullptr;
+	}
+	m_sounds_map.emplace(name, sound);
+	return sound;
+}
+std::shared_ptr<Sound> ResourceManager::get_sound(std::string name)
+{
+	SoundsMap::const_iterator it = m_sounds_map.find(name);
+	if (it != m_sounds_map.end())
+	{
+		return it->second;
+	}
+	LOG_ERROR("Can't find sound: {0}", name);
 	return nullptr;
 }
 bool ResourceManager::load_scene(std::string relativePath, Scene& scene)

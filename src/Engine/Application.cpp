@@ -4,6 +4,7 @@
 #include "EngineCore/System/Stopwatch.h"
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Renderer/Renderer.h"
+#include "EngineCore/Sound/SoundEngine.h"
 
 Application::Application()
 {
@@ -15,6 +16,7 @@ Application::~Application()
 {
     LOG_INFO("Closing Application");
     ResourceManager::unloadAllResources();
+    SoundEngine::uninit_audio();
 }
 
 int Application::start(glm::ivec2& window_size, const char* title, const char* json_rel_path, const char* ini_rel_path)
@@ -26,6 +28,8 @@ int Application::start(glm::ivec2& window_size, const char* title, const char* j
 
     m_pCloseWindow = false;
     m_pWindow = std::make_unique<Window>(title, m_window_position, window_size, m_maximized_window);
+
+    if (SoundEngine::init_audio() != 0) LOG_ERROR("Fail init sound engine");
 
     ResourceManager::load_JSON_resources(json_rel_path);
 

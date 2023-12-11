@@ -17,3 +17,15 @@ bool CommandManager::call_command(std::string name, std::vector<std::string> arg
 	}
 	return false;
 }
+
+std::vector<std::string> CommandManager::get_commands()
+{
+	std::vector<std::string> commands;
+
+	for (const auto cur : m_commands)
+	{
+		commands.push_back(cur.first);
+	}
+
+	return commands;
+}

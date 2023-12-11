@@ -1,6 +1,8 @@
 #include "EngineCore/Renderer/Camera.h"
 #include "EngineCore/Renderer/Renderer.h"
 
+#include "EngineCore/Sound/SoundEngine.h"
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/trigonometric.hpp>
 
@@ -9,6 +11,7 @@ Camera::Camera(const glm::vec3& position, const glm::vec3& rotation, const Proje
 	, m_rotation(rotation)
 	, m_projection_mode(mode)
 {
+	SoundEngine::set_position(position.x, position.y, position.z);
 	update_veiw_matrix();
 	update_projection_matrix();
 }
@@ -41,6 +44,7 @@ void Camera::set_position(const glm::vec3& position)
 {
 	m_position = position;
 	m_update_view_matrix = true;
+	SoundEngine::set_position(position.x, position.y, position.z);
 }
 void Camera::set_rotation(const glm::vec3& rotation)
 {
@@ -52,6 +56,7 @@ void Camera::set_position_rotation(const glm::vec3& position, const glm::vec3& r
 	m_position = position;
 	m_rotation = rotation;
 	m_update_view_matrix = true;
+	SoundEngine::set_position(position.x, position.y, position.z);
 }
 void Camera::set_projection_mode(const ProjectionMode mode)
 {
@@ -118,6 +123,7 @@ void Camera::add_movement_and_rotation(const glm::vec3& movement_delta, const gl
 	m_position += m_up * movement_delta.y;
 	if (m_rotation.x + rotation_delta.x > s_min_pitch && m_rotation.x + rotation_delta.x < s_max_pitch) m_rotation += rotation_delta;
 	m_update_view_matrix = true;
+	SoundEngine::set_position(m_position.x, m_position.y, m_position.z);
 }
 
 void Camera::update_veiw_matrix()
@@ -151,6 +157,8 @@ void Camera::update_veiw_matrix()
 
 	m_veiw_matrix = glm::lookAt(m_position, m_position + m_direction, m_up);
 	m_update_view_matrix = false;
+
+	SoundEngine::set_direction(m_direction.x, m_direction.y, m_direction.z);
 }
 
 void Camera::update_projection_matrix()

@@ -1,6 +1,8 @@
 #include "EngineCore/Sound/Sound.h"
 #include "EngineCore/Sound/SoundEngine.h"
 
+#include <string>
+
 #define MA_NO_WAV
 #define MA_NO_MP3
 #define MA_NO_ENCODING
@@ -14,8 +16,7 @@ Sound::Sound()
 
 Sound::~Sound()
 {
-    ma_sound_stop(m_sound);
-    delete m_sound;
+
 }
 
 int Sound::init(const char* path)
@@ -27,8 +28,15 @@ int Sound::init(const char* path)
         return result;  // Failed to initialize the engine.
     }
     ma_sound_set_pinned_listener_index(m_sound, 0);
+    ma_sound_set_positioning(m_sound, ma_positioning_relative);
 
     return 0;
+}
+// may be pronlems with memory
+void Sound::terminate()
+{
+    ma_sound_stop(m_sound);
+    //delete m_sound;
 }
 
 int Sound::play()

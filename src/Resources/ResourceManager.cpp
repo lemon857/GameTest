@@ -35,6 +35,7 @@ ResourceManager::MaterialsMap ResourceManager::m_materials;
 ResourceManager::CacheOBJMap ResourceManager::m_obj_files;
 ResourceManager::FontsMap ResourceManager::m_fonts_map;
 ResourceManager::SoundsMap ResourceManager::m_sounds_map;
+ResourceManager::UniqueSoundsMap ResourceManager::m_uSounds_map;
 //ResourceManager::SpriteRenderersMap ResourceManager::m_SpriteRenderers;
 //ResourceManager::GraphObjMap ResourceManager::m_graph_objs;
 //ResourceManager::AnimatorsMap ResourceManager::m_animators;
@@ -47,6 +48,8 @@ void ResourceManager::unloadAllResources()
 	m_materials.clear();
 	m_obj_files.clear();
 	m_fonts_map.clear();
+	m_sounds_map.clear();
+	m_uSounds_map.clear();
 	//m_SpriteRenderers.clear();
 }
 void ResourceManager::setExecutablePath(const std::string& executablePath)
@@ -150,6 +153,7 @@ bool ResourceManager::load_JSON_resources(const std::string & JSONpath)
 			const std::string name = currentSound["name"].GetString();
 			const std::string path = currentSound["path"].GetString();
 			load_sound(path, name);
+			load_unique_sound(path, name);
 		}
 	}
 	LOG_INFO("Loadind data from JSON file complete");
@@ -393,6 +397,26 @@ std::shared_ptr<Sound> ResourceManager::get_sound(std::string name)
 		return it->second;
 	}
 	LOG_ERROR("Can't find sound: {0}", name);
+	return nullptr;
+}
+void ResourceManager::load_unique_sound(std::string relativePath, std::string name)
+{
+	m_uSounds_map.emplace(name, m_path + "/" + relativePath);
+}
+std::unique_ptr<Sound> ResourceManager::get_unique_sound(std::string name)
+{
+	UniqueSoundsMap::const_iterator it = m_uSounds_map.find(name);
+	if (it != m_uSounds_map.end())
+	{
+		std::unique_ptr<Sound> sound = std::make_unique<Sound>();
+		if (sound->init(it->second.c_str()) != 0)
+		{
+			LOG_ERROR("Error load unique sound: {0}", name);
+			return nullptr;
+		}
+		return std::move(sound);
+	}
+	LOG_ERROR("Can't find unique sound: {0}", name);
 	return nullptr;
 }
 bool ResourceManager::load_scene(std::string relativePath, Scene& scene)

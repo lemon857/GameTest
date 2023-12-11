@@ -9,6 +9,7 @@ public:
 	~Sound();
 
 	int init(const char* path);
+	void terminate();
 
 	int play();
 

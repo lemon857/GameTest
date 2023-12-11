@@ -54,6 +54,16 @@ void SoundEngine::set_direction(float x, float y, float z)
     ma_engine_listener_set_direction(m_soundEngine, 0, x, y, z);
 }
 
+void SoundEngine::set_volume(float volume)
+{
+    ma_engine_set_volume(m_soundEngine, volume);
+}
+
+float SoundEngine::get_volume()
+{
+    return ma_engine_get_volume(m_soundEngine);
+}
+
 ma_engine* SoundEngine::get_engine()
 {
     return m_soundEngine;

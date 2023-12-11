@@ -79,6 +79,10 @@ namespace RenderEngine
 
 		static std::shared_ptr<Sound> get_sound(std::string name);
 
+		static void load_unique_sound(std::string relativePath, std::string name);
+
+		static std::unique_ptr<Sound> get_unique_sound(std::string name);
+
 		static std::shared_ptr<RenderEngine::ShaderProgram> loadShaders(
 			const std::string& shaderName, 
 			const std::string& vertexPath, 
@@ -153,6 +157,9 @@ namespace RenderEngine
 
 		typedef std::map<const std::string, std::shared_ptr<Sound>> SoundsMap;
 		static SoundsMap m_sounds_map;
+
+		typedef std::map<const std::string, std::string> UniqueSoundsMap;
+		static UniqueSoundsMap m_uSounds_map;
 
 		//typedef std::map<const std::string, std::shared_ptr<RenderEngine::SpriteRenderer>> SpriteRenderersMap;
 		//static SpriteRenderersMap m_SpriteRenderers;

@@ -366,14 +366,22 @@
       "size": 96
     }
   ],
-  "sounds": [
-    {
-      "name": "test",
-      "path": "res/sounds/test.flac"
-    },
+  "sounds": [    
     {
       "name": "click",
       "path": "res/sounds/click.flac"
+    },
+    {
+      "name": "tower_spawn",
+      "path": "res/sounds/tower_spawn.flac"
+    },
+    {
+      "name": "tower_attak",
+      "path": "res/sounds/tower_attak.flac"
+    },
+    {
+      "name": "enemy_spawn",
+      "path": "res/sounds/enemy_spawn.flac"
     }
   ]
 }

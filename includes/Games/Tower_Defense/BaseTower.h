@@ -8,6 +8,7 @@
 
 class BaseEnemy;
 class ObjModel;
+class Sound;
 
 namespace RenderEngine
 {
@@ -39,4 +40,6 @@ private:
 	unsigned int m_damage;
 
 	RenderEngine::Line* m_line;
+
+	std::unique_ptr<Sound> m_sound;
 };

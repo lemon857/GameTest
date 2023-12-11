@@ -42,6 +42,7 @@
 #include "EngineCore/System/sysfunc.h"
 
 #include "EngineCore/Sound/Sound.h"
+#include "EngineCore/Sound/SoundEngine.h"
 
 #include <array>
 #include <memory>
@@ -66,9 +67,7 @@ GameApp::~GameApp()
 
 bool GameApp::init()
 {
-    ResourceManager::get_sound("click")->set_looping(true);
-    ResourceManager::get_sound("click")->set_positioning(true);
-    ResourceManager::get_sound("click")->play();
+    volume = SoundEngine::get_volume();
 
     lock_key_update = new bool(false);
 
@@ -816,6 +815,7 @@ void GameApp::on_update(const double delta)
         {
             m_towers.push_back(new BaseTower("res/models/tower.obj",
                 ResourceManager::getMaterial("tower"), nullptr, parts[m_spawn_towers.front()], _set_cooldown_tower, _set_damage_tower, new RenderEngine::Line(ResourceManager::getMaterial("default"))));
+            ResourceManager::get_sound("tower_spawn")->play();
             m_spawn_towers.pop();
         }
         while (!m_spawn_enemies.empty()) // spawn enemies
@@ -824,6 +824,7 @@ void GameApp::on_update(const double delta)
             auto a = new BaseEnemy(new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("monkey")),
                 m_main_castle, parts[m_spawn_enemies.front()], 1, _set_velosity * 0.001, _set_max_hp_enemy, ResourceManager::getMaterial("default"));
             m_enemies.push_back(a);
+            ResourceManager::get_sound("enemy_spawn")->play();
             m_spawn_enemies.pop();
             m_gui_debug->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));
         }
@@ -1249,6 +1250,16 @@ void GameApp::init_gui()
     // Settings ------------------------------------------------------------------------------------    
     m_gui_place_settings->add_element<GUI::TextRenderer>(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
         "Settings", glm::vec3(1.f), glm::vec2(50.f, 90.f), glm::vec2(1.f));       
+
+
+    m_gui_place_settings->add_element<GUI::Button>(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(89.f, 72.f), glm::vec2(10.f, 5.f),
+        "Mute", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f), "muteToggle")->set_click_callback([&]()
+            {
+                is_mute = !is_mute;
+                m_gui_place_settings->get_element<GUI::Button>("muteToggle")->set_text(is_mute ? "Unmute" : "Mute");
+                SoundEngine::set_volume(is_mute ? 0 : volume);
+            });
 
     m_gui_place_settings->add_element<GUI::Button>(new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, 61.f), glm::vec2(10.f, 5.f),

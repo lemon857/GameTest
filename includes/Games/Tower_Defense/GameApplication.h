@@ -116,6 +116,7 @@ private:
 	bool is_spawn_enemy = false;
 	bool is_spawn_mode = false;
 	bool is_lock_move = true;
+	bool is_mute = false;
 
 	bool isKeyPressed = false;
 	bool isKeyPressedmouse = false;
@@ -124,6 +125,8 @@ private:
 	bool restart_querry = false;
 	
 	bool* lock_key_update;
+
+	float volume = 70;
 
 	unsigned int countKills = 0;
 	unsigned int fps = 0;

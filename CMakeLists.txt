@@ -167,7 +167,7 @@ set(ENGINE_PRIVATE_SOURCES
 
 	src/Sound/SoundEngine.cpp
 	src/Sound/Sound.cpp	
-	src/Sound/miniaudio.c	
+	src/Sound/miniaudio.cpp
 	
 	src/System/Timer.cpp
 	src/System/Stopwatch.cpp	

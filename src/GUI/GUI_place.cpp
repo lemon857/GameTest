@@ -9,6 +9,10 @@
 
 #include "EngineCore/System/Log.h"
 
+#include "EngineCore/Resources/ResourceManager.h"
+
+#include "EngineCore/Sound/Sound.h"
+
 namespace GUI
 {
 	GUI_place::GUI_place(Camera* render_cam, std::shared_ptr<RenderEngine::Material> pMaterial)
@@ -107,6 +111,7 @@ namespace GUI
 			{
 				cur.second->on_press();
 				m_isFocus = true;
+				ResourceManager::get_sound("click")->play();
 				if (m_is_event_logging_active) LOG_INFO("[GUI] Click on object: {0}", cur.second->get_name());
 			}
 		}

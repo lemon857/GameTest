@@ -9,5 +9,6 @@ Be seriously my engine have:
 - Resource system loading in JSON and manager
 - GUI system
 - Game object and component system
+- includes miniaudio lib for sound playing
 
 And I know it have just terrible realization

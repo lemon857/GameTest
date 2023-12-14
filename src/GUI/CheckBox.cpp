@@ -55,6 +55,8 @@ namespace GUI
 
 	std::vector<GUI_element*> CheckBox::get_elements()
 	{
+		add_tree_element(m_backgroung);
+		add_tree_element(m_check);
 		std::vector<GUI_element*> vec;
 		vec.push_back(m_backgroung);
 		vec.push_back(m_check);

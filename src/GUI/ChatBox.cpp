@@ -28,6 +28,7 @@ namespace GUI
 	}
 	std::vector<GUI_element*> ChatBox::get_elements()
 	{
+		add_tree_element(m_scrollbox);
 		std::vector<GUI_element*> vec;
 		vec.push_back(m_scrollbox);
 		return vec;
@@ -38,7 +39,7 @@ namespace GUI
 	}
 	void ChatBox::set_open(bool isOpen)
 	{
-		m_scrollbox->set_open(isOpen);
+		set_tree_active(isOpen);		
 	}
 	void ChatBox::clear()
 	{

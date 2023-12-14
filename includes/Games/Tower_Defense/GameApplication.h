@@ -1,7 +1,5 @@
 #pragma once 
 
-#define BUILD_NAME "Tower_defense_0.0.3_alfa"
-
 #include "EngineCore/Engine/Application.h"
 
 #include "EngineCore/Renderer/Camera.h"
@@ -112,7 +110,6 @@ private:
 	bool is_gui_active = false;
 	bool is_chat_active = false;
 	bool is_chat_full_hide = false;
-	bool is_debug_active = false;
 	bool is_spawn_enemy = false;
 	bool is_spawn_mode = false;
 	bool is_lock_move = true;
@@ -128,6 +125,7 @@ private:
 
 	float volume = 70;
 
+	unsigned int countSpawnEnemies = 1;
 	unsigned int countKills = 0;
 	unsigned int fps = 0;
 	unsigned int frames = 0;
@@ -150,10 +148,6 @@ private:
 	unsigned int _set_damage_tower = 10;
 
 	GUI::GUI_place* m_gui;
-	GUI::GUI_place* m_gui_chat;
-	GUI::GUI_place* m_gui_debug;
-	GUI::GUI_place* m_gui_place_menu;
-	GUI::GUI_place* m_gui_place_settings;
 
 	enum GUI_Active
 	{

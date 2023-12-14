@@ -2,6 +2,7 @@
 
 #include <string>
 #include <memory>
+#include <vector>
 #include <functional>
 
 #include <glm/mat4x4.hpp>
@@ -52,15 +53,37 @@ namespace GUI
 		virtual void on_press() {};
 		virtual void on_release() {};
 
-		virtual void set_active(const bool state) { m_isActive = state; }
+		virtual void set_active(const bool state) { m_isActive = state; set_tree_active(state); }
+		
+		void set_layer(int layer) { m_layer = layer; set_tree_layer(layer); }
 
 		void add_position(glm::vec2 pos) { m_position += pos; }
 
 		virtual void set_position(glm::vec2 pos) { m_position = pos; }
 		virtual void set_scale(glm::vec2 scale) { m_scale = scale; }
 
+		GUI_element* add_tree_element(GUI_element* element) { m_tree.push_back(element); return std::move(element); }
+
+		void set_tree_layer(int layer)
+		{
+			for (auto& i : m_tree)
+			{
+				i->set_layer(layer);
+			}
+		}
+
+		void set_tree_active(const bool state)
+		{
+			for (auto& i : m_tree)
+			{
+				i->set_active(state);
+			}
+		}
+
 		void set_position_p(glm::vec2 pos) { m_position_p = pos; }
 		void set_scale_p(glm::vec2 scale) { m_scale_p = scale; }
+
+		int get_layer() { return m_layer; }
 
 		glm::vec2 get_position() { return m_position; }
 		glm::vec2 get_scale() { return m_scale; }
@@ -76,7 +99,7 @@ namespace GUI
 		void on_click() { if (m_on_click != nullptr) m_on_click(); }
 		void set_click_callback(std::function<void()> on_click) { m_on_click = on_click; }
 
-		std::shared_ptr < RenderEngine::Material> get_material() { return m_pMaterial; }
+		std::shared_ptr<RenderEngine::Material> get_material() { return m_pMaterial; }
 
 		virtual std::vector<GUI_element*> get_elements() { return std::vector<GUI_element*>(); }
 	protected:
@@ -84,7 +107,7 @@ namespace GUI
 		bool m_isFocused;
 		bool m_isActive;
 
-		unsigned int m_layer;
+		int m_layer;
 
 		std::function<void()> m_on_click;
 		// Real coords
@@ -96,5 +119,7 @@ namespace GUI
 
 		std::string m_name;
 		std::shared_ptr<RenderEngine::Material> m_pMaterial;
+
+		std::vector<GUI_element*> m_tree;
 	};
 }

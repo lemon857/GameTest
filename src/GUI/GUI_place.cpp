@@ -13,6 +13,43 @@
 
 #include "EngineCore/Sound/Sound.h"
 
+void swap(GUI::GUI_element** a, GUI::GUI_element** b) {
+	GUI::GUI_element* t = *a;
+	*a = *b;
+	*b = t;
+}
+
+int partition(GUI::GUI_element** arr, int low, int high) {
+
+	int pivot = arr[high]->get_layer();
+
+	int i = (low - 1);
+
+	for (int j = low; j < high; j++) {
+		if (arr[j]->get_layer() <= pivot) {
+
+			i++;
+
+			swap(&arr[i], &arr[j]);
+		}
+	}
+
+	swap(&arr[i + 1], &arr[high]);
+
+	return (i + 1);
+}
+
+void quickSort(GUI::GUI_element** arr, int low, int high) {
+	if (low < high) {
+
+		int pi = partition(arr, low, high);
+
+		quickSort(arr, low, pi - 1);
+
+		quickSort(arr, pi + 1, high);
+	}
+}
+
 namespace GUI
 {
 	GUI_place::GUI_place(Camera* render_cam, std::shared_ptr<RenderEngine::Material> pMaterial)
@@ -94,8 +131,28 @@ namespace GUI
 			m_render_list.push_back(cur); // need sort with layers
 			add_elements(cur->get_elements(), wsize);
 		}
-
 	}
+	void GUI_place::add_elements(std::vector<GUI_element*> elements, glm::vec2 wsize, GUI_element* tree_parent)
+	{
+		if (elements.empty()) return;
+		for (auto cur : elements)
+		{
+			glm::vec2 posp = cur->get_position_p();
+			glm::vec2 scalep = cur->get_scale_p();
+			cur->set_position(glm::vec2(posp.x / 100 * wsize.x, posp.y / 100 * wsize.y));
+			cur->set_scale(glm::vec2(scalep.x / 100 * wsize.x, scalep.y / 100 * wsize.y));
+			cur->set_layer(tree_parent->get_layer());
+			m_render_list.push_back(cur);
+			tree_parent->add_tree_element(cur);
+			add_elements(cur->get_elements(), wsize);
+		}
+	}
+
+	void GUI_place::sort_render_list()
+	{
+		quickSort(m_render_list.data(), 0, m_render_list.size() - 1);
+	}
+
 	void GUI_place::on_mouse_press(int x, int y)
 	{
 		if (!m_isActive) return;

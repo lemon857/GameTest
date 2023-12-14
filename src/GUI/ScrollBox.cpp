@@ -41,6 +41,7 @@ namespace GUI
 	// need fix for add elements in render list in gui place
 	std::vector<GUI_element*> ScrollBox::get_elements()
 	{
+		add_tree_element(m_background);
 		std::vector<GUI_element*> vec;
 		vec.push_back(m_background);
 		return vec;
@@ -76,6 +77,6 @@ namespace GUI
 	}
 	void ScrollBox::set_open(bool isOpen)
 	{
-		m_background->set_active(isOpen);
+		set_tree_active(isOpen);
 	}
 }

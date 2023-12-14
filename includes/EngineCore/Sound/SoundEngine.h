@@ -24,8 +24,12 @@ public:
 
 	static float get_volume();
 
+	static bool get_OK() { return is_OK; }
+
 	static ma_engine* get_engine();
 
 private:
+	static bool is_OK;
+
 	static ma_engine* m_soundEngine;
 };

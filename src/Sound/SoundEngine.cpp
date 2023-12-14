@@ -7,6 +7,7 @@
 #include "EngineCore/Sound/miniaudio.h"
 
 ma_engine* SoundEngine::m_soundEngine;
+bool SoundEngine::is_OK;
 
 int SoundEngine::init_audio()
 {
@@ -34,7 +35,7 @@ int SoundEngine::init_audio()
 
     ma_engine_listener_set_world_up(m_soundEngine, 0, 0, 1, 0);
     //ma_engine_listener_set_cone(&engine, 0, 1, 2, 3);       
-
+    is_OK = true;
     return 0;
 }
 
@@ -42,6 +43,7 @@ void SoundEngine::uninit_audio()
 {
     ma_engine_stop(m_soundEngine);
     delete m_soundEngine;
+    is_OK = false;
 }
 
 void SoundEngine::set_position(float x, float y, float z)

@@ -41,6 +41,7 @@ void Sound::terminate()
 
 int Sound::play()
 {
+    if (!SoundEngine::get_OK()) return -1; // <--------------------- this need delete
     ma_result result;
     result = ma_sound_start(m_sound);
     if (result != MA_SUCCESS) {

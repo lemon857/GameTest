@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+#define BUILD_NAME "Tower_defense_0.0.4_alfa"
+
 #define DEBUG_CONSOLE // chanage on release build here
 
 #ifdef DEBUG_CONSOLE

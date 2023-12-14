@@ -18,4 +18,14 @@ namespace sysfunc
 	{
 		*val = *(_Ty*)(&buff[offset]);
 	}
+
+	// if str full contains symbol return true
+	bool is_full(const char* str, int strLen, char symbol)
+	{
+		for (int i = 0;i < strLen; i++)
+		{
+			if (str[i] != symbol) return false;
+		}
+		return true;
+	}	
 }

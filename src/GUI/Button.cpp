@@ -45,6 +45,8 @@ namespace GUI
 	}
 	std::vector<GUI_element*> Button::get_elements()
 	{
+		add_tree_element(m_face);
+		add_tree_element(m_textRenderer);
 		std::vector<GUI_element*> vec;
 		vec.push_back(m_textRenderer);
 		vec.push_back(m_face);

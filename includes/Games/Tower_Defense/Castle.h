@@ -24,6 +24,8 @@ public:
 
 	void update(const double delta) override;
 
+	void render() override;
+
 	void damage(const unsigned int damage_hp);
 		
 	glm::vec3 get_pos();

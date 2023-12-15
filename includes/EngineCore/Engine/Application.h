@@ -17,11 +17,13 @@ public:
 	Application& operator=(const Application&) = delete;
 	Application& operator=(Application&&) = delete;
 
-	int start(glm::ivec2& window_size, const char* title, const char* json_rel_path, const char* ini_rel_path);
+	int start(glm::ivec2& window_size, const char* title, const char* json_rel_path, const char* ini_rel_path, double tps_max = 20);
 
 	virtual bool init() { return true; };
 
 	virtual bool init_events() { return true; };
+
+	virtual void on_render(const double delta) {};
 
 	virtual void on_update(const double delta) {};
 

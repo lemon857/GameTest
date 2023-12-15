@@ -762,38 +762,16 @@ void GameApp::on_key_update(const double delta)
 }
 
 void GameApp::on_update(const double delta)
-{
-    // clear screen
-    RenderEngine::Renderer::setClearColor(m_colors[0], m_colors[1], m_colors[2], m_colors[3]);
-
-    RenderEngine::Renderer::clearColor();
-    // set matrix
-    ResourceManager::getShaderProgram("colorShader")->use();
-    ResourceManager::getShaderProgram("colorShader")->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
-    //ResourceManager::getShaderProgram("colorShader")->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_cam->get_ui_matrix());
-
-    ResourceManager::getShaderProgram("default3DShader")->use();
-    ResourceManager::getShaderProgram("default3DShader")->setVec3("cam_position", m_cam->get_position());
+{         
 
     m_gui->on_update(delta);
 
-    m_scene.at(4)->getComponent<Transform>()->set_position(parts[cur_player]);
-    //m_grid_line->render(glm::vec3(0), glm::vec3(m_world_mouse_pos_x, m_world_mouse_pos_y + 0.1f, m_world_mouse_pos_z), glm::vec3(1.f));
-
-
     for (size_t i = 0; i < m_scene.get_list().size(); i++)
-    {
-        MeshRenderer* mesh = m_scene.at(i)->getComponent<MeshRenderer>();
-        if (mesh != nullptr)
-        {
-            std::shared_ptr<RenderEngine::ShaderProgram> shader = mesh->get_material_ptr()->get_shader_ptr();
-            shader->use();
-
-            shader->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
-        }
+    {        
         if (i != 2) m_scene.at(i)->update(delta);
         if (i == 2 && is_grid_active) m_scene.at(i)->update(delta);
-    }       
+    }
+
     // ================================================================================ game logic ===========================================================
     if (restart_querry)
     {
@@ -1015,6 +993,63 @@ void GameApp::on_update(const double delta)
     }
 
     // ================================================================================ game logic ===========================================================
+    // tps counter
+    if (ticks < 5)
+    {
+        ticks++;
+        timesTicks += delta;
+    }
+    else
+    {
+        tps = int((ticks / timesTicks) * 1000.f);
+        m_gui->get_element<GUI::TextRenderer>("tps")->set_text("TPS: " + std::to_string(tps));
+        ticks = 0;
+        timesTicks = 0;
+    }
+}
+
+void GameApp::on_render(const double delta)
+{// clear screen
+    RenderEngine::Renderer::setClearColor(m_colors[0], m_colors[1], m_colors[2], m_colors[3]);
+
+    RenderEngine::Renderer::clearColor();
+    // set matrix
+    ResourceManager::getShaderProgram("colorShader")->use();
+    ResourceManager::getShaderProgram("colorShader")->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+    //ResourceManager::getShaderProgram("colorShader")->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_cam->get_ui_matrix());
+
+    ResourceManager::getShaderProgram("default3DShader")->use();
+    ResourceManager::getShaderProgram("default3DShader")->setVec3("cam_position", m_cam->get_position());
+
+    m_scene.at(4)->getComponent<Transform>()->set_position(parts[cur_player]);
+    //m_grid_line->render(glm::vec3(0), glm::vec3(m_world_mouse_pos_x, m_world_mouse_pos_y + 0.1f, m_world_mouse_pos_z), glm::vec3(1.f));
+
+    m_main_castle->render();
+
+    for (size_t i = 0; i < m_scene.get_list().size(); i++)
+    {
+        MeshRenderer* mesh = m_scene.at(i)->getComponent<MeshRenderer>();
+        if (mesh != nullptr)
+        {
+            std::shared_ptr<RenderEngine::ShaderProgram> shader = mesh->get_material_ptr()->get_shader_ptr();
+            shader->use();
+
+            shader->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+        }
+        if (i != 2) m_scene.at(i)->render();
+        if (i == 2 && is_grid_active) m_scene.at(i)->render();
+    }
+
+    for (auto curTower : m_towers)
+    {        
+        curTower->render();
+    }
+    for (size_t i = 0; i < m_enemies.size(); i++)
+    {
+        if (m_enemies[i] == nullptr) continue;
+        m_enemies[i]->render();
+    }
+
     // fps counter
     if (frames < 5)
     {
@@ -1171,6 +1206,10 @@ void GameApp::init_gui()
 
     m_gui->add_element<GUI::TextRenderer>(debug, ResourceManager::get_font("calibriChat"), ResourceManager::getShaderProgram("textShader"),
         "FPS: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, offset), glm::vec2(0.5f), "fps", false);
+    offset -= 2.5f;
+
+    m_gui->add_element<GUI::TextRenderer>(debug, ResourceManager::get_font("calibriChat"), ResourceManager::getShaderProgram("textShader"),
+        "TPS: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, offset), glm::vec2(0.5f), "tps", false);
     offset -= 2.5f;
 
     m_gui->add_element<GUI::TextRenderer>(debug, ResourceManager::get_font("calibriChat"), ResourceManager::getShaderProgram("textShader"),

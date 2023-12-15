@@ -18,6 +18,8 @@ public:
 	Plane(std::shared_ptr<RenderEngine::Material> pMaterial, glm::vec3 init_pos, glm::vec3 init_scale);
 	~Plane() = default;
 
+	void render() override;
+
 private:
 	std::shared_ptr<RenderEngine::Material> m_pMaterial;
 };

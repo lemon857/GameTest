@@ -19,7 +19,7 @@ Application::~Application()
     SoundEngine::uninit_audio();
 }
 
-int Application::start(glm::ivec2& window_size, const char* title, const char* json_rel_path, const char* ini_rel_path)
+int Application::start(glm::ivec2& window_size, const char* title, const char* json_rel_path, const char* ini_rel_path, double tps_max)
 {
     m_watch = new Stopwatch();
 
@@ -51,13 +51,25 @@ int Application::start(glm::ivec2& window_size, const char* title, const char* j
 
     auto lastTime = std::chrono::high_resolution_clock::now();
 
+    double sum_time = 0;
+
+    double max = 1000 / tps_max;
+
     while (!m_pCloseWindow)
     {
         auto currentTime = std::chrono::high_resolution_clock::now();
         double duration = std::chrono::duration<double, std::milli>(currentTime - lastTime).count();
         lastTime = currentTime;
         
-        on_update(duration);
+        sum_time += duration;
+
+        if (sum_time >= max)
+        {
+            on_update(sum_time);
+            sum_time = 0;
+        }
+
+        on_render(duration);
 
         on_ui_render();        
 

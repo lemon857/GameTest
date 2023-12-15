@@ -24,6 +24,8 @@ public:
 
 	void update(const double delta) override;
 
+	void render() override;
+
 	void set_target(BaseEnemy* target);
 
 	glm::vec3 get_pos();

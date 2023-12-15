@@ -20,9 +20,14 @@ Castle::Castle(glm::vec3 initPos, const unsigned int hp, std::string objPath,
 
 void Castle::update(const double delta)
 {
+
+}
+
+void Castle::render()
+{
 	if (m_isDestroyed) return;
 	m_bar->update();
-	updateComponents(delta);
+	updateComponents(0);
 }
 
 void Castle::damage(const unsigned int damage_hp)

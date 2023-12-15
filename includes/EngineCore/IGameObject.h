@@ -11,6 +11,8 @@ class IGameObject
 public:
 	virtual void update(const double delta) { updateComponents(delta); };
 
+	virtual void render() { updateComponents(0); };
+
 	std::string get_name() { return m_name; };
 
 	void set_name(const std::string name) { m_name = name; };

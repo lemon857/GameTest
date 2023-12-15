@@ -106,3 +106,8 @@ Plane::Plane(std::shared_ptr<RenderEngine::Material> pMaterial, glm::vec3 init_p
     addComponent<MeshRenderer>(std::make_shared<GraphicsObject>(vertexArray, indexBuffer), m_pMaterial);
     addComponent<Transform>(init_pos, init_scale);
 }
+
+void Plane::render()
+{
+    updateComponents(0);
+}

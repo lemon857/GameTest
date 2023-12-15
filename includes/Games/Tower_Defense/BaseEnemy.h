@@ -25,6 +25,8 @@ public:
 
 	void update(const double delta);
 
+	void render();
+
 	void damage(const unsigned int damage_hp);
 	
 	bool is_destroy() { return m_isDestroyed; }

@@ -63,7 +63,12 @@ void BaseEnemy::update(const double delta)
 		if (m_effect->is_destroy()) delete m_effect;
 		else m_effect->update(delta);
 	}
-	m_model->update(delta);
+}
+
+void BaseEnemy::render()
+{
+	if (m_isDestroyed) return;
+	m_model->update(0);
 	m_bar->update();
 }
 

@@ -32,7 +32,6 @@ BaseTower::~BaseTower()
 
 void BaseTower::update(const double delta)
 {
-	updateComponents(delta);
 	if (m_target_BaseEnemy == nullptr)
 	{		
 		return;
@@ -47,7 +46,12 @@ void BaseTower::update(const double delta)
 		}
 		m_cur_time = 0;
 	}
-	m_line->render_from_to(getComponent<Transform>()->get_position() + glm::vec3(0.f, 2.f, 0.f), m_target_BaseEnemy->get_pos(), glm::vec3(1.f));
+}
+
+void BaseTower::render()
+{
+	updateComponents(0);
+	if (m_target_BaseEnemy != nullptr) m_line->render_from_to(getComponent<Transform>()->get_position() + glm::vec3(0.f, 2.f, 0.f), m_target_BaseEnemy->get_pos(), glm::vec3(1.f));
 }
 
 void BaseTower::set_target(BaseEnemy* target)

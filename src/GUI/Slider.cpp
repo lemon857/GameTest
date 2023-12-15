@@ -53,7 +53,7 @@ namespace GUI
 			}
 			m_slider->set_position(glm::vec2(y * (m_scale.x + m_scale.x) + m_position.x - m_scale.x, m_position.y));
 			if (m_slide_callback != nullptr) m_slide_callback(m_value);
-			LOG_INFO("[SLIDER] Val: {0}", m_value);
+			//LOG_INFO("[SLIDER] Val: {0}", m_value);
 		}
 	}
 	float Slider::value()

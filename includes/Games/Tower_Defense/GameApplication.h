@@ -39,6 +39,7 @@ public:
 	bool init() override;
 	void on_key_update(const double delta) override;
 	void on_update(const double delta) override;
+	void on_render(const double delta) override;
 	void on_ui_render() override;
 	bool init_events() override;
 private:
@@ -128,8 +129,11 @@ private:
 	unsigned int countSpawnEnemies = 1;
 	unsigned int countKills = 0;
 	unsigned int fps = 0;
+	unsigned int tps = 0;
 	unsigned int frames = 0;
+	unsigned int ticks = 0;
 	double times = 0;
+	double timesTicks = 0;
 
 	double angle = 0;
 

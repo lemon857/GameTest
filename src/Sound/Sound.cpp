@@ -30,6 +30,8 @@ int Sound::init(const char* path)
     ma_sound_set_pinned_listener_index(m_sound, 0);
     ma_sound_set_positioning(m_sound, ma_positioning_relative);
 
+    ma_sound_set_volume(m_sound, SoundEngine::get_volume());
+
     return 0;
 }
 // may be pronlems with memory

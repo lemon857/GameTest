@@ -591,7 +591,10 @@ std::shared_ptr<GraphicsObject> ResourceManager::load_OBJ_file(const std::string
 		textureCoordsLayout.addElementLayoutFloat(2, false);
 		vao->addBuffer(vbo_texture, textureCoordsLayout);
 
-		ebo->init(index_array.data(), index_array.size() * sizeof(GLuint));
+		while (!ebo->init(index_array.data(), index_array.size() * sizeof(GLuint)))
+		{
+			LOG_CRIT("[BUG] Cause bug init index buffer");
+		}
 
 		vao->unbind();
 		ebo->unbind();

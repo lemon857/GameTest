@@ -25,7 +25,7 @@ int main(int argc, char** argv)
     }
     catch (const std::exception& ex)
     {
-        LOG_ERROR("Exception: {0}", ex.what());
+        LOG_CRIT("Exception: {0}", ex.what());
     }
     delete gameApp;
 #endif // !EDITOR_BUILD                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               

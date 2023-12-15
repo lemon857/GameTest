@@ -1,6 +1,5 @@
 #include "EngineCore/Renderer/IndexBuffer.h"
 
-
 namespace RenderEngine
 {
 	IndexBuffer::IndexBuffer()
@@ -28,12 +27,21 @@ namespace RenderEngine
 		m_count = IndexBuffer.m_count;
 		IndexBuffer.m_count = 0;
 	}
-	void IndexBuffer::init(const void* data, const unsigned int count)
+	bool IndexBuffer::init(const void* data, const unsigned int count)
 	{
-		glGenBuffers(1, &m_ID);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ID);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(GLuint), data, GL_STATIC_DRAW);
-		m_count = count;
+		__try
+		{
+			glGenBuffers(1, &m_ID);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ID);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(GLuint), data, GL_STATIC_DRAW);
+			m_count = count;
+			return true;
+		}
+		__except (true)
+		{
+			return false;
+		}
+		return false;
 	}
 	void IndexBuffer::bind() const
 	{

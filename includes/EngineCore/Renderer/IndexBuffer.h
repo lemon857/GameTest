@@ -15,7 +15,7 @@ namespace RenderEngine
 		IndexBuffer& operator=(const IndexBuffer&) = delete;
 		IndexBuffer& operator=(IndexBuffer&& IndexBuffer) noexcept;
 
-		void init(const void* data, const unsigned int count);
+		bool init(const void* data, const unsigned int count);
 		void bind() const;
 		void unbind() const;
 		unsigned int getCount() const { return m_count; };

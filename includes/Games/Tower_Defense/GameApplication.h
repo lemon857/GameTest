@@ -123,7 +123,7 @@ private:
 	
 	bool* lock_key_update;
 
-	float volume = 70;
+	float volume;
 
 	unsigned int countSpawnEnemies = 1;
 	unsigned int countKills = 0;

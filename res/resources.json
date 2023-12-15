@@ -285,6 +285,29 @@
       "subTextures": [
         "default"
       ]
+    },
+    {
+      "name": "Slider_bg",
+      "filePath": "res/textures/Slider_bg.png",
+      "width": 600,
+      "height": 100,
+      "subTexture_w": 600,
+      "subTexture_h": 100,
+      "subTextures": [
+        "default"
+      ]
+    },
+    {
+      "name": "Slider_face",
+      "filePath": "res/textures/Slider_face.png",
+      "width": 200,
+      "height": 100,
+      "subTexture_w": 100,
+      "subTexture_h": 100,
+      "subTextures": [
+        "static",
+        "clicked"
+      ]
     }
   ],
   "materials": [
@@ -347,6 +370,16 @@
       "name": "checkbox_mark",
       "nameShader": "spriteShader",
       "nameTexture": "CheckBox_mark"
+    },
+    {
+      "name": "slider_bg",
+      "nameShader": "spriteShader",
+      "nameTexture": "Slider_bg"
+    },
+    {
+      "name": "slider_face",
+      "nameShader": "spriteShader",
+      "nameTexture": "Slider_face"
     }
   ],
   "fonts": [

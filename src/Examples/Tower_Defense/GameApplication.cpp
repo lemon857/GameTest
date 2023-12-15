@@ -30,6 +30,7 @@
 #include "EngineCore/GUI/Square.h"
 #include "EngineCore/GUI/TextRenderer.h"
 #include "EngineCore/GUI/Button.h"
+#include "EngineCore/GUI/Slider.h"
 #include "EngineCore/GUI/Sprite.h"
 #include "EngineCore/GUI/InputField.h"
 #include "EngineCore/GUI/CheckBox.h"
@@ -67,8 +68,7 @@ GameApp::~GameApp()
 
 bool GameApp::init()
 {
-    volume = 100;
-    SoundEngine::set_volume(volume);
+    SoundEngine::set_volume(10);
 
     lock_key_update = new bool(false);
 
@@ -523,7 +523,7 @@ void GameApp::on_key_update(const double delta)
                                 sysfunc::type_to_char(&cur, buff, 1);
 
                                 WinSock::send_data(buff, sizeof(unsigned int) + 1);
-                                LOG_INFO("Add tower at {0}x{1}", x, y);
+                                //LOG_INFO("Add tower at {0}x{1}", x, y);
                             }
                         }
                         else
@@ -626,7 +626,7 @@ void GameApp::on_key_update(const double delta)
                             sysfunc::type_to_char(&cur, buff, 1);
 
                             WinSock::send_data(buff, sizeof(unsigned int) + 1);
-                            LOG_INFO("Add tower at {0}x{1}", x, y);
+                            //LOG_INFO("Add tower at {0}x{1}", x, y);
                         }
                     }
                     else
@@ -1091,6 +1091,7 @@ bool GameApp::init_events()
         });
     m_event_dispather.add_event_listener<EventMouseMoved>([&](EventMouseMoved& e)
         {
+            m_gui->get_element<GUI::Slider>("slider_volume")->move_mouse(e.x);
             glm::vec3 objcoord = m_cam->get_world_mouse_position(glm::vec2(e.x, e.y), m_pWindow->get_size());
 
             m_world_mouse_pos_x = objcoord.x;
@@ -1253,6 +1254,10 @@ void GameApp::init_gui()
 
     // Settings ------------------------------------------------------------------------------------
     GUI::GUI_element* settings = m_gui->add_element<GUI::GUI_element>("settings_place");
+
+
+    m_gui->add_element<GUI::Slider>(settings, new GUI::Sprite(ResourceManager::getMaterial("slider_bg"), "static"),
+        new GUI::Sprite(ResourceManager::getMaterial("slider_face"), "static"), glm::vec2(89.f, 83.f), glm::vec2(10.f, 5.f), 0, 100, "slider_volume");
 
     m_gui->add_element<GUI::Sprite>(settings, 1, ResourceManager::getMaterial("defaultSprite"), "default",
         glm::vec2(100.f), glm::vec2(100.f), "BG");

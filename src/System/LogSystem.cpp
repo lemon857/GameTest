@@ -7,6 +7,7 @@
 #include <chrono>
 #include <ctime>
 #include <fstream>
+#include <filesystem>
 
 std::ofstream* LogSystem::m_stream;
 
@@ -25,13 +26,24 @@ std::string currentDateTime() {
 	return std::string(buffer) + "." + tmp.substr(tmp.size() - 3);
 }
 
-void LogSystem::open_log_file(std::string relPath)
-{ 
-	m_stream = new std::ofstream();
-	m_stream->open(ResourceManager::getExeFilePath() + "/" + relPath);
-}
+void LogSystem::init_log_system(std::string relPathFolder)
+{ 	
+	bool res = std::filesystem::create_directory(ResourceManager::getExeFilePath() + "\\" + relPathFolder);
+	if (std::filesystem::exists(ResourceManager::getExeFilePath() + "\\" + relPathFolder + "\\lastest.log"))
+	{
+		std::time_t t = std::time(nullptr);
+		std::tm* now = std::localtime(&t);
+		char buffer[128];
+		strftime(buffer, sizeof(buffer), "%Y-%m-%d_%H-%M-%S", now);
 
-void LogSystem::close_log_file()
+		std::filesystem::copy_file(ResourceManager::getExeFilePath() + "\\" + relPathFolder + "\\lastest.log", 
+			ResourceManager::getExeFilePath() + "\\" + relPathFolder + "\\" + buffer + ".log");
+	}
+	m_stream = new std::ofstream();
+	m_stream->open(ResourceManager::getExeFilePath() + "\\" + relPathFolder + "\\lastest.log");
+} 
+
+void LogSystem::uninit_log_system()
 {
 	m_stream->close();
 }

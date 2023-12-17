@@ -8,7 +8,7 @@
 
 Application::Application()
 {
-    LogSystem::open_log_file("lastest.log");
+    LogSystem::init_log_system("logs");
     LOG_INFO("Starting Application");
 }
 
@@ -17,6 +17,7 @@ Application::~Application()
     LOG_INFO("Closing Application");
     ResourceManager::unloadAllResources();
     SoundEngine::uninit_audio();
+    LogSystem::uninit_log_system();
 }
 
 int Application::start(glm::ivec2& window_size, const char* title, const char* json_rel_path, const char* ini_rel_path, double tps_max)

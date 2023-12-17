@@ -27,8 +27,8 @@ public:
 	LogSystem& operator=(const LogSystem&) = delete;
 	LogSystem& operator=(const LogSystem&&) = delete;
 	
-	static void open_log_file(std::string relPath);
-	static void close_log_file();
+	static void init_log_system(std::string relPathFolder);
+	static void uninit_log_system();
 
 	static void log_info(std::string msg);
 	static void log_warn(std::string msg);

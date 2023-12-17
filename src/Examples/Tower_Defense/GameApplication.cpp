@@ -68,7 +68,7 @@ GameApp::~GameApp()
 
 bool GameApp::init()
 {
-    SoundEngine::set_volume(10);
+    SoundEngine::set_volume(1);
 
     lock_key_update = new bool(false);
 
@@ -1296,7 +1296,11 @@ void GameApp::init_gui()
 
 
     m_gui->add_element<GUI::Slider>(settings, new GUI::Sprite(ResourceManager::getMaterial("slider_bg"), "static"),
-        new GUI::Sprite(ResourceManager::getMaterial("slider_face"), "static"), glm::vec2(89.f, 83.f), glm::vec2(10.f, 5.f), 0, 100, "slider_volume");
+        new GUI::Sprite(ResourceManager::getMaterial("slider_face"), "static"), glm::vec2(89.f, 83.f), glm::vec2(10.f, 5.f), 0, 10, "slider_volume")->
+        set_slide_callback([](float val)
+            {
+                SoundEngine::set_volume(val / 10);
+            });
 
     m_gui->add_element<GUI::Sprite>(settings, 1, ResourceManager::getMaterial("defaultSprite"), "default",
         glm::vec2(100.f), glm::vec2(100.f), "BG");

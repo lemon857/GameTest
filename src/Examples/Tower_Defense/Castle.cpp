@@ -5,9 +5,7 @@
 #include "EngineCore/Components/MeshRenderer.h"
 #include "EngineCore/Components/Transform.h"
 
-#include "EngineCore/Resources/ResourceManager.h"
-
-Castle::Castle(glm::vec3 initPos, const unsigned int hp, std::string objPath,
+Castle::Castle(glm::vec3 initPos, const unsigned int hp, std::shared_ptr<GraphicsObject> obj,
 	std::shared_ptr<RenderEngine::Material> pMaterial, std::shared_ptr<RenderEngine::Material> pMaterialBar, glm::vec3 colorBar)
 	: m_hp(hp)
 	, m_isDestroyed(false)
@@ -15,7 +13,7 @@ Castle::Castle(glm::vec3 initPos, const unsigned int hp, std::string objPath,
 	, IGameObject("MainCastle")
 {
 	addComponent<Transform>(initPos);
-	addComponent<MeshRenderer>(ResourceManager::load_OBJ_file(objPath), pMaterial);
+	addComponent<MeshRenderer>(std::move(obj), pMaterial);
 }
 
 void Castle::update(const double delta)

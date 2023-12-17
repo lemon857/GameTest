@@ -32,7 +32,7 @@
 ResourceManager::ShaderProgramsMap ResourceManager::m_ShaderPrograms;
 ResourceManager::TexturesMap ResourceManager::m_textures;
 ResourceManager::MaterialsMap ResourceManager::m_materials;
-ResourceManager::CacheOBJMap ResourceManager::m_obj_files;
+ResourceManager::OBJMap ResourceManager::m_obj_models;
 ResourceManager::FontsMap ResourceManager::m_fonts_map;
 ResourceManager::SoundsMap ResourceManager::m_sounds_map;
 ResourceManager::UniqueSoundsMap ResourceManager::m_uSounds_map;
@@ -46,7 +46,7 @@ void ResourceManager::unloadAllResources()
 	m_ShaderPrograms.clear();
 	m_textures.clear();
 	m_materials.clear();
-	m_obj_files.clear();
+	m_obj_models.clear();
 	m_fonts_map.clear();
 	m_sounds_map.clear();
 	m_uSounds_map.clear();
@@ -154,6 +154,19 @@ bool ResourceManager::load_JSON_resources(const std::string & JSONpath)
 			const std::string path = currentSound["path"].GetString();
 			load_sound(path, name);
 			load_unique_sound(path, name);
+		}
+	}
+	auto modelsIt = doc.FindMember("models");
+	if (modelsIt != doc.MemberEnd())
+	{
+		for (const auto& currentModel: modelsIt->value.GetArray())
+		{
+			const std::string name = currentModel["name"].GetString();
+			const std::string path = currentModel["path"].GetString();
+			while (load_OBJ_model(name, path) == nullptr)
+			{
+
+			}
 		}
 	}
 	LOG_INFO("Loadind data from JSON file complete");
@@ -466,15 +479,8 @@ bool ResourceManager::save_scene(std::string relativePath, const Scene& scene)
 	fout.close();
 	return true;
 }
-std::shared_ptr<GraphicsObject> ResourceManager::load_OBJ_file(const std::string& OBJrelativePath, bool is_reload)
+std::shared_ptr<GraphicsObject> ResourceManager::load_OBJ_model(const std::string& name, const std::string& OBJrelativePath)
 {
-	CacheOBJMap::iterator it = m_obj_files.find(OBJrelativePath);
-		
-	if (it != m_obj_files.end())
-	{
-		if (!is_reload) return it->second;
-	}
-	
 	std::ifstream file;
 	file.open(m_path + "/" + OBJrelativePath);
 	if (file.is_open())
@@ -593,31 +599,32 @@ std::shared_ptr<GraphicsObject> ResourceManager::load_OBJ_file(const std::string
 
 		while (!ebo->init(index_array.data(), index_array.size() * sizeof(GLuint)))
 		{
-			LOG_CRIT("[BUG] Cause bug init index buffer");
+			LOG_WARN("Caused bug init index buffer");
+			file.close();
+			return nullptr;
 		}
 
 		vao->unbind();
 		ebo->unbind();
 
 		file.close();
+		std::shared_ptr<GraphicsObject> newOBJ =
+			m_obj_models.emplace(name, std::make_shared<GraphicsObject>(std::move(vao), std::move(ebo))).first->second;
 
-		if (is_reload)
-		{
-			it->second = std::make_shared<GraphicsObject>(std::move(vao), std::move(ebo));
-
-			LOG_INFO("Success load obj file: {0}", OBJrelativePath);
-			return it->second;
-		}
-		else
-		{
-			std::shared_ptr<GraphicsObject> newOBJ =
-				m_obj_files.emplace(OBJrelativePath, std::make_shared<GraphicsObject>(std::move(vao), std::move(ebo))).first->second;
-
-			LOG_INFO("Success load obj file: {0}", OBJrelativePath);
-			return newOBJ;
-		}
+		LOG_INFO("Success load obj file: {0}", OBJrelativePath);
+		return newOBJ;
 	}
 	file.close();
+	return nullptr;
+}
+std::shared_ptr<GraphicsObject> ResourceManager::get_OBJ_model(const std::string& name)
+{
+	OBJMap::const_iterator it = m_obj_models.find(name);
+	if (it != m_obj_models.end())
+	{
+		return it->second;
+	}
+	LOG_ERROR("Can't find OBJ model: {0}", name);
 	return nullptr;
 }
 bool ResourceManager::start_with(std::string& line, const char* text)
@@ -793,7 +800,7 @@ std::vector<std::string> ResourceManager::getNamesObjs()
 {
 	std::vector<std::string> data;
 
-	for (const auto& curObj : m_obj_files)
+	for (const auto& curObj : m_obj_models)
 	{
 		data.push_back(curObj.first);
 	}

@@ -15,9 +15,10 @@ struct GraphicsObject;
 class ObjModel : public IGameObject
 {
 public:
-	ObjModel(const std::string relativeFilePath, std::shared_ptr<RenderEngine::Material> pMaterial);
+	ObjModel(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<RenderEngine::Material> pMaterial);
 
+	// need additions
 	void reload();
 private:
-	std::string m_path;
+	//std::string m_path;
 };

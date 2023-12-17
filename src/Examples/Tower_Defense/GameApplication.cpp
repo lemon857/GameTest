@@ -131,10 +131,6 @@ bool GameApp::init()
             parts.push_back(startPos + glm::vec3((float)i * size.x, 0, (float)j * size.z));
         }
     }
-    // cache obj files
-    ResourceManager::load_OBJ_file("res/models/castle.obj");
-    ResourceManager::load_OBJ_file("res/models/tower.obj");
-    ResourceManager::load_OBJ_file("res/models/monkey.obj");
     // system init
     init_gui();
     start_game_single();
@@ -806,7 +802,7 @@ void GameApp::on_update(const double delta)
 
         while (!m_spawn_towers.empty())
         {
-            m_towers.push_back(new BaseTower("res/models/tower.obj",
+            m_towers.push_back(new BaseTower(ResourceManager::get_OBJ_model("tower"),
                 ResourceManager::getMaterial("tower"), nullptr, parts[m_spawn_towers.front()], _set_cooldown_tower, _set_damage_tower, new RenderEngine::Line(ResourceManager::getMaterial("default"))));
             ResourceManager::get_sound("tower_spawn")->play();
             m_spawn_towers.pop();
@@ -815,7 +811,7 @@ void GameApp::on_update(const double delta)
         {
             glm::vec3 pos = parts[m_spawn_enemies.front()];
             countEnemiesPerm++;
-            auto a = new BaseEnemy(new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("monkey")),
+            auto a = new BaseEnemy(new ObjModel(ResourceManager::get_OBJ_model("monkey"), ResourceManager::getMaterial("monkey")),
                 m_main_castle, glm::vec3(pos.x + (rand() % 100 - 50) / 100.f, pos.y, pos.z + (rand() % 100 - 50) / 100.f), 1, _set_velosity * 0.001, _set_max_hp_enemy, ResourceManager::getMaterial("default"));
             m_enemies.push_back(a);
             ResourceManager::get_sound("enemy_spawn")->play();
@@ -866,131 +862,127 @@ void GameApp::on_update(const double delta)
             m_enemies[i]->update(delta);
         }
     }    
-    else
-    {
-        m_main_castle->update(delta);
-        m_adv_castle->update(delta);
-
-        while (!m_spawn_towers.empty())
-        {
-            m_towers.push_back(new BaseTower("res/models/tower.obj",
-                ResourceManager::getMaterial("tower"), nullptr, parts[m_spawn_towers.front()],
-                _set_cooldown_tower, _set_damage_tower, new RenderEngine::Line(ResourceManager::getMaterial("default"))));
-            m_spawn_towers.pop();
-        }
-        while (!m_spawn_towers_self.empty())
-        {
-            m_towers_self.push_back(new BaseTower("res/models/tower.obj",
-                ResourceManager::getMaterial("tower"), nullptr, parts[m_spawn_towers_self.front()],
-                _set_cooldown_tower, _set_damage_tower, new RenderEngine::Line(ResourceManager::getMaterial("default"))));
-            m_spawn_towers_self.pop();
-        }
-
-        while (!m_spawn_enemies.empty()) // spawn enemies adv
-        {
-            countEnemiesPerm++;
-            auto a = new BaseEnemy(new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("monkey")),
-                isServer ? m_adv_castle : m_main_castle, parts[m_spawn_enemies.front()], 1, _set_velosity * 0.001, 
-                _set_max_hp_enemy, ResourceManager::getMaterial("default"), isServer ? glm::vec3(0.f, 0.f, 1.f) : glm::vec3(1.f, 0.f, 0.f));
-            m_enemies.push_back(a);
-            m_spawn_enemies.pop();
-            m_gui->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));
-        }
-        while (!m_spawn_enemies_self.empty()) // spawn enemies adv
-        {
-            countEnemiesPerm++;
-            auto a = new BaseEnemy(new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("monkey")),
-                isServer ? m_main_castle : m_adv_castle, parts[m_spawn_enemies_self.front()], 1, _set_velosity * 0.001,
-                _set_max_hp_enemy, ResourceManager::getMaterial("default"), isServer ? glm::vec3(1.f, 0.f, 0.f) : glm::vec3(0.f, 0.f, 1.f));
-            m_enemies_self.push_back(a);
-            m_spawn_enemies_self.pop();
-            m_gui->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));
-        }
-
-        for (auto curTower : m_towers)
-        {
-            double distance = 100; // <-------
-            for (size_t i = 0; i < m_enemies_self.size(); i++)
-            {
-                if (m_enemies_self[i] == nullptr) continue;
-                glm::vec3 a = m_enemies_self[i]->get_pos() - curTower->get_pos();
-                double d = sqrt(a.x * a.x + a.z * a.z);
-                if (d < _set_min_distance && d < distance)
-                {
-                    distance = d;
-                    if (curTower->get_target() == nullptr) curTower->set_target(m_enemies_self[i]);
-                    //if (curTower->get_target() != m_enemies[i]) curTower->set_target(m_enemies[i]);
-                }
-                else
-                {
-                    //curTower->set_target(nullptr);
-                }
-            }
-            curTower->update(delta);
-        }
-        for (auto curTower1 : m_towers_self)
-        {
-            double distance = 100; // <-------
-            for (size_t i = 0; i < m_enemies.size(); i++)
-            {
-                if (m_enemies[i] == nullptr) continue;
-                glm::vec3 a = m_enemies[i]->get_pos() - curTower1->get_pos();
-                double d = sqrt(a.x * a.x + a.z * a.z);
-                if (d < _set_min_distance && d < distance)
-                {
-                    distance = d;
-                    if (curTower1->get_target() == nullptr) curTower1->set_target(m_enemies[i]);
-                    //if (curTower->get_target() != m_enemies[i]) curTower->set_target(m_enemies[i]);
-                }
-                else
-                {
-                    //curTower->set_target(nullptr);
-                }
-            }
-            curTower1->update(delta);
-        }
-
-        for (size_t i = 0; i < m_enemies.size(); i++)
-        {
-            if (m_enemies[i] == nullptr) continue;
-            if (m_enemies[i]->is_destroy())
-            {
-                //countEnemies++;
-                countEnemiesPerm--;
-                for (auto curTower : m_towers)
-                {
-                    if (curTower->get_target() == m_enemies[i]) curTower->set_target(nullptr);
-                }
-                delete m_enemies[i];
-                m_enemies.remove(i);
-                countKills++;
-                m_gui->get_element<GUI::TextRenderer>("kills")->set_text("Kills: " + std::to_string(countKills));
-                m_gui->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));
-                continue;
-            }
-            m_enemies[i]->update(delta);
-        }
-        for (size_t i = 0; i < m_enemies_self.size(); i++)
-        {
-            if (m_enemies_self[i] == nullptr) continue;
-            if (m_enemies_self[i]->is_destroy())
-            {
-                //countEnemies++;
-                countEnemiesPerm--;
-                for (auto curTower : m_towers)
-                {
-                    if (curTower->get_target() == m_enemies_self[i]) curTower->set_target(nullptr);
-                }
-                delete m_enemies_self[i];
-                m_enemies_self.remove(i);
-                countKills++;
-                m_gui->get_element<GUI::TextRenderer>("kills")->set_text("Kills: " + std::to_string(countKills));
-                m_gui->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));
-                continue;
-            }
-            m_enemies_self[i]->update(delta);
-        }
-    }
+    //else
+    //{
+    //    m_main_castle->update(delta);
+    //    m_adv_castle->update(delta);
+    //    while (!m_spawn_towers.empty())
+    //    {
+    //        m_towers.push_back(new BaseTower(ResourceManager::load_OBJ_file("res/models/tower.obj"),
+    //            ResourceManager::getMaterial("tower"), nullptr, parts[m_spawn_towers.front()],
+    //            _set_cooldown_tower, _set_damage_tower, new RenderEngine::Line(ResourceManager::getMaterial("default"))));
+    //        m_spawn_towers.pop();
+    //    }
+    //    while (!m_spawn_towers_self.empty())
+    //    {
+    //        m_towers_self.push_back(new BaseTower(ResourceManager::load_OBJ_file("res/models/tower.obj"),
+    //            ResourceManager::getMaterial("tower"), nullptr, parts[m_spawn_towers_self.front()],
+    //            _set_cooldown_tower, _set_damage_tower, new RenderEngine::Line(ResourceManager::getMaterial("default"))));
+    //        m_spawn_towers_self.pop();
+    //    }
+    //    while (!m_spawn_enemies.empty()) // spawn enemies adv
+    //    {
+    //        countEnemiesPerm++;
+    //        auto a = new BaseEnemy(new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("monkey")),
+    //            isServer ? m_adv_castle : m_main_castle, parts[m_spawn_enemies.front()], 1, _set_velosity * 0.001, 
+    //            _set_max_hp_enemy, ResourceManager::getMaterial("default"), isServer ? glm::vec3(0.f, 0.f, 1.f) : glm::vec3(1.f, 0.f, 0.f));
+    //        m_enemies.push_back(a);
+    //        m_spawn_enemies.pop();
+    //        m_gui->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));
+    //    }
+    //    while (!m_spawn_enemies_self.empty()) // spawn enemies adv
+    //    {
+    //        countEnemiesPerm++;
+    //        auto a = new BaseEnemy(new ObjModel("res/models/monkey.obj", ResourceManager::getMaterial("monkey")),
+    //            isServer ? m_main_castle : m_adv_castle, parts[m_spawn_enemies_self.front()], 1, _set_velosity * 0.001,
+    //            _set_max_hp_enemy, ResourceManager::getMaterial("default"), isServer ? glm::vec3(1.f, 0.f, 0.f) : glm::vec3(0.f, 0.f, 1.f));
+    //        m_enemies_self.push_back(a);
+    //        m_spawn_enemies_self.pop();
+    //        m_gui->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));
+    //    }
+    //    for (auto curTower : m_towers)
+    //    {
+    //        double distance = 100; // <-------
+    //        for (size_t i = 0; i < m_enemies_self.size(); i++)
+    //        {
+    //            if (m_enemies_self[i] == nullptr) continue;
+    //            glm::vec3 a = m_enemies_self[i]->get_pos() - curTower->get_pos();
+    //            double d = sqrt(a.x * a.x + a.z * a.z);
+    //            if (d < _set_min_distance && d < distance)
+    //            {
+    //                distance = d;
+    //                if (curTower->get_target() == nullptr) curTower->set_target(m_enemies_self[i]);
+    //                //if (curTower->get_target() != m_enemies[i]) curTower->set_target(m_enemies[i]);
+    //            }
+    //            else
+    //            {
+    //                //curTower->set_target(nullptr);
+    //            }
+    //        }
+    //        curTower->update(delta);
+    //    }
+    //    for (auto curTower1 : m_towers_self)
+    //    {
+    //        double distance = 100; // <-------
+    //        for (size_t i = 0; i < m_enemies.size(); i++)
+    //        {
+    //            if (m_enemies[i] == nullptr) continue;
+    //            glm::vec3 a = m_enemies[i]->get_pos() - curTower1->get_pos();
+    //            double d = sqrt(a.x * a.x + a.z * a.z);
+    //            if (d < _set_min_distance && d < distance)
+    //            {
+    //                distance = d;
+    //                if (curTower1->get_target() == nullptr) curTower1->set_target(m_enemies[i]);
+    //                //if (curTower->get_target() != m_enemies[i]) curTower->set_target(m_enemies[i]);
+    //            }
+    //            else
+    //            {
+    //                //curTower->set_target(nullptr);
+    //            }
+    //        }
+    //        curTower1->update(delta);
+    //    }
+    //    for (size_t i = 0; i < m_enemies.size(); i++)
+    //    {
+    //        if (m_enemies[i] == nullptr) continue;
+    //        if (m_enemies[i]->is_destroy())
+    //        {
+    //            //countEnemies++;
+    //            countEnemiesPerm--;
+    //            for (auto curTower : m_towers)
+    //            {
+    //                if (curTower->get_target() == m_enemies[i]) curTower->set_target(nullptr);
+    //            }
+    //            delete m_enemies[i];
+    //            m_enemies.remove(i);
+    //            countKills++;
+    //            m_gui->get_element<GUI::TextRenderer>("kills")->set_text("Kills: " + std::to_string(countKills));
+    //            m_gui->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));
+    //            continue;
+    //        }
+    //        m_enemies[i]->update(delta);
+    //    }
+    //    for (size_t i = 0; i < m_enemies_self.size(); i++)
+    //    {
+    //        if (m_enemies_self[i] == nullptr) continue;
+    //        if (m_enemies_self[i]->is_destroy())
+    //        {
+    //            //countEnemies++;
+    //            countEnemiesPerm--;
+    //            for (auto curTower : m_towers)
+    //            {
+    //                if (curTower->get_target() == m_enemies_self[i]) curTower->set_target(nullptr);
+    //            }
+    //            delete m_enemies_self[i];
+    //            m_enemies_self.remove(i);
+    //            countKills++;
+    //            m_gui->get_element<GUI::TextRenderer>("kills")->set_text("Kills: " + std::to_string(countKills));
+    //            m_gui->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));
+    //            continue;
+    //        }
+    //        m_enemies_self[i]->update(delta);
+    //    }
+    //}
 
     // ================================================================================ game logic ===========================================================
     // tps counter
@@ -1330,7 +1322,7 @@ void GameApp::init_gui()
         glm::vec2(89.f, 50.f), glm::vec2(10.f, 5.f),
         "Switch mode", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
             {
-                if (m_mode == GameMode::Single)
+               /* if (m_mode == GameMode::Single)
                 {
                     m_mode = GameMode::Multi;
                 }
@@ -1338,7 +1330,8 @@ void GameApp::init_gui()
                 {
                     m_mode = GameMode::Single;
                 }
-                restart_querry = true;
+                restart_querry = true;*/
+                m_chat_mes.push("Coming soon...");
             });
 
     m_gui->add_element<GUI::Button>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
@@ -1516,7 +1509,7 @@ void GameApp::start_game_single()
     gui_window = null;
 
     m_main_castle = new Castle(parts[int((size_x * size_y) / 2) + int(size_x / 2)], _set_max_hp_castle,
-        "res/models/castle.obj", ResourceManager::getMaterial("castle"), ResourceManager::getMaterial("default"));
+        ResourceManager::get_OBJ_model("castle"), ResourceManager::getMaterial("castle"), ResourceManager::getMaterial("default"));
     map[int((size_x * size_y) / 2) + int(size_x / 2)] = true;
 
     for (size_t i = 0; i < m_towers.size(); i++)
@@ -1599,13 +1592,13 @@ void GameApp::start_game_multi()
     m_gui->set_active(false);
     //m_gui_place_settings->set_active(false);
 
-    m_adv_castle = new Castle(parts[int(size_x * (size_y / 8)) + int(size_x / 4)], _set_max_hp_castle,
-        "res/models/castle.obj", ResourceManager::getMaterial("castle"), ResourceManager::getMaterial("default"));
-    map[int(size_x * (size_y / 8)) + int(size_x / 8)] = true;
+    //m_adv_castle = new Castle(parts[int(size_x * (size_y / 8)) + int(size_x / 4)], _set_max_hp_castle,
+    //    ResourceManager::load_OBJ_file("res/models/castle.obj"), ResourceManager::getMaterial("castle"), ResourceManager::getMaterial("default"));
+    //map[int(size_x * (size_y / 8)) + int(size_x / 8)] = true;
 
-    m_main_castle = new Castle(parts[int(size_x * ((size_y * 7) / 8)) + int((size_x * 3) / 4)], _set_max_hp_castle,
-        "res/models/castle.obj", ResourceManager::getMaterial("castle"), ResourceManager::getMaterial("default"), glm::vec3(0.f, 0.f, 1.f));
-    map[int(size_x * ((size_y * 7) / 8)) + int((size_x * 7) / 8)] = true;
+    //m_main_castle = new Castle(parts[int(size_x * ((size_y * 7) / 8)) + int((size_x * 3) / 4)], _set_max_hp_castle,
+    //    ResourceManager::load_OBJ_file("res/models/castle.obj"), ResourceManager::getMaterial("castle"), ResourceManager::getMaterial("default"), glm::vec3(0.f, 0.f, 1.f));
+    //map[int(size_x * ((size_y * 7) / 8)) + int((size_x * 7) / 8)] = true;
 
     if (isServer)
     {

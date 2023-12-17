@@ -16,10 +16,12 @@ namespace RenderEngine
 	class Line;
 }
 
+struct GraphicsObject;
+
 class BaseTower : public IGameObject
 {
 public:
-	BaseTower(std::string objPath, std::shared_ptr<RenderEngine::Material> pMaterial, BaseEnemy* target, glm::vec3 pos, double cooldown, unsigned int damage, RenderEngine::Line* line);
+	BaseTower(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<RenderEngine::Material> pMaterial, BaseEnemy* target, glm::vec3 pos, double cooldown, unsigned int damage, RenderEngine::Line* line);
 	~BaseTower();
 
 	void update(const double delta) override;

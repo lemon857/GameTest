@@ -12,7 +12,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-BaseTower::BaseTower(std::string objPath, std::shared_ptr<RenderEngine::Material> pMaterial, BaseEnemy* target, glm::vec3 pos, double cooldown, unsigned int damage, RenderEngine::Line* line)
+BaseTower::BaseTower(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<RenderEngine::Material> pMaterial, BaseEnemy* target, glm::vec3 pos, double cooldown, unsigned int damage, RenderEngine::Line* line)
 	: m_target_BaseEnemy(std::move(target))
 	, m_line(std::move(line))
 	, m_cool_down(cooldown * 1000)
@@ -21,7 +21,7 @@ BaseTower::BaseTower(std::string objPath, std::shared_ptr<RenderEngine::Material
 	, IGameObject("Tower")
 {
 	addComponent<Transform>(pos);
-	addComponent<MeshRenderer>(ResourceManager::load_OBJ_file(objPath), pMaterial);
+	addComponent<MeshRenderer>(std::move(obj), pMaterial);
 	m_sound = std::move(ResourceManager::get_unique_sound("tower_attak"));
 }
 

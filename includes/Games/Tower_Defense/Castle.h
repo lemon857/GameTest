@@ -9,6 +9,8 @@
 
 class HealthBar;
 
+struct GraphicsObject;
+
 namespace RenderEngine
 {
 	class Material;
@@ -17,7 +19,7 @@ namespace RenderEngine
 class Castle : public IGameObject
 {
 public:
-	Castle(glm::vec3 initPos, const unsigned int hp, std::string objPath,
+	Castle(glm::vec3 initPos, const unsigned int hp, std::shared_ptr<GraphicsObject> obj,
 		std::shared_ptr<RenderEngine::Material> pMaterial, std::shared_ptr<RenderEngine::Material> pMaterialBar, glm::vec3 colorBar = glm::vec3(1.f, 0.f, 0.f));
 
 	~Castle() = default;

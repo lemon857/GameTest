@@ -399,7 +399,7 @@
       "size": 96
     }
   ],
-  "sounds": [    
+  "sounds": [
     {
       "name": "click",
       "path": "res/sounds/click.flac"
@@ -415,6 +415,20 @@
     {
       "name": "enemy_spawn",
       "path": "res/sounds/enemy_spawn.flac"
+    }
+  ],
+  "models": [
+    {
+      "name": "castle",
+      "path": "res/models/castle.obj"
+    },
+    {
+      "name": "tower",
+      "path": "res/models/tower.obj"
+    },
+    {
+      "name": "monkey",
+      "path": "res/models/monkey.obj"
     }
   ]
 }

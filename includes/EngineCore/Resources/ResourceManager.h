@@ -68,7 +68,8 @@ namespace RenderEngine
 
 		static bool save_scene(std::string relativePath, const Scene& scene);
 
-		static std::shared_ptr<GraphicsObject> load_OBJ_file(const std::string& OBJrelativePath, bool is_reload = false);
+		static std::shared_ptr<GraphicsObject> load_OBJ_model(const std::string& name, const std::string& OBJrelativePath);
+		static std::shared_ptr<GraphicsObject> get_OBJ_model(const std::string& name);
 
 		static std::shared_ptr<GUI::Font> load_font(std::string relativePath, std::string font_name, unsigned int font_size);
 
@@ -149,8 +150,8 @@ namespace RenderEngine
 		typedef std::map<const std::string, std::shared_ptr<RenderEngine::Material>> MaterialsMap;
 		static MaterialsMap m_materials;
 
-		typedef std::map<const std::string, std::shared_ptr<GraphicsObject>> CacheOBJMap;
-		static CacheOBJMap m_obj_files;
+		typedef std::map<const std::string, std::shared_ptr<GraphicsObject>> OBJMap;
+		static OBJMap m_obj_models;
 
 		typedef std::map<const std::string, std::shared_ptr<GUI::Font>> FontsMap;
 		static FontsMap m_fonts_map;

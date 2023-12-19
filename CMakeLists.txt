@@ -37,6 +37,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/System/List.h	
 	includes/EngineCore/System/SysFunc.h	
 	includes/EngineCore/System/CommandManager.h	
+	includes/EngineCore/System/INI_loader.h	
 	
 	includes/Games/Tower_Defense/GameApplication.h
   
@@ -177,7 +178,8 @@ set(ENGINE_PRIVATE_SOURCES
 	src/System/Timer.cpp
 	src/System/Stopwatch.cpp	
 	src/System/LogSystem.cpp	
-	src/System/CommandManager.cpp	
+	src/System/CommandManager.cpp
+	src/System/INI_loader.cpp		
 	
 	src/Components/MeshRenderer.cpp	
 	src/Components/Transform.cpp

@@ -19,6 +19,14 @@
 
 const int size_x = 30, size_y = 30;
 
+struct INIregionUSER : BaseINIregion
+{
+	std::string* nickname;
+
+	void parse(std::string name, std::string value) override;
+	std::string get_str_data() override;
+};
+
 namespace GUI
 {
 	class GUI_place;
@@ -35,14 +43,16 @@ class GameApp : public Application
 public:
 	GameApp();
 	~GameApp();
-
+	
+private:
 	bool init() override;
+	void terminate() override;
 	void on_key_update(const double delta) override;
 	void on_update(const double delta) override;
 	void on_render(const double delta) override;
 	void on_ui_render() override;
 	bool init_events() override;
-private:
+
 	void init_gui();
 
 	void start_game_single();
@@ -161,4 +171,6 @@ private:
 	};
 
 	GUI_Active gui_window;
+
+	INIregionUSER m_ini_region_user;
 };

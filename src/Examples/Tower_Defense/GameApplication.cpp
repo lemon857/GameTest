@@ -54,17 +54,14 @@
 
 GameApp::GameApp()
     : Application()
-    , m_nickname("")
+    , m_nickname("defaultNick")
     , m_nickname_connect("")
 {
+    m_ini_region_user.nickname = &m_nickname;
+    m_ini_data.add_region("USER", &m_ini_region_user);
 }
 GameApp::~GameApp()
-{
-    delete m_cam;
-    delete lock_key_update;
-    WinSock::close_WinSock();
-    chat_last.clear();
-}
+{}
 
 bool GameApp::init()
 {
@@ -273,6 +270,14 @@ bool GameApp::init()
         });
 
     return true;
+}
+
+void GameApp::terminate()
+{
+    delete m_cam;
+    delete lock_key_update;
+    WinSock::close_WinSock();
+    chat_last.clear();
 }
 
 void GameApp::on_key_update(const double delta)
@@ -1756,4 +1761,16 @@ void GameApp::init_winSock()
         m_mode = GameMode::Multi;
         restart_querry = true;
         });
+}
+
+void INIregionUSER::parse(std::string name, std::string value)
+{
+    if (name == "nickname") *nickname = value;
+}
+
+std::string INIregionUSER::get_str_data()
+{
+    std::string data = "";
+    data += "nickname=" + *nickname + "\n";
+    return data;
 }

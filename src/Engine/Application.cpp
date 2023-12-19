@@ -7,28 +7,28 @@
 #include "EngineCore/Sound/SoundEngine.h"
 
 Application::Application()
-{
-    LogSystem::init_log_system("logs");
-    LOG_INFO("Starting Application");
-}
+{}
 
 Application::~Application()
-{
-    LOG_INFO("Closing Application");
-    ResourceManager::unloadAllResources();
-    SoundEngine::uninit_audio();
-    LogSystem::uninit_log_system();
-}
+{}
 
 int Application::start(glm::ivec2& window_size, const char* title, const char* json_rel_path, const char* ini_rel_path, double tps_max)
 {
+    LogSystem::init_log_system("logs");
+    LOG_INFO("Starting Application");
+
     m_watch = new Stopwatch();
 
-    INIdata data{ window_size, m_window_position, m_maximized_window };
-    ResourceManager::load_INI_settings(ini_rel_path, data, false);
+    m_window_size = window_size;
+
+    INIregionSTARTUP startup{ &m_window_size, &m_window_position, &m_maximized_window };
+
+    m_ini_data.add_region("STARTUP", &startup);
+
+    ResourceManager::load_INI_settings(ini_rel_path, m_ini_data, false);
 
     m_pCloseWindow = false;
-    m_pWindow = std::make_unique<Window>(title, m_window_position, window_size, m_maximized_window);
+    m_pWindow = std::make_unique<Window>(title, m_window_position, m_window_size, m_maximized_window);
 
     if (SoundEngine::init_audio() != 0) LOG_ERROR("Fail init sound engine");
 
@@ -78,9 +78,40 @@ int Application::start(glm::ivec2& window_size, const char* title, const char* j
         on_key_update(duration);
     }
 
-    INIdata endData{ m_pWindow->get_size(), m_window_position, m_maximized_window};
-    ResourceManager::load_INI_settings(ini_rel_path, endData, true);
+    m_window_size = m_pWindow->get_size();
+
+    ResourceManager::load_INI_settings(ini_rel_path, m_ini_data, true);
+
     m_pWindow = nullptr;
 
     return 0;
+}
+
+void Application::stop()
+{    
+    LOG_INFO("Closing Application");
+    terminate();
+    ResourceManager::unloadAllResources();
+    SoundEngine::uninit_audio();
+    LogSystem::uninit_log_system();
+}
+
+void INIregionSTARTUP::parse(std::string name, std::string value)
+{
+    if (name == "window_width") window_size->x = std::stoi(value);
+    else if (name == "window_height") window_size->y = std::stoi(value);
+    else if (name == "window_position_x") window_position->x = std::stoi(value);
+    else if (name == "window_position_y") window_position->y = std::stoi(value);
+    else if (name == "window_maximized") *maximized_window = std::stoi(value) == 1 ? true : false;
+}
+
+std::string INIregionSTARTUP::get_str_data()
+{
+    std::string data = "";
+    data += "window_width=" + std::to_string(window_size->x) + "\n";
+    data += "window_height=" + std::to_string(window_size->y) + "\n";
+    data += "window_position_x=" + std::to_string(window_position->x) + "\n";
+    data += "window_position_y=" + std::to_string(window_position->y) + "\n";
+    data += "window_maximized=" + std::to_string(*maximized_window == true ? 1 : 0) + "\n";
+    return data;
 }

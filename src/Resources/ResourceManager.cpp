@@ -12,6 +12,8 @@
 #include "EngineCore/Resources/Scene.h"
 #include "EngineCore/GUI/Font.h"
 
+#include "EngineCore/System/INI_loader.h" 
+
 #include "EngineCore/Sound/Sound.h"
 
 #include <sstream>
@@ -310,40 +312,26 @@ bool ResourceManager::load_JSON_fonts(const std::string& JSONpath)
 bool ResourceManager::load_INI_settings(const std::string& INIpath, INIdata& data, const bool isWrite)
 {
 	std::ifstream f;
-	f.open(m_path + "/" + INIpath, std::ios::in | std::ios::binary);
+	f.open(m_path + "/" + INIpath, std::ios::in);
 
 	if (f.is_open() && !isWrite)
 	{
-
-		std::stringstream buf;
-		buf << f.rdbuf();
-		f.close();
-
-		std::string INIstr = buf.str();
-		if (!INIstr.empty() && !isWrite)
+		std::string line;
+		std::string region = "";
+		while (std::getline(f, line))
 		{
-			const size_t newLine = INIstr.find('\n');
-			const size_t newLine2 = INIstr.substr(newLine + 1, INIstr.size() - newLine + 1).find('\n');
-
-			const std::string size = INIstr.substr(0, newLine - 1);
-			const std::string pos = INIstr.substr(newLine + 1, newLine2 - 1);
-
-			const std::string width = size.substr(0, size.find(' '));
-			const std::string height = size.substr(size.find(' ') + 1, size.size());
-
-			const std::string posX = pos.substr(0, pos.find(' '));
-			const std::string posY = pos.substr(pos.find(' ') + 1, pos.size());
-
-			const std::string maximized = INIstr.substr(newLine + newLine2 + 2, INIstr.size() - newLine2 - newLine);
-
-			LOG_INFO("Succsess read file {0}", INIpath);
-			LOG_INFO("Data {2} {0}x{1} {3}x{4}", width, height, maximized, posX, posY);
-
-			data.window_size = glm::ivec2(std::stoi(width), std::stoi(height));
-			data.window_position = glm::ivec2(std::stoi(posX), std::stoi(posY));
-			data.maximized_window = std::stoi(maximized) == 1 ? true : false;
-			return true;
+			if (line[0] == '[')
+			{
+				region = line.substr(1, line.length() - 2);
+			}
+			else if (data.get_region(region) != nullptr)
+			{
+				std::string name = line.substr(0, line.find('='));
+				std::string value = line.substr(line.find('=') + 1);
+				data.get_region(region)->parse(name, value);
+			}
 		}
+		return true;
 	}
 	std::ofstream writeStream;
 	writeStream.open(m_path + "/" + INIpath);
@@ -351,10 +339,11 @@ bool ResourceManager::load_INI_settings(const std::string& INIpath, INIdata& dat
 	if (writeStream.is_open())
 	{
 		LOG_INFO("Succsess open file {0} for write data", INIpath);
-		writeStream << std::to_string(data.window_size.x) << " " << std::to_string(data.window_size.y) << "\n";
-		writeStream << std::to_string(data.window_position.x) << " " << std::to_string(data.window_position.y) << "\n";
-		writeStream << std::to_string(data.maximized_window == true ? 1 : 0);
-		writeStream.close();
+		for (auto& i : data.regions)
+		{
+			writeStream << '[' << i.first << ']' << '\n';
+			writeStream << i.second->get_str_data();
+		}		
 		return true;
 	}
 	else

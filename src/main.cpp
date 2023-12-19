@@ -27,6 +27,7 @@ int main(int argc, char** argv)
     {
         LOG_CRIT("Exception: {0}", ex.what());
     }
+    gameApp->stop();
     delete gameApp;
 #endif // !EDITOR_BUILD                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 

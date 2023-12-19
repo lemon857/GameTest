@@ -4,19 +4,13 @@
 #include <memory>
 #include <map>
 #include <vector>
+
 #include <glm/vec2.hpp>
 
-struct INIdata
-{
-	glm::ivec2& window_size;
-	glm::ivec2& window_position;
-	bool& maximized_window;
-};
-
 class Scene;
-
 class Sound;
 
+struct INIdata;
 struct GraphicsObject;
 
 namespace GUI

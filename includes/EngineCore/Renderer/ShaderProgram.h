@@ -16,7 +16,7 @@ namespace RenderEngine
 	class ShaderProgram {
 	public:
 		// Создание шейдерной программы из двух, вертексной и фрагментной
-		ShaderProgram(const std::string& vertexShader, const std::string& fragmentShader, std::shared_ptr<RenderEngine::ShaderProgramLayout> layout);
+		ShaderProgram(const std::string& vertexShader, const std::string& fragmentShader, const std::string& geometryShader, std::shared_ptr<RenderEngine::ShaderProgramLayout> layout);
 		~ShaderProgram();
 		// Проверка на скомпилированность шейдера 
 		bool isCompiled() const;

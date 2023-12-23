@@ -124,6 +124,7 @@ private:
 	bool is_spawn_enemy = false;
 	bool is_spawn_mode = false;
 	bool is_lock_move = true;
+	bool is_special_move = false;
 	bool is_mute = false;
 
 	bool isKeyPressed = false;
@@ -173,4 +174,7 @@ private:
 	GUI_Active gui_window;
 
 	INIregionUSER m_ini_region_user;
+
+	glm::vec3 movDel = glm::vec3(0);
+	glm::vec3 rotDel = glm::vec3(0);
 };

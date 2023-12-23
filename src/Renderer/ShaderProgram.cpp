@@ -5,7 +5,7 @@
 
 namespace RenderEngine 
 {
-	ShaderProgram::ShaderProgram(const std::string& vertexShader, const std::string& fragmentShader, std::shared_ptr<RenderEngine::ShaderProgramLayout> layout)
+	ShaderProgram::ShaderProgram(const std::string& vertexShader, const std::string& fragmentShader, const std::string& geometryShader, std::shared_ptr<RenderEngine::ShaderProgramLayout> layout)
 		: m_layout(std::move(layout))
 	{
 		GLuint vertexShaderID;
@@ -21,9 +21,21 @@ namespace RenderEngine
 			glDeleteShader(vertexShaderID);
 			return;
 		}
+		GLuint geometryShaderID;
+		if (!geometryShader.empty())
+		{
+			if (!createShader(geometryShader, GL_GEOMETRY_SHADER, geometryShaderID))
+			{
+				LOG_ERROR("GEOMETRY SHADER ERROR COMPILE");
+				glDeleteShader(vertexShaderID);
+				glDeleteShader(fragmentShaderID);
+				return;
+			}
+		}
 		m_ID = glCreateProgram();
 		glAttachShader(m_ID, vertexShaderID);
 		glAttachShader(m_ID, fragmentShaderID);
+		if (!geometryShader.empty()) glAttachShader(m_ID, geometryShaderID);
 		glLinkProgram(m_ID);
 
 		GLint success;
@@ -40,6 +52,7 @@ namespace RenderEngine
 		}
 		glDeleteShader(vertexShaderID);
 		glDeleteShader(fragmentShaderID);
+		if (!geometryShader.empty()) glDeleteShader(geometryShaderID);
 	}
 	ShaderProgram::~ShaderProgram()
 	{

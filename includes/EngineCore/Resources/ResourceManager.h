@@ -82,6 +82,7 @@ namespace RenderEngine
 			const std::string& shaderName, 
 			const std::string& vertexPath, 
 			const std::string& fragmentPath,
+			const std::string& geometryPath,
 			std::shared_ptr<RenderEngine::ShaderProgramLayout> layout);
 		static std::shared_ptr<RenderEngine::ShaderProgram> getShaderProgram(
 			const std::string& shaderName);

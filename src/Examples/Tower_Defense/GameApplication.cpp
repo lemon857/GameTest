@@ -759,11 +759,26 @@ void GameApp::on_key_update(const double delta)
         m_init_mouse_pos_y = pos.y;
     }
 
+    if (is_special_move)
+    {
+        movDel += movement_delta;
+        rotDel += rotation_delta;
+        return;
+    }
     m_cam->add_movement_and_rotation(movement_delta, rotation_delta);
 }
 
 void GameApp::on_update(const double delta)
-{         
+{       
+    if (is_special_move)
+    {
+        m_cam->add_movement_and_rotation(movDel, rotDel);
+        movDel = glm::vec3(0);
+        rotDel = glm::vec3(0);
+    }
+
+    m_gui->get_element<GUI::TextRenderer>("cam_pos")->set_text("Cam pos: " +
+        std::to_string(m_cam->get_position().x) + " " + std::to_string(m_cam->get_position().y) + " " + std::to_string(m_cam->get_position().z));
 
     m_gui->on_update(delta);
 
@@ -1188,7 +1203,7 @@ bool GameApp::init_events()
 void GameApp::init_gui()
 {
     ResourceManager::get_font("calibri")->set_scale(0.5f);
-    ResourceManager::get_font("calibriChat")->set_scale(0.3f);
+    ResourceManager::get_font("calibriChat")->set_scale(0.27f);
 
     m_gui = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
 
@@ -1219,6 +1234,10 @@ void GameApp::init_gui()
 
     m_gui->add_element<GUI::TextRenderer>(debug, ResourceManager::get_font("calibriChat"), ResourceManager::getShaderProgram("textShader"),
         "Ping: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, offset), glm::vec2(0.5f), "ping", false);
+    offset -= 2.5f;
+
+    m_gui->add_element<GUI::TextRenderer>(debug, ResourceManager::get_font("calibriChat"), ResourceManager::getShaderProgram("textShader"),
+        "Cam pos: 0", glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.1f, offset), glm::vec2(0.5f), "cam_pos", false);
 
     debug->set_active(false);
 
@@ -1313,6 +1332,14 @@ void GameApp::init_gui()
                 is_mute = !is_mute;
                 m_gui->get_element<GUI::Button>("muteToggle")->set_text(is_mute ? "Unmute" : "Mute");
                 SoundEngine::set_volume(is_mute ? 0 : volume);
+            });
+
+    m_gui->add_element<GUI::Button>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(11.f, 61.f), glm::vec2(10.f, 5.f),
+        "Off spec move", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f), "SpecMoveToggle")->set_click_callback([&]()
+            {
+                is_special_move = !is_special_move;
+                m_gui->get_element<GUI::Button>("SpecMoveToggle")->set_text(is_special_move ? "Off spec move" : "On spec move");
             });
 
     m_gui->add_element<GUI::Button>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),

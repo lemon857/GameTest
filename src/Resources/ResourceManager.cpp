@@ -84,6 +84,7 @@ bool ResourceManager::load_JSON_resources(const std::string & JSONpath)
 			const std::string name = currentShader["name"].GetString();
 			const std::string vertShader = currentShader["filePath_v"].GetString();
 			const std::string fragShader = currentShader["filePath_f"].GetString();
+			const std::string geomShader = (currentShader.HasMember("filePath_g") ? currentShader["filePath_g"].GetString() : "");
 			const auto layoutArray = currentShader["layout"].GetArray();
 
 			std::shared_ptr<RenderEngine::ShaderProgramLayout> layout = std::make_shared<RenderEngine::ShaderProgramLayout>();
@@ -97,7 +98,7 @@ bool ResourceManager::load_JSON_resources(const std::string & JSONpath)
 				layout->addElementLayout(name, (ETypeData)type, min, max);
 			}
 
-			loadShaders(name, vertShader, fragShader, layout);
+			loadShaders(name, vertShader, fragShader, geomShader, layout);
 		}
 	}
 	auto atlasesIt = doc.FindMember("textureAtlases");
@@ -202,6 +203,7 @@ bool ResourceManager::load_JSON_shaders(const std::string& JSONpath)
 			const std::string name = currentShader["name"].GetString();
 			const std::string vertShader = currentShader["filePath_v"].GetString();
 			const std::string fragShader = currentShader["filePath_f"].GetString();
+			const std::string geomShader = (currentShader.HasMember("filePath_g") ? currentShader["filePath_g"].GetString() : "");
 			const auto layoutArray = currentShader["layout"].GetArray();
 
 			std::shared_ptr<RenderEngine::ShaderProgramLayout> layout = std::make_shared<RenderEngine::ShaderProgramLayout>();
@@ -215,7 +217,7 @@ bool ResourceManager::load_JSON_shaders(const std::string& JSONpath)
 				layout->addElementLayout(name, (ETypeData)type, min, max);
 			}
 
-			loadShaders(name, vertShader, fragShader, layout);
+			loadShaders(name, vertShader, fragShader, geomShader, layout);
 		}
 	}
 	auto materialsIt = doc.FindMember("materials");
@@ -644,6 +646,7 @@ std::string ResourceManager::getFileString(const std::string& relativeFilePath)
 }
 
 std::shared_ptr<RenderEngine::ShaderProgram> ResourceManager::loadShaders(const std::string& shaderName, const std::string& vertexPath, const std::string& fragmentPath,
+	const std::string& geometryPath,
 	std::shared_ptr<RenderEngine::ShaderProgramLayout> layout)
 {
 	std::string vertexString = getFileString(vertexPath);
@@ -658,6 +661,16 @@ std::shared_ptr<RenderEngine::ShaderProgram> ResourceManager::loadShaders(const 
 		LOG_ERROR("Fragment shader file is empty");
 		return nullptr;
 	}
+	std::string geometryString = "";
+	if (!geometryPath.empty())
+	{
+		geometryString = getFileString(fragmentPath);
+		if (geometryString.empty())
+		{
+			LOG_ERROR("Geometry shader file is empty");
+			return nullptr;
+		}
+	}
 	std::shared_ptr<RenderEngine::ShaderProgram> shader;
 	ShaderProgramsMap::const_iterator it = m_ShaderPrograms.find(shaderName);
 	if (it != m_ShaderPrograms.end()) shader = it->second;
@@ -665,7 +678,7 @@ std::shared_ptr<RenderEngine::ShaderProgram> ResourceManager::loadShaders(const 
 	if (shader == nullptr)
 	{
 		std::shared_ptr<RenderEngine::ShaderProgram>& newShader =
-			m_ShaderPrograms.emplace(shaderName, std::make_shared<RenderEngine::ShaderProgram>(vertexString, fragmentString, std::move(layout))).first->second;
+			m_ShaderPrograms.emplace(shaderName, std::make_shared<RenderEngine::ShaderProgram>(vertexString, fragmentString, geometryString, std::move(layout))).first->second;
 
 		if (newShader->isCompiled())
 		{
@@ -674,7 +687,12 @@ std::shared_ptr<RenderEngine::ShaderProgram> ResourceManager::loadShaders(const 
 		}
 		else
 		{
-			LOG_ERROR("Can't load shader program: \nVertex: {0} \nFragment: {1}", vertexPath, fragmentPath);
+			if (geometryPath.empty())
+			{
+				LOG_ERROR("Can't load shader program: \nVertex: {0} \nFragment: {1}", vertexPath, fragmentPath);
+				return nullptr;
+			}
+			LOG_ERROR("Can't load shader program: \nVertex: {0} \nFragment: {1} \nGeometry: {2}", vertexPath, fragmentPath, geometryPath);
 			return nullptr;
 		}
 	}

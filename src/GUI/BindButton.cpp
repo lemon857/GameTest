@@ -1,0 +1,73 @@
+#include "EngineCore/GUI/BindButton.h"
+
+#include "EngineCore/System/Input.h"
+#include "EngineCore/GUI/TextRenderer.h"
+#include "EngineCore/GUI/Font.h"
+#include "EngineCore/GUI/Sprite.h"
+
+namespace GUI
+{
+	BindButton::BindButton(Sprite* face, glm::vec2 pos, glm::vec2 scale, 
+		std::shared_ptr<RenderEngine::ShaderProgram> textShader, std::shared_ptr<Font> font, glm::vec3 textColor,
+		KeyCode* targetBind, std::string name)
+		: GUI_element(name)
+		, m_face(std::move(face))
+		, m_targetBind(std::move(targetBind))
+		, m_textRenderer(new TextRenderer(font, std::move(textShader), Input::getKeyString(*m_targetBind), textColor, glm::vec2(pos.x, pos.y - SHIFT_TEXT_SYMBOL_Y), glm::vec2(0.5f)))
+	{
+		m_position_p = pos;
+		m_scale_p = scale;
+		m_face->set_position_p(pos);
+		m_face->set_scale_p(scale);
+	}
+	BindButton::~BindButton()
+	{
+	}
+	void BindButton::on_render_prj(glm::mat4& prj)
+	{
+		if (!m_isClicked) return;
+		if (m_last != Input::getLastKeyPressed() && (char)Input::getLastKeyPressed() != 0)
+		{
+			*m_targetBind = Input::getLastKeyPressed();
+			m_last = *m_targetBind;
+			m_textRenderer->set_text(Input::getKeyString(*m_targetBind));
+			m_isClicked = false;
+			m_face->setSubTexture(NAME_TEXTURE_STATIC);
+		}
+	}
+	void BindButton::on_press()
+	{
+		if (m_isClicked)
+		{
+			m_face->setSubTexture(NAME_TEXTURE_STATIC);
+			m_isClicked = false;
+		}
+		else
+		{
+			m_face->setSubTexture(NAME_TEXTURE_CLICKED);
+			m_last = Input::getLastKeyPressed();
+			m_isClicked = true;
+		}
+	}
+	void BindButton::on_release()
+	{
+	}
+	std::vector<GUI_element*> BindButton::get_elements()
+	{
+		add_tree_element(m_face);
+		add_tree_element(m_textRenderer);
+		std::vector<GUI_element*> vec;
+		vec.push_back(m_textRenderer);
+		vec.push_back(m_face);
+		return vec;
+	}
+	void BindButton::press_button(KeyCode key)
+	{
+		if (m_isClicked)
+		{
+			*m_targetBind = key;
+			m_textRenderer->set_text(Input::getKeyString(*m_targetBind));
+			m_isClicked = false;
+		}
+	}
+}

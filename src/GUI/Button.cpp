@@ -1,19 +1,15 @@
 #include "EngineCore/GUI/Button.h"
 
-#include "EngineCore/Renderer/VertexArray.h"
 #include "EngineCore/GUI/TextRenderer.h"
 #include "EngineCore/GUI/Font.h"
 #include "EngineCore/GUI/Sprite.h"
 
-#include "EngineCore/Renderer/ShaderProgram.h"
-#include "EngineCore/Resources/ResourceManager.h"
-
 namespace GUI
 {
 	Button::Button(Sprite* face, glm::vec2 pos, glm::vec2 scale,
-		std::string text, std::string shaderName, std::shared_ptr<Font> font, glm::vec3 textColor, std::string name)
+		std::string text, std::shared_ptr<RenderEngine::ShaderProgram> textShader, std::shared_ptr<Font> font, glm::vec3 textColor, std::string name)
 		: GUI_element(name == "default" ? text : name)
-		, m_textRenderer(new TextRenderer(font, ResourceManager::getShaderProgram(shaderName), text, textColor, glm::vec2(pos.x, pos.y - SHIFT_TEXT_SYMBOL_Y), glm::vec2(0.5f)))  // font sclae here
+		, m_textRenderer(new TextRenderer(font, std::move(textShader), text, textColor, glm::vec2(pos.x, pos.y - SHIFT_TEXT_SYMBOL_Y), glm::vec2(0.5f)))  // font sclae here
 		, m_face(std::move(face))
 	{
 		m_position_p = pos;

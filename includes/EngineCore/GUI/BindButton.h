@@ -8,6 +8,8 @@
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
 
+enum class KeyCode;
+
 namespace RenderEngine
 {
 	class Material;
@@ -20,12 +22,12 @@ namespace GUI
 	class Font;
 	class Sprite;
 
-	class Button : public GUI_element
+	class BindButton : public GUI_element
 	{
 	public:
-		Button(Sprite* face, glm::vec2 pos, glm::vec2 scale,
-			std::string text, std::shared_ptr<RenderEngine::ShaderProgram> textShader, std::shared_ptr<Font> font, glm::vec3 textColor, std::string name = "default");
-		~Button();
+		BindButton(Sprite* face, glm::vec2 pos, glm::vec2 scale,
+			 std::shared_ptr<RenderEngine::ShaderProgram> textShader, std::shared_ptr<Font> font, glm::vec3 textColor, KeyCode* targetBind, std::string name = "default");
+		~BindButton();
 
 		void on_render_prj(glm::mat4& prj) override;
 
@@ -34,11 +36,12 @@ namespace GUI
 
 		std::vector<GUI_element*> get_elements() override;
 
-		void set_text(std::string text);
-
+		void press_button(KeyCode key);
 	private:
 		Sprite* m_face;
+		KeyCode* m_targetBind;
 		TextRenderer* m_textRenderer;
+		KeyCode m_last;
 		bool m_isClicked = false;
 	};
 }

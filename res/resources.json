@@ -243,7 +243,7 @@
     },
     {
       "name": "console_input",
-      "filePath": "res/textures/console_input.png",
+      "filePath": "res/textures/default_input.png",
       "width": 600,
       "height": 200,
       "subTexture_w": 600,
@@ -357,7 +357,7 @@
       "nameTexture": "Button_1"
     },
     {
-      "name": "console_i",
+      "name": "default_input",
       "nameShader": "spriteShader",
       "nameTexture": "console_input"
     },

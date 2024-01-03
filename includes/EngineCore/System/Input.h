@@ -2,12 +2,15 @@
 
 #include "EngineCore/System/Keys.h"
 
+#include <string>
+
 class Input
 {
 public:
 	Input() = delete;
 	~Input() = delete;
 
+	static std::string getKeyString(KeyCode key);
 	static bool isKeyPressed(KeyCode key);
 
 	static void pressKey(KeyCode key);

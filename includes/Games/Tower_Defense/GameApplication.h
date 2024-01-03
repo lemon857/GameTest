@@ -27,6 +27,8 @@ struct INIregionUSER : BaseINIregion
 	std::string get_str_data() override;
 };
 
+enum class KeyCode;
+
 namespace GUI
 {
 	class GUI_place;
@@ -52,6 +54,8 @@ private:
 	void on_render(const double delta) override;
 	void on_ui_render() override;
 	bool init_events() override;
+
+	void press_button(KeyCode key);
 
 	void init_gui();
 
@@ -162,6 +166,10 @@ private:
 	double _set_max_hp_enemy = 50;
 	double _set_cooldown_tower = 3;
 	unsigned int _set_damage_tower = 10;
+
+	// binds
+
+	KeyCode k_debug = KeyCode::KEY_F3;
 
 	GUI::GUI_place* m_gui;
 

@@ -38,9 +38,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/System/SysFunc.h	
 	includes/EngineCore/System/CommandManager.h	
 	includes/EngineCore/System/INI_loader.h	
-	
-	includes/Games/Tower_Defense/GameApplication.h
-  
+	  
 	includes/EngineCore/GUI/GUI_place.h
 	includes/EngineCore/GUI/GUI_element.h
 	includes/EngineCore/GUI/Button.h
@@ -53,11 +51,9 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/GUI/ChatBox.h
 	includes/EngineCore/GUI/ScrollBox.h
 	includes/EngineCore/GUI/Slider.h
-	includes/EngineCore/GUI/Slider.h
-	includes/EngineCore/GUI/Slider.h
-	includes/EngineCore/GUI/Slider.h
-	includes/EngineCore/GUI/Slider.h
-  
+	includes/EngineCore/GUI/BindButton.h
+
+	includes/Games/Tower_Defense/GameApplication.h  
 	includes/Games/Tower_Defense/Castle.h
 	includes/Games/Tower_Defense/HealthBar.h
 	includes/Games/Tower_Defense/BaseEnemy.h
@@ -128,14 +124,12 @@ set(ENGINE_PRIVATE_SOURCES
 	#src/Examples/TanksDemo/BrickWall.h
 	#src/Examples/TanksDemo/BrickWall.cpp
 	#src/Examples/TanksDemo/Bullet.h
-	#src/Examples/TanksDemo/Bullet.cpp
-	#
+	#src/Examples/TanksDemo/Bullet.cpp	
 	#src/Examples/SnakeDemo/SnakeDemoGame.cpp
 	#src/Examples/SnakeDemo/SnakeDemoGame.h
 	#src/Examples/SnakeDemo/SnakePart.h
 	#src/Examples/SnakeDemo/SnakePart.cpp
-	#src/Examples/SnakeDemo/SnakePart.h
-	#
+	#src/Examples/SnakeDemo/SnakePart.h	
 	#src/Examples/PongDemo/PongDemoGame.h
 	#src/Examples/PongDemo/PongDemoGame.cpp
 	#src/Examples/PongDemo/PongObject.h
@@ -206,6 +200,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/GUI/ChatBox.cpp
 	src/GUI/ScrollBox.cpp
 	src/GUI/Slider.cpp
+	src/GUI/BindButton.cpp
 
 	src/Network/WinSock.cpp
 )

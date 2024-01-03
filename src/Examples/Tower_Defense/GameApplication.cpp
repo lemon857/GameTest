@@ -30,6 +30,7 @@
 #include "EngineCore/GUI/Square.h"
 #include "EngineCore/GUI/TextRenderer.h"
 #include "EngineCore/GUI/Button.h"
+#include "EngineCore/GUI/BindButton.h"
 #include "EngineCore/GUI/Slider.h"
 #include "EngineCore/GUI/Sprite.h"
 #include "EngineCore/GUI/InputField.h"
@@ -282,32 +283,6 @@ void GameApp::on_key_update(const double delta)
 {// need more additions
     if (m_isLose || *lock_key_update)
     {
-        if (Input::isKeyPressed(KeyCode::KEY_ESCAPE))
-        {
-            m_gui->get_element<GUI::InputField>("SendMessage")->set_focus(false);
-            m_gui->get_element<GUI::InputField>("SendMessage")->set_active(false);
-            isKeyPressed = true;
-            if (is_chat_active)
-            {
-                is_chat_active = false;
-                m_gui->get_element<GUI::ChatBox>("Chat")->set_open(false);
-            }
-        }
-        if (m_gui->get_element<GUI::InputField>("SendMessage")->get_focus())
-        {
-            if (Input::isKeyPressed(KeyCode::KEY_UP) && !isKeyPressed)
-            {
-                if (cur_chat_index < chat_last.size() - 1) cur_chat_index++;
-                if (!chat_last.empty()) m_gui->get_element<GUI::InputField>("SendMessage")->set_text(chat_last[cur_chat_index]);
-                isKeyPressed = true;
-            }
-            else if (Input::isKeyPressed(KeyCode::KEY_DOWN) && !isKeyPressed)
-            {
-                if (cur_chat_index > 0) cur_chat_index--;
-                if (!chat_last.empty()) m_gui->get_element<GUI::InputField>("SendMessage")->set_text(chat_last[cur_chat_index]);
-                isKeyPressed = true;
-            }
-        }
         return;
     }
     
@@ -315,170 +290,6 @@ void GameApp::on_key_update(const double delta)
     glm::vec3 rotation_delta{ 0,0,0 };
 
     double addSpeed = 1;
-    if (Input::isKeyPressed(KeyCode::KEY_G))
-    {
-        if (is_grid_active && !isKeyPressed)
-        {
-            is_grid_active = false;
-            isKeyPressed = true;
-        }
-        else if (!isKeyPressed)
-        {
-            is_grid_active = true;
-            isKeyPressed = true;
-        }
-    }
-    else if (Input::isKeyPressed(KeyCode::KEY_T))
-    {        
-        if (is_chat_active && !isKeyPressed && !is_chat_full_hide && !is_gui_active)
-        {
-            m_gui->get_element<GUI::ChatBox>("Chat")->set_open(false);
-            m_gui->get_element<GUI::GUI_element>("chat_place")->set_active(false);
-            is_chat_active = false;
-            isKeyPressed = true;
-        }
-        else if (!isKeyPressed && !is_chat_full_hide && !is_gui_active)
-        {
-            m_gui->get_element<GUI::GUI_element>("chat_place")->set_active(true);
-            m_gui->get_element<GUI::InputField>("SendMessage")->set_focus(true);
-            m_gui->get_element<GUI::ChatBox>("Chat")->set_open(true);
-            m_gui->get_element<GUI::InputField>("SendMessage")->set_text("");
-            is_chat_active = true;
-            isKeyPressed = true;
-        }
-    }
-    else if (Input::isKeyPressed(KeyCode::KEY_R))
-    {
-        if (moveCamMoue && !isKeyPressed)
-        {
-            m_pWindow->set_cursor_visible(true);
-            moveCamMoue = false;
-            isKeyPressed = true;
-        }
-        else if (!isKeyPressed && !moveCamMoue)
-        {
-            m_pWindow->set_cursor_visible(false);
-            moveCamMoue = true;
-            isKeyPressed = true;
-        }
-    }
-    else if (Input::isKeyPressed(KeyCode::KEY_P))
-    {
-        if (!isKeyPressed)
-        {
-            glm::vec3 pos = m_cam->get_position();
-            glm::vec3 rot = m_cam->get_rotation();
-            LOG_INFO("Cam pos: {0} {1} {2}", pos.x, pos.y, pos.z);
-            LOG_INFO("Cam rot: {0} {1} {2}", rot.x, rot.y, rot.z);
-            m_cam->set_position_rotation(glm::vec3(12.5f, 55.f, 30.f), glm::vec3(-75.f, -90.f, 0.f));
-            isKeyPressed = true;
-        }
-    }
-    else if (Input::isKeyPressed(KeyCode::KEY_M))
-    {
-        if (is_spawn_enemy && !isKeyPressed)
-        {
-            if (is_spawn_mode)
-            {
-                m_scene.at(curObj)->getComponent<Highlight>()->set_color(glm::vec3(1.f, 1.f, 0.f));
-            }
-            else
-            {
-                m_scene.at(curObj)->getComponent<Highlight>()->set_color(glm::vec3(1.f));
-            }
-
-            is_spawn_enemy = false;
-            isKeyPressed = true;
-        }
-        else if (!isKeyPressed)
-        {
-            if (is_spawn_mode)
-            {
-                m_scene.at(curObj)->getComponent<Highlight>()->set_color(glm::vec3(0.f, 1.f, 1.f));
-            }
-            else
-            {
-                m_scene.at(curObj)->getComponent<Highlight>()->set_color(glm::vec3(1.f, 0.f, 1.f));
-            }
-            is_spawn_enemy = true;
-            isKeyPressed = true;
-        }
-    }
-    else if (Input::isKeyPressed(KeyCode::KEY_L))
-    {
-        if (is_event_logging_active && !isKeyPressed)
-        {
-            is_event_logging_active = false;
-            m_gui->set_logging_active(false);
-            isKeyPressed = true;
-        }
-        else if (!isKeyPressed)
-        {
-            is_event_logging_active = true;
-            m_gui->set_logging_active(true);
-            isKeyPressed = true;
-        }
-    }
-    else if (Input::isKeyPressed(KeyCode::KEY_J))
-    {
-        if (!isKeyPressed)
-        {
-            short snum = rand() % 4;
-            unsigned int spawn = 0;
-            if (snum == 0) spawn = rand() % size_x;
-            else if (snum == 1) spawn = (rand() % size_x) + ((size_x - 1) * size_y);
-            else if (snum == 2) spawn = (rand() % size_y) * size_x;
-            else if (snum == 3) spawn = ((rand() % size_y) * size_x) + (size_x - 1);
-            m_spawn_enemies.push(spawn);
-
-            char buff[sizeof(unsigned int) + 1];
-            buff[0] = 's';
-            sysfunc::type_to_char(&spawn, buff, 1);
-            WinSock::send_data(buff, sizeof(unsigned int) + 1);
-
-            isKeyPressed = true;
-        }
-    }
-    else if (Input::isKeyPressed(KeyCode::KEY_ESCAPE))
-    {
-        if (is_gui_active && !isKeyPressed)
-        {
-            m_gui->get_element<GUI::GUI_element>("menu_place")->set_active(false);
-            m_gui->get_element<GUI::GUI_element>("settings_place")->set_active(false);
-            m_gui->get_element<GUI::GUI_element>("multiplayer_menu_place")->set_active(false);
-            is_gui_active = false;
-            isKeyPressed = true;
-        }
-        else if (!isKeyPressed)
-        {
-            m_gui->get_element<GUI::GUI_element>("multiplayer_menu_place")->set_active(false);
-            m_gui->get_element<GUI::GUI_element>("settings_place")->set_active(false);
-            is_gui_active = true;
-            m_gui->get_element<GUI::GUI_element>("menu_place")->set_active(true);
-            isKeyPressed = true;
-        }
-    }
-    else if (Input::isKeyPressed(KeyCode::KEY_F1))
-    {
-        if (is_chat_full_hide && !isKeyPressed)
-        {
-            is_chat_full_hide = false;
-            isKeyPressed = true;
-        }
-        else if (!isKeyPressed)
-        {
-            is_chat_full_hide = true;
-            isKeyPressed = true;
-        }
-    }
-    else if (Input::isKeyPressed(KeyCode::KEY_F3))
-    {
-        if (!isKeyPressed)
-        {
-            m_gui->get_element<GUI::GUI_element>("debug_place")->set_active(!m_gui->get_element<GUI::GUI_element>("debug_place")->get_active());
-            isKeyPressed = true;
-        }
-        }
 
     if (is_gui_active) return; // block move in menu
 
@@ -1123,6 +934,7 @@ bool GameApp::init_events()
                 }
             }
             Input::pressKey(e.key_code);
+            press_button(e.key_code);
             m_gui->get_element<GUI::InputField>("InputNick")->press_button(e.key_code);
             m_gui->get_element<GUI::InputField>("InputIP")->press_button(e.key_code);
             m_gui->get_element<GUI::InputField>("SendMessage")->press_button(e.key_code);
@@ -1204,6 +1016,199 @@ bool GameApp::init_events()
     return true;
 }
 
+void GameApp::press_button(KeyCode key)
+{    
+    if (m_isLose || *lock_key_update)
+    {
+        if (key == KeyCode::KEY_ESCAPE)
+        {
+            m_gui->get_element<GUI::InputField>("SendMessage")->set_focus(false);
+            m_gui->get_element<GUI::InputField>("SendMessage")->set_active(false);
+            isKeyPressed = true;
+            if (is_chat_active)
+            {
+                is_chat_active = false;
+                m_gui->get_element<GUI::ChatBox>("Chat")->set_open(false);
+            }
+        }
+        if (m_gui->get_element<GUI::InputField>("SendMessage")->get_focus())
+        {
+            if (key == KeyCode::KEY_UP && !isKeyPressed)
+            {
+                if (cur_chat_index < chat_last.size() - 1) cur_chat_index++;
+                if (!chat_last.empty()) m_gui->get_element<GUI::InputField>("SendMessage")->set_text(chat_last[cur_chat_index]);
+                isKeyPressed = true;
+            }
+            else if (key == KeyCode::KEY_DOWN && !isKeyPressed)
+            {
+                if (cur_chat_index > 0) cur_chat_index--;
+                if (!chat_last.empty()) m_gui->get_element<GUI::InputField>("SendMessage")->set_text(chat_last[cur_chat_index]);
+                isKeyPressed = true;
+            }
+        }
+        return;
+    }
+
+    if (key == k_debug)
+    {
+        if (!isKeyPressed)
+        {
+            m_gui->get_element<GUI::GUI_element>("debug_place")->set_active(!m_gui->get_element<GUI::GUI_element>("debug_place")->get_active());
+            isKeyPressed = true;
+        }
+    }
+    switch (key)
+    {
+    case KeyCode::KEY_F1:
+        if (is_chat_full_hide && !isKeyPressed)
+        {
+            is_chat_full_hide = false;
+            isKeyPressed = true;
+        }
+        else if (!isKeyPressed)
+        {
+            is_chat_full_hide = true;
+            isKeyPressed = true;
+        }
+        break;
+    case KeyCode::KEY_ESCAPE:
+        if (is_gui_active && !isKeyPressed)
+        {
+            m_gui->get_element<GUI::GUI_element>("menu_place")->set_active(false);
+            m_gui->get_element<GUI::GUI_element>("settings_place")->set_active(false);
+            m_gui->get_element<GUI::GUI_element>("multiplayer_menu_place")->set_active(false);
+            is_gui_active = false;
+            isKeyPressed = true;
+        }
+        else if (!isKeyPressed)
+        {
+            m_gui->get_element<GUI::GUI_element>("multiplayer_menu_place")->set_active(false);
+            m_gui->get_element<GUI::GUI_element>("settings_place")->set_active(false);
+            is_gui_active = true;
+            m_gui->get_element<GUI::GUI_element>("menu_place")->set_active(true);
+            isKeyPressed = true;
+        }
+        break;
+    case KeyCode::KEY_J:
+        if (!isKeyPressed)
+        {
+            short snum = rand() % 4;
+            unsigned int spawn = 0;
+            if (snum == 0) spawn = rand() % size_x;
+            else if (snum == 1) spawn = (rand() % size_x) + ((size_x - 1) * size_y);
+            else if (snum == 2) spawn = (rand() % size_y) * size_x;
+            else if (snum == 3) spawn = ((rand() % size_y) * size_x) + (size_x - 1);
+            m_spawn_enemies.push(spawn);
+
+            char buff[sizeof(unsigned int) + 1];
+            buff[0] = 's';
+            sysfunc::type_to_char(&spawn, buff, 1);
+            WinSock::send_data(buff, sizeof(unsigned int) + 1);
+
+            isKeyPressed = true;
+        }
+        break;
+    case KeyCode::KEY_L:
+        if (is_event_logging_active && !isKeyPressed)
+        {
+            is_event_logging_active = false;
+            m_gui->set_logging_active(false);
+            isKeyPressed = true;
+        }
+        else if (!isKeyPressed)
+        {
+            is_event_logging_active = true;
+            m_gui->set_logging_active(true);
+            isKeyPressed = true;
+        }
+        break;
+    case KeyCode::KEY_M:
+        if (is_spawn_enemy && !isKeyPressed)
+        {
+            if (is_spawn_mode)
+            {
+                m_scene.at(curObj)->getComponent<Highlight>()->set_color(glm::vec3(1.f, 1.f, 0.f));
+            }
+            else
+            {
+                m_scene.at(curObj)->getComponent<Highlight>()->set_color(glm::vec3(1.f));
+            }
+
+            is_spawn_enemy = false;
+            isKeyPressed = true;
+        }
+        else if (!isKeyPressed)
+        {
+            if (is_spawn_mode)
+            {
+                m_scene.at(curObj)->getComponent<Highlight>()->set_color(glm::vec3(0.f, 1.f, 1.f));
+            }
+            else
+            {
+                m_scene.at(curObj)->getComponent<Highlight>()->set_color(glm::vec3(1.f, 0.f, 1.f));
+            }
+            is_spawn_enemy = true;
+            isKeyPressed = true;
+        }
+        break;
+    case KeyCode::KEY_P:
+        if (!isKeyPressed)
+        {
+            glm::vec3 pos = m_cam->get_position();
+            glm::vec3 rot = m_cam->get_rotation();
+            LOG_INFO("Cam pos: {0} {1} {2}", pos.x, pos.y, pos.z);
+            LOG_INFO("Cam rot: {0} {1} {2}", rot.x, rot.y, rot.z);
+            m_cam->set_position_rotation(glm::vec3(12.5f, 55.f, 30.f), glm::vec3(-75.f, -90.f, 0.f));
+            isKeyPressed = true;
+        }
+        break;
+    case KeyCode::KEY_R:
+        if (moveCamMoue && !isKeyPressed)
+        {
+            m_pWindow->set_cursor_visible(true);
+            moveCamMoue = false;
+            isKeyPressed = true;
+        }
+        else if (!isKeyPressed && !moveCamMoue)
+        {
+            m_pWindow->set_cursor_visible(false);
+            moveCamMoue = true;
+            isKeyPressed = true;
+        }
+        break;
+    case KeyCode::KEY_T:
+        if (is_chat_active && !isKeyPressed && !is_chat_full_hide && !is_gui_active)
+        {
+            m_gui->get_element<GUI::ChatBox>("Chat")->set_open(false);
+            m_gui->get_element<GUI::GUI_element>("chat_place")->set_active(false);
+            is_chat_active = false;
+            isKeyPressed = true;
+        }
+        else if (!isKeyPressed && !is_chat_full_hide && !is_gui_active)
+        {
+            m_gui->get_element<GUI::GUI_element>("chat_place")->set_active(true);
+            m_gui->get_element<GUI::InputField>("SendMessage")->set_focus(true);
+            m_gui->get_element<GUI::ChatBox>("Chat")->set_open(true);
+            m_gui->get_element<GUI::InputField>("SendMessage")->set_text("");
+            is_chat_active = true;
+            isKeyPressed = true;
+        }
+        break;
+    case KeyCode::KEY_G:
+        if (is_grid_active && !isKeyPressed)
+        {
+            is_grid_active = false;
+            isKeyPressed = true;
+        }
+        else if (!isKeyPressed)
+        {
+            is_grid_active = true;
+            isKeyPressed = true;
+        }
+        break;
+    }    
+}
+
 void GameApp::init_gui()
 {
     ResourceManager::get_font("calibri")->set_scale(0.5f);
@@ -1254,7 +1259,7 @@ void GameApp::init_gui()
     m_gui->add_element<GUI::ChatBox>(chat, new GUI::Sprite(ResourceManager::getMaterial("defaultSprite")),
         glm::vec2(13.f, 36.f), glm::vec2(12.f, 30.f), "Chat", 128, ResourceManager::get_font("calibriChat"), ResourceManager::getShaderProgram("textShader"), glm::vec3(1.f));
 
-    m_gui->add_element<GUI::InputField>(chat, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+    m_gui->add_element<GUI::InputField>(chat, new GUI::Sprite(ResourceManager::getMaterial("default_input"), "static"),
         glm::vec2(13.f, 3.f), glm::vec2(12.f, 3.f), "SendMessage", ResourceManager::getShaderProgram("textShader"),
         ResourceManager::get_font("calibriChat"), glm::vec3(1.f), true, lock_key_update)->set_enter_callback([&](std::string text) {
             if (text[0] == '/') // need finalize
@@ -1303,7 +1308,7 @@ void GameApp::init_gui()
 
     m_gui->add_element<GUI::Button>(lose, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, 6.f), glm::vec2(10.f, 5.f),
-        "Restart", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f));
+        "Restart", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f));
 
     m_gui->get_element<GUI::GUI_element>("Restart")->set_click_callback([&]()
         {
@@ -1311,49 +1316,62 @@ void GameApp::init_gui()
             restart_querry = true;
         });
 
-
-
     // ------------------------------------------------------------ settings ------------------------------------------------
     auto settings = m_gui->add_element<GUI::GUI_element>("settings_place");
 
+    m_gui->add_element<GUI::TextRenderer>(settings, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
+        "Volume", glm::vec3(1.f), glm::vec2(89.f, 92.f), glm::vec2(1.f));
+
     m_gui->add_element<GUI::Slider>(settings, new GUI::Sprite(ResourceManager::getMaterial("slider_bg"), "static"),
         new GUI::Sprite(ResourceManager::getMaterial("slider_face"), "static"), glm::vec2(89.f, 83.f), glm::vec2(10.f, 5.f), 0, 10, "slider_volume")->
-        set_slide_callback([](float val)
+        set_slide_callback([&](float val)
             {
-                SoundEngine::set_volume(val / 10);
+                volume = val / 10.f;
+                SoundEngine::set_volume(volume);
             });
 
     m_gui->get_element<GUI::Slider>("slider_volume")->set_value(5);
 
-    SoundEngine::set_volume(5.f / 10.f);
+    volume = 5.f / 10.f;
+
+    SoundEngine::set_volume(volume);
 
     m_gui->add_element<GUI::Sprite>(settings, 1, ResourceManager::getMaterial("defaultSprite"), "default",
         glm::vec2(100.f), glm::vec2(100.f), "BG");
 
     m_gui->add_element<GUI::TextRenderer>(settings, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        "Settings", glm::vec3(1.f), glm::vec2(50.f, 90.f), glm::vec2(1.f));       
+        "Settings", glm::vec3(1.f), glm::vec2(50.f, 90.f), glm::vec2(1.f));
 
+    // right    
+
+    m_gui->add_element<GUI::BindButton>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(11.f, 50.f), glm::vec2(5.f, 5.f), ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), 
+        glm::vec3(1.f), &k_debug, "BindDebug");
+
+
+    // left
 
     m_gui->add_element<GUI::Button>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        glm::vec2(89.f, 72.f), glm::vec2(10.f, 5.f),
-        "Mute", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f), "muteToggle")->set_click_callback([&]()
-            {
-                is_mute = !is_mute;
-                m_gui->get_element<GUI::Button>("muteToggle")->set_text(is_mute ? "Unmute" : "Mute");
-                SoundEngine::set_volume(is_mute ? 0 : volume);
-            });
-
-    m_gui->add_element<GUI::Button>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        glm::vec2(11.f, 61.f), glm::vec2(10.f, 5.f),
-        "Off spec move", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f), "SpecMoveToggle")->set_click_callback([&]()
+        glm::vec2(67.f, 61.f), glm::vec2(10.f, 5.f),
+        "Off spec move", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), "SpecMoveToggle")->set_click_callback([&]()
             {
                 is_special_move = !is_special_move;
                 m_gui->get_element<GUI::Button>("SpecMoveToggle")->set_text(is_special_move ? "Off spec move" : "On spec move");
             });
 
     m_gui->add_element<GUI::Button>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(89.f, 72.f), glm::vec2(10.f, 5.f),
+        "Mute", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), "muteToggle")->set_click_callback([&]()
+            {
+                is_mute = !is_mute;
+                m_gui->get_element<GUI::Button>("muteToggle")->set_text(is_mute ? "Unmute" : "Mute");
+                SoundEngine::set_volume(is_mute ? 0 : volume);
+                m_gui->get_element<GUI::Slider>("slider_volume")->set_value(is_mute ? 0 : volume * 10);
+            });
+
+    m_gui->add_element<GUI::Button>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, 61.f), glm::vec2(10.f, 5.f),
-        "Unlock move", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f), "moveToggle")->set_click_callback([&]()
+        "Unlock move", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), "moveToggle")->set_click_callback([&]()
             {
                 is_lock_move = !is_lock_move;
                 m_gui->get_element<GUI::Button>("moveToggle")->set_text(is_lock_move ? "Unlock move" : "Lock move");
@@ -1361,7 +1379,7 @@ void GameApp::init_gui()
 
     m_gui->add_element<GUI::Button>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, 50.f), glm::vec2(10.f, 5.f),
-        "Switch mode", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
+        "Switch mode", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
             {
                /* if (m_mode == GameMode::Single)
                 {
@@ -1377,14 +1395,14 @@ void GameApp::init_gui()
 
     m_gui->add_element<GUI::Button>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, 39.f), glm::vec2(10.f, 5.f),
-        "Clear chat", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
+        "Clear chat", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
             {
                 m_gui->get_element<GUI::ChatBox>("Chat")->clear();
             });   
 
     m_gui->add_element<GUI::Button>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, 28.f), glm::vec2(10.f, 5.f),
-        "Add enemy", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
+        "Add enemy", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
             {
                 short snum = rand() % 4;
                 int spawn = 0;
@@ -1402,14 +1420,14 @@ void GameApp::init_gui()
 
     m_gui->add_element<GUI::Button>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, 17.f), glm::vec2(10.f, 5.f),
-        "Grid", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
+        "Grid", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
             {
                 is_grid_active = !is_grid_active;
             });
 
     m_gui->add_element<GUI::Button>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, 6.f), glm::vec2(10.f, 5.f),
-        "Back", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f), "BFromSettings")->set_click_callback([&]()
+        "Back", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), "BFromSettings")->set_click_callback([&]()
             {
                 m_gui->get_element<GUI::GUI_element>("settings_place")->set_active(false);
                 m_gui->get_element<GUI::GUI_element>("menu_place")->set_active(true);
@@ -1424,36 +1442,36 @@ void GameApp::init_gui()
 
     m_gui->add_element<GUI::Button>(menu, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, 6.f), glm::vec2(10.f, 5.f),
-        "Quit", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
+        "Quit", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
             {
                 m_pCloseWindow = true;
-            });;
+            });
 
     m_gui->add_element<GUI::Button>(menu, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, 39.f), glm::vec2(10.f, 5.f),
-        "Multiplayer", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
+        "Multiplayer", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
             {
                 m_gui->get_element<GUI::GUI_element>("menu_place")->set_active(false);
                 m_gui->get_element<GUI::GUI_element>("multiplayer_menu_place")->set_active(true);
-            });;
+            });
 
     m_gui->add_element<GUI::Button>(menu, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, 28.f), glm::vec2(10.f, 5.f),
-        "Settings", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
+        "Settings", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
             {
                 m_gui->get_element<GUI::GUI_element>("menu_place")->set_active(false);
                 m_gui->get_element<GUI::GUI_element>("settings_place")->set_active(true);
-            });;
+            });
     
     m_gui->add_element<GUI::Button>(menu, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
             glm::vec2(89.f, 17.f), glm::vec2(10.f, 5.f),
-            "Restart", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f), "RestartInMenu")->set_click_callback([&]()
+            "Restart", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), "RestartInMenu")->set_click_callback([&]()
                 {
                     if (isServer) WinSock::send_data("r", 1);
                     restart_querry = true;
                     is_gui_active = false;
                     m_gui->get_element<GUI::GUI_element>("menu_place")->set_active(false);
-                });;      
+                });     
 
     m_gui->add_element<GUI::Sprite>(menu, 1, ResourceManager::getMaterial("defaultSprite"), "default",
         glm::vec2(100.f), glm::vec2(100.f), "BG");
@@ -1470,7 +1488,7 @@ void GameApp::init_gui()
 
     m_gui->add_element<GUI::Button>(multmenu, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, 6.f), glm::vec2(10.f, 5.f),
-        "Back", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f), "BFromMultMenu")->set_click_callback([&]()
+        "Back", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), "BFromMultMenu")->set_click_callback([&]()
             {
                 m_gui->get_element<GUI::GUI_element>("multiplayer_menu_place")->set_active(false);
                 m_gui->get_element<GUI::GUI_element>("menu_place")->set_active(true);
@@ -1479,7 +1497,7 @@ void GameApp::init_gui()
     m_gui->add_element<GUI::TextRenderer>(multmenu, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
         "Enter Nickname", glm::vec3(1.f), glm::vec2(88.f, 88.f), glm::vec2(1.f), "m1");
 
-    m_gui->add_element<GUI::InputField>(multmenu, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+    m_gui->add_element<GUI::InputField>(multmenu, new GUI::Sprite(ResourceManager::getMaterial("default_input"), "static"),
         glm::vec2(88.f, 80.f), glm::vec2(10.f, 5.f), "InputNick", ResourceManager::getShaderProgram("textShader"),
         ResourceManager::get_font("calibri"), glm::vec3(1.f), false, lock_key_update)->set_enter_callback([&](std::string nick)
             {
@@ -1496,13 +1514,13 @@ void GameApp::init_gui()
     m_gui->add_element<GUI::TextRenderer>(multmenu, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
         "Enter IP", glm::vec3(1.f), glm::vec2(88.f, 68.f), glm::vec2(1.f), "m");
 
-    m_gui->add_element<GUI::InputField>(multmenu, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+    m_gui->add_element<GUI::InputField>(multmenu, new GUI::Sprite(ResourceManager::getMaterial("default_input"), "static"),
         glm::vec2(88.f, 60.f), glm::vec2(10.f, 5.f), "InputIP", ResourceManager::getShaderProgram("textShader"),
         ResourceManager::get_font("calibri"), glm::vec3(1.f), false, lock_key_update);
 
     m_gui->add_element<GUI::Button>(multmenu, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(88.f, 48.f), glm::vec2(10.f, 5.f),
-        "Disconnect", "textShader", ResourceManager::get_font("calibri"), glm::vec3(1.f));
+        "Disconnect", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f));
 
     m_gui->add_element<GUI::CheckBox>(multmenu, new GUI::Sprite(ResourceManager::getMaterial("checkbox_bg")), new GUI::Sprite(ResourceManager::getMaterial("checkbox_mark")),
         glm::vec2(70.f, 60.f), glm::vec2(5.f), "checkbox")->set_click_callback([&]() {

@@ -60,6 +60,12 @@ namespace GUI
 	{
 		return m_value;
 	}
+	void Slider::set_value(float val)
+	{
+		m_value = val;
+		float y = val / (float)(m_max - m_min);
+		m_slider->set_position(glm::vec2(y * (m_scale.x + m_scale.x) + m_position.x - m_scale.x, m_position.y));
+	}
 	std::vector<GUI_element*> Slider::get_elements()
 	{
 		add_tree_element(m_slider);

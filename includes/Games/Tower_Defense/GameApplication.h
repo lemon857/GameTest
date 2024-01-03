@@ -127,6 +127,7 @@ private:
 	bool is_special_move = false;
 	bool is_mute = false;
 
+	bool moveCamMoue = false;
 	bool isKeyPressed = false;
 	bool isKeyPressedmouse = false;
 
@@ -163,15 +164,6 @@ private:
 	unsigned int _set_damage_tower = 10;
 
 	GUI::GUI_place* m_gui;
-
-	enum GUI_Active
-	{
-		null,
-		main,
-		settings
-	};
-
-	GUI_Active gui_window;
 
 	INIregionUSER m_ini_region_user;
 

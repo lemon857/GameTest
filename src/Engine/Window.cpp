@@ -35,6 +35,11 @@ void Window::set_pos(glm::ivec2& pos)
     glfwSetWindowPos(m_pWindow, pos.x, pos.y);
 }
 
+void Window::set_cursor_visible(bool isVisible)
+{
+    glfwSetInputMode(m_pWindow, GLFW_CURSOR, isVisible ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+}
+
 glm::vec2 Window::get_current_cursor_position() const
 {
     double x_pos, y_pos;

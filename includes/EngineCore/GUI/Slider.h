@@ -21,6 +21,8 @@ namespace GUI
 
 		float value();
 
+		void set_value(float val);
+
 		std::vector<GUI_element*> get_elements() override;
 
 		void set_slide_callback(std::function<void(float)> callback);

@@ -15,6 +15,7 @@ Application::~Application()
 int Application::start(glm::ivec2& window_size, const char* title, const char* json_rel_path, const char* ini_rel_path, double tps_max)
 {
     LogSystem::init_log_system("logs");
+    LOG_INFO("Build name: {0}", BUILD_NAME);
     LOG_INFO("Starting Application");
 
     m_watch = new Stopwatch();

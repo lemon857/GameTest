@@ -31,6 +31,8 @@ public:
 	void maximize();
 	void set_pos(glm::ivec2& pos);
 
+	void set_cursor_visible(bool isVisible);
+
 	glm::ivec2& get_size() { return m_data.window_size; }
 	glm::ivec2& get_pos() { return m_data.window_position; }
 	bool is_maximized() { return m_data.maximized; }

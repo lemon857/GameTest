@@ -291,6 +291,26 @@ void GameApp::on_key_update(const double delta)
 
     double addSpeed = 1;
 
+    if (Input::isKeyPressed(KeyCode::KEY_T))
+    {
+        if (is_chat_active && !isKeyPressed && !is_chat_full_hide && !is_gui_active)
+        {
+            m_gui->get_element<GUI::ChatBox>("Chat")->set_open(false);
+            m_gui->get_element<GUI::GUI_element>("chat_place")->set_active(false);
+            is_chat_active = false;
+            isKeyPressed = true;
+        }
+        else if (!isKeyPressed && !is_chat_full_hide && !is_gui_active)
+        {
+            m_gui->get_element<GUI::GUI_element>("chat_place")->set_active(true);
+            m_gui->get_element<GUI::InputField>("SendMessage")->set_focus(true);
+            m_gui->get_element<GUI::ChatBox>("Chat")->set_open(true);
+            m_gui->get_element<GUI::InputField>("SendMessage")->set_text("");
+            is_chat_active = true;
+            isKeyPressed = true;
+        }
+    }
+
     if (is_gui_active) return; // block move in menu
 
     if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT) && !m_gui->get_focus())
@@ -1173,24 +1193,6 @@ void GameApp::press_button(KeyCode key)
         {
             m_pWindow->set_cursor_visible(false);
             moveCamMoue = true;
-            isKeyPressed = true;
-        }
-        break;
-    case KeyCode::KEY_T:
-        if (is_chat_active && !isKeyPressed && !is_chat_full_hide && !is_gui_active)
-        {
-            m_gui->get_element<GUI::ChatBox>("Chat")->set_open(false);
-            m_gui->get_element<GUI::GUI_element>("chat_place")->set_active(false);
-            is_chat_active = false;
-            isKeyPressed = true;
-        }
-        else if (!isKeyPressed && !is_chat_full_hide && !is_gui_active)
-        {
-            m_gui->get_element<GUI::GUI_element>("chat_place")->set_active(true);
-            m_gui->get_element<GUI::InputField>("SendMessage")->set_focus(true);
-            m_gui->get_element<GUI::ChatBox>("Chat")->set_open(true);
-            m_gui->get_element<GUI::InputField>("SendMessage")->set_text("");
-            is_chat_active = true;
             isKeyPressed = true;
         }
         break;

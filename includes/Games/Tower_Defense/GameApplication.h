@@ -16,6 +16,7 @@
 #include "Games/Tower_Defense/BaseEnemy.h"
 #include "Games/Tower_Defense/BaseTower.h"
 #include "Games/Tower_Defense/BaseEffect.h"
+#include "Games/Tower_Defense/Target.h"
 
 const int size_x = 30, size_y = 30;
 
@@ -88,9 +89,11 @@ private:
 
 	Camera* m_cam;
 
-	RenderEngine::Line* m_grid_line;
+	RenderEngine::Line* m_line;
 
 	std::vector<glm::vec3> parts;
+
+	std::vector<Target> targets;
 	
 	GameMode m_mode = GameMode::Single;
 
@@ -122,6 +125,7 @@ private:
 
 	bool is_event_logging_active = false;
 	bool is_grid_active = false;
+	bool is_line_active = false;
 	bool is_gui_active = false;
 	bool is_chat_active = false;
 	bool is_chat_full_hide = false;
@@ -161,9 +165,10 @@ private:
 
 	// settings
 	double _set_min_distance = 7;
-	double _set_velosity = 7;
+	double _set_velosity = 4;
 	double _set_max_hp_castle = 100;
 	double _set_max_hp_enemy = 50;
+	double _set_damage_enemy = 5;
 	double _set_cooldown_tower = 3;
 	unsigned int _set_damage_tower = 10;
 

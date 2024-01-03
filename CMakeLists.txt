@@ -59,6 +59,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/Games/Tower_Defense/BaseEnemy.h
 	includes/Games/Tower_Defense/BaseTower.h
 	includes/Games/Tower_Defense/BaseEffect.h
+	includes/Games/Tower_Defense/Target.h
 )
 
 set(ENGINE_PRIVATE_INCLUDES

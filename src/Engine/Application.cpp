@@ -74,10 +74,10 @@ int Application::start(glm::ivec2& window_size, const char* title, const char* j
 
         on_render(duration);
 
-        on_ui_render();        
+        on_ui_render();
 
-        m_pWindow->on_update();
         on_key_update(duration);
+        m_pWindow->on_update();
     }
 
     m_window_size = m_pWindow->get_size();

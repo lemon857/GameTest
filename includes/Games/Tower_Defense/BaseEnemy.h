@@ -5,11 +5,13 @@
 #include <glm/vec3.hpp>
 
 #include <memory>
+#include <vector>
 
 class Castle;
 class ObjModel;
 class HealthBar;
 class BaseEffect;
+class Target;
 
 namespace RenderEngine
 {
@@ -19,8 +21,8 @@ namespace RenderEngine
 class BaseEnemy
 {
 public:
-	BaseEnemy(ObjModel* model, Castle* target, glm::vec3 pos, double cooldown, double velocity,
-		const unsigned int maxHP, std::shared_ptr<RenderEngine::Material> pMaterial, glm::vec3 color = glm::vec3(1.f, 0.f, 0.f));
+	BaseEnemy(ObjModel* model, Castle* target, std::vector<Target> targets, glm::vec3 pos, const double cooldown, const double velocity,
+		const unsigned int maxHP, const unsigned int damage, std::shared_ptr<RenderEngine::Material> pMaterial, glm::vec3 color = glm::vec3(1.f, 0.f, 0.f));
 	~BaseEnemy();
 
 	void update(const double delta);
@@ -37,13 +39,16 @@ public:
 
 protected:
 
+	std::vector<Target> m_targets;
+	int curtarget;
+
 	Castle* m_target_castle;
 	ObjModel* m_model;
 	HealthBar* m_bar;
 	BaseEffect* m_effect;
 
-	int m_hp;
-
+	unsigned int m_hp;
+	unsigned int m_dmg;
 	double m_cur_time;
 
 	double m_cool_down;

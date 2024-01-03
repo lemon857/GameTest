@@ -20,7 +20,7 @@ public:
 	Grid(glm::vec3 pos, glm::vec2 size, unsigned int count_cols, unsigned int count_rows, glm::vec3 color, std::shared_ptr<RenderEngine::Material> pMaterial);
 	~Grid();
 
-	void update(const double delta) override;
+	void render() override;
 
 private:
 	std::vector<glm::vec3> m_starts_pos;

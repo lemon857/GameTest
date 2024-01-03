@@ -38,7 +38,7 @@ Grid::~Grid()
 	delete m_line;
 }
 
-void Grid::update(const double delta)
+void Grid::render()
 {
 	for (size_t i = 0; i < m_starts_pos.size(); i++)
 	{

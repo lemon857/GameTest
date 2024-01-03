@@ -70,6 +70,8 @@ bool GameApp::init()
 
     m_cam = new Camera(glm::vec3(12.5f, 55.f, 30.f), glm::vec3(-75.f, -90.f, 0.f));
 
+    m_line = new RenderEngine::Line(ResourceManager::getMaterial("default"), 5.f);
+
     m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
     // init materials
     GET_DATA_MATERIAL("cube", float, "ambient_factor", 0) = 0.25f;
@@ -227,6 +229,18 @@ bool GameApp::init()
         //sysfunc::type_to_char(&_set_min_distance, buff, 2);
         //WinSock::send_data(buff, sizeof(double) + 2);
         });
+    CommandManager::add_command("dmgen", [&](std::vector<std::string> args) {
+        if (args.empty())
+        {
+            m_chat_mes.push("Damage enemy: " + std::to_string(_set_damage_enemy));
+            return;
+        }
+        _set_damage_enemy = std::stod(args[0]);
+        m_chat_mes.push("Set damage enemy: " + std::to_string(_set_damage_enemy));
+        //buff[1] = 'a';
+        //sysfunc::type_to_char(&_set_min_distance, buff, 2);
+        //WinSock::send_data(buff, sizeof(double) + 2);
+        });
     CommandManager::add_command("reload", [&](std::vector<std::string> args) {
         if (args.empty())
         {
@@ -267,6 +281,58 @@ bool GameApp::init()
         //m_chat_mes.push("/dmgtow - damage tower attacks");
         //m_chat_mes.push("/reload <shaders/textures/fonts> - reload resources");
         });
+    //  --------------------------------------------- commands init -------------------------------
+
+    targets.push_back(Target(parts[814]));
+    targets.push_back(Target(parts[124]));
+    targets.push_back(Target(parts[135]));
+    targets.push_back(Target(parts[765]));
+    targets.push_back(Target(parts[776]));
+    targets.push_back(Target(parts[86]));
+
+    // --------------------------- fills dead zones -------------------------------
+    for (size_t i = 0; i < 4; i++)
+    {
+        for (size_t j = 0; j < 13; j++)
+        {
+            map[780 + 30 * i + j] = true;
+        }
+    }
+    for (size_t i = 0; i < 24; i++)
+    {
+        for (size_t j = 0; j < 5; j++)
+        {
+            map[62 + 30 * i + j] = true;
+        }
+    }
+    for (size_t i = 0; i < 5; i++)
+    {
+        for (size_t j = 0; j < 6; j++)
+        {
+            map[67 + 30 * i + j] = true;
+        }
+    }
+    for (size_t i = 0; i < 26; i++)
+    {
+        for (size_t j = 0; j < 5; j++)
+        {
+            map[73 + 30 * i + j] = true;
+        }
+    }
+    for (size_t i = 0; i < 5; i++)
+    {
+        for (size_t j = 0; j < 6; j++)
+        {
+            map[708 + 30 * i + j] = true;
+        }
+    }
+    for (size_t i = 0; i < 27; i++)
+    {
+        for (size_t j = 0; j < 5; j++)
+        {
+            map[54 + 30 * i + j] = true;
+        }
+    }
 
     return true;
 }
@@ -317,7 +383,6 @@ void GameApp::on_key_update(const double delta)
     {
         int x = (int)floor(m_world_mouse_pos_x / 2.f);
         int y = (int)floor(m_world_mouse_pos_z / 2.f);
-
         if ((x * y <= (size_x - 1) * (size_y - 1)) && (x >= 0 && y >= 0))
         {
             if (x <= (size_x - 1) && y <= (size_y - 1))
@@ -325,6 +390,7 @@ void GameApp::on_key_update(const double delta)
                 if (cur != x * size_y + y)
                 {
                     cur = x * size_y + y;
+                    LOG_INFO("CUR: {0}", cur);
                     m_scene.at(curObj)->getComponent<Transform>()->set_position(parts[cur]);
 
                     isKeyPressedmouse = true;
@@ -342,14 +408,14 @@ void GameApp::on_key_update(const double delta)
                         {
                             if (is_spawn_enemy)
                             {
-                                for (unsigned int i = 0; i < countSpawnEnemies; i++)
+                                /*for (unsigned int i = 0; i < countSpawnEnemies; i++)
                                 {
                                     m_spawn_enemies.push(cur);
                                 }
                                 buff[0] = 's';
                                 sysfunc::type_to_char(&cur, buff, 1);
 
-                                WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                                WinSock::send_data(buff, sizeof(unsigned int) + 1);*/
                             }
                             else if (!map[cur])
                             {
@@ -366,7 +432,7 @@ void GameApp::on_key_update(const double delta)
                         {
                             if (is_spawn_enemy)
                             {
-                                if (isServer)
+                               /* if (isServer)
                                 {
                                     if (x < 5 && y > 16 && y < 30)
                                     {
@@ -393,7 +459,7 @@ void GameApp::on_key_update(const double delta)
 
                                         WinSock::send_data(buff, sizeof(unsigned int) + 1);
                                     }
-                                }
+                                }*/
                             }
                             else if (!map[cur])
                             {
@@ -445,14 +511,14 @@ void GameApp::on_key_update(const double delta)
                     {
                         if (is_spawn_enemy)
                         {
-                            for (unsigned int i = 0; i < countSpawnEnemies; i++)
+                            /*for (unsigned int i = 0; i < countSpawnEnemies; i++)
                             {
                                 m_spawn_enemies.push(cur);
                             }
                             buff[0] = 's';
                             sysfunc::type_to_char(&cur, buff, 1);
 
-                            WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                            WinSock::send_data(buff, sizeof(unsigned int) + 1);*/
                         }
                         else if (!map[cur])
                         {
@@ -469,7 +535,7 @@ void GameApp::on_key_update(const double delta)
                     {
                         if (is_spawn_enemy)
                         {
-                            if (isServer)
+                            /*if (isServer)
                             {
                                 if (x < 5 && y > 16 && y < 30)
                                 {
@@ -490,7 +556,7 @@ void GameApp::on_key_update(const double delta)
 
                                     WinSock::send_data(buff, sizeof(unsigned int) + 1);
                                 }
-                            }
+                            }*/
                         }
                         else if (!map[cur])
                         {
@@ -618,9 +684,8 @@ void GameApp::on_update(const double delta)
     m_gui->on_update(delta);
 
     for (size_t i = 0; i < m_scene.get_list().size(); i++)
-    {        
-        if (i != 2) m_scene.at(i)->update(delta);
-        if (i == 2 && is_grid_active) m_scene.at(i)->update(delta);
+    {   
+        m_scene.at(i)->update(delta);
     }
 
     // ================================================================================ game logic ===========================================================
@@ -667,7 +732,8 @@ void GameApp::on_update(const double delta)
             glm::vec3 pos = parts[m_spawn_enemies.front()];
             countEnemiesPerm++;
             auto a = new BaseEnemy(new ObjModel(ResourceManager::get_OBJ_model("monkey"), ResourceManager::getMaterial("monkey")),
-                m_main_castle, glm::vec3(pos.x + (rand() % 100 - 50) / 100.f, pos.y, pos.z + (rand() % 100 - 50) / 100.f), 1, _set_velosity * 0.001, _set_max_hp_enemy, ResourceManager::getMaterial("default"));
+                m_main_castle, targets, glm::vec3(pos.x + (rand() % 100 - 50) / 100.f, pos.y, pos.z + (rand() % 100 - 50) / 100.f), 1, _set_velosity * 0.001,
+                _set_max_hp_enemy, _set_damage_enemy, ResourceManager::getMaterial("default"));
             m_enemies.push_back(a);
             ResourceManager::get_sound("enemy_spawn")->play();
             m_spawn_enemies.pop();
@@ -869,7 +935,13 @@ void GameApp::on_render(const double delta)
     ResourceManager::getShaderProgram("default3DShader")->setVec3("cam_position", m_cam->get_position());
 
     m_scene.at(4)->getComponent<Transform>()->set_position(parts[cur_player]);
-    //m_grid_line->render(glm::vec3(0), glm::vec3(m_world_mouse_pos_x, m_world_mouse_pos_y + 0.1f, m_world_mouse_pos_z), glm::vec3(1.f));
+    if (is_line_active)
+    {
+        for (int i = 0; i < targets.size() - 1; i++)
+        {
+            m_line->render_from_to(targets[i].get_pos(), targets[i + 1].get_pos(), glm::vec3(1.f, 0.3f, 0.1f));
+        }
+    }
 
     m_main_castle->render();
 
@@ -1112,19 +1184,12 @@ void GameApp::press_button(KeyCode key)
     case KeyCode::KEY_J:
         if (!isKeyPressed)
         {
-            short snum = rand() % 4;
-            unsigned int spawn = 0;
-            if (snum == 0) spawn = rand() % size_x;
-            else if (snum == 1) spawn = (rand() % size_x) + ((size_x - 1) * size_y);
-            else if (snum == 2) spawn = (rand() % size_y) * size_x;
-            else if (snum == 3) spawn = ((rand() % size_y) * size_x) + (size_x - 1);
-            m_spawn_enemies.push(spawn);
-
-            char buff[sizeof(unsigned int) + 1];
-            buff[0] = 's';
-            sysfunc::type_to_char(&spawn, buff, 1);
-            WinSock::send_data(buff, sizeof(unsigned int) + 1);
-
+            int add = rand() % 10;
+            unsigned int spawn = 841 + add;
+            for (unsigned int i = 0; i < countSpawnEnemies; i++)
+            {
+                m_spawn_enemies.push(spawn);
+            }
             isKeyPressed = true;
         }
         break;
@@ -1183,16 +1248,14 @@ void GameApp::press_button(KeyCode key)
         }
         break;
     case KeyCode::KEY_R:
-        if (moveCamMoue && !isKeyPressed)
+        if (is_line_active && !isKeyPressed)
         {
-            m_pWindow->set_cursor_visible(true);
-            moveCamMoue = false;
+            is_line_active = false;
             isKeyPressed = true;
         }
-        else if (!isKeyPressed && !moveCamMoue)
+        else if (!isKeyPressed)
         {
-            m_pWindow->set_cursor_visible(false);
-            moveCamMoue = true;
+            is_line_active = true;
             isKeyPressed = true;
         }
         break;
@@ -1406,19 +1469,25 @@ void GameApp::init_gui()
         glm::vec2(89.f, 28.f), glm::vec2(10.f, 5.f),
         "Add enemy", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
             {
-                short snum = rand() % 4;
-                int spawn = 0;
-                if (snum == 0) spawn = rand() % size_x;
-                else if (snum == 1) spawn = (rand() % size_x) + ((size_x - 1) * size_y);
-                else if (snum == 2) spawn = (rand() % size_y) * size_x;
-                else if (snum == 3) spawn = ((rand() % size_y) * size_x) + (size_x - 1);
-                m_spawn_enemies.push(spawn);
+                int add = rand() % 10;
+                unsigned int spawn = 841 + add;
+                for (unsigned int i = 0; i < countSpawnEnemies; i++)
+                {
+                    m_spawn_enemies.push(spawn);
+                }
 
-                char buff[sizeof(unsigned int) + 1];
-                buff[0] = 's';
-                sysfunc::type_to_char(&spawn, buff, 1);
-                WinSock::send_data(buff, sizeof(unsigned int) + 1);          
+                //char buff[sizeof(unsigned int) + 1];
+                //buff[0] = 's';
+                //sysfunc::type_to_char(&spawn, buff, 1);
+                //WinSock::send_data(buff, sizeof(unsigned int) + 1);          
             });;
+
+    m_gui->add_element<GUI::Button>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(67.f, 17.f), glm::vec2(10.f, 5.f),
+        "Line", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
+            {
+                is_line_active = !is_line_active;
+            });
 
     m_gui->add_element<GUI::Button>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, 17.f), glm::vec2(10.f, 5.f),
@@ -1593,10 +1662,10 @@ void GameApp::start_game_single()
     countEnemies = 0; 
     countEnemiesPerm = 0;
     cur = 0;
-
-    m_main_castle = new Castle(parts[int((size_x * size_y) / 2) + int(size_x / 2)], _set_max_hp_castle,
+    //int((size_x * size_y) / 2) + int(size_x / 2)
+    m_main_castle = new Castle(parts[86], _set_max_hp_castle,
         ResourceManager::get_OBJ_model("castle"), ResourceManager::getMaterial("castle"), ResourceManager::getMaterial("default"));
-    map[int((size_x * size_y) / 2) + int(size_x / 2)] = true;
+    map[86] = true;
 
     for (size_t i = 0; i < m_towers.size(); i++)
     {

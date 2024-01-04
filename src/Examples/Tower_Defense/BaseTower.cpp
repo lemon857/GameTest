@@ -16,7 +16,7 @@ BaseTower::BaseTower(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<Render
 	: m_target_BaseEnemy(nullptr)
 	, m_enemies(std::move(list))
 	, m_line(std::move(line))
-	, m_cool_down(cooldown * 1000)
+	, m_cooldown(cooldown * 1000)
 	, m_distance(distance)
 	, m_cur_time(0)	
 	, m_damage(damage)
@@ -59,7 +59,7 @@ void BaseTower::update(const double delta)
 	{		
 		return;
 	}
-	if (m_cur_time < m_cool_down) m_cur_time += delta;
+	if (m_cur_time < m_cooldown) m_cur_time += delta;
 	else
 	{
 		if (m_target_BaseEnemy != nullptr)
@@ -74,7 +74,8 @@ void BaseTower::update(const double delta)
 void BaseTower::render()
 {
 	updateComponents(0);
-	if (m_target_BaseEnemy != nullptr) m_line->render_from_to(getComponent<Transform>()->get_position() + glm::vec3(0.f, 2.f, 0.f), m_target_BaseEnemy->get_pos(), glm::vec3(1.f, 0.1f, 0.1f));
+	if (m_target_BaseEnemy != nullptr) m_line->render_from_to(getComponent<Transform>()->get_position() + glm::vec3(0.f, 2.f, 0.f),
+		m_target_BaseEnemy->get_pos(), glm::vec4(1.f, 0.1f, 0.1f, 1.f));
 }
 
 void BaseTower::upgrade()
@@ -82,7 +83,7 @@ void BaseTower::upgrade()
 	if (m_isUpgraded) return;
 	m_distance += 3;
 	m_damage += 5;
-	m_cool_down -= 1000;
+	m_cooldown -= 1000;
 	m_isUpgraded = true;
 }
 

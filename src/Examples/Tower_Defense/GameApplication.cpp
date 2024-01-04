@@ -47,6 +47,9 @@
 #include "EngineCore/Sound/Sound.h"
 #include "EngineCore/Sound/SoundEngine.h"
 
+#include "Games/Tower_Defense/ArcherTower.h"
+#include "Games/Tower_Defense/MortarTower.h"
+
 #include <array>
 #include <memory>
 
@@ -758,9 +761,25 @@ void GameApp::on_update(const double delta)
 
         while (!m_spawn_towers.empty())
         {
-            m_towers.push_back({ new BaseTower(ResourceManager::get_OBJ_model("tower"),
-                ResourceManager::getMaterial("tower"), &m_enemies, parts[m_spawn_towers.front()],
-                _set_cooldown_tower, _set_min_distance, _set_damage_tower, new RenderEngine::Line(ResourceManager::getMaterial("default"))), m_spawn_towers.front()});
+            switch (m_spawn_towers.front().type)
+            {
+            case Default:
+                m_towers.push_back({ new BaseTower(ResourceManager::get_OBJ_model("tower"),
+                ResourceManager::getMaterial("tower"), &m_enemies, parts[m_spawn_towers.front().num],
+                4, 12, 14, new RenderEngine::Line(ResourceManager::getMaterial("default"))), m_spawn_towers.front().num });
+                break;
+            case Archer:
+                m_towers.push_back({ new ArcherTower(ResourceManager::get_OBJ_model("archer_tower"),
+                ResourceManager::getMaterial("archer_tower"), &m_enemies, parts[m_spawn_towers.front().num],
+                new RenderEngine::Line(ResourceManager::getMaterial("default"))), m_spawn_towers.front().num });
+                break;
+            case Mortar:
+                m_towers.push_back({ new MortarTower(ResourceManager::get_OBJ_model("mortar_tower"),
+                ResourceManager::getMaterial("mortar_tower"), &m_enemies, parts[m_spawn_towers.front().num],
+                new RenderEngine::Line(ResourceManager::getMaterial("default"))), m_spawn_towers.front().num });
+                break;
+            }
+
             ResourceManager::get_unique_sound("tower_spawn")->play();
             m_spawn_towers.pop();
             m_select_tower = m_towers.back().tow;
@@ -1394,41 +1413,45 @@ void GameApp::init_gui()
     //    "Settings", glm::vec3(0.f), glm::vec2(50.f, 90.f), glm::vec2(1.f)));
 
     // ------------------------------------------------------------ game gui ------------------------------------------------
-
+    offset = 62.f;
     auto gamegui = m_gui->add_element<GUI::GUI_element>("game_gui_place");
 
     //m_gui->add_element<GUI::ScrollBox>(gamegui, 1, new GUI::Sprite(ResourceManager::getMaterial("defaultSprite")),
      //      glm::vec2(89.f, 78.f), glm::vec2(10.f, 20.f), "Towers", 10);
 
      m_gui->add_element<GUI::Sprite>(gamegui, 1, ResourceManager::getMaterial("defaultSprite"), "default",
-        glm::vec2(89.f, 78.f), glm::vec2(10.f, 20.f), "BG_tows");
+        glm::vec2(89.f, 75.f), glm::vec2(10.f, 20.f), "BG_tows");
      
      m_gui->add_element<GUI::Sprite>(gamegui, 1, ResourceManager::getMaterial("defaultSprite"), "default",
-            glm::vec2(9.f, 78.f), glm::vec2(10.f, 20.f), "BG_props");
+            glm::vec2(9.f, 75.f), glm::vec2(10.f, 20.f), "BG_props");
 
      m_gui->add_element<GUI::TextRenderer>(gamegui, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-         "Damage: 0", glm::vec3(1.f), glm::vec2(0.2f, 94.f), glm::vec2(1.f), "Damage_prop", false);
+         "Damage: 0", glm::vec3(1.f), glm::vec2(0.2f, 91.f), glm::vec2(1.f), "Damage_prop", false);
 
      m_gui->add_element<GUI::TextRenderer>(gamegui, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-         "Colldown: 0", glm::vec3(1.f), glm::vec2(0.2f, 89.f), glm::vec2(1.f), "Cooldown_prop", false);
+         "Colldown: 0", glm::vec3(1.f), glm::vec2(0.2f, 86.f), glm::vec2(1.f), "Cooldown_prop", false);
 
      m_gui->add_element<GUI::TextRenderer>(gamegui, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-         "Radius: 0", glm::vec3(1.f), glm::vec2(0.2f, 84.f), glm::vec2(1.f), "Radius_prop", false);
+         "Radius: 0", glm::vec3(1.f), glm::vec2(0.2f, 81.f), glm::vec2(1.f), "Radius_prop", false);
+
+     m_gui->add_element<GUI::TextRenderer>(gamegui, ResourceManager::get_font("calibriChat"), ResourceManager::getShaderProgram("textShader"),
+         "", glm::vec3(1.f), glm::vec2(0.2f, 76.f), glm::vec2(1.f), "Description_prop", false);
 
      m_gui->add_element<GUI::Button>(gamegui, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-         glm::vec2(9.f, 65.f), glm::vec2(8.f, 5.f),
+         glm::vec2(9.f, 62.f), glm::vec2(8.f, 5.f),
          "Upgrade", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), "Upgrade_place")->set_click_callback(
              [&]()
              {
-                 if (place_querry && !map[cur])
+                 if (place_querry != null && !map[cur])
                  {
-                     m_spawn_towers.push(cur);
+                     m_spawn_towers.push({ cur, place_querry });
                      map[cur] = true;
-                     place_querry = false;
+                     place_querry = null;
                      m_gui->get_element<GUI::Button>("Upgrade_place")->set_text("Upgrade");
+                     m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("");
                      //m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(false);
                  }
-                 else if (m_select_tower != nullptr && !place_querry)
+                 else if (m_select_tower != nullptr && place_querry == null)
                  {
                      m_select_tower->upgrade();
                      m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " + std::to_string(m_select_tower->get_damage()));
@@ -1438,15 +1461,42 @@ void GameApp::init_gui()
              });
 
     m_gui->add_element<GUI::Button>(gamegui, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        glm::vec2(89.f, 65.f), glm::vec2(8.f, 5.f),
-        "Towrer - 1", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), "Tower1")->set_click_callback(
+        glm::vec2(89.f, offset), glm::vec2(8.f, 5.f),
+        "Default", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), "Tower1")->set_click_callback(
             [&]()
             {
-                m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " + std::to_string(_set_damage_tower));
-                m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text("Colldown: " + std::to_string((int)_set_cooldown_tower));
-                m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text("Radius: " + std::to_string((int)_set_min_distance));
+                m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " + std::to_string(14));
+                m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text("Colldown: " + std::to_string(4));
+                m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text("Radius: " + std::to_string(12));
+                m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("Just a Tower, nothing more");
                 m_gui->get_element<GUI::Button>("Upgrade_place")->set_text("Place");
-                place_querry = true;
+                place_querry = Default;
+            });
+    offset += 11.f;
+    m_gui->add_element<GUI::Button>(gamegui, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(89.f, offset), glm::vec2(8.f, 5.f),
+        "Archer", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), "Tower2")->set_click_callback(
+            [&]()
+            {
+                m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " + std::to_string(ArcherTower::p_damage));
+                m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text("Colldown: " + std::to_string(ArcherTower::p_cooldown));
+                m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text("Radius: " + std::to_string(ArcherTower::p_distance));
+                m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("Just a Archer, faster");
+                m_gui->get_element<GUI::Button>("Upgrade_place")->set_text("Place");
+                place_querry = Archer;
+            });
+    offset += 11.f;
+    m_gui->add_element<GUI::Button>(gamegui, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(89.f, offset), glm::vec2(8.f, 5.f),
+        "Mortar", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), "Tower3")->set_click_callback(
+            [&]()
+            {
+                m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " + std::to_string(MortarTower::p_damage));
+                m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text("Colldown: " + std::to_string(MortarTower::p_cooldown));
+                m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text("Radius: " + std::to_string(MortarTower::p_distance));
+                m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("Just a Mortar");
+                m_gui->get_element<GUI::Button>("Upgrade_place")->set_text("Place");
+                place_querry = Mortar;
             });
 
     //m_gui->get_element<GUI::ScrollBox>("Towers")->add_element(m_gui->get_element<GUI::Button>("Tower1"));
@@ -1900,7 +1950,7 @@ void GameApp::init_winSock()
         {
             unsigned int cur_buf;
             sysfunc::char_to_type(&cur_buf, data, WS_DATA_PACKET_INFO_SIZE + 1);
-            m_spawn_towers.push(cur_buf);
+            //m_spawn_towers.push(cur_buf);
         }
         else if (data[WS_DATA_PACKET_INFO_SIZE] == 's') // spawn enemy
         {

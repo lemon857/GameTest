@@ -187,7 +187,7 @@
     },
     {
       "name": "CastleTexture",
-      "filePath": "res/textures/castle.png",
+      "filePath": "res/textures/Towers/castle.png",
       "width": 128,
       "height": 128,
       "subTexture_w": 128,
@@ -220,7 +220,29 @@
     },
     {
       "name": "Tower",
-      "filePath": "res/textures/tower.png",
+      "filePath": "res/textures/Towers/tower.png",
+      "width": 128,
+      "height": 128,
+      "subTexture_w": 128,
+      "subTexture_h": 128,
+      "subTextures": [
+        "default"
+      ]
+    },
+    {
+      "name": "Archer_tower",
+      "filePath": "res/textures/Towers/Archer_tower.png",
+      "width": 128,
+      "height": 128,
+      "subTexture_w": 128,
+      "subTexture_h": 128,
+      "subTextures": [
+        "default"
+      ]
+    },
+    {
+      "name": "Mortar_tower",
+      "filePath": "res/textures/Towers/Mortar_tower.png",
       "width": 128,
       "height": 128,
       "subTexture_w": 128,
@@ -337,6 +359,16 @@
       "nameTexture": "Tower"
     },
     {
+      "name": "archer_tower",
+      "nameShader": "default3DShader",
+      "nameTexture": "Archer_tower"
+    },
+    {
+      "name": "mortar_tower",
+      "nameShader": "default3DShader",
+      "nameTexture": "Mortar_tower"
+    },
+    {
       "name": "castle",
       "nameShader": "default3DShader",
       "nameTexture": "CastleTexture"
@@ -434,6 +466,14 @@
     {
       "name": "monkey",
       "path": "res/models/monkey.obj"
+    },
+    {
+      "name": "archer_tower",
+      "path": "res/models/archer_tower.obj"
+    },
+    {
+      "name": "mortar_tower",
+      "path": "res/models/mortar_tower.obj"
     }
   ]
 }

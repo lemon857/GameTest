@@ -36,6 +36,20 @@ namespace GUI
 	class GUI_place;
 }
 
+enum TypeTower
+{
+	null,
+	Default,
+	Archer,
+	Mortar
+};
+
+struct SpawnTower
+{
+	unsigned int num;
+	TypeTower type;
+};
+
 struct Tower
 {
 	BaseTower* tow;
@@ -91,7 +105,7 @@ private:
 
 	std::queue<std::string> m_chat_mes;
 
-	std::queue<unsigned int> m_spawn_towers;
+	std::queue<SpawnTower> m_spawn_towers;
 	//std::queue<unsigned int> m_spawn_towers_self;
 
 	std::queue<unsigned int> m_spawn_enemies;
@@ -155,7 +169,7 @@ private:
 	bool isServer = false;
 	bool restart_querry = false;
 
-	bool place_querry = false;
+	TypeTower place_querry = null;
 
 	bool* lock_key_update;
 

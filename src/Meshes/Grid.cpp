@@ -5,7 +5,7 @@
 
 static unsigned int s_current_grids_ID = 0;
 
-Grid::Grid(glm::vec3 pos, glm::vec2 size, unsigned int count_cols, unsigned int count_rows, glm::vec3 color, std::shared_ptr<RenderEngine::Material> pMaterial)
+Grid::Grid(glm::vec3 pos, glm::vec2 size, unsigned int count_cols, unsigned int count_rows, glm::vec4 color, std::shared_ptr<RenderEngine::Material> pMaterial)
 	: IGameObject("Grid" + std::to_string(s_current_grids_ID++))
 	, m_count_firsts(count_cols)
 	, m_color(color)

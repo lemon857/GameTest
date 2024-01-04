@@ -81,6 +81,7 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Renderer/Camera.h
 	includes/EngineCore/Renderer/Material.h
 	includes/EngineCore/Renderer/ShaderProgramLayout.h
+	includes/EngineCore/Renderer/Circle.h
 	
 	includes/EngineCore/Physics/PhysicsEngine.h
 	includes/EngineCore/Physics/Collider.h
@@ -160,6 +161,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Renderer/Camera.cpp	
 	src/Renderer/Material.cpp
 	src/Renderer/ShaderProgramLayout.cpp
+	src/Renderer/Circle.cpp
 	
 	src/Physics/PhysicsEngine.cpp
 	src/Physics/Collider.cpp

@@ -35,6 +35,12 @@ namespace GUI
 	class GUI_place;
 }
 
+struct Tower
+{
+	BaseTower* tow;
+	unsigned int num;
+};
+
 enum GameMode
 {
 	Single,
@@ -46,7 +52,7 @@ class GameApp : public Application
 public:
 	GameApp();
 	~GameApp();
-	
+
 private:
 	bool init() override;
 	void terminate() override;
@@ -65,27 +71,29 @@ private:
 
 	void init_winSock();
 
+	void add_green_place(glm::vec3 startPos, glm::vec3 endPos);
+
 	std::string m_nickname;
-	std::string m_nickname_connect;
+	//std::string m_nickname_connect;
 
 	Scene m_scene;
 
 	Castle* m_main_castle;
-	Castle* m_adv_castle;
+	//Castle* m_adv_castle;
 
 	linked_list<BaseEnemy*> m_enemies;
-	linked_list<BaseEnemy*> m_enemies_self;
+	//linked_list<BaseEnemy*> m_enemies_self;
 
-	std::vector<BaseTower*> m_towers;
-	std::vector<BaseTower*> m_towers_self;
+	std::vector<Tower> m_towers;
+	//std::vector<BaseTower*> m_towers_self;
 
 	std::queue<std::string> m_chat_mes;
 
 	std::queue<unsigned int> m_spawn_towers;
-	std::queue<unsigned int> m_spawn_towers_self;
+	//std::queue<unsigned int> m_spawn_towers_self;
 
 	std::queue<unsigned int> m_spawn_enemies;
-	std::queue<unsigned int> m_spawn_enemies_self;
+	//std::queue<unsigned int> m_spawn_enemies_self;
 
 	Camera* m_cam;
 
@@ -94,7 +102,7 @@ private:
 	std::vector<glm::vec3> parts;
 
 	std::vector<Target> targets;
-	
+
 	GameMode m_mode = GameMode::Single;
 
 	float m_colors[4] = { 0.33f, 0.33f, 0.33f, 0.f };
@@ -114,7 +122,7 @@ private:
 	bool m_isInversiveMouseY = false;
 	bool m_isLose = false;
 
-	std::array <bool, size_x * size_y> map;
+	std::array <bool, size_x* size_y> map;
 
 	unsigned int cur = 0;
 	unsigned int cur_player = 0;
@@ -124,6 +132,7 @@ private:
 	int countEnemiesPerm = 0;
 
 	bool is_event_logging_active = false;
+	bool is_green_place_active = false;
 	bool is_grid_active = false;
 	bool is_line_active = false;
 	bool is_gui_active = false;
@@ -141,7 +150,7 @@ private:
 
 	bool isServer = false;
 	bool restart_querry = false;
-	
+
 	bool* lock_key_update;
 
 	float volume;
@@ -168,9 +177,9 @@ private:
 	double _set_velosity = 4;
 	double _set_max_hp_castle = 100;
 	double _set_max_hp_enemy = 50;
-	double _set_damage_enemy = 5;
-	double _set_cooldown_tower = 3;
-	unsigned int _set_damage_tower = 10;
+	double _set_damage_enemy = 1;
+	double _set_cooldown_tower = 4;
+	unsigned int _set_damage_tower = 15;
 
 	// binds
 

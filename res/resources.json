@@ -317,6 +317,11 @@
       "nameTexture": "DefaultTexture"
     },
     {
+      "name": "green_place",
+      "nameShader": "colorShader",
+      "nameTexture": "DefaultTexture"
+    },
+    {
       "name": "defaultSprite",
       "nameShader": "spriteShader",
       "nameTexture": "bg_1"

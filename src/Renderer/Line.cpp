@@ -72,4 +72,52 @@ namespace RenderEngine
 
 		Renderer::drawLine(m_vertexArray, m_size);
 	}
+	void Line::render(const glm::vec3& position, const glm::vec3& dir, glm::vec4& color) const
+	{
+		m_pMaterial->use();
+
+		glm::mat4 scaleMat(
+			dir.x, 0, 0, 0,
+			0, dir.y, 0, 0,
+			0, 0, dir.z, 0,
+			0, 0, 0, 1);
+
+		glm::mat4 translateMat(
+			1, 0, 0, 0,
+			0, 1, 0, 0,
+			0, 0, 1, 0,
+			position.x, position.y, position.z, 1);
+
+		glm::mat4 model = translateMat * scaleMat;
+
+		m_pMaterial->set_model_matrix(model);
+		m_pMaterial->get_shader_ptr()->setVec4(SS_COLOR_PROP_NAME, color);
+
+		Renderer::drawLine(m_vertexArray, m_size);
+	}
+	void Line::render_from_to(const glm::vec3& position, const glm::vec3& to, glm::vec4& color) const
+	{
+		glm::vec3 dir = to - position;
+
+		m_pMaterial->use();
+
+		glm::mat4 scaleMat(
+			dir.x, 0, 0, 0,
+			0, dir.y, 0, 0,
+			0, 0, dir.z, 0,
+			0, 0, 0, 1);
+
+		glm::mat4 translateMat(
+			1, 0, 0, 0,
+			0, 1, 0, 0,
+			0, 0, 1, 0,
+			position.x, position.y, position.z, 1);
+
+		glm::mat4 model = translateMat * scaleMat;
+
+		m_pMaterial->set_model_matrix(model);
+		m_pMaterial->get_shader_ptr()->setVec4(SS_COLOR_PROP_NAME, color);
+
+		Renderer::drawLine(m_vertexArray, m_size);
+	}
 }

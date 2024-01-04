@@ -56,7 +56,6 @@
 GameApp::GameApp()
     : Application()
     , m_nickname("defaultNick")
-    , m_nickname_connect("")
 {
     m_ini_region_user.nickname = &m_nickname;
     m_ini_data.add_region("USER", &m_ini_region_user);
@@ -74,6 +73,9 @@ bool GameApp::init()
 
     m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
     // init materials
+    GET_DATA_MATERIAL("green_place", float, "sourceColor", 1) = 1.f;
+    GET_DATA_MATERIAL("green_place", float, "sourceColor", 3) = 0.2f;
+
     GET_DATA_MATERIAL("cube", float, "ambient_factor", 0) = 0.25f;
     GET_DATA_MATERIAL("cube", float, "diffuse_factor", 0) = 0.1f;
     GET_DATA_MATERIAL("cube", float, "specular_factor", 0) = 0.0f;
@@ -105,7 +107,7 @@ bool GameApp::init()
 
     m_scene.add_object<Plane>(ResourceManager::getMaterial("dirt"), glm::vec3(size_x, 0.f, size_y), glm::vec3(size_x, 0.f, size_y));
     m_scene.add_object<DirectionalLight>(names);
-    m_scene.add_object<Grid>(glm::vec3(size_x, 0.5f, size_y), glm::vec2(1.f), size_x, size_y, glm::vec3(1.f), ResourceManager::getMaterial("default"));
+    m_scene.add_object<Grid>(glm::vec3(size_x, 0.5f, size_y), glm::vec2(1.f), size_x, size_y, glm::vec4(1.f, 1.f, 1.f, 0.5f), ResourceManager::getMaterial("default"));
     m_scene.add_object<EmptyObject>();
     m_scene.add_object<EmptyObject>();
 
@@ -129,6 +131,15 @@ bool GameApp::init()
             parts.push_back(startPos + glm::vec3((float)i * size.x, 0, (float)j * size.z));
         }
     }
+
+    add_green_place(parts[217] - glm::vec3(1.f, 0.f, 1.f), parts[762] + glm::vec3(1.f, 0.f, 1.f));
+    add_green_place(parts[0] - glm::vec3(1.f, 0.f, 1.f), parts[751] + glm::vec3(1.f, 0.f, 1.f));
+    add_green_place(parts[2] - glm::vec3(1.f, 0.f, 1.f), parts[53] + glm::vec3(1.f, 0.f, 1.f));
+    add_green_place(parts[78] - glm::vec3(1.f, 0.f, 1.f), parts[683] + glm::vec3(1.f, 0.f, 1.f));
+    add_green_place(parts[24] - glm::vec3(1.f, 0.f, 1.f), parts[28] + glm::vec3(1.f, 0.f, 1.f));
+    add_green_place(parts[29] - glm::vec3(1.f, 0.f, 1.f), parts[899] + glm::vec3(1.f, 0.f, 1.f));
+    add_green_place(parts[853] - glm::vec3(1.f, 0.f, 1.f), parts[898] + glm::vec3(1.f, 0.f, 1.f));
+
     // game system init
     init_gui();
     start_game_single();
@@ -288,7 +299,7 @@ bool GameApp::init()
     targets.push_back(Target(parts[135]));
     targets.push_back(Target(parts[765]));
     targets.push_back(Target(parts[776]));
-    targets.push_back(Target(parts[86]));
+    targets.push_back(Target(parts[116]));
 
     // --------------------------- fills dead zones -------------------------------
     for (size_t i = 0; i < 4; i++)
@@ -722,9 +733,10 @@ void GameApp::on_update(const double delta)
 
         while (!m_spawn_towers.empty())
         {
-            m_towers.push_back(new BaseTower(ResourceManager::get_OBJ_model("tower"),
-                ResourceManager::getMaterial("tower"), nullptr, parts[m_spawn_towers.front()], _set_cooldown_tower, _set_damage_tower, new RenderEngine::Line(ResourceManager::getMaterial("default"))));
-            ResourceManager::get_sound("tower_spawn")->play();
+            m_towers.push_back({ new BaseTower(ResourceManager::get_OBJ_model("tower"),
+                ResourceManager::getMaterial("tower"), nullptr, parts[m_spawn_towers.front()],
+                _set_cooldown_tower, _set_damage_tower, new RenderEngine::Line(ResourceManager::getMaterial("default"))), m_spawn_towers.front()});
+            ResourceManager::get_unique_sound("tower_spawn")->play();
             m_spawn_towers.pop();
         }
         while (!m_spawn_enemies.empty()) // spawn enemies
@@ -746,12 +758,12 @@ void GameApp::on_update(const double delta)
             for (size_t i = 0; i < m_enemies.size(); i++)
             {
                 if (m_enemies[i] == nullptr) continue;
-                glm::vec3 a = m_enemies[i]->get_pos() - curTower->get_pos();
+                glm::vec3 a = m_enemies[i]->get_pos() - curTower.tow->get_pos();
                 double d = sqrt(a.x * a.x + a.z * a.z);
                 if (d < _set_min_distance && d < distance)
                 {
                     distance = d;
-                    if (curTower->get_target() == nullptr) curTower->set_target(m_enemies[i]);
+                    if (curTower.tow->get_target() == nullptr) curTower.tow->set_target(m_enemies[i]);
                     //if (curTower->get_target() != m_enemies[i]) curTower->set_target(m_enemies[i]);
                 }
                 else
@@ -759,7 +771,7 @@ void GameApp::on_update(const double delta)
                     //curTower->set_target(nullptr);
                 }
             }
-            curTower->update(delta);
+            curTower.tow->update(delta);
         }
 
         for (size_t i = 0; i < m_enemies.size(); i++)
@@ -771,7 +783,7 @@ void GameApp::on_update(const double delta)
                 countEnemiesPerm--;
                 for (auto curTower : m_towers)
                 {
-                    if (curTower->get_target() == m_enemies[i]) curTower->set_target(nullptr);
+                    if (curTower.tow->get_target() == m_enemies[i]) curTower.tow->set_target(nullptr);
                 }
                 delete m_enemies[i];
                 m_enemies.remove(i);
@@ -949,19 +961,19 @@ void GameApp::on_render(const double delta)
     {
         MeshRenderer* mesh = m_scene.at(i)->getComponent<MeshRenderer>();
         if (mesh != nullptr)
-        {
+        {            
             std::shared_ptr<RenderEngine::ShaderProgram> shader = mesh->get_material_ptr()->get_shader_ptr();
-            shader->use();
-
+            shader->use();            
             shader->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
         }
         if (i != 2) m_scene.at(i)->render();
-        if (i == 2 && is_grid_active) m_scene.at(i)->render();
+        else if (i == 2 && is_grid_active) m_scene.at(i)->render();
+        if (!is_green_place_active && i == 4) break;
     }
 
     for (auto curTower : m_towers)
     {        
-        curTower->render();
+        curTower.tow->render();
     }
     for (size_t i = 0; i < m_enemies.size(); i++)
     {
@@ -1194,16 +1206,16 @@ void GameApp::press_button(KeyCode key)
         }
         break;
     case KeyCode::KEY_L:
-        if (is_event_logging_active && !isKeyPressed)
+        if (is_green_place_active && !isKeyPressed)
         {
-            is_event_logging_active = false;
-            m_gui->set_logging_active(false);
+            is_green_place_active = false;
+            //m_gui->set_logging_active(false);
             isKeyPressed = true;
         }
         else if (!isKeyPressed)
         {
-            is_event_logging_active = true;
-            m_gui->set_logging_active(true);
+            is_green_place_active = true;
+            //m_gui->set_logging_active(true);
             isKeyPressed = true;
         }
         break;
@@ -1483,6 +1495,14 @@ void GameApp::init_gui()
             });;
 
     m_gui->add_element<GUI::Button>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(67.f, 28.f), glm::vec2(10.f, 5.f),
+        "Light", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
+            {
+                is_green_place_active = !is_green_place_active;
+            });
+
+
+    m_gui->add_element<GUI::Button>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(67.f, 17.f), glm::vec2(10.f, 5.f),
         "Line", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
             {
@@ -1669,7 +1689,7 @@ void GameApp::start_game_single()
 
     for (size_t i = 0; i < m_towers.size(); i++)
     {
-        delete m_towers[i];
+        delete m_towers[i].tow;
     }
     for (size_t i = 0; i < m_enemies.size(); i++)
     {
@@ -1703,65 +1723,65 @@ void GameApp::start_game_single()
 
 void GameApp::start_game_multi()
 {
-    map.fill(false);
-    isKeyPressed = false;
-    m_isLose = false;
-    countKills = 0;
-    countEnemies = 0;
-    countEnemiesPerm = 0;
-    cur = 0;
+    //map.fill(false);
+    //isKeyPressed = false;
+    //m_isLose = false;
+    //countKills = 0;
+    //countEnemies = 0;
+    //countEnemiesPerm = 0;
+    //cur = 0;
 
-    for (size_t i = 0; i < m_towers.size(); i++)
-    {
-        delete m_towers[i];
-    }
-    for (size_t i = 0; i < m_towers_self.size(); i++)
-    {
-        delete m_towers_self[i];
-    }
-    for (size_t i = 0; i < m_enemies.size(); i++)
-    {
-        delete m_enemies[i];
-    }
-    for (size_t i = 0; i < m_enemies_self.size(); i++)
-    {
-        delete m_enemies_self[i];
-    }
-    m_towers.clear();
-    m_enemies.clear();
+    //for (size_t i = 0; i < m_towers.size(); i++)
+    //{
+    //    delete m_towers[i];
+    //}
+    //for (size_t i = 0; i < m_towers_self.size(); i++)
+    //{
+    //    delete m_towers_self[i];
+    //}
+    //for (size_t i = 0; i < m_enemies.size(); i++)
+    //{
+    //    delete m_enemies[i];
+    //}
+    //for (size_t i = 0; i < m_enemies_self.size(); i++)
+    //{
+    //    delete m_enemies_self[i];
+    //}
+    //m_towers.clear();
+    //m_enemies.clear();
 
-    m_towers_self.clear();
-    m_enemies_self.clear();
+    //m_towers_self.clear();
+    //m_enemies_self.clear();
 
-    is_gui_active = false;
+    //is_gui_active = false;
 
-    is_spawn_mode = false;
-    is_spawn_enemy = false;
-    m_scene.at(curObj)->getComponent<Highlight>()->set_color(glm::vec3(1.f));
+    //is_spawn_mode = false;
+    //is_spawn_enemy = false;
+    //m_scene.at(curObj)->getComponent<Highlight>()->set_color(glm::vec3(1.f));
 
-    m_gui->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: 0");
-    m_gui->get_element<GUI::TextRenderer>("kills")->set_text("Kills: 0");
-    //m_gui_place_menu->get_element<GUI::InputField>("InputIP")->set_focus(false);
+    //m_gui->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: 0");
+    //m_gui->get_element<GUI::TextRenderer>("kills")->set_text("Kills: 0");
+    ////m_gui_place_menu->get_element<GUI::InputField>("InputIP")->set_focus(false);
 
-    m_gui->set_active(false);
-    //m_gui_place_settings->set_active(false);
+    //m_gui->set_active(false);
+    ////m_gui_place_settings->set_active(false);
 
-    //m_adv_castle = new Castle(parts[int(size_x * (size_y / 8)) + int(size_x / 4)], _set_max_hp_castle,
-    //    ResourceManager::load_OBJ_file("res/models/castle.obj"), ResourceManager::getMaterial("castle"), ResourceManager::getMaterial("default"));
-    //map[int(size_x * (size_y / 8)) + int(size_x / 8)] = true;
+    ////m_adv_castle = new Castle(parts[int(size_x * (size_y / 8)) + int(size_x / 4)], _set_max_hp_castle,
+    ////    ResourceManager::load_OBJ_file("res/models/castle.obj"), ResourceManager::getMaterial("castle"), ResourceManager::getMaterial("default"));
+    ////map[int(size_x * (size_y / 8)) + int(size_x / 8)] = true;
 
-    //m_main_castle = new Castle(parts[int(size_x * ((size_y * 7) / 8)) + int((size_x * 3) / 4)], _set_max_hp_castle,
-    //    ResourceManager::load_OBJ_file("res/models/castle.obj"), ResourceManager::getMaterial("castle"), ResourceManager::getMaterial("default"), glm::vec3(0.f, 0.f, 1.f));
-    //map[int(size_x * ((size_y * 7) / 8)) + int((size_x * 7) / 8)] = true;
+    ////m_main_castle = new Castle(parts[int(size_x * ((size_y * 7) / 8)) + int((size_x * 3) / 4)], _set_max_hp_castle,
+    ////    ResourceManager::load_OBJ_file("res/models/castle.obj"), ResourceManager::getMaterial("castle"), ResourceManager::getMaterial("default"), glm::vec3(0.f, 0.f, 1.f));
+    ////map[int(size_x * ((size_y * 7) / 8)) + int((size_x * 7) / 8)] = true;
 
-    if (isServer)
-    {
-        m_cam->set_position_rotation(glm::vec3(12.5f, 55.f, 30.f), glm::vec3(-75.f, -90.f, 0.f));
-    }   
-    else
-    {
-        m_cam->set_position_rotation(glm::vec3(45.5f, 55.f, 30.f), glm::vec3(-75.f, -270.f, 0.f));
-    }
+    //if (isServer)
+    //{
+    //    m_cam->set_position_rotation(glm::vec3(12.5f, 55.f, 30.f), glm::vec3(-75.f, -90.f, 0.f));
+    //}   
+    //else
+    //{
+    //    m_cam->set_position_rotation(glm::vec3(45.5f, 55.f, 30.f), glm::vec3(-75.f, -270.f, 0.f));
+    //}
 }
 
 void GameApp::init_winSock()
@@ -1772,7 +1792,7 @@ void GameApp::init_winSock()
         if (data[WS_DATA_PACKET_INFO_SIZE] == 'm') // message for chat
         {
             std::string str = std::string(&data[WS_DATA_PACKET_INFO_SIZE + 1]).substr(0, size - (WS_DATA_PACKET_INFO_SIZE));
-            m_chat_mes.push(m_nickname_connect + ": " + str);
+            //m_chat_mes.push(m_nickname_connect + ": " + str);
         }
         else if (data[WS_DATA_PACKET_INFO_SIZE] == 'q') // kill enemy (not working now)
         {
@@ -1813,13 +1833,13 @@ void GameApp::init_winSock()
         else if (data[WS_DATA_PACKET_INFO_SIZE] == 'n')
         {
             std::string str = std::string(&data[WS_DATA_PACKET_INFO_SIZE + 1]).substr(0, size - (WS_DATA_PACKET_INFO_SIZE));
-            m_nickname_connect = str;
+            //m_nickname_connect = str;
             std::string temp = isServer ? ": " : "to: ";
             m_chat_mes.push("Connect " + temp + str);
         }
         else if (data[WS_DATA_PACKET_INFO_SIZE] == 'c')
         {
-            if (data[WS_DATA_PACKET_INFO_SIZE + 1] == 'a')
+            /*if (data[WS_DATA_PACKET_INFO_SIZE + 1] == 'a')
             {
                 sysfunc::char_to_type(&_set_min_distance, data, WS_DATA_PACKET_INFO_SIZE + 2);
                 m_chat_mes.push(m_nickname_connect + ": Set min distance: " + std::to_string(_set_min_distance));
@@ -1851,7 +1871,7 @@ void GameApp::init_winSock()
                 sysfunc::char_to_type(&_set_damage_tower, data, WS_DATA_PACKET_INFO_SIZE + 2);
                 m_chat_mes.push(m_nickname_connect + ": Set damage tower: " + std::to_string(_set_damage_tower));
                 m_chat_mes.push("Need restart");
-            }
+            }*/
         }
         });
 
@@ -1910,6 +1930,12 @@ void GameApp::init_winSock()
         m_mode = GameMode::Multi;
         restart_querry = true;
         });
+}
+
+void GameApp::add_green_place(glm::vec3 startPos, glm::vec3 endPos)
+{
+    glm::vec3 pos((endPos.x - startPos.x) / 2.f, 0.1f, (endPos.z - startPos.z) / 2.f);
+    m_scene.add_object<Plane>(ResourceManager::getMaterial("green_place"), glm::vec3(startPos.x, 0.f, startPos.z) + pos, pos);
 }
 
 void INIregionUSER::parse(std::string name, std::string value)

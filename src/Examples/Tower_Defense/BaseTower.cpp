@@ -12,12 +12,15 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-BaseTower::BaseTower(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<RenderEngine::Material> pMaterial, BaseEnemy* target, glm::vec3 pos, double cooldown, unsigned int damage, RenderEngine::Line* line)
-	: m_target_BaseEnemy(std::move(target))
+BaseTower::BaseTower(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<RenderEngine::Material> pMaterial, linked_list<BaseEnemy*>* list, glm::vec3 pos, double cooldown, double distance, unsigned int damage, RenderEngine::Line* line)
+	: m_target_BaseEnemy(nullptr)
+	, m_enemies(std::move(list))
 	, m_line(std::move(line))
 	, m_cool_down(cooldown * 1000)
+	, m_distance(distance)
 	, m_cur_time(0)	
 	, m_damage(damage)
+	, m_isUpgraded(false)
 	, IGameObject("Tower")
 {
 	addComponent<Transform>(pos);
@@ -32,6 +35,26 @@ BaseTower::~BaseTower()
 
 void BaseTower::update(const double delta)
 {
+	double distance = 100; // <-------
+	for (size_t i = 0; i < m_enemies->size(); i++)
+	{
+		if (m_enemies->at(i) == nullptr) continue;
+		glm::vec3 a = m_enemies->at(i)->get_pos() - get_pos();
+		double d = sqrt(a.x * a.x + a.z * a.z);
+		if (d <= m_distance && d <= distance)
+		{
+			distance = d;
+			if (m_target_BaseEnemy == nullptr)
+			{
+				m_target_BaseEnemy = m_enemies->at(i);
+			}
+			//if (curTower->get_target() != m_enemies[i]) curTower->set_target(m_enemies[i]);
+		}
+		else if (d > m_distance)
+		{
+			m_target_BaseEnemy = nullptr;
+		}
+	}
 	if (m_target_BaseEnemy == nullptr)
 	{		
 		return;
@@ -51,7 +74,16 @@ void BaseTower::update(const double delta)
 void BaseTower::render()
 {
 	updateComponents(0);
-	if (m_target_BaseEnemy != nullptr) m_line->render_from_to(getComponent<Transform>()->get_position() + glm::vec3(0.f, 2.f, 0.f), m_target_BaseEnemy->get_pos(), glm::vec3(1.f));
+	if (m_target_BaseEnemy != nullptr) m_line->render_from_to(getComponent<Transform>()->get_position() + glm::vec3(0.f, 2.f, 0.f), m_target_BaseEnemy->get_pos(), glm::vec3(1.f, 0.1f, 0.1f));
+}
+
+void BaseTower::upgrade()
+{
+	if (m_isUpgraded) return;
+	m_distance += 3;
+	m_damage += 5;
+	m_cool_down -= 1000;
+	m_isUpgraded = true;
 }
 
 void BaseTower::set_target(BaseEnemy* target)

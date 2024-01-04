@@ -86,6 +86,7 @@ private:
 	//linked_list<BaseEnemy*> m_enemies_self;
 
 	std::vector<Tower> m_towers;
+	BaseTower* m_select_tower = nullptr;
 	//std::vector<BaseTower*> m_towers_self;
 
 	std::queue<std::string> m_chat_mes;
@@ -135,7 +136,7 @@ private:
 	int countEnemiesPerm = 0;
 
 	bool is_event_logging_active = false;
-	bool is_green_place_active = false;
+	bool is_green_place_active = true;
 	bool is_grid_active = false;
 	bool is_line_active = false;
 	bool is_gui_active = false;
@@ -153,6 +154,8 @@ private:
 
 	bool isServer = false;
 	bool restart_querry = false;
+
+	bool place_querry = false;
 
 	bool* lock_key_update;
 
@@ -176,8 +179,8 @@ private:
 	const unsigned int max_buffer_chat_last = 32;
 
 	// settings
-	double _set_min_distance = 7;
-	double _set_velosity = 4;
+	double _set_min_distance = 12;
+	double _set_velosity = 2;
 	double _set_max_hp_castle = 100;
 	double _set_max_hp_enemy = 50;
 	double _set_damage_enemy = 1;
@@ -194,4 +197,5 @@ private:
 
 	glm::vec3 movDel = glm::vec3(0);
 	glm::vec3 rotDel = glm::vec3(0);
+	glm::vec3 uPos = glm::vec3(25.f, -10.f, 25.f);
 };

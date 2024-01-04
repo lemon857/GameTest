@@ -12,13 +12,15 @@
 
 namespace RenderEngine
 {
-	Circle::Circle(std::shared_ptr<Material> pMaterial, glm::vec3 pos, glm::vec3 scale, glm::vec3 rot, float radius, int numSegments, float size)
+	Circle::Circle(std::shared_ptr<Material> pMaterial, glm::vec3 pos, glm::vec3 scale, glm::vec3 rot, glm::vec4 color, float radius, int numSegments, float size)
 		: m_pos(pos)
 		, m_rot(rot)
 		, m_scale(scale)
 		, m_pMaterial(std::move(pMaterial))
 		, m_size(size)
 		, m_numSegments(numSegments)
+		, m_radius(radius)
+		, m_color(color)
 	{
 		std::vector<GLfloat> poss;
 		for (int ii = 0; ii < m_numSegments; ii++) {
@@ -88,18 +90,20 @@ namespace RenderEngine
 		glm::mat4 model = translateMat * rotateXmat * rotateYmat * rotateZmat * scaleMat;
 
 		m_pMaterial->set_model_matrix(model);
-		m_pMaterial->get_shader_ptr()->setVec4(SS_COLOR_PROP_NAME, glm::vec4(1.f));
+		m_pMaterial->get_shader_ptr()->setVec4(SS_COLOR_PROP_NAME, m_color);
 
 		Renderer::drawLine(*m_vertexArray, m_size, m_numSegments);
 	}
 	void Circle::update(float radius, int numSegments)
 	{
+		if (m_radius == radius && m_numSegments == numSegments) return;
+		m_radius = radius;
 		m_numSegments = numSegments;
 		std::vector<GLfloat> poss;
 		for (int ii = 0; ii < m_numSegments; ii++) {
 			float theta = 2.0f * 3.1415926f * float(ii) / float(m_numSegments);//get the current angle 
-			float x = radius * cosf(theta);//calculate the x component 
-			float y = radius * sinf(theta);//calculate the y component 
+			float x = m_radius * cosf(theta);//calculate the x component 
+			float y = m_radius * sinf(theta);//calculate the y component 
 			poss.push_back(x);
 			poss.push_back(0.f);
 			poss.push_back(y);
@@ -108,5 +112,35 @@ namespace RenderEngine
 		m_vertexCoordsBuffer->update(poss.data(), 3 * m_numSegments * sizeof(GLfloat));
 
 		m_vertexArray->unbind();
+	}
+	void Circle::set_pos(glm::vec3 pos)
+	{
+		m_pos = pos;
+	}
+	void Circle::set_rot(glm::vec3 rot)
+	{
+		m_rot = rot;
+	}
+	void Circle::set_rad(float radius)
+	{
+		if (m_radius == radius) return;
+		m_radius = radius;
+		std::vector<GLfloat> poss;
+		for (int ii = 0; ii < m_numSegments; ii++) {
+			float theta = 2.0f * 3.1415926f * float(ii) / float(m_numSegments);//get the current angle 
+			float x = m_radius * cosf(theta);//calculate the x component 
+			float y = m_radius * sinf(theta);//calculate the y component 
+			poss.push_back(x);
+			poss.push_back(0.f);
+			poss.push_back(y);
+		}
+
+		m_vertexCoordsBuffer->update(poss.data(), 3 * m_numSegments * sizeof(GLfloat));
+
+		m_vertexArray->unbind();
+	}
+	void Circle::add_rot(glm::vec3 rot)
+	{
+		m_rot += rot;
 	}
 }

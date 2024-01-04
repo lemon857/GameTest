@@ -52,7 +52,7 @@ namespace GUI
 		for (size_t i = 0; i < m_elements.size(); i++)
 		{
 			GUI_element* cur = m_elements[i];
-			cur->add_position(glm::vec2(0.f, offset * SCROLL_MYLTIPLIER));
+			cur->set_position(cur->get_position() + glm::vec2(0.f, offset * SCROLL_MYLTIPLIER));
 		}
 	}
 	void ScrollBox::add_element(GUI_element* element)

@@ -37,7 +37,7 @@ public:
 private:
 	HealthBar* m_bar;
 
-	unsigned int m_hp;
+	int m_hp;
 
 	bool m_isDestroyed;
 };

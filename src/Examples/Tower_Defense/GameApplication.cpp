@@ -72,7 +72,7 @@ bool GameApp::init()
 
     m_line = new RenderEngine::Line(ResourceManager::getMaterial("default"), 5.f);
 
-    m_circle = new RenderEngine::Circle(ResourceManager::getMaterial("default"), glm::vec3(0.f, 10.f, 0.f), glm::vec3(1.f), glm::vec3(0.f), 5.f, 120, 2);
+    m_circle = new RenderEngine::Circle(ResourceManager::getMaterial("default"), uPos, glm::vec3(1.f), glm::vec3(0.f), glm::vec4(1.f, 0.f, 0.f, 0.4f), _set_min_distance, 120, 4);
 
     m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
     // init materials
@@ -168,93 +168,93 @@ bool GameApp::init()
         //sysfunc::type_to_char(&_set_min_distance, buff, 2);
         //WinSock::send_data(buff, sizeof(double) + 2);
         });
-    CommandManager::add_command("dis", [&](std::vector<std::string> args) {
-        if (args.empty())
-        {
-            m_chat_mes.push("Min distance: " + std::to_string(_set_min_distance));
-            return;
-        }
-        _set_min_distance = std::stod(args[0]);
-        m_chat_mes.push("Set min distance: " + std::to_string(_set_min_distance));
-        //buff[1] = 'a';
-        //sysfunc::type_to_char(&_set_min_distance, buff, 2);
-        //WinSock::send_data(buff, sizeof(double) + 2);
-        });
-    CommandManager::add_command("vel", [&](std::vector<std::string> args) {
-        if (args.empty())
-        {
-            m_chat_mes.push("Velocity: " + std::to_string(_set_velosity));
-            return;
-        }
-        _set_velosity = std::stod(args[0]);
-        m_chat_mes.push("Set velocity: " + std::to_string(_set_velosity));
-        //buff[1] = 'a';
-        //sysfunc::type_to_char(&_set_min_distance, buff, 2);
-        //WinSock::send_data(buff, sizeof(double) + 2);
-        });
-    CommandManager::add_command("mhpcas", [&](std::vector<std::string> args) {
-        if (args.empty())
-        {
-            m_chat_mes.push("Max hp castle: " + std::to_string(_set_max_hp_castle));
-            return;
-        }
-        _set_max_hp_castle = std::stod(args[0]);
-        m_chat_mes.push("Set max hp castle: " + std::to_string(_set_max_hp_castle));
-        m_chat_mes.push("Need restart");
-        //buff[1] = 'a';
-        //sysfunc::type_to_char(&_set_min_distance, buff, 2);
-        //WinSock::send_data(buff, sizeof(double) + 2);
-        });
-    CommandManager::add_command("mhpen", [&](std::vector<std::string> args) {
-        if (args.empty())
-        {
-            m_chat_mes.push("Max hp enemy: " + std::to_string(_set_max_hp_enemy));
-            return;
-        }
-        _set_max_hp_enemy = std::stod(args[0]);
-        m_chat_mes.push("Set max hp enemy: " + std::to_string(_set_max_hp_enemy));
-        //buff[1] = 'a';
-        //sysfunc::type_to_char(&_set_min_distance, buff, 2);
-        //WinSock::send_data(buff, sizeof(double) + 2);
-        });
-    CommandManager::add_command("cdtow", [&](std::vector<std::string> args) {
-        if (args.empty())
-        {
-            m_chat_mes.push("Cooldown tower: " + std::to_string(_set_cooldown_tower));
-            return;
-        }
-        _set_cooldown_tower = std::stod(args[0]);
-        m_chat_mes.push("Set cooldown tower: " + std::to_string(_set_cooldown_tower));
-        m_chat_mes.push("Need restart");
-        //buff[1] = 'a';
-        //sysfunc::type_to_char(&_set_min_distance, buff, 2);
-        //WinSock::send_data(buff, sizeof(double) + 2);
-        });
-    CommandManager::add_command("dmgtow", [&](std::vector<std::string> args) {
-        if (args.empty())
-        {
-            m_chat_mes.push("Damage tower: " + std::to_string(_set_damage_tower));
-            return;
-        }
-        _set_cooldown_tower = std::stod(args[0]);
-        m_chat_mes.push("Set damage tower: " + std::to_string(_set_damage_tower));
-        m_chat_mes.push("Need restart");
-        //buff[1] = 'a';
-        //sysfunc::type_to_char(&_set_min_distance, buff, 2);
-        //WinSock::send_data(buff, sizeof(double) + 2);
-        });
-    CommandManager::add_command("dmgen", [&](std::vector<std::string> args) {
-        if (args.empty())
-        {
-            m_chat_mes.push("Damage enemy: " + std::to_string(_set_damage_enemy));
-            return;
-        }
-        _set_damage_enemy = std::stod(args[0]);
-        m_chat_mes.push("Set damage enemy: " + std::to_string(_set_damage_enemy));
-        //buff[1] = 'a';
-        //sysfunc::type_to_char(&_set_min_distance, buff, 2);
-        //WinSock::send_data(buff, sizeof(double) + 2);
-        });
+    //CommandManager::add_command("dis", [&](std::vector<std::string> args) {
+    //    if (args.empty())
+    //    {
+    //        m_chat_mes.push("Min distance: " + std::to_string(_set_min_distance));
+    //        return;
+    //    }
+    //    _set_min_distance = std::stod(args[0]);
+    //    m_chat_mes.push("Set min distance: " + std::to_string(_set_min_distance));
+    //    //buff[1] = 'a';
+    //    //sysfunc::type_to_char(&_set_min_distance, buff, 2);
+    //    //WinSock::send_data(buff, sizeof(double) + 2);
+    //    });
+    //CommandManager::add_command("vel", [&](std::vector<std::string> args) {
+    //    if (args.empty())
+    //    {
+    //        m_chat_mes.push("Velocity: " + std::to_string(_set_velosity));
+    //        return;
+    //    }
+    //    _set_velosity = std::stod(args[0]);
+    //    m_chat_mes.push("Set velocity: " + std::to_string(_set_velosity));
+    //    //buff[1] = 'a';
+    //    //sysfunc::type_to_char(&_set_min_distance, buff, 2);
+    //    //WinSock::send_data(buff, sizeof(double) + 2);
+    //    });
+    //CommandManager::add_command("mhpcas", [&](std::vector<std::string> args) {
+    //    if (args.empty())
+    //    {
+    //        m_chat_mes.push("Max hp castle: " + std::to_string(_set_max_hp_castle));
+    //        return;
+    //    }
+    //    _set_max_hp_castle = std::stod(args[0]);
+    //    m_chat_mes.push("Set max hp castle: " + std::to_string(_set_max_hp_castle));
+    //    m_chat_mes.push("Need restart");
+    //    //buff[1] = 'a';
+    //    //sysfunc::type_to_char(&_set_min_distance, buff, 2);
+    //    //WinSock::send_data(buff, sizeof(double) + 2);
+    //    });
+    //CommandManager::add_command("mhpen", [&](std::vector<std::string> args) {
+    //    if (args.empty())
+    //    {
+    //        m_chat_mes.push("Max hp enemy: " + std::to_string(_set_max_hp_enemy));
+    //        return;
+    //    }
+    //    _set_max_hp_enemy = std::stod(args[0]);
+    //    m_chat_mes.push("Set max hp enemy: " + std::to_string(_set_max_hp_enemy));
+    //    //buff[1] = 'a';
+    //    //sysfunc::type_to_char(&_set_min_distance, buff, 2);
+    //    //WinSock::send_data(buff, sizeof(double) + 2);
+    //    });
+    //CommandManager::add_command("cdtow", [&](std::vector<std::string> args) {
+    //    if (args.empty())
+    //    {
+    //        m_chat_mes.push("Cooldown tower: " + std::to_string(_set_cooldown_tower));
+    //        return;
+    //    }
+    //    _set_cooldown_tower = std::stod(args[0]);
+    //    m_chat_mes.push("Set cooldown tower: " + std::to_string(_set_cooldown_tower));
+    //    m_chat_mes.push("Need restart");
+    //    //buff[1] = 'a';
+    //    //sysfunc::type_to_char(&_set_min_distance, buff, 2);
+    //    //WinSock::send_data(buff, sizeof(double) + 2);
+    //    });
+    //CommandManager::add_command("dmgtow", [&](std::vector<std::string> args) {
+    //    if (args.empty())
+    //    {
+    //        m_chat_mes.push("Damage tower: " + std::to_string(_set_damage_tower));
+    //        return;
+    //    }
+    //    _set_cooldown_tower = std::stod(args[0]);
+    //    m_chat_mes.push("Set damage tower: " + std::to_string(_set_damage_tower));
+    //    m_chat_mes.push("Need restart");
+    //    //buff[1] = 'a';
+    //    //sysfunc::type_to_char(&_set_min_distance, buff, 2);
+    //    //WinSock::send_data(buff, sizeof(double) + 2);
+    //    });
+    //CommandManager::add_command("dmgen", [&](std::vector<std::string> args) {
+    //    if (args.empty())
+    //    {
+    //        m_chat_mes.push("Damage enemy: " + std::to_string(_set_damage_enemy));
+    //        return;
+    //    }
+    //    _set_damage_enemy = std::stod(args[0]);
+    //    m_chat_mes.push("Set damage enemy: " + std::to_string(_set_damage_enemy));
+    //    //buff[1] = 'a';
+    //    //sysfunc::type_to_char(&_set_min_distance, buff, 2);
+    //    //WinSock::send_data(buff, sizeof(double) + 2);
+    //    });
     CommandManager::add_command("reload", [&](std::vector<std::string> args) {
         if (args.empty())
         {
@@ -404,9 +404,9 @@ void GameApp::on_key_update(const double delta)
                 if (cur != x * size_y + y)
                 {
                     cur = x * size_y + y;
-                    LOG_INFO("CUR: {0}", cur);
+                    //LOG_INFO("CUR: {0}", cur);
                     m_scene.at(curObj)->getComponent<Transform>()->set_position(parts[cur]);
-
+                    m_select_tower = nullptr;
                     isKeyPressedmouse = true;
 
                     if (is_spawn_mode)
@@ -416,101 +416,98 @@ void GameApp::on_key_update(const double delta)
 
                         isKeyPressedmouse = true;
 
-                        char buff[sizeof(unsigned int) + 1];
+                        //char buff[sizeof(unsigned int) + 1];
 
-                        if (m_mode == GameMode::Single)
-                        {
-                            if (is_spawn_enemy)
+                        //if (m_mode == GameMode::Single)
+                        //{
+                            //if (is_spawn_enemy)
+                            //{
+                            //    /*for (unsigned int i = 0; i < countSpawnEnemies; i++)
+                            //    {
+                            //        m_spawn_enemies.push(cur);
+                            //    }
+                            //    buff[0] = 's';
+                            //    sysfunc::type_to_char(&cur, buff, 1);
+
+                            //    WinSock::send_data(buff, sizeof(unsigned int) + 1);*/
+                            //}
+                            if (!map[cur])
                             {
-                                /*for (unsigned int i = 0; i < countSpawnEnemies; i++)
-                                {
-                                    m_spawn_enemies.push(cur);
-                                }
-                                buff[0] = 's';
-                                sysfunc::type_to_char(&cur, buff, 1);
+                                //m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(true);
+                                //map[cur] = true;
+                                //m_spawn_towers.push(cur);
+                                //buff[0] = 't';
+                                //sysfunc::type_to_char(&cur, buff, 1);
 
-                                WinSock::send_data(buff, sizeof(unsigned int) + 1);*/
-                            }
-                            else if (!map[cur])
-                            {
-                                map[cur] = true;
-                                m_spawn_towers.push(cur);
-                                buff[0] = 't';
-                                sysfunc::type_to_char(&cur, buff, 1);
-
-                                WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                                //WinSock::send_data(buff, sizeof(unsigned int) + 1);
                                 //LOG_INFO("Add tower at {0}x{1}", x, y);
                             }
-                        }
-                        else
-                        {
-                            if (is_spawn_enemy)
-                            {
-                               /* if (isServer)
-                                {
-                                    if (x < 5 && y > 16 && y < 30)
-                                    {
-                                        for (unsigned int i = 0; i < countSpawnEnemies; i++)
-                                        {
-                                            m_spawn_enemies_self.push(cur);
-                                        }
-                                        buff[0] = 's';
-                                        sysfunc::type_to_char(&cur, buff, 1);
-
-                                        WinSock::send_data(buff, sizeof(unsigned int) + 1);
-                                    }
-                                }
-                                else
-                                {
-                                    if (x > 25 && y < 14 && y > 1)
-                                    {
-                                        for (unsigned int i = 0; i < countSpawnEnemies; i++)
-                                        {
-                                            m_spawn_enemies_self.push(cur);
-                                        }
-                                        buff[0] = 's';
-                                        sysfunc::type_to_char(&cur, buff, 1);
-
-                                        WinSock::send_data(buff, sizeof(unsigned int) + 1);
-                                    }
-                                }*/
-                            }
-                            else if (!map[cur])
-                            {
-                                if (isServer)
-                                {
-                                    if ((x > 6 && x < 25) && ((y > 0 && y < 3) || (y > 8 && y < 16)))
-                                    {
-                                        map[cur] = true;
-                                        m_spawn_towers.push(cur);
-                                        buff[0] = 't';
-                                        sysfunc::type_to_char(&cur, buff, 1);
-
-                                        WinSock::send_data(buff, sizeof(unsigned int) + 1);
-                                    }
-                                }
-                                else
-                                {
-                                    if ((x > 6 && x < 25) && ((y > 16 && y < 19) || (y > 22 && y < 30)))
-                                    {
-                                        map[cur] = true;
-                                        m_spawn_towers.push(cur);
-                                        buff[0] = 't';
-                                        sysfunc::type_to_char(&cur, buff, 1);
-
-                                        WinSock::send_data(buff, sizeof(unsigned int) + 1);
-                                    }
-                                }
-                            }
-                        }
+                        //}
+                        //else
+                        //{
+                        //    if (is_spawn_enemy)
+                        //    {
+                        //       /* if (isServer)
+                        //        {
+                        //            if (x < 5 && y > 16 && y < 30)
+                        //            {
+                        //                for (unsigned int i = 0; i < countSpawnEnemies; i++)
+                        //                {
+                        //                    m_spawn_enemies_self.push(cur);
+                        //                }
+                        //                buff[0] = 's';
+                        //                sysfunc::type_to_char(&cur, buff, 1);
+                        //                WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                        //            }
+                        //        }
+                        //        else
+                        //        {
+                        //            if (x > 25 && y < 14 && y > 1)
+                        //            {
+                        //                for (unsigned int i = 0; i < countSpawnEnemies; i++)
+                        //                {
+                        //                    m_spawn_enemies_self.push(cur);
+                        //                }
+                        //                buff[0] = 's';
+                        //                sysfunc::type_to_char(&cur, buff, 1);
+                        //                WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                        //            }
+                        //        }*/
+                        //    }
+                        //    else if (!map[cur])
+                        //    {
+                        //        if (isServer)
+                        //        {
+                        //            if ((x > 6 && x < 25) && ((y > 0 && y < 3) || (y > 8 && y < 16)))
+                        //            {
+                        //                map[cur] = true;
+                        //                m_spawn_towers.push(cur);
+                        //                buff[0] = 't';
+                        //                sysfunc::type_to_char(&cur, buff, 1);
+                        //                WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                        //            }
+                        //        }
+                        //        else
+                        //        {
+                        //            if ((x > 6 && x < 25) && ((y > 16 && y < 19) || (y > 22 && y < 30)))
+                        //            {
+                        //                map[cur] = true;
+                        //                m_spawn_towers.push(cur);
+                        //                buff[0] = 't';
+                        //                sysfunc::type_to_char(&cur, buff, 1);
+                        //                WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                        //            }
+                        //        }
+                        //    }
+                        //}
 
                         //LOG_INFO("Pos: X:{0} Y:{1}", x, y);
                     }
 
-                    char buff[sizeof(unsigned int) + 1];
-                    buff[0] = 'd';
-                    sysfunc::type_to_char(&cur, buff, 1);
-                    WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                    //char buff[sizeof(unsigned int) + 1];
+                    //buff[0] = 'd';
+                    //sysfunc::type_to_char(&cur, buff, 1);
+                    //WinSock::send_data(buff, sizeof(unsigned int) + 1);
                 }
                 else if (!is_spawn_mode && !isKeyPressedmouse)
                 {
@@ -519,12 +516,12 @@ void GameApp::on_key_update(const double delta)
 
                     isKeyPressedmouse = true;
 
-                    char buff[sizeof(unsigned int) + 1];
+                    //char buff[sizeof(unsigned int) + 1];
 
-                    if (m_mode == GameMode::Single)
-                    {
-                        if (is_spawn_enemy)
-                        {
+                    //if (m_mode == GameMode::Single)
+                    //{
+                        //if (is_spawn_enemy)
+                        //{
                             /*for (unsigned int i = 0; i < countSpawnEnemies; i++)
                             {
                                 m_spawn_enemies.push(cur);
@@ -533,80 +530,96 @@ void GameApp::on_key_update(const double delta)
                             sysfunc::type_to_char(&cur, buff, 1);
 
                             WinSock::send_data(buff, sizeof(unsigned int) + 1);*/
-                        }
-                        else if (!map[cur])
+                        //}
+                        if (!map[cur])
                         {
-                            map[cur] = true;
-                            m_spawn_towers.push(cur);
-                            buff[0] = 't';
-                            sysfunc::type_to_char(&cur, buff, 1);
+                            m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(true);
+                            m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: 0");
+                            m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text("Colldown: 0");
+                            m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text("Radius: 0");
+                            //map[cur] = true;
+                            //m_spawn_towers.push(cur);
+                            //buff[0] = 't';
+                            //sysfunc::type_to_char(&cur, buff, 1);
 
-                            WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                            //WinSock::send_data(buff, sizeof(unsigned int) + 1);
                             //LOG_INFO("Add tower at {0}x{1}", x, y);
                         }
-                    }
-                    else
-                    {
-                        if (is_spawn_enemy)
+                        else
                         {
-                            /*if (isServer)
+                            m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(false);
+                            for (auto& it : m_towers)
                             {
-                                if (x < 5 && y > 16 && y < 30)
+                                if (it.num == cur)
                                 {
-                                    m_spawn_enemies_self.push(cur);
-                                    buff[0] = 's';
-                                    sysfunc::type_to_char(&cur, buff, 1);
-
-                                    WinSock::send_data(buff, sizeof(unsigned int) + 1);
-                                }
-                            }
-                            else
-                            {
-                                if (x > 25 && y < 14 && y > 1)
-                                {
-                                    m_spawn_enemies_self.push(cur);
-                                    buff[0] = 's';
-                                    sysfunc::type_to_char(&cur, buff, 1);
-
-                                    WinSock::send_data(buff, sizeof(unsigned int) + 1);
-                                }
-                            }*/
-                        }
-                        else if (!map[cur])
-                        {
-                            if (isServer)
-                            {
-                                if ((x > 6 && x < 25) && ((y > 0 && y < 3) || (y > 8 && y < 16)))
-                                {
-                                    map[cur] = true;
-                                    m_spawn_towers.push(cur);
-                                    buff[0] = 't';
-                                    sysfunc::type_to_char(&cur, buff, 1);
-
-                                    WinSock::send_data(buff, sizeof(unsigned int) + 1);
-                                }
-                            }
-                            else
-                            {
-                                if ((x > 6 && x < 25) && ((y > 16 && y < 19) || (y > 22 && y < 30)))
-                                {
-                                    map[cur] = true;
-                                    m_spawn_towers.push(cur);
-                                    buff[0] = 't';
-                                    sysfunc::type_to_char(&cur, buff, 1);
-
-                                    WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                                    m_select_tower = it.tow;
+                                    m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(true);
+                                    m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " + std::to_string(m_select_tower->get_damage()));
+                                    m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text("Colldown: " + std::to_string((int)m_select_tower->get_cooldown()));
+                                    m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text("Radius: " + std::to_string((int)m_select_tower->get_distance()));
+                                    break;
                                 }
                             }
                         }
-                    }
+                    //}
+                    //else
+                    //{
+                    //    if (is_spawn_enemy)
+                    //    {
+                    //        /*if (isServer)
+                    //        {
+                    //            if (x < 5 && y > 16 && y < 30)
+                    //            {
+                    //                m_spawn_enemies_self.push(cur);
+                    //                buff[0] = 's';
+                    //                sysfunc::type_to_char(&cur, buff, 1);
+                    //                WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                    //            }
+                    //        }
+                    //        else
+                    //        {
+                    //            if (x > 25 && y < 14 && y > 1)
+                    //            {
+                    //                m_spawn_enemies_self.push(cur);
+                    //                buff[0] = 's';
+                    //                sysfunc::type_to_char(&cur, buff, 1);                        
+                    //                WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                    //            }
+                    //        }*/
+                    //    }
+                    //    else if (!map[cur])
+                    //    {
+                    //        if (isServer)
+                    //        {
+                    //            if ((x > 6 && x < 25) && ((y > 0 && y < 3) || (y > 8 && y < 16)))
+                    //            {
+                    //                map[cur] = true;
+                    //                m_spawn_towers.push(cur);
+                    //                buff[0] = 't';
+                    //                sysfunc::type_to_char(&cur, buff, 1);
+                    //                WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                    //            }
+                    //        }
+                    //        else
+                    //        {
+                    //            if ((x > 6 && x < 25) && ((y > 16 && y < 19) || (y > 22 && y < 30)))
+                    //            {
+                    //                map[cur] = true;
+                    //                m_spawn_towers.push(cur);
+                    //                buff[0] = 't';
+                    //                sysfunc::type_to_char(&cur, buff, 1);
+                    //                WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                    //            }
+                    //        }
+                    //    }
+                    //}
 
                     //LOG_INFO("Pos: X:{0} Y:{1}", x, y);
                 }
             }
         }
     }
-    else if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_RIGHT))
+    /*else if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_RIGHT))
     {
         if (is_spawn_mode && !isKeyPressedmouse)
         {
@@ -634,7 +647,7 @@ void GameApp::on_key_update(const double delta)
             is_spawn_mode = true;
             isKeyPressedmouse = true;
         }
-    }
+    }*/
     // movement
     if (is_lock_move) return;
     if (Input::isKeyPressed(KeyCode::KEY_W))
@@ -702,6 +715,15 @@ void GameApp::on_update(const double delta)
         m_scene.at(i)->update(delta);
     }
 
+    if (m_select_tower == nullptr) m_circle->set_pos(uPos);
+    else
+    {
+        m_circle->set_pos(m_select_tower->get_pos());
+        m_circle->set_rad(m_select_tower->get_distance());
+    }
+
+    m_circle->add_rot(glm::vec3(0.f, 0.05f * delta, 0.f));
+
     // ================================================================================ game logic ===========================================================
     if (restart_querry)
     {
@@ -737,10 +759,12 @@ void GameApp::on_update(const double delta)
         while (!m_spawn_towers.empty())
         {
             m_towers.push_back({ new BaseTower(ResourceManager::get_OBJ_model("tower"),
-                ResourceManager::getMaterial("tower"), nullptr, parts[m_spawn_towers.front()],
-                _set_cooldown_tower, _set_damage_tower, new RenderEngine::Line(ResourceManager::getMaterial("default"))), m_spawn_towers.front()});
+                ResourceManager::getMaterial("tower"), &m_enemies, parts[m_spawn_towers.front()],
+                _set_cooldown_tower, _set_min_distance, _set_damage_tower, new RenderEngine::Line(ResourceManager::getMaterial("default"))), m_spawn_towers.front()});
             ResourceManager::get_unique_sound("tower_spawn")->play();
             m_spawn_towers.pop();
+            m_select_tower = m_towers.back().tow;
+            m_circle->set_pos(m_select_tower->get_pos());
         }
         while (!m_spawn_enemies.empty()) // spawn enemies
         {
@@ -756,24 +780,7 @@ void GameApp::on_update(const double delta)
         }
 
         for (auto curTower : m_towers)
-        {
-            double distance = 100; // <-------
-            for (size_t i = 0; i < m_enemies.size(); i++)
-            {
-                if (m_enemies[i] == nullptr) continue;
-                glm::vec3 a = m_enemies[i]->get_pos() - curTower.tow->get_pos();
-                double d = sqrt(a.x * a.x + a.z * a.z);
-                if (d < _set_min_distance && d < distance)
-                {
-                    distance = d;
-                    if (curTower.tow->get_target() == nullptr) curTower.tow->set_target(m_enemies[i]);
-                    //if (curTower->get_target() != m_enemies[i]) curTower->set_target(m_enemies[i]);
-                }
-                else
-                {
-                    //curTower->set_target(nullptr);
-                }
-            }
+        {            
             curTower.tow->update(delta);
         }
 
@@ -1078,6 +1085,7 @@ bool GameApp::init_events()
     m_event_dispather.add_event_listener<EventMouseScrolled>([&](EventMouseScrolled& e)
         {
             if (is_chat_active) m_gui->get_element<GUI::ChatBox>("Chat")->on_scroll(-e.y_offset);
+            if (is_chat_active) m_gui->get_element<GUI::ScrollBox>("Towers")->on_scroll(-e.y_offset);
             if (is_event_logging_active) LOG_INFO("[EVENT] Scroll: {0}x{1}", e.x_offset, e.y_offset);
         });
     m_event_dispather.add_event_listener<EventWindowClose>([&](EventWindowClose& e)
@@ -1181,6 +1189,12 @@ void GameApp::press_button(KeyCode key)
         }
         break;
     case KeyCode::KEY_ESCAPE:
+        if (m_gui->get_element<GUI::GUI_element>("game_gui_place")->get_active() && !isKeyPressed)
+        {
+            m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(false);
+            isKeyPressed = true;
+            break;
+        }
         if (is_gui_active && !isKeyPressed)
         {
             m_gui->get_element<GUI::GUI_element>("menu_place")->set_active(false);
@@ -1193,6 +1207,7 @@ void GameApp::press_button(KeyCode key)
         {
             m_gui->get_element<GUI::GUI_element>("multiplayer_menu_place")->set_active(false);
             m_gui->get_element<GUI::GUI_element>("settings_place")->set_active(false);
+            m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(false);
             is_gui_active = true;
             m_gui->get_element<GUI::GUI_element>("menu_place")->set_active(true);
             isKeyPressed = true;
@@ -1225,7 +1240,7 @@ void GameApp::press_button(KeyCode key)
         }
         break;
     case KeyCode::KEY_M:
-        if (is_spawn_enemy && !isKeyPressed)
+        /*if (is_spawn_enemy && !isKeyPressed)
         {
             if (is_spawn_mode)
             {
@@ -1251,7 +1266,7 @@ void GameApp::press_button(KeyCode key)
             }
             is_spawn_enemy = true;
             isKeyPressed = true;
-        }
+        }*/
         break;
     case KeyCode::KEY_P:
         if (!isKeyPressed)
@@ -1378,15 +1393,77 @@ void GameApp::init_gui()
    // m_gui_chat->get_element<GUI::ScrollBox>("Scroll")->add_element(new GUI::TextRenderer(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
     //    "Settings", glm::vec3(0.f), glm::vec2(50.f, 90.f), glm::vec2(1.f)));
 
+    // ------------------------------------------------------------ game gui ------------------------------------------------
+
+    auto gamegui = m_gui->add_element<GUI::GUI_element>("game_gui_place");
+
+    //m_gui->add_element<GUI::ScrollBox>(gamegui, 1, new GUI::Sprite(ResourceManager::getMaterial("defaultSprite")),
+     //      glm::vec2(89.f, 78.f), glm::vec2(10.f, 20.f), "Towers", 10);
+
+     m_gui->add_element<GUI::Sprite>(gamegui, 1, ResourceManager::getMaterial("defaultSprite"), "default",
+        glm::vec2(89.f, 78.f), glm::vec2(10.f, 20.f), "BG_tows");
+     
+     m_gui->add_element<GUI::Sprite>(gamegui, 1, ResourceManager::getMaterial("defaultSprite"), "default",
+            glm::vec2(9.f, 78.f), glm::vec2(10.f, 20.f), "BG_props");
+
+     m_gui->add_element<GUI::TextRenderer>(gamegui, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
+         "Damage: 0", glm::vec3(1.f), glm::vec2(0.2f, 94.f), glm::vec2(1.f), "Damage_prop", false);
+
+     m_gui->add_element<GUI::TextRenderer>(gamegui, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
+         "Colldown: 0", glm::vec3(1.f), glm::vec2(0.2f, 89.f), glm::vec2(1.f), "Cooldown_prop", false);
+
+     m_gui->add_element<GUI::TextRenderer>(gamegui, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
+         "Radius: 0", glm::vec3(1.f), glm::vec2(0.2f, 84.f), glm::vec2(1.f), "Radius_prop", false);
+
+     m_gui->add_element<GUI::Button>(gamegui, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+         glm::vec2(9.f, 65.f), glm::vec2(8.f, 5.f),
+         "Upgrade", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), "Upgrade_place")->set_click_callback(
+             [&]()
+             {
+                 if (place_querry && !map[cur])
+                 {
+                     m_spawn_towers.push(cur);
+                     map[cur] = true;
+                     place_querry = false;
+                     m_gui->get_element<GUI::Button>("Upgrade_place")->set_text("Upgrade");
+                     //m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(false);
+                 }
+                 else if (m_select_tower != nullptr && !place_querry)
+                 {
+                     m_select_tower->upgrade();
+                     m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " + std::to_string(m_select_tower->get_damage()));
+                     m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text("Colldown: " + std::to_string((int)m_select_tower->get_cooldown()));
+                     m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text("Radius: " + std::to_string((int)m_select_tower->get_distance()));
+                 }
+             });
+
+    m_gui->add_element<GUI::Button>(gamegui, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(89.f, 65.f), glm::vec2(8.f, 5.f),
+        "Towrer - 1", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), "Tower1")->set_click_callback(
+            [&]()
+            {
+                m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " + std::to_string(_set_damage_tower));
+                m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text("Colldown: " + std::to_string((int)_set_cooldown_tower));
+                m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text("Radius: " + std::to_string((int)_set_min_distance));
+                m_gui->get_element<GUI::Button>("Upgrade_place")->set_text("Place");
+                place_querry = true;
+            });
+
+    //m_gui->get_element<GUI::ScrollBox>("Towers")->add_element(m_gui->get_element<GUI::Button>("Tower1"));
+
+    //m_gui->get_element<GUI::ScrollBox>("Towers")->set_open(true);
+
+    gamegui->set_active(false);
+
     // ------------------------------------------------------------ lose window ------------------------------------------------
 
     auto lose = m_gui->add_element<GUI::GUI_element>("lose_place");
 
     m_gui->add_element<GUI::TextRenderer>(lose, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        "You lose!", glm::vec3(1.f, 0.1f, 0.1f), glm::vec2(41.f, 57.f), glm::vec2(2.f), "Lose text");
+        "You lose!", glm::vec3(1.f, 0.1f, 0.1f), glm::vec2(41.f, 57.f), glm::vec2(4.f), "Lose text");
 
     m_gui->add_element<GUI::TextRenderer>(lose, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        "Your score: 0", glm::vec3(1.f, 0.1f, 0.1f), glm::vec2(41.f, 50.f), glm::vec2(2.f), "Lose scoreboard");
+        "Your score: 0", glm::vec3(1.f, 0.1f, 0.1f), glm::vec2(41.f, 50.f), glm::vec2(4.f), "Lose scoreboard");
 
     m_gui->add_element<GUI::Button>(lose, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, 6.f), glm::vec2(10.f, 5.f),

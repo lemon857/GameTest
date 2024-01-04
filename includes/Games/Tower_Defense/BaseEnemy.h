@@ -47,7 +47,7 @@ protected:
 	HealthBar* m_bar;
 	BaseEffect* m_effect;
 
-	unsigned int m_hp;
+	int m_hp;
 	unsigned int m_dmg;
 	double m_cur_time;
 

@@ -107,6 +107,7 @@ void BaseEnemy::damage(const unsigned int damage_hp)
 	if (m_hp <= 0)
 	{
 		m_isDestroyed = true;
+		return;
 	}
 	m_bar->set_value(m_hp);
 }

@@ -4,6 +4,7 @@
 
 #include "EngineCore/Renderer/Camera.h"
 #include "EngineCore/Renderer/Line.h"
+#include "EngineCore/Renderer/Circle.h"
 #include "EngineCore/Resources/Scene.h"
 
 #include <vector>
@@ -96,6 +97,8 @@ private:
 	//std::queue<unsigned int> m_spawn_enemies_self;
 
 	Camera* m_cam;
+
+	RenderEngine::Circle* m_circle;
 
 	RenderEngine::Line* m_line;
 

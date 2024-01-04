@@ -15,6 +15,7 @@
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Renderer/Renderer.h"
 #include "EngineCore/Renderer/Material.h"
+
 #include "EngineCore/System/Input.h"
 
 #include "EngineCore/Renderer3D/GraphicsObject.h"
@@ -70,6 +71,8 @@ bool GameApp::init()
     m_cam = new Camera(glm::vec3(12.5f, 55.f, 30.f), glm::vec3(-75.f, -90.f, 0.f));
 
     m_line = new RenderEngine::Line(ResourceManager::getMaterial("default"), 5.f);
+
+    m_circle = new RenderEngine::Circle(ResourceManager::getMaterial("default"), glm::vec3(0.f, 10.f, 0.f), glm::vec3(1.f), glm::vec3(0.f), 5.f, 120, 2);
 
     m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
     // init materials
@@ -945,6 +948,8 @@ void GameApp::on_render(const double delta)
 
     ResourceManager::getShaderProgram("default3DShader")->use();
     ResourceManager::getShaderProgram("default3DShader")->setVec3("cam_position", m_cam->get_position());
+
+    m_circle->render();
 
     m_scene.at(4)->getComponent<Transform>()->set_position(parts[cur_player]);
     if (is_line_active)

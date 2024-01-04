@@ -5,19 +5,18 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
-#include "VertexBuffer.h"
-#include "IndexBuffer.h"
-#include "VertexArray.h"
 
 namespace RenderEngine 
 {
-	class Texture2D;
+	class VertexArray;
+	class VertexBuffer;
 	class Material;
 
 	class Line 
 	{
 	public:
 		Line(std::shared_ptr<Material> pMaterial, float size = 1.f);
+		~Line();
 
 		Line(const Line&) = delete;
 		Line& operator=(const Line&) = delete;
@@ -31,7 +30,7 @@ namespace RenderEngine
 		std::shared_ptr<Material> m_pMaterial;
 		float m_size;
 
-		VertexArray m_vertexArray;
-		VertexBuffer m_vertexCoordsBuffer;
+		VertexArray* m_vertexArray;
+		VertexBuffer* m_vertexCoordsBuffer;
 	};
 }

@@ -161,6 +161,7 @@ private:
 	bool is_lock_move = true;
 	bool is_special_move = false;
 	bool is_mute = false;
+	bool is_game_paused = false;
 	bool is_funny_spawn_mode = false;
 
 	bool moveCamMoue = false;

@@ -183,6 +183,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/System/Timer.cpp
 	src/System/Stopwatch.cpp	
 	src/System/LogSystem.cpp	
+	src/System/SysFunc.cpp	
 	src/System/CommandManager.cpp
 	src/System/INI_loader.cpp		
 	

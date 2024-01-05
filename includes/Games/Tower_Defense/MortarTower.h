@@ -25,6 +25,11 @@ public:
 	static const unsigned int p_cooldown = 14;
 	static const unsigned int p_radius_attack = 2;
 
+	std::string get_add_cooldown() override { return " +2"; }
+	std::string get_add_distance() override { return " +5"; }
+	std::string get_add_damage() override { return " +1"; }
+	std::string get_add_custom() override { return " +1"; };
+
 private:
 
 	unsigned int m_radius;

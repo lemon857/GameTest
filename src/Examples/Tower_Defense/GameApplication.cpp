@@ -568,11 +568,25 @@ void GameApp::on_key_update(const double delta)
                                 if (it.num == cur)
                                 {
                                     m_select_tower = it.tow;
-                                    m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(true);
-                                    m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " + std::to_string(m_select_tower->get_damage()));
-                                    m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text("Colldown: " + std::to_string((int)m_select_tower->get_cooldown()));
-                                    m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text("Radius: " + std::to_string((int)m_select_tower->get_distance()));
-                                    m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text(m_select_tower->get_custom());
+
+                                    if (m_select_tower->is_upgradable()){
+                                        m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(true);
+                                        m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " +
+                                            std::to_string(m_select_tower->get_damage()) + m_select_tower->get_add_damage());
+                                        m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text("Colldown: " +
+                                            std::to_string((int)m_select_tower->get_cooldown()) + m_select_tower->get_add_cooldown());
+                                        m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text("Radius: " +
+                                            std::to_string((int)m_select_tower->get_distance()) + m_select_tower->get_add_distance());
+                                        m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text(m_select_tower->get_custom() + m_select_tower->get_add_custom());
+                                    }
+                                    else
+                                    {
+                                        m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(true);
+                                        m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " + std::to_string(m_select_tower->get_damage()));
+                                        m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text("Colldown: " + std::to_string((int)m_select_tower->get_cooldown()));
+                                        m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text("Radius: " + std::to_string((int)m_select_tower->get_distance()));
+                                        m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text(m_select_tower->get_custom());
+                                    }
                                     place_querry = null;
                                     break;
                                 }
@@ -715,6 +729,7 @@ void GameApp::on_key_update(const double delta)
 
 void GameApp::on_update(const double delta)
 {       
+    if (is_game_paused) return;
     if (is_special_move)
     {
         m_cam->add_movement_and_rotation(movDel, rotDel);
@@ -1481,11 +1496,11 @@ void GameApp::init_gui()
                      map[cur] = true;
                      place_querry = null;
                      m_gui->get_element<GUI::Button>("Upgrade_place")->set_text("Upgrade");
-                     m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("");
-                     //m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(false);
+                     m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("");                     
                  }
                  else if (m_select_tower != nullptr && place_querry == null)
                  {
+                     ResourceManager::get_sound("upgrade")->play();
                      m_select_tower->upgrade();
                      m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " + std::to_string(m_select_tower->get_damage()));
                      m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text("Colldown: " + std::to_string((int)m_select_tower->get_cooldown()));
@@ -1547,10 +1562,10 @@ void GameApp::init_gui()
     auto lose = m_gui->add_element<GUI::GUI_element>("lose_place");
 
     m_gui->add_element<GUI::TextRenderer>(lose, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        "You lose!", glm::vec3(1.f, 0.1f, 0.1f), glm::vec2(41.f, 57.f), glm::vec2(4.f), "Lose text");
+        "You lose!", glm::vec3(1.f, 0.1f, 0.1f), glm::vec2(41.f, 57.f), glm::vec2(7.f), "Lose text");
 
     m_gui->add_element<GUI::TextRenderer>(lose, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        "Your score: 0", glm::vec3(1.f, 0.1f, 0.1f), glm::vec2(41.f, 50.f), glm::vec2(4.f), "Lose scoreboard");
+        "Your score: 0", glm::vec3(1.f, 0.1f, 0.1f), glm::vec2(41.f, 50.f), glm::vec2(7.f), "Lose scoreboard");
 
     m_gui->add_element<GUI::Button>(lose, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, 6.f), glm::vec2(10.f, 5.f),
@@ -1734,6 +1749,13 @@ void GameApp::init_gui()
         "Quit", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
             {
                 m_pCloseWindow = true;
+            });
+
+    m_gui->add_element<GUI::Button>(menu, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(89.f, 50.f), glm::vec2(10.f, 5.f),
+        "Pause", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
+            {
+                is_game_paused = !is_game_paused;
             });
 
     m_gui->add_element<GUI::Button>(menu, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),

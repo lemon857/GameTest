@@ -43,11 +43,18 @@ public:
 
 	BaseEnemy* get_target();
 
+	bool is_upgradable() {	return !m_isUpgraded; }
+
 	double get_cooldown() { return m_cooldown / 1000.0; }
 	double get_distance() { return m_distance; }
 	unsigned int get_damage() { return m_damage; }
 	virtual std::string get_custom() { return ""; };
 	
+	virtual std::string get_add_cooldown() { return ""; }
+	virtual std::string get_add_distance() { return ""; }
+	virtual std::string get_add_damage() { return ""; }
+	virtual std::string get_add_custom() { return ""; };
+
 protected:
 	BaseEnemy* m_target_BaseEnemy;
 

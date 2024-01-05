@@ -22,6 +22,8 @@ public:
 	static const unsigned int p_cooldown = 3;
 	static const unsigned int p_time_freeze = 10;
 
+	std::string get_add_distance() override { return " -3"; }
+	std::string get_add_custom() override { return " +5"; };
 private:
 	double m_time_freeze;
 };

@@ -442,6 +442,10 @@
       "path": "res/sounds/click.flac"
     },
     {
+      "name": "upgrade",
+      "path": "res/sounds/upgrade.flac"
+    },
+    {
       "name": "tower_spawn",
       "path": "res/sounds/tower_spawn.flac"
     },

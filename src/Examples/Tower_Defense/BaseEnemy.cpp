@@ -6,6 +6,7 @@
 #include "Games/Tower_Defense/Target.h"
 #include "EngineCore/Meshes/ObjModel.h"
 #include "EngineCore/Components/Transform.h"
+#include "EngineCore/System/SysFunc.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/vector_angle.hpp>
@@ -30,6 +31,10 @@ BaseEnemy::BaseEnemy(ObjModel* model, Castle* target, std::vector<Target> target
 	, m_targets(targets)
 {
 	m_model->addComponent<Transform>(pos, glm::vec3(1.f));
+	for (size_t i = 0; i < m_targets.size(); i++)
+	{
+		m_targets[i].set_pos(m_targets[i].get_pos() + glm::vec3((float)sysfunc::get_random(-25, 25) / 10.f, 0.f, (float)sysfunc::get_random(-25, 25) / 10.f));
+	}
 }
 
 BaseEnemy::~BaseEnemy()

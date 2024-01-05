@@ -18,6 +18,8 @@ MortarTower::MortarTower(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<Re
 	m_sound_attack = std::move(ResourceManager::get_unique_sound("mortar_fall"));
 	m_attack = new RenderEngine::Circle(pMaterialLine, pos - glm::vec3(0.f, 100.f, 0.f), glm::vec3(1.f), glm::vec3(0.f),
 		glm::vec4(1.f, 0.f, 0.3f, 0.7f), m_radius, 120, 3);
+	m_coast = p_coast;
+	m_coast_upgrade = p_coast_upgrade;
 }
 
 void MortarTower::upgrade()

@@ -12,6 +12,8 @@ IceTower::IceTower(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<RenderEn
 	, m_time_freeze(p_time_freeze)
 {
 	m_sound = std::move(ResourceManager::get_unique_sound("freeze_attak"));
+	m_coast = p_coast;
+	m_coast_upgrade = p_coast_upgrade;
 }
 
 void IceTower::upgrade()

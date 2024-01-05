@@ -19,6 +19,8 @@
 #include <sstream>
 #include <fstream>
 #include <iostream>
+#include <thread>
+#include <chrono>
 #include <filesystem>
 
 #include <ft2build.h>
@@ -592,6 +594,7 @@ std::shared_ptr<GraphicsObject> ResourceManager::load_OBJ_model(const std::strin
 		{
 			LOG_WARN("Caused bug init index buffer");
 			file.close();
+			std::this_thread::sleep_for(std::chrono::milliseconds(10));
 			return nullptr;
 		}
 

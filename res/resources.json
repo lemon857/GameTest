@@ -287,6 +287,17 @@
       ]
     },
     {
+      "name": "coin",
+      "filePath": "res/textures/coin.png",
+      "width": 128,
+      "height": 128,
+      "subTexture_w": 128,
+      "subTexture_h": 128,
+      "subTextures": [
+        "default"
+      ]
+    },
+    {
       "name": "CheckBox_bg",
       "filePath": "res/textures/CheckBox_bg.png",
       "width": 128,
@@ -347,6 +358,11 @@
       "name": "defaultSprite",
       "nameShader": "spriteShader",
       "nameTexture": "bg_1"
+    },
+    {
+      "name": "coin",
+      "nameShader": "spriteShader",
+      "nameTexture": "coin"
     },
     {
       "name": "cube",

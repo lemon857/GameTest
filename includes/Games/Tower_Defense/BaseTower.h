@@ -48,8 +48,10 @@ public:
 	double get_cooldown() { return m_cooldown / 1000.0; }
 	double get_distance() { return m_distance; }
 	unsigned int get_damage() { return m_damage; }
+	unsigned int get_coast() { return m_coast; }
+	unsigned int get_upgrade_coast() { return m_coast_upgrade; }
 	virtual std::string get_custom() { return ""; };
-	
+
 	virtual std::string get_add_cooldown() { return ""; }
 	virtual std::string get_add_distance() { return ""; }
 	virtual std::string get_add_damage() { return ""; }
@@ -68,6 +70,8 @@ protected:
 	double m_distance;
 
 	unsigned int m_damage;
+	unsigned int m_coast;
+	unsigned int m_coast_upgrade;
 
 	RenderEngine::Line* m_line;
 

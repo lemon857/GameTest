@@ -9,6 +9,8 @@ ArcherTower::ArcherTower(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<Re
 	: BaseTower(obj, pMaterial, std::move(list), pos, p_cooldown, p_distance, p_damage, line, pMaterialLine)
 {
 	m_sound = std::move(ResourceManager::get_unique_sound("bow_attack"));
+	m_coast_upgrade = p_coast_upgrade;
+	m_coast = p_coast;
 }
 
 void ArcherTower::upgrade()

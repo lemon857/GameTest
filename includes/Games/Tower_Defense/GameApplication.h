@@ -19,6 +19,10 @@
 #include "Games/Tower_Defense/BaseEffect.h"
 #include "Games/Tower_Defense/Target.h"
 
+#include "Games/Tower_Defense/ArcherTower.h"
+#include "Games/Tower_Defense/MortarTower.h"
+#include "Games/Tower_Defense/IceTower.h"
+
 const int size_x = 30, size_y = 30;
 
 struct INIregionUSER : BaseINIregion
@@ -38,10 +42,10 @@ namespace GUI
 
 enum TypeTower
 {
-	null,
-	Ice,
-	Archer,
-	Mortar
+	null = 0,
+	Ice = IceTower::p_coast,
+	Archer = ArcherTower::p_coast,
+	Mortar = MortarTower::p_coast
 };
 
 struct SpawnTower
@@ -183,6 +187,7 @@ private:
 	unsigned int tps = 0;
 	unsigned int frames = 0;
 	unsigned int ticks = 0;
+	unsigned int g_coins = 100;
 	double times = 0;
 	double timesTicks = 0;
 

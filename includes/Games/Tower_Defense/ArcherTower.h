@@ -14,6 +14,8 @@ public:
 	static const unsigned int p_damage = 3;
 	static const unsigned int p_distance = 10;
 	static const unsigned int p_cooldown = 1;
+	static const unsigned int p_coast = 15;
+	static const unsigned int p_coast_upgrade = 7;
 
 	std::string get_add_cooldown() override { return " +1"; }
 	std::string get_add_distance() override { return " +3"; }

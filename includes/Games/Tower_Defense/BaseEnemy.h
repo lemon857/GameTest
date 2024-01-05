@@ -44,6 +44,8 @@ public:
 
 	void set_color_effect(glm::vec3 colorFore, glm::vec3 colorBack);
 
+	unsigned int get_reward() { return m_reward; }
+
 protected:
 
 	std::vector<Target> m_targets;
@@ -59,6 +61,7 @@ protected:
 	unsigned int m_dmg;
 	double m_cur_time;
 
+	unsigned int m_reward = 2;
 	double m_cool_down;
 
 	double m_velocity;

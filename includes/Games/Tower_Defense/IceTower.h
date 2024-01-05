@@ -21,6 +21,8 @@ public:
 	static const unsigned int p_distance = 16;
 	static const unsigned int p_cooldown = 3;
 	static const unsigned int p_time_freeze = 10;
+	static const unsigned int p_coast = 24;
+	static const unsigned int p_coast_upgrade = 11;
 
 	std::string get_add_distance() override { return " -3"; }
 	std::string get_add_custom() override { return " +5"; };

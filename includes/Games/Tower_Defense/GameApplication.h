@@ -161,6 +161,7 @@ private:
 	bool is_lock_move = true;
 	bool is_special_move = false;
 	bool is_mute = false;
+	bool is_funny_spawn_mode = false;
 
 	bool moveCamMoue = false;
 	bool isKeyPressed = false;
@@ -175,7 +176,7 @@ private:
 
 	float volume;
 
-	unsigned int countSpawnEnemies = 1;
+	unsigned int countSpawnEnemies = 10;
 	unsigned int countKills = 0;
 	unsigned int fps = 0;
 	unsigned int tps = 0;
@@ -201,6 +202,9 @@ private:
 	// binds
 
 	KeyCode k_debug = KeyCode::KEY_F3;
+	KeyCode k_spawn_en_one = KeyCode::KEY_J;
+	KeyCode k_spawn_en_pack = KeyCode::KEY_K;
+	KeyCode k_chat = KeyCode::KEY_T;
 
 	GUI::GUI_place* m_gui;
 

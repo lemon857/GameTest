@@ -3,11 +3,14 @@
 #include "Games/Tower_Defense/HealthBar.h"
 #include "Games/Tower_Defense/BaseEnemy.h"
 #include "Games/Tower_Defense/FreezeEffect.h"
+#include "EngineCore/Resources/ResourceManager.h"
+#include "EngineCore/Sound/Sound.h"
 
 IceTower::IceTower(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<RenderEngine::Material> pMaterial,
 	linked_list<BaseEnemy*>* list, glm::vec3 pos, RenderEngine::Line* line, std::shared_ptr<RenderEngine::Material> pMaterialLine)
 	: BaseTower(obj, pMaterial, std::move(list), pos, p_cooldown, p_distance, p_damage, line, pMaterialLine)
 {
+	m_sound = std::move(ResourceManager::get_unique_sound("freeze_attak"));
 }
 
 void IceTower::upgrade()
@@ -41,7 +44,7 @@ void IceTower::target(size_t i, double dis, double& all_dis)
 		}
 		//if (curTower->get_target() != m_enemies[i]) curTower->set_target(m_enemies[i]);
 	}
-	else if (dis > m_distance)
+	else if (dis > m_distance && m_target_BaseEnemy == m_enemies->at(i))
 	{
 		m_target_BaseEnemy = nullptr;
 	}

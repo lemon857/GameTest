@@ -6,7 +6,6 @@
 #include "EngineCore/Components/Transform.h"
 #include "EngineCore/Components/MeshRenderer.h"
 #include "EngineCore/Renderer/Line.h"
-#include "EngineCore/Resources/ResourceManager.h"
 #include "Games/Tower_Defense/HealthBar.h"
 
 #include "EngineCore/Sound/Sound.h"
@@ -28,7 +27,6 @@ BaseTower::BaseTower(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<Render
 {	
 	addComponent<Transform>(pos);
 	addComponent<MeshRenderer>(std::move(obj), pMaterial);
-	m_sound = std::move(ResourceManager::get_unique_sound("tower_attak"));
 	m_bar->set_max_value(m_cooldown);
 }
 
@@ -97,7 +95,7 @@ void BaseTower::target(size_t i, double dis, double& all_dis)
 		}
 		//if (curTower->get_target() != m_enemies[i]) curTower->set_target(m_enemies[i]);
 	}
-	else if (dis > m_distance)
+	else if (dis > m_distance && m_target_BaseEnemy == m_enemies->at(i))
 	{
 		m_target_BaseEnemy = nullptr;
 	}

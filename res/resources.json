@@ -446,8 +446,16 @@
       "path": "res/sounds/tower_spawn.flac"
     },
     {
-      "name": "tower_attak",
-      "path": "res/sounds/tower_attak.flac"
+      "name": "mortar_attack",
+      "path": "res/sounds/mortar_attack.flac"
+    },
+    {
+      "name": "bow_attack",
+      "path": "res/sounds/bow_attack.flac"
+    },
+    {
+      "name": "freeze_attak",
+      "path": "res/sounds/freeze_attack.flac"
     },
     {
       "name": "enemy_spawn",

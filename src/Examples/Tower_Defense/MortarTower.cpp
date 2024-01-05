@@ -1,12 +1,14 @@
 #include "Games/Tower_Defense/MortarTower.h"
 
 #include "Games/Tower_Defense/HealthBar.h"
+#include "EngineCore/Resources/ResourceManager.h"
+#include "EngineCore/Sound/Sound.h"
 
 MortarTower::MortarTower(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<RenderEngine::Material> pMaterial,
 	linked_list<BaseEnemy*>* list, glm::vec3 pos, RenderEngine::Line* line, std::shared_ptr<RenderEngine::Material> pMaterialLine)
 	: BaseTower(obj, pMaterial, std::move(list), pos, p_cooldown, p_distance, p_damage, line, pMaterialLine)
 {
-
+	m_sound = std::move(ResourceManager::get_unique_sound("mortar_attack"));
 }
 
 void MortarTower::upgrade()

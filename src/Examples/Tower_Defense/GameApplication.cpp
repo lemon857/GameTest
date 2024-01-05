@@ -385,7 +385,7 @@ void GameApp::on_key_update(const double delta)
 
     double addSpeed = 1;
 
-    if (Input::isKeyPressed(KeyCode::KEY_T))
+    if (Input::isKeyPressed(k_chat))
     {
         if (is_chat_active && !isKeyPressed && !is_chat_full_hide && !is_gui_active)
         {
@@ -571,6 +571,7 @@ void GameApp::on_key_update(const double delta)
                                     m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " + std::to_string(m_select_tower->get_damage()));
                                     m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text("Colldown: " + std::to_string((int)m_select_tower->get_cooldown()));
                                     m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text("Radius: " + std::to_string((int)m_select_tower->get_distance()));
+                                    place_querry = null;
                                     break;
                                 }
                             }
@@ -812,7 +813,12 @@ void GameApp::on_update(const double delta)
             if (m_enemies[i] == nullptr) continue;
             if (m_enemies[i]->is_destroy())
             {
-                //countEnemies++;
+                if (is_funny_spawn_mode)
+                {
+                    int add = rand() % 10;
+                    unsigned int spawn = 841 + add;
+                    m_spawn_enemies.push(spawn);
+                }
                 countEnemiesPerm--;
                 for (auto curTower : m_towers)
                 {
@@ -1203,9 +1209,34 @@ void GameApp::press_button(KeyCode key)
             isKeyPressed = true;
         }
     }
+    else if (key == k_spawn_en_one)
+    {
+        if (!isKeyPressed)
+        {
+            int add = rand() % 10;
+            unsigned int spawn = 841 + add;
+            m_spawn_enemies.push(spawn);
+            isKeyPressed = true;
+        }
+    }
+    else if (key == k_spawn_en_pack)
+    {
+        if (!isKeyPressed)
+        {
+            int count = (rand() % countSpawnEnemies);
+            for (unsigned int i = 0; i < count; i++)
+            {
+                int add = rand() % 10;
+                unsigned int spawn = 841 + add;
+                m_spawn_enemies.push(spawn);
+            }
+            isKeyPressed = true;
+        }
+    }
+
     switch (key)
     {
-    case KeyCode::KEY_F1:
+    /*case KeyCode::KEY_F1:
         if (is_chat_full_hide && !isKeyPressed)
         {
             is_chat_full_hide = false;
@@ -1216,7 +1247,7 @@ void GameApp::press_button(KeyCode key)
             is_chat_full_hide = true;
             isKeyPressed = true;
         }
-        break;
+        break;*/
     case KeyCode::KEY_ESCAPE:
         if (m_gui->get_element<GUI::GUI_element>("game_gui_place")->get_active() && !isKeyPressed)
         {
@@ -1242,62 +1273,49 @@ void GameApp::press_button(KeyCode key)
             isKeyPressed = true;
         }
         break;
-    case KeyCode::KEY_J:
-        if (!isKeyPressed)
-        {
-            int add = rand() % 10;
-            unsigned int spawn = 841 + add;
-            for (unsigned int i = 0; i < countSpawnEnemies; i++)
-            {
-                m_spawn_enemies.push(spawn);
-            }
-            isKeyPressed = true;
-        }
-        break;
-    case KeyCode::KEY_L:
-        if (is_green_place_active && !isKeyPressed)
-        {
-            is_green_place_active = false;
-            //m_gui->set_logging_active(false);
-            isKeyPressed = true;
-        }
-        else if (!isKeyPressed)
-        {
-            is_green_place_active = true;
-            //m_gui->set_logging_active(true);
-            isKeyPressed = true;
-        }
-        break;
-    case KeyCode::KEY_M:
-        /*if (is_spawn_enemy && !isKeyPressed)
-        {
-            if (is_spawn_mode)
-            {
-                m_scene.at(curObj)->getComponent<Highlight>()->set_color(glm::vec3(1.f, 1.f, 0.f));
-            }
-            else
-            {
-                m_scene.at(curObj)->getComponent<Highlight>()->set_color(glm::vec3(1.f));
-            }
-
-            is_spawn_enemy = false;
-            isKeyPressed = true;
-        }
-        else if (!isKeyPressed)
-        {
-            if (is_spawn_mode)
-            {
-                m_scene.at(curObj)->getComponent<Highlight>()->set_color(glm::vec3(0.f, 1.f, 1.f));
-            }
-            else
-            {
-                m_scene.at(curObj)->getComponent<Highlight>()->set_color(glm::vec3(1.f, 0.f, 1.f));
-            }
-            is_spawn_enemy = true;
-            isKeyPressed = true;
-        }*/
-        break;
-    case KeyCode::KEY_P:
+    //case KeyCode::KEY_L:
+    //    if (is_green_place_active && !isKeyPressed)
+    //    {
+    //        is_green_place_active = false;
+    //        //m_gui->set_logging_active(false);
+    //        isKeyPressed = true;
+    //    }
+    //    else if (!isKeyPressed)
+    //    {
+    //        is_green_place_active = true;
+    //        //m_gui->set_logging_active(true);
+    //        isKeyPressed = true;
+    //    }
+    //    break;
+    //case KeyCode::KEY_M:
+    //    /*if (is_spawn_enemy && !isKeyPressed)
+    //    {
+    //        if (is_spawn_mode)
+    //        {
+    //            m_scene.at(curObj)->getComponent<Highlight>()->set_color(glm::vec3(1.f, 1.f, 0.f));
+    //        }
+    //        else
+    //        {
+    //            m_scene.at(curObj)->getComponent<Highlight>()->set_color(glm::vec3(1.f));
+    //        }
+    //        is_spawn_enemy = false;
+    //        isKeyPressed = true;
+    //    }
+    //    else if (!isKeyPressed)
+    //    {
+    //        if (is_spawn_mode)
+    //        {
+    //            m_scene.at(curObj)->getComponent<Highlight>()->set_color(glm::vec3(0.f, 1.f, 1.f));
+    //        }
+    //        else
+    //        {
+    //            m_scene.at(curObj)->getComponent<Highlight>()->set_color(glm::vec3(1.f, 0.f, 1.f));
+    //        }
+    //        is_spawn_enemy = true;
+    //        isKeyPressed = true;
+    //    }*/
+    //    break;
+    /*case KeyCode::KEY_P:
         if (!isKeyPressed)
         {
             glm::vec3 pos = m_cam->get_position();
@@ -1307,8 +1325,8 @@ void GameApp::press_button(KeyCode key)
             m_cam->set_position_rotation(glm::vec3(12.5f, 55.f, 30.f), glm::vec3(-75.f, -90.f, 0.f));
             isKeyPressed = true;
         }
-        break;
-    case KeyCode::KEY_R:
+        break;*/
+    /*case KeyCode::KEY_R:
         if (is_line_active && !isKeyPressed)
         {
             is_line_active = false;
@@ -1331,7 +1349,7 @@ void GameApp::press_button(KeyCode key)
             is_grid_active = true;
             isKeyPressed = true;
         }
-        break;
+        break;*/
     }    
 }
 
@@ -1549,9 +1567,9 @@ void GameApp::init_gui()
                 SoundEngine::set_volume(volume);
             });
 
-    m_gui->get_element<GUI::Slider>("slider_volume")->set_value(5);
+    m_gui->get_element<GUI::Slider>("slider_volume")->set_value(1);
 
-    volume = 5.f / 10.f;
+    volume = 1.f / 10.f;
 
     SoundEngine::set_volume(volume);
 
@@ -1564,9 +1582,20 @@ void GameApp::init_gui()
     // right    
 
     m_gui->add_element<GUI::BindButton>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        glm::vec2(11.f, 50.f), glm::vec2(5.f, 5.f), ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), 
+        glm::vec2(6.f, 50.f), glm::vec2(5.f, 5.f), ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), 
         glm::vec3(1.f), &k_debug, "BindDebug");
 
+    m_gui->add_element<GUI::BindButton>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(6.f, 61.f), glm::vec2(5.f, 5.f), ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"),
+        glm::vec3(1.f), &k_spawn_en_one, "BindSpawnOne");
+
+    m_gui->add_element<GUI::BindButton>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(6.f, 72.f), glm::vec2(5.f, 5.f), ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"),
+        glm::vec3(1.f), &k_spawn_en_pack, "BindSpawnPack");
+
+    m_gui->add_element<GUI::BindButton>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(6.f, 83.f), glm::vec2(5.f, 5.f), ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"),
+        glm::vec3(1.f), &k_chat, "BindChat");
 
     // left
 
@@ -1620,24 +1649,42 @@ void GameApp::init_gui()
             });   
 
     m_gui->add_element<GUI::Button>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(67.f, 39.f), glm::vec2(10.f, 5.f),
+        "On fun spawn mode", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), "FunModeToggle")->set_click_callback([&]()
+            {
+                is_funny_spawn_mode = !is_funny_spawn_mode;
+                m_gui->get_element<GUI::Button>("FunModeToggle")->set_text(is_funny_spawn_mode ? "Off fun spawn mode" : "On fun spawn mode");
+            });
+
+    m_gui->add_element<GUI::Button>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(67.f, 28.f), glm::vec2(10.f, 5.f),
+        "Add enemy pack", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
+            {
+                int count = (rand() % countSpawnEnemies);
+                for (unsigned int i = 0; i < count; i++)
+                {
+                    int add = rand() % 10;
+                    unsigned int spawn = 841 + add;
+                    m_spawn_enemies.push(spawn);
+                }
+            });
+
+    m_gui->add_element<GUI::Button>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, 28.f), glm::vec2(10.f, 5.f),
         "Add enemy", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
             {
                 int add = rand() % 10;
                 unsigned int spawn = 841 + add;
-                for (unsigned int i = 0; i < countSpawnEnemies; i++)
-                {
-                    m_spawn_enemies.push(spawn);
-                }
+                m_spawn_enemies.push(spawn);                
 
                 //char buff[sizeof(unsigned int) + 1];
                 //buff[0] = 's';
                 //sysfunc::type_to_char(&spawn, buff, 1);
                 //WinSock::send_data(buff, sizeof(unsigned int) + 1);          
-            });;
+            });
 
     m_gui->add_element<GUI::Button>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
-        glm::vec2(67.f, 28.f), glm::vec2(10.f, 5.f),
+        glm::vec2(67.f, 6.f), glm::vec2(10.f, 5.f),
         "Light", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
             {
                 is_green_place_active = !is_green_place_active;

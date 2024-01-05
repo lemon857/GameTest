@@ -37,7 +37,22 @@ void HealthBar::set_value(const double value)
 	if (value >= 0 && value <= m_max_value) m_value = value;
 }
 
+void HealthBar::set_max_value(const double max_val)
+{
+	m_max_value = max_val;
+}
+
 void HealthBar::set_pos(glm::vec3 pos)
 {
 	m_pos = pos;
+}
+
+void HealthBar::set_fore_color(glm::vec3 col)
+{
+	m_foreground_color = col;
+}
+
+void HealthBar::set_back_color(glm::vec3 col)
+{
+	m_background_color = col;
 }

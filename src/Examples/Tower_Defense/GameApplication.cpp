@@ -49,6 +49,7 @@
 
 #include "Games/Tower_Defense/ArcherTower.h"
 #include "Games/Tower_Defense/MortarTower.h"
+#include "Games/Tower_Defense/IceTower.h"
 
 #include <array>
 #include <memory>
@@ -75,7 +76,7 @@ bool GameApp::init()
 
     m_line = new RenderEngine::Line(ResourceManager::getMaterial("default"), 5.f);
 
-    m_circle = new RenderEngine::Circle(ResourceManager::getMaterial("default"), uPos, glm::vec3(1.f), glm::vec3(0.f), glm::vec4(1.f, 0.f, 0.f, 0.4f), _set_min_distance, 120, 4);
+    m_circle = new RenderEngine::Circle(ResourceManager::getMaterial("default"), uPos, glm::vec3(1.f), glm::vec3(0.f), glm::vec4(1.f, 0.f, 0.f, 0.4f), 1, 120, 4);
 
     m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
     // init materials
@@ -92,10 +93,20 @@ bool GameApp::init()
     GET_DATA_MATERIAL("dirt", float, "specular_factor", 0) = 0.0f;
     GET_DATA_MATERIAL("dirt", float, "metalic_factor", 0) = 0.0f;
 
-    GET_DATA_MATERIAL("tower", float, "ambient_factor", 0) = 0.3f;
-    GET_DATA_MATERIAL("tower", float, "diffuse_factor", 0) = 0.4f;
-    GET_DATA_MATERIAL("tower", float, "specular_factor", 0) = 0.0f;
-    GET_DATA_MATERIAL("tower", float, "metalic_factor", 0) = 0.0f;
+    GET_DATA_MATERIAL("ice_tower", float, "ambient_factor", 0) = 0.3f;
+    GET_DATA_MATERIAL("ice_tower", float, "diffuse_factor", 0) = 0.4f;
+    GET_DATA_MATERIAL("ice_tower", float, "specular_factor", 0) = 0.0f;
+    GET_DATA_MATERIAL("ice_tower", float, "metalic_factor", 0) = 0.0f;
+
+    GET_DATA_MATERIAL("mortar_tower", float, "ambient_factor", 0) = 0.3f;
+    GET_DATA_MATERIAL("mortar_tower", float, "diffuse_factor", 0) = 0.4f;
+    GET_DATA_MATERIAL("mortar_tower", float, "specular_factor", 0) = 0.0f;
+    GET_DATA_MATERIAL("mortar_tower", float, "metalic_factor", 0) = 0.0f;
+
+    GET_DATA_MATERIAL("archer_tower", float, "ambient_factor", 0) = 0.3f;
+    GET_DATA_MATERIAL("archer_tower", float, "diffuse_factor", 0) = 0.4f;
+    GET_DATA_MATERIAL("archer_tower", float, "specular_factor", 0) = 0.0f;
+    GET_DATA_MATERIAL("archer_tower", float, "metalic_factor", 0) = 0.0f;
 
     GET_DATA_MATERIAL("castle", float, "ambient_factor", 0) = 0.3f;
     GET_DATA_MATERIAL("castle", float, "diffuse_factor", 0) = 0.4f;
@@ -716,14 +727,7 @@ void GameApp::on_update(const double delta)
     for (size_t i = 0; i < m_scene.get_list().size(); i++)
     {   
         m_scene.at(i)->update(delta);
-    }
-
-    if (m_select_tower == nullptr) m_circle->set_pos(uPos);
-    else
-    {
-        m_circle->set_pos(m_select_tower->get_pos());
-        m_circle->set_rad(m_select_tower->get_distance());
-    }
+    }    
 
     m_circle->add_rot(glm::vec3(0.f, 0.05f * delta, 0.f));
 
@@ -763,20 +767,20 @@ void GameApp::on_update(const double delta)
         {
             switch (m_spawn_towers.front().type)
             {
-            case Default:
-                m_towers.push_back({ new BaseTower(ResourceManager::get_OBJ_model("tower"),
-                ResourceManager::getMaterial("tower"), &m_enemies, parts[m_spawn_towers.front().num],
-                4, 12, 14, new RenderEngine::Line(ResourceManager::getMaterial("default"))), m_spawn_towers.front().num });
+            case Ice:
+                m_towers.push_back({ new IceTower(ResourceManager::get_OBJ_model("ice_tower"),
+                ResourceManager::getMaterial("ice_tower"), &m_enemies, parts[m_spawn_towers.front().num],
+                new RenderEngine::Line(ResourceManager::getMaterial("default")), ResourceManager::getMaterial("default")), m_spawn_towers.front().num });
                 break;
             case Archer:
                 m_towers.push_back({ new ArcherTower(ResourceManager::get_OBJ_model("archer_tower"),
                 ResourceManager::getMaterial("archer_tower"), &m_enemies, parts[m_spawn_towers.front().num],
-                new RenderEngine::Line(ResourceManager::getMaterial("default"))), m_spawn_towers.front().num });
+                new RenderEngine::Line(ResourceManager::getMaterial("default")), ResourceManager::getMaterial("default")), m_spawn_towers.front().num });
                 break;
             case Mortar:
                 m_towers.push_back({ new MortarTower(ResourceManager::get_OBJ_model("mortar_tower"),
                 ResourceManager::getMaterial("mortar_tower"), &m_enemies, parts[m_spawn_towers.front().num],
-                new RenderEngine::Line(ResourceManager::getMaterial("default"))), m_spawn_towers.front().num });
+                new RenderEngine::Line(ResourceManager::getMaterial("default")), ResourceManager::getMaterial("default")), m_spawn_towers.front().num });
                 break;
             }
 
@@ -822,6 +826,12 @@ void GameApp::on_update(const double delta)
                 continue;
             }
             m_enemies[i]->update(delta);
+        }
+        if (m_select_tower == nullptr) m_circle->set_pos(uPos);
+        else
+        {
+            m_circle->set_pos(m_select_tower->get_pos());
+            m_circle->set_rad(m_select_tower->get_distance());
         }
     }    
     //else
@@ -1462,15 +1472,15 @@ void GameApp::init_gui()
 
     m_gui->add_element<GUI::Button>(gamegui, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, offset), glm::vec2(8.f, 5.f),
-        "Default", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), "Tower1")->set_click_callback(
+        "Ice", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), "Tower1")->set_click_callback(
             [&]()
             {
-                m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " + std::to_string(14));
-                m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text("Colldown: " + std::to_string(4));
-                m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text("Radius: " + std::to_string(12));
-                m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("Just a Tower, nothing more");
+                m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " + std::to_string(IceTower::p_damage));
+                m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text("Colldown: " + std::to_string(IceTower::p_cooldown));
+                m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text("Radius: " + std::to_string(IceTower::p_distance));
+                m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("Well freezing enemies");
                 m_gui->get_element<GUI::Button>("Upgrade_place")->set_text("Place");
-                place_querry = Default;
+                place_querry = Ice;
             });
     offset += 11.f;
     m_gui->add_element<GUI::Button>(gamegui, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
@@ -2029,7 +2039,7 @@ void GameApp::init_winSock()
         }
         else
         {
-            char buff[sizeof(double) + 2];
+            /*char buff[sizeof(double) + 2];
             buff[0] = 'c';
 
             buff[1] = 'a';
@@ -2057,7 +2067,7 @@ void GameApp::init_winSock()
 
             buff1[1] = 'h';
             sysfunc::type_to_char(&_set_damage_tower, buff1, 2);
-            WinSock::send_data(buff1, sizeof(unsigned int) + 2);
+            WinSock::send_data(buff1, sizeof(unsigned int) + 2);*/
         }
         m_mode = GameMode::Multi;
         restart_querry = true;

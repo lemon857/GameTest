@@ -22,7 +22,12 @@ public:
 
 	void set_value(const double value);
 
+	void set_max_value(const double max_val);
+
 	void set_pos(glm::vec3 pos);
+
+	void set_fore_color(glm::vec3 col);
+	void set_back_color(glm::vec3 col);
 
 private:
 	// Линия заднего фона бара

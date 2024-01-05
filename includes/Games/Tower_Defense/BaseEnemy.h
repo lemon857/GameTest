@@ -33,9 +33,16 @@ public:
 	
 	bool is_destroy() { return m_isDestroyed; }
 
+	double get_vel() { return m_velocity; }
+	void set_vel(const double vel) { if (vel >= 0) m_velocity = vel; else m_velocity = 0; }
+
 	glm::vec3 get_pos();
 
-	void set_effect(BaseEffect* effect);
+	void set_effect(std::unique_ptr<BaseEffect> effect);
+
+	bool has_effect() { return m_has_effect; }
+
+	void set_color_effect(glm::vec3 colorFore, glm::vec3 colorBack);
 
 protected:
 
@@ -45,7 +52,8 @@ protected:
 	Castle* m_target_castle;
 	ObjModel* m_model;
 	HealthBar* m_bar;
-	BaseEffect* m_effect;
+	HealthBar* m_bar_effect;
+	std::unique_ptr<BaseEffect> m_effect;
 
 	int m_hp;
 	unsigned int m_dmg;
@@ -55,4 +63,5 @@ protected:
 
 	double m_velocity;
 	bool m_isDestroyed;
+	bool m_has_effect;
 };

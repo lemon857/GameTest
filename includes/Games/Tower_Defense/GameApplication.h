@@ -39,7 +39,7 @@ namespace GUI
 enum TypeTower
 {
 	null,
-	Default,
+	Ice,
 	Archer,
 	Mortar
 };
@@ -193,13 +193,10 @@ private:
 	const unsigned int max_buffer_chat_last = 32;
 
 	// settings
-	double _set_min_distance = 12;
-	double _set_velosity = 2;
+	double _set_velosity = 1.3;
 	double _set_max_hp_castle = 100;
 	double _set_max_hp_enemy = 50;
 	double _set_damage_enemy = 1;
-	double _set_cooldown_tower = 4;
-	unsigned int _set_damage_tower = 15;
 
 	// binds
 

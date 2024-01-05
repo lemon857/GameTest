@@ -20,7 +20,9 @@ BaseEnemy::BaseEnemy(ObjModel* model, Castle* target, std::vector<Target> target
 	, m_velocity(velocity)
 	, m_model(std::move(model))
 	, m_bar(new HealthBar(pMaterial, pos + glm::vec3(0.f, 2.5f, 0.f), 25, 2, hp, glm::vec3(1.f), color))
+	, m_bar_effect(new HealthBar(pMaterial, pos + glm::vec3(0.f, 4.5f, 0.f), 25, 2, hp, glm::vec3(1.f), glm::vec3(1.f)))
 	, m_isDestroyed(false)
+	, m_has_effect(false)
 	, m_hp(hp)
 	, m_dmg(damage)
 	, m_effect(nullptr)
@@ -33,7 +35,8 @@ BaseEnemy::BaseEnemy(ObjModel* model, Castle* target, std::vector<Target> target
 BaseEnemy::~BaseEnemy()
 {
 	delete m_bar;
-	delete m_effect;
+	delete m_bar_effect;
+	m_effect = nullptr;
 }
 
 void BaseEnemy::update(const double delta)
@@ -54,6 +57,7 @@ void BaseEnemy::update(const double delta)
 			//}
 			m_model->getComponent<Transform>()->add_position(glm::normalize(a)* (float)delta* (float)m_velocity);
 			m_bar->set_pos(m_model->getComponent<Transform>()->get_position() + glm::vec3(0.f, 2.5f, 0.f));
+			m_bar_effect->set_pos(m_model->getComponent<Transform>()->get_position() + glm::vec3(0.f, 4.5f, 0.f));
 		}
 		else
 		{
@@ -75,6 +79,7 @@ void BaseEnemy::update(const double delta)
 			//}
 			m_model->getComponent<Transform>()->add_position(glm::normalize(a) * (float)delta * (float)m_velocity);
 			m_bar->set_pos(m_model->getComponent<Transform>()->get_position() + glm::vec3(0.f, 2.5f, 0.f));
+			m_bar_effect->set_pos(m_model->getComponent<Transform>()->get_position() + glm::vec3(0.f, 4.5f, 0.f));
 		}
 		else
 		{
@@ -89,7 +94,11 @@ void BaseEnemy::update(const double delta)
 
 	if (m_effect != nullptr)
 	{
-		if (m_effect->is_destroy()) delete m_effect;
+		if (m_effect->is_destroy())
+		{
+			m_effect = nullptr;
+			m_has_effect = false;
+		}
 		else m_effect->update(delta);
 	}
 }
@@ -99,6 +108,11 @@ void BaseEnemy::render()
 	if (m_isDestroyed) return;
 	m_model->update(0);
 	m_bar->update();
+	if (m_effect != nullptr)
+	{
+		m_bar_effect->set_value(m_effect->get_live_time());
+		m_bar_effect->update();
+	}
 }
 
 void BaseEnemy::damage(const unsigned int damage_hp)
@@ -117,9 +131,17 @@ glm::vec3 BaseEnemy::get_pos()
 	return m_model->getComponent<Transform>()->get_position();
 }
 
-void BaseEnemy::set_effect(BaseEffect* effect)
+void BaseEnemy::set_effect(std::unique_ptr<BaseEffect> effect)
 {
-	if (m_effect != nullptr) delete m_effect;
+	if (m_effect != nullptr) m_effect = nullptr;
 	m_effect = std::move(effect);
+	m_bar_effect->set_max_value(m_effect->get_duration());
 	m_effect->set_cur_enemy(this);
+	m_has_effect = true;
+}
+
+void BaseEnemy::set_color_effect(glm::vec3 colorFore, glm::vec3 colorBack)
+{
+	m_bar_effect->set_fore_color(colorFore);
+	m_bar_effect->set_back_color(colorBack);
 }

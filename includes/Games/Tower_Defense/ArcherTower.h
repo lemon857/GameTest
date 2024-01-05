@@ -6,7 +6,7 @@ class ArcherTower : public BaseTower
 {
 public:
 	ArcherTower(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<RenderEngine::Material> pMaterial,
-		linked_list<BaseEnemy*>* list, glm::vec3 pos, RenderEngine::Line* line);
+		linked_list<BaseEnemy*>* list, glm::vec3 pos, RenderEngine::Line* line, std::shared_ptr<RenderEngine::Material> pMaterialLine);
 	~ArcherTower() = default;
 
 	void upgrade() override;

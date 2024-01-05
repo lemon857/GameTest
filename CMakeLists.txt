@@ -61,7 +61,9 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/Games/Tower_Defense/BaseEffect.h
 	includes/Games/Tower_Defense/MortarTower.h
 	includes/Games/Tower_Defense/ArcherTower.h
+	includes/Games/Tower_Defense/IceTower.h
 	includes/Games/Tower_Defense/Target.h
+	includes/Games/Tower_Defense/FreezeEffect.h
 )
 
 set(ENGINE_PRIVATE_INCLUDES
@@ -149,6 +151,8 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Examples/Tower_Defense/BaseEffect.cpp
 	src/Examples/Tower_Defense/MortarTower.cpp
 	src/Examples/Tower_Defense/ArcherTower.cpp
+	src/Examples/Tower_Defense/IceTower.cpp
+	src/Examples/Tower_Defense/FreezeEffect.cpp
 	
 	src/Resources/ResourceManager.cpp
 	src/Resources/Scene.cpp

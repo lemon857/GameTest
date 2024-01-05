@@ -219,7 +219,7 @@
       ]
     },
     {
-      "name": "Tower",
+      "name": "Ice_tower",
       "filePath": "res/textures/Towers/tower.png",
       "width": 128,
       "height": 128,
@@ -354,9 +354,9 @@
       "nameTexture": "CubeTexture"
     },
     {
-      "name": "tower",
+      "name": "ice_tower",
       "nameShader": "default3DShader",
-      "nameTexture": "Tower"
+      "nameTexture": "Ice_tower"
     },
     {
       "name": "archer_tower",
@@ -460,8 +460,8 @@
       "path": "res/models/castle.obj"
     },
     {
-      "name": "tower",
-      "path": "res/models/tower.obj"
+      "name": "ice_tower",
+      "path": "res/models/ice_tower.obj"
     },
     {
       "name": "monkey",

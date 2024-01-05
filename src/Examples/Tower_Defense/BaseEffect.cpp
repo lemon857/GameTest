@@ -6,6 +6,7 @@ BaseEffect::BaseEffect(unsigned int damage, double cooldown, double duration)
 	: m_damage(damage)
 	, m_cool_down(cooldown * 1000)
 	, m_cur_time(0)
+	, m_live_time(0)
 	, m_duration(duration * 1000)
 	, m_cur_enemy(nullptr)
 	, m_isDestroyed(false)
@@ -25,10 +26,15 @@ void BaseEffect::update(const double delta)
 		m_cur_time = 0;
 	}
 	if (m_live_time < m_duration) m_live_time += delta;
-	else m_isDestroyed = true;
+	else
+	{
+		unmodify_enemy();
+		m_isDestroyed = true;
+	}
 }
 
 void BaseEffect::set_cur_enemy(BaseEnemy* cur_enemy)
 {
 	m_cur_enemy = std::move(cur_enemy);
+	modify_enemy();
 }

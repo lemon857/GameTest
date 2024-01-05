@@ -6,14 +6,14 @@ class MortarTower : public BaseTower
 {
 public:
 	MortarTower(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<RenderEngine::Material> pMaterial, 
-		linked_list<BaseEnemy*>* list, glm::vec3 pos, RenderEngine::Line* line);
+		linked_list<BaseEnemy*>* list, glm::vec3 pos, RenderEngine::Line* line, std::shared_ptr<RenderEngine::Material> pMaterialLine);
 	~MortarTower() = default;
 
 	void upgrade() override;
 
 	static const unsigned int p_damage = 10;
 	static const unsigned int p_distance = 20;
-	static const unsigned int p_cooldown = 7;
+	static const unsigned int p_cooldown = 6;
 
 private:
 

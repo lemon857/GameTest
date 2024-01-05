@@ -7,6 +7,7 @@
 #include <memory>
 #include <string>
 
+class HealthBar;
 class BaseEnemy;
 class ObjModel;
 class Sound;
@@ -23,7 +24,7 @@ class BaseTower : public IGameObject
 {
 public:
 	BaseTower(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<RenderEngine::Material> pMaterial, linked_list<BaseEnemy*>* list, glm::vec3 pos,
-		double cooldown, double distance, unsigned int damage, RenderEngine::Line* line);
+		double cooldown, double distance, unsigned int damage, RenderEngine::Line* line, std::shared_ptr<RenderEngine::Material> pMaterialLine);
 	~BaseTower();
 
 	virtual void update(const double delta) override;
@@ -31,6 +32,9 @@ public:
 	void render() override;
 
 	virtual void upgrade();
+	virtual void damage(BaseEnemy* target) {}
+
+	virtual void target(size_t i, double dis, double& all_dis);
 
 	void set_target(BaseEnemy* target);
 
@@ -46,6 +50,8 @@ protected:
 	BaseEnemy* m_target_BaseEnemy;
 
 	linked_list<BaseEnemy*>* m_enemies;
+
+	HealthBar* m_bar;
 
 	double m_cur_time;
 

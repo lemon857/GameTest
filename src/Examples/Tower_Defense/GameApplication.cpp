@@ -47,6 +47,8 @@
 #include "EngineCore/Sound/Sound.h"
 #include "EngineCore/Sound/SoundEngine.h"
 
+#include "Games/Tower_Defense/EnemyMonkey.h"
+
 #include <array>
 #include <memory>
 
@@ -586,7 +588,7 @@ void GameApp::on_key_update(const double delta)
                                         m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text("Radius: " + std::to_string((int)m_select_tower->get_distance()));
                                         m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text(m_select_tower->get_custom());
                                     }
-                                    place_querry = null;
+                                    place_querry = TypeTower::null;
                                     break;
                                 }
                             }
@@ -785,17 +787,17 @@ void GameApp::on_update(const double delta)
         {
             switch (m_spawn_towers.front().type)
             {
-            case Ice:
+            case TypeTower::Ice:
                 m_towers.push_back({ new IceTower(ResourceManager::get_OBJ_model("ice_tower"),
                 ResourceManager::getMaterial("ice_tower"), &m_enemies, parts[m_spawn_towers.front().num],
                 new RenderEngine::Line(ResourceManager::getMaterial("default")), ResourceManager::getMaterial("default")), m_spawn_towers.front().num });
                 break;
-            case Archer:
+            case TypeTower::Archer:
                 m_towers.push_back({ new ArcherTower(ResourceManager::get_OBJ_model("archer_tower"),
                 ResourceManager::getMaterial("archer_tower"), &m_enemies, parts[m_spawn_towers.front().num],
                 new RenderEngine::Line(ResourceManager::getMaterial("default")), ResourceManager::getMaterial("default")), m_spawn_towers.front().num });
                 break;
-            case Mortar:
+            case TypeTower::Mortar:
                 m_towers.push_back({ new MortarTower(ResourceManager::get_OBJ_model("mortar_tower"),
                 ResourceManager::getMaterial("mortar_tower"), &m_enemies, parts[m_spawn_towers.front().num],
                 new RenderEngine::Line(ResourceManager::getMaterial("default")), ResourceManager::getMaterial("default")), m_spawn_towers.front().num });
@@ -809,15 +811,27 @@ void GameApp::on_update(const double delta)
         }
         while (!m_spawn_enemies.empty()) // spawn enemies
         {
-            glm::vec3 pos = parts[m_spawn_enemies.front()];
+            glm::vec3 pos = parts[m_spawn_enemies.front().num];
             countEnemiesPerm++;
-            auto a = new BaseEnemy(new ObjModel(ResourceManager::get_OBJ_model("monkey"), ResourceManager::getMaterial("monkey")),
-                m_main_castle, targets, glm::vec3(pos.x + (rand() % 100 - 50) / 100.f, pos.y, pos.z + (rand() % 100 - 50) / 100.f), 1, _set_velosity * 0.001,
-                _set_max_hp_enemy, _set_damage_enemy, ResourceManager::getMaterial("default"));
-            m_enemies.push_back(a);
+            switch (m_spawn_enemies.front().type)
+            {
+            case TypeEnemy::Monkey:
+                m_enemies.push_back(new MonkeyEnemy(new ObjModel(ResourceManager::get_OBJ_model("monkey"), ResourceManager::getMaterial("monkey")),
+                    m_main_castle, targets,
+                    glm::vec3(pos.x + (rand() % 100 - 50) / 100.f, pos.y, pos.z + (rand() % 100 - 50) / 100.f), ResourceManager::getMaterial("default")));
+                break;
+            }
             ResourceManager::get_sound("enemy_spawn")->play();
             m_spawn_enemies.pop();
             m_gui->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));
+        }
+
+
+        if (m_select_tower == nullptr) m_circle->set_pos(uPos);
+        else if (!restart_querry)
+        {
+            m_circle->set_pos(m_select_tower->get_pos());
+            m_circle->set_rad(m_select_tower->get_distance());
         }
 
         for (auto curTower : m_towers)
@@ -834,7 +848,7 @@ void GameApp::on_update(const double delta)
                 {
                     int add = rand() % 10;
                     unsigned int spawn = 841 + add;
-                    m_spawn_enemies.push(spawn);
+                    //m_spawn_enemies.push({ spawn,  });
                 }
                 countEnemiesPerm--;
                 for (auto curTower : m_towers)
@@ -852,12 +866,6 @@ void GameApp::on_update(const double delta)
                 continue;
             }
             m_enemies[i]->update(delta);
-        }
-        if (m_select_tower == nullptr) m_circle->set_pos(uPos);
-        else
-        {
-            m_circle->set_pos(m_select_tower->get_pos());
-            m_circle->set_rad(m_select_tower->get_distance());
         }
     }    
     //else
@@ -1235,7 +1243,7 @@ void GameApp::press_button(KeyCode key)
         {
             int add = rand() % 10;
             unsigned int spawn = 841 + add;
-            m_spawn_enemies.push(spawn);
+            m_spawn_enemies.push({ spawn, TypeEnemy::Monkey });
             isKeyPressed = true;
         }
     }
@@ -1248,7 +1256,7 @@ void GameApp::press_button(KeyCode key)
             {
                 int add = rand() % 10;
                 unsigned int spawn = 841 + add;
-                m_spawn_enemies.push(spawn);
+                m_spawn_enemies.push({ spawn, TypeEnemy::Monkey });
             }
             isKeyPressed = true;
         }
@@ -1503,29 +1511,34 @@ void GameApp::init_gui()
              [&]()
              {
                  unsigned int coast = 0;
+                 unsigned int coastUpgrade = 0;
                  switch (place_querry)
                  {
-                 case Ice:
+                 case TypeTower::Ice:
                      coast = IceTower::p_coast;
+                     coastUpgrade = IceTower::p_coast_upgrade;
                      break;
-                 case Archer:
+                 case TypeTower::Archer:
                      coast = ArcherTower::p_coast;
+                     coastUpgrade = ArcherTower::p_coast_upgrade;
                      break;
-                 case Mortar:
+                 case TypeTower::Mortar:
                      coast = MortarTower::p_coast;
+                     coastUpgrade = MortarTower::p_coast_upgrade;
                      break;
                  }
-                 if (place_querry != null && !map[cur] && g_coins >= coast)
+                 if (place_querry != TypeTower::null && !map[cur] && g_coins >= coast)
                  {
                      m_spawn_towers.push({ cur, place_querry });
                      map[cur] = true;
-                     place_querry = null;
+                     place_querry = TypeTower::null;
                      g_coins -= coast;
                      m_gui->get_element<GUI::TextRenderer>("Coins_count")->set_text(std::to_string(g_coins));
                      m_gui->get_element<GUI::Button>("Upgrade_place")->set_text("Upgrade");
-                     m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("");                     
+                     m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("");
+                     m_gui->get_element<GUI::TextRenderer>("Coast_prop")->set_text("Coast: " + std::to_string(coastUpgrade));
                  }
-                 else if (m_select_tower != nullptr && place_querry == null)
+                 else if (m_select_tower != nullptr && place_querry == TypeTower::null)
                  {
                      if (g_coins >= m_select_tower->get_upgrade_coast() && m_select_tower->is_upgradable())
                      {
@@ -1554,7 +1567,7 @@ void GameApp::init_gui()
                 m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text("Time freeze: " + std::to_string(IceTower::p_time_freeze));
                 m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("Well freezing enemies");
                 m_gui->get_element<GUI::Button>("Upgrade_place")->set_text("Place");
-                place_querry = Ice;
+                place_querry = TypeTower::Ice;
             });
     offset += 11.f;
     m_gui->add_element<GUI::Button>(gamegui, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
@@ -1569,7 +1582,7 @@ void GameApp::init_gui()
                 m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text("");
                 m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("Just a Archer, faster");
                 m_gui->get_element<GUI::Button>("Upgrade_place")->set_text("Place");
-                place_querry = Archer;
+                place_querry = TypeTower::Archer;
             });
     offset += 11.f;
     m_gui->add_element<GUI::Button>(gamegui, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
@@ -1584,7 +1597,7 @@ void GameApp::init_gui()
                 m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text("Radius attack: " + std::to_string(MortarTower::p_radius_attack));
                 m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("Just a Mortar");
                 m_gui->get_element<GUI::Button>("Upgrade_place")->set_text("Place");
-                place_querry = Mortar;
+                place_querry = TypeTower::Mortar;
             });
 
     //m_gui->get_element<GUI::ScrollBox>("Towers")->add_element(m_gui->get_element<GUI::Button>("Tower1"));
@@ -1601,10 +1614,10 @@ void GameApp::init_gui()
         "You lose!", glm::vec3(1.f, 0.1f, 0.1f), glm::vec2(45.f, 57.f), glm::vec2(7.f), "Lose_text");
 
     m_gui->add_element<GUI::TextRenderer>(lose, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        "Your score: 0", glm::vec3(1.f, 0.1f, 0.1f), glm::vec2(45.f, 50.f), glm::vec2(7.f), "Lose_scoreboard");
+        "Your score: 0", glm::vec3(1.f, 0.1f, 0.1f), glm::vec2(45.f, 51.f), glm::vec2(7.f), "Lose_scoreboard");
 
     m_gui->add_element<GUI::TextRenderer>(lose, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        "Your money: 0", glm::vec3(1.f, 0.1f, 0.1f), glm::vec2(45.f, 47.f), glm::vec2(7.f), "Money_scoreboard");
+        "Your money: 0", glm::vec3(1.f, 0.1f, 0.1f), glm::vec2(45.f, 45.f), glm::vec2(7.f), "Money_scoreboard");
 
     m_gui->add_element<GUI::Button>(lose, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, 6.f), glm::vec2(10.f, 5.f),
@@ -1728,7 +1741,7 @@ void GameApp::init_gui()
                 {
                     int add = rand() % 10;
                     unsigned int spawn = 841 + add;
-                    m_spawn_enemies.push(spawn);
+                    m_spawn_enemies.push({ spawn, TypeEnemy::Monkey });
                 }
             });
 
@@ -1738,7 +1751,7 @@ void GameApp::init_gui()
             {
                 int add = rand() % 10;
                 unsigned int spawn = 841 + add;
-                m_spawn_enemies.push(spawn);                
+                m_spawn_enemies.push({ spawn, TypeEnemy::Monkey });
 
                 //char buff[sizeof(unsigned int) + 1];
                 //buff[0] = 's';
@@ -1940,6 +1953,7 @@ void GameApp::start_game_single()
     countKills = 0;
     countEnemies = 0; 
     countEnemiesPerm = 0;
+    g_coins = 100;
     cur = 0;
     //int((size_x * size_y) / 2) + int(size_x / 2)
     m_main_castle = new Castle(parts[86], _set_max_hp_castle,
@@ -2045,150 +2059,150 @@ void GameApp::start_game_multi()
 
 void GameApp::init_winSock()
 {
-    WinSock::init_WinSock();
+    //WinSock::init_WinSock();
 
-    WinSock::set_receive_callback([&](char* data, int size) {
-        if (data[WS_DATA_PACKET_INFO_SIZE] == 'm') // message for chat
-        {
-            std::string str = std::string(&data[WS_DATA_PACKET_INFO_SIZE + 1]).substr(0, size - (WS_DATA_PACKET_INFO_SIZE));
-            //m_chat_mes.push(m_nickname_connect + ": " + str);
-        }
-        else if (data[WS_DATA_PACKET_INFO_SIZE] == 'q') // kill enemy (not working now)
-        {
-            unsigned int dmg = 0;
-            sysfunc::char_to_type(&dmg, data, WS_DATA_PACKET_INFO_SIZE + 1);
-            //m_main_castle->damage(dmg);
-        }
-        else if (data[WS_DATA_PACKET_INFO_SIZE] == 'w') // damage castle (not working now)
-        {
-            unsigned int dmg = 0;
-            sysfunc::char_to_type(&dmg, data, WS_DATA_PACKET_INFO_SIZE + 1);
-            m_main_castle->damage(dmg);
-        }
-        else if (data[WS_DATA_PACKET_INFO_SIZE] == 'l') // lose
-        {
-            m_main_castle->damage(_set_max_hp_castle + 1);
-        }
-        else if (data[WS_DATA_PACKET_INFO_SIZE] == 'r') // restart
-        {
-            restart_querry = true;
-        }
-        else if (data[WS_DATA_PACKET_INFO_SIZE] == 't') // spawn tower
-        {
-            unsigned int cur_buf;
-            sysfunc::char_to_type(&cur_buf, data, WS_DATA_PACKET_INFO_SIZE + 1);
-            //m_spawn_towers.push(cur_buf);
-        }
-        else if (data[WS_DATA_PACKET_INFO_SIZE] == 's') // spawn enemy
-        {
-            unsigned int spawn = 0;
-            sysfunc::char_to_type(&spawn, data, WS_DATA_PACKET_INFO_SIZE + 1);
-            m_spawn_enemies.push(spawn);
-        }
-        else if (data[WS_DATA_PACKET_INFO_SIZE] == 'd') // cursor move
-        {
-            sysfunc::char_to_type(&cur_player, data, WS_DATA_PACKET_INFO_SIZE + 1);
-        }
-        else if (data[WS_DATA_PACKET_INFO_SIZE] == 'n')
-        {
-            std::string str = std::string(&data[WS_DATA_PACKET_INFO_SIZE + 1]).substr(0, size - (WS_DATA_PACKET_INFO_SIZE));
-            //m_nickname_connect = str;
-            std::string temp = isServer ? ": " : "to: ";
-            m_chat_mes.push("Connect " + temp + str);
-        }
-        else if (data[WS_DATA_PACKET_INFO_SIZE] == 'c')
-        {
-            /*if (data[WS_DATA_PACKET_INFO_SIZE + 1] == 'a')
-            {
-                sysfunc::char_to_type(&_set_min_distance, data, WS_DATA_PACKET_INFO_SIZE + 2);
-                m_chat_mes.push(m_nickname_connect + ": Set min distance: " + std::to_string(_set_min_distance));
-            }
-            else if (data[WS_DATA_PACKET_INFO_SIZE + 1] == 's')
-            {
-                sysfunc::char_to_type(&_set_velosity, data, WS_DATA_PACKET_INFO_SIZE + 2);
-                m_chat_mes.push(m_nickname_connect + ": Set velocity: " + std::to_string(_set_velosity));
-            }
-            else if (data[WS_DATA_PACKET_INFO_SIZE + 1] == 'd')
-            {
-                sysfunc::char_to_type(&_set_max_hp_castle, data, WS_DATA_PACKET_INFO_SIZE + 2);
-                m_chat_mes.push(m_nickname_connect + ": Max hp castle: " + std::to_string(_set_max_hp_castle));
-                m_chat_mes.push("Need restart");
-            }
-            else if (data[WS_DATA_PACKET_INFO_SIZE + 1] == 'f')
-            {
-                sysfunc::char_to_type(&_set_max_hp_enemy, data, WS_DATA_PACKET_INFO_SIZE + 2);
-                m_chat_mes.push(m_nickname_connect + ": Set max hp enemy: " + std::to_string(_set_max_hp_enemy));
-            }
-            else if (data[WS_DATA_PACKET_INFO_SIZE + 1] == 'g')
-            {
-                sysfunc::char_to_type(&_set_cooldown_tower, data, WS_DATA_PACKET_INFO_SIZE + 2);
-                m_chat_mes.push(m_nickname_connect + ": Set cooldown tower: " + std::to_string(_set_cooldown_tower));
-                m_chat_mes.push("Need restart");
-            }
-            else if (data[WS_DATA_PACKET_INFO_SIZE + 1] == 'h')
-            {
-                sysfunc::char_to_type(&_set_damage_tower, data, WS_DATA_PACKET_INFO_SIZE + 2);
-                m_chat_mes.push(m_nickname_connect + ": Set damage tower: " + std::to_string(_set_damage_tower));
-                m_chat_mes.push("Need restart");
-            }*/
-        }
-        });
+    //WinSock::set_receive_callback([&](char* data, int size) {
+    //    if (data[WS_DATA_PACKET_INFO_SIZE] == 'm') // message for chat
+    //    {
+    //        std::string str = std::string(&data[WS_DATA_PACKET_INFO_SIZE + 1]).substr(0, size - (WS_DATA_PACKET_INFO_SIZE));
+    //        //m_chat_mes.push(m_nickname_connect + ": " + str);
+    //    }
+    //    else if (data[WS_DATA_PACKET_INFO_SIZE] == 'q') // kill enemy (not working now)
+    //    {
+    //        unsigned int dmg = 0;
+    //        sysfunc::char_to_type(&dmg, data, WS_DATA_PACKET_INFO_SIZE + 1);
+    //        //m_main_castle->damage(dmg);
+    //    }
+    //    else if (data[WS_DATA_PACKET_INFO_SIZE] == 'w') // damage castle (not working now)
+    //    {
+    //        unsigned int dmg = 0;
+    //        sysfunc::char_to_type(&dmg, data, WS_DATA_PACKET_INFO_SIZE + 1);
+    //        m_main_castle->damage(dmg);
+    //    }
+    //    else if (data[WS_DATA_PACKET_INFO_SIZE] == 'l') // lose
+    //    {
+    //        m_main_castle->damage(_set_max_hp_castle + 1);
+    //    }
+    //    else if (data[WS_DATA_PACKET_INFO_SIZE] == 'r') // restart
+    //    {
+    //        restart_querry = true;
+    //    }
+    //    else if (data[WS_DATA_PACKET_INFO_SIZE] == 't') // spawn tower
+    //    {
+    //        unsigned int cur_buf;
+    //        sysfunc::char_to_type(&cur_buf, data, WS_DATA_PACKET_INFO_SIZE + 1);
+    //        //m_spawn_towers.push(cur_buf);
+    //    }
+    //    else if (data[WS_DATA_PACKET_INFO_SIZE] == 's') // spawn enemy
+    //    {
+    //        unsigned int spawn = 0;
+    //        sysfunc::char_to_type(&spawn, data, WS_DATA_PACKET_INFO_SIZE + 1);
+    //        //m_spawn_enemies.push(spawn);
+    //    }
+    //    else if (data[WS_DATA_PACKET_INFO_SIZE] == 'd') // cursor move
+    //    {
+    //        sysfunc::char_to_type(&cur_player, data, WS_DATA_PACKET_INFO_SIZE + 1);
+    //    }
+    //    else if (data[WS_DATA_PACKET_INFO_SIZE] == 'n')
+    //    {
+    //        std::string str = std::string(&data[WS_DATA_PACKET_INFO_SIZE + 1]).substr(0, size - (WS_DATA_PACKET_INFO_SIZE));
+    //        //m_nickname_connect = str;
+    //        std::string temp = isServer ? ": " : "to: ";
+    //        m_chat_mes.push("Connect " + temp + str);
+    //    }
+    //    else if (data[WS_DATA_PACKET_INFO_SIZE] == 'c')
+    //    {
+    //        /*if (data[WS_DATA_PACKET_INFO_SIZE + 1] == 'a')
+    //        {
+    //            sysfunc::char_to_type(&_set_min_distance, data, WS_DATA_PACKET_INFO_SIZE + 2);
+    //            m_chat_mes.push(m_nickname_connect + ": Set min distance: " + std::to_string(_set_min_distance));
+    //        }
+    //        else if (data[WS_DATA_PACKET_INFO_SIZE + 1] == 's')
+    //        {
+    //            sysfunc::char_to_type(&_set_velosity, data, WS_DATA_PACKET_INFO_SIZE + 2);
+    //            m_chat_mes.push(m_nickname_connect + ": Set velocity: " + std::to_string(_set_velosity));
+    //        }
+    //        else if (data[WS_DATA_PACKET_INFO_SIZE + 1] == 'd')
+    //        {
+    //            sysfunc::char_to_type(&_set_max_hp_castle, data, WS_DATA_PACKET_INFO_SIZE + 2);
+    //            m_chat_mes.push(m_nickname_connect + ": Max hp castle: " + std::to_string(_set_max_hp_castle));
+    //            m_chat_mes.push("Need restart");
+    //        }
+    //        else if (data[WS_DATA_PACKET_INFO_SIZE + 1] == 'f')
+    //        {
+    //            sysfunc::char_to_type(&_set_max_hp_enemy, data, WS_DATA_PACKET_INFO_SIZE + 2);
+    //            m_chat_mes.push(m_nickname_connect + ": Set max hp enemy: " + std::to_string(_set_max_hp_enemy));
+    //        }
+    //        else if (data[WS_DATA_PACKET_INFO_SIZE + 1] == 'g')
+    //        {
+    //            sysfunc::char_to_type(&_set_cooldown_tower, data, WS_DATA_PACKET_INFO_SIZE + 2);
+    //            m_chat_mes.push(m_nickname_connect + ": Set cooldown tower: " + std::to_string(_set_cooldown_tower));
+    //            m_chat_mes.push("Need restart");
+    //        }
+    //        else if (data[WS_DATA_PACKET_INFO_SIZE + 1] == 'h')
+    //        {
+    //            sysfunc::char_to_type(&_set_damage_tower, data, WS_DATA_PACKET_INFO_SIZE + 2);
+    //            m_chat_mes.push(m_nickname_connect + ": Set damage tower: " + std::to_string(_set_damage_tower));
+    //            m_chat_mes.push("Need restart");
+    //        }*/
+    //    }
+    //    });
 
-    WinSock::set_ping_callback([&](double ping) {
-        m_gui->get_element<GUI::TextRenderer>("ping")->set_text(std::to_string((float)ping) + " ms");
-        });
+    //WinSock::set_ping_callback([&](double ping) {
+    //    m_gui->get_element<GUI::TextRenderer>("ping")->set_text(std::to_string((float)ping) + " ms");
+    //    });
 
-    WinSock::set_disconnect_callback([&]() {
-        m_chat_mes.push("Disconnect!");
-        m_scene.at(4)->getComponent<Highlight>()->set_active(false);
-        m_gui->get_element<GUI::Button>("Disconnect")->set_active(false);
-        m_gui->get_element<GUI::Button>("RestartMenu")->set_active(true);
-        m_gui->get_element<GUI::Button>("Restart")->set_active(true);
-        });
-    WinSock::set_connect_callback([&]() {
-        WinSock::send_data(('n' + m_nickname).data(), m_nickname.length() + 1); // =========================== message flag first
-        m_scene.at(4)->getComponent<Highlight>()->set_active(true);
-        m_gui->get_element<GUI::Button>("Disconnect")->set_active(true);
-        if (!isServer)
-        {
-            m_gui->get_element<GUI::Button>("RestartMenu")->set_active(false);
-            m_gui->get_element<GUI::Button>("Restart")->set_active(false);
-        }
-        else
-        {
-            /*char buff[sizeof(double) + 2];
-            buff[0] = 'c';
+    //WinSock::set_disconnect_callback([&]() {
+    //    m_chat_mes.push("Disconnect!");
+    //    m_scene.at(4)->getComponent<Highlight>()->set_active(false);
+    //    m_gui->get_element<GUI::Button>("Disconnect")->set_active(false);
+    //    m_gui->get_element<GUI::Button>("RestartMenu")->set_active(true);
+    //    m_gui->get_element<GUI::Button>("Restart")->set_active(true);
+    //    });
+    //WinSock::set_connect_callback([&]() {
+    //    WinSock::send_data(('n' + m_nickname).data(), m_nickname.length() + 1); // =========================== message flag first
+    //    m_scene.at(4)->getComponent<Highlight>()->set_active(true);
+    //    m_gui->get_element<GUI::Button>("Disconnect")->set_active(true);
+    //    if (!isServer)
+    //    {
+    //        m_gui->get_element<GUI::Button>("RestartMenu")->set_active(false);
+    //        m_gui->get_element<GUI::Button>("Restart")->set_active(false);
+    //    }
+    //    else
+    //    {
+    //        /*char buff[sizeof(double) + 2];
+    //        buff[0] = 'c';
 
-            buff[1] = 'a';
-            sysfunc::type_to_char(&_set_min_distance, buff, 2);
-            WinSock::send_data(buff, sizeof(double) + 2);
+    //        buff[1] = 'a';
+    //        sysfunc::type_to_char(&_set_min_distance, buff, 2);
+    //        WinSock::send_data(buff, sizeof(double) + 2);
 
-            buff[1] = 's';
-            sysfunc::type_to_char(&_set_velosity, buff, 2);
-            WinSock::send_data(buff, sizeof(double) + 2);
+    //        buff[1] = 's';
+    //        sysfunc::type_to_char(&_set_velosity, buff, 2);
+    //        WinSock::send_data(buff, sizeof(double) + 2);
 
-            buff[1] = 'd';
-            sysfunc::type_to_char(&_set_max_hp_castle, buff, 2);
-            WinSock::send_data(buff, sizeof(double) + 2);
+    //        buff[1] = 'd';
+    //        sysfunc::type_to_char(&_set_max_hp_castle, buff, 2);
+    //        WinSock::send_data(buff, sizeof(double) + 2);
 
-            buff[1] = 'f';
-            sysfunc::type_to_char(&_set_max_hp_enemy, buff, 2);
-            WinSock::send_data(buff, sizeof(double) + 2);
+    //        buff[1] = 'f';
+    //        sysfunc::type_to_char(&_set_max_hp_enemy, buff, 2);
+    //        WinSock::send_data(buff, sizeof(double) + 2);
 
-            buff[1] = 'g';
-            sysfunc::type_to_char(&_set_cooldown_tower, buff, 2);
-            WinSock::send_data(buff, sizeof(double) + 2);
+    //        buff[1] = 'g';
+    //        sysfunc::type_to_char(&_set_cooldown_tower, buff, 2);
+    //        WinSock::send_data(buff, sizeof(double) + 2);
 
-            char buff1[sizeof(unsigned int) + 2];
-            buff1[0] = 'c';
+    //        char buff1[sizeof(unsigned int) + 2];
+    //        buff1[0] = 'c';
 
-            buff1[1] = 'h';
-            sysfunc::type_to_char(&_set_damage_tower, buff1, 2);
-            WinSock::send_data(buff1, sizeof(unsigned int) + 2);*/
-        }
-        m_mode = GameMode::Multi;
-        restart_querry = true;
-        });
+    //        buff1[1] = 'h';
+    //        sysfunc::type_to_char(&_set_damage_tower, buff1, 2);
+    //        WinSock::send_data(buff1, sizeof(unsigned int) + 2);*/
+    //    }
+    //    m_mode = GameMode::Multi;
+    //    restart_querry = true;
+    //    });
 }
 
 void GameApp::add_green_place(glm::vec3 startPos, glm::vec3 endPos)

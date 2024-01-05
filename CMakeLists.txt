@@ -59,9 +59,10 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/Games/Tower_Defense/BaseEnemy.h
 	includes/Games/Tower_Defense/BaseTower.h
 	includes/Games/Tower_Defense/BaseEffect.h
-	includes/Games/Tower_Defense/MortarTower.h
-	includes/Games/Tower_Defense/ArcherTower.h
-	includes/Games/Tower_Defense/IceTower.h
+	includes/Games/Tower_Defense/TowerMortar.h
+	includes/Games/Tower_Defense/TowerArcher.h
+	includes/Games/Tower_Defense/TowerIce.h
+	includes/Games/Tower_Defense/EnemyMonkey.h
 	includes/Games/Tower_Defense/Target.h
 	includes/Games/Tower_Defense/FreezeEffect.h
 )
@@ -149,9 +150,10 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Examples/Tower_Defense/BaseEnemy.cpp
 	src/Examples/Tower_Defense/BaseTower.cpp
 	src/Examples/Tower_Defense/BaseEffect.cpp
-	src/Examples/Tower_Defense/MortarTower.cpp
-	src/Examples/Tower_Defense/ArcherTower.cpp
-	src/Examples/Tower_Defense/IceTower.cpp
+	src/Examples/Tower_Defense/TowerMortar.cpp
+	src/Examples/Tower_Defense/TowerArcher.cpp
+	src/Examples/Tower_Defense/TowerIce.cpp
+	src/Examples/Tower_Defense/EnemyMonkey.cpp
 	src/Examples/Tower_Defense/FreezeEffect.cpp
 	
 	src/Resources/ResourceManager.cpp

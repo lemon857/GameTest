@@ -2,6 +2,8 @@
 
 #define MIN_DISTANCE_TO_CASTLE 2.7f
 
+#include "Games/Tower_Defense/Target.h"
+
 #include <glm/vec3.hpp>
 
 #include <memory>
@@ -11,7 +13,6 @@ class Castle;
 class ObjModel;
 class HealthBar;
 class BaseEffect;
-class Target;
 
 namespace RenderEngine
 {
@@ -27,7 +28,7 @@ public:
 
 	void update(const double delta);
 
-	void render();
+	virtual void render();
 
 	void damage(const unsigned int damage_hp);
 	

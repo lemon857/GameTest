@@ -19,9 +19,9 @@
 #include "Games/Tower_Defense/BaseEffect.h"
 #include "Games/Tower_Defense/Target.h"
 
-#include "Games/Tower_Defense/ArcherTower.h"
-#include "Games/Tower_Defense/MortarTower.h"
-#include "Games/Tower_Defense/IceTower.h"
+#include "Games/Tower_Defense/TowerArcher.h"
+#include "Games/Tower_Defense/TowerIce.h"
+#include "Games/Tower_Defense/TowerMortar.h"
 
 const int size_x = 30, size_y = 30;
 
@@ -40,12 +40,17 @@ namespace GUI
 	class GUI_place;
 }
 
-enum TypeTower
+enum class TypeTower
 {
 	null = 0,
 	Ice = IceTower::p_coast,
 	Archer = ArcherTower::p_coast,
 	Mortar = MortarTower::p_coast
+};
+enum class TypeEnemy
+{
+	null = 0,
+	Monkey,
 };
 
 struct SpawnTower
@@ -53,6 +58,13 @@ struct SpawnTower
 	unsigned int num;
 	TypeTower type;
 };
+
+struct SpawnEnemy
+{
+	unsigned int num;
+	TypeEnemy type;
+};
+
 
 struct Tower
 {
@@ -112,7 +124,7 @@ private:
 	std::queue<SpawnTower> m_spawn_towers;
 	//std::queue<unsigned int> m_spawn_towers_self;
 
-	std::queue<unsigned int> m_spawn_enemies;
+	std::queue<SpawnEnemy> m_spawn_enemies;
 	//std::queue<unsigned int> m_spawn_enemies_self;
 
 	Camera* m_cam;
@@ -175,7 +187,7 @@ private:
 	bool isServer = false;
 	bool restart_querry = false;
 
-	TypeTower place_querry = null;
+	TypeTower place_querry = TypeTower::null;
 
 	bool* lock_key_update;
 

@@ -3,7 +3,6 @@
 #include "Games/Tower_Defense/Castle.h"
 #include "Games/Tower_Defense/BaseEffect.h"
 #include "Games/Tower_Defense/HealthBar.h"
-#include "Games/Tower_Defense/Target.h"
 #include "EngineCore/Meshes/ObjModel.h"
 #include "EngineCore/Components/Transform.h"
 #include "EngineCore/System/SysFunc.h"
@@ -18,7 +17,7 @@ BaseEnemy::BaseEnemy(ObjModel* model, Castle* target, std::vector<Target> target
 	: m_cool_down(cooldown * 1000)
 	, m_target_castle(std::move(target))
 	, m_cur_time(0)
-	, m_velocity(velocity)
+	, m_velocity(velocity * 0.001)
 	, m_model(std::move(model))
 	, m_bar(new HealthBar(pMaterial, pos + glm::vec3(0.f, 2.5f, 0.f), 25, 2, hp, glm::vec3(1.f), color))
 	, m_bar_effect(new HealthBar(pMaterial, pos + glm::vec3(0.f, 4.5f, 0.f), 25, 2, hp, glm::vec3(1.f), glm::vec3(1.f)))

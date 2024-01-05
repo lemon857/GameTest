@@ -5,6 +5,7 @@
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Sound/Sound.h"
 #include "EngineCore/Renderer/Circle.h"
+#include "Games/Tower_Defense/DamageList.h"
 
 MortarTower::MortarTower(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<RenderEngine::Material> pMaterial,
 	linked_list<BaseEnemy*>* list, glm::vec3 pos, RenderEngine::Line* line, std::shared_ptr<RenderEngine::Material> pMaterialLine)
@@ -20,6 +21,7 @@ MortarTower::MortarTower(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<Re
 		glm::vec4(1.f, 0.f, 0.3f, 0.7f), m_radius, 90, 3);
 	m_coast = p_coast;
 	m_coast_upgrade = p_coast_upgrade;
+	m_type_attack = TypeAttack::Heavy;
 }
 
 void MortarTower::upgrade()
@@ -72,4 +74,9 @@ void MortarTower::updating(const double delta)
 std::string MortarTower::get_custom()
 {
 	return "Radius attack: " + std::to_string(m_radius);
+}
+
+std::string MortarTower::get_type_str()
+{
+	return BaseTower::get_type_attack(TypeAttack::Heavy);
 }

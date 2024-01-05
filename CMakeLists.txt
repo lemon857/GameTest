@@ -64,6 +64,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/Games/Tower_Defense/TowerIce.h
 	includes/Games/Tower_Defense/EnemyMonkey.h
 	includes/Games/Tower_Defense/Target.h
+	includes/Games/Tower_Defense/DamageList.h
 	includes/Games/Tower_Defense/FreezeEffect.h
 )
 

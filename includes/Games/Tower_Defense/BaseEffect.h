@@ -3,6 +3,7 @@
 #include "EngineCore/System/List.h"
 
 class BaseEnemy;
+enum class TypeAttack;
 
 class BaseEffect
 {
@@ -36,6 +37,6 @@ protected:
 	double m_duration;
 
 	bool m_isDestroyed;
-
+	TypeAttack m_type_attack;
 	BaseEnemy* m_cur_enemy;
 };

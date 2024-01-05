@@ -7,10 +7,12 @@
 #include <memory>
 #include <string>
 
+
 class HealthBar;
-class BaseEnemy;
 class ObjModel;
 class Sound;
+class BaseEnemy;
+enum class TypeAttack;
 
 namespace RenderEngine
 {
@@ -57,12 +59,18 @@ public:
 	virtual std::string get_add_damage() { return ""; }
 	virtual std::string get_add_custom() { return ""; };
 
+	static std::string get_type_attack(TypeAttack type);
+
+	std::string get_self_type_str();
+
 protected:
 	BaseEnemy* m_target_BaseEnemy;
 
 	linked_list<BaseEnemy*>* m_enemies;
 
 	HealthBar* m_bar;
+
+	TypeAttack m_type_attack;
 
 	double m_cur_time;
 

@@ -7,6 +7,7 @@
 #include "EngineCore/Components/MeshRenderer.h"
 #include "EngineCore/Renderer/Line.h"
 #include "Games/Tower_Defense/HealthBar.h"
+#include "Games/Tower_Defense/DamageList.h"
 
 #include "EngineCore/Sound/Sound.h"
 
@@ -57,7 +58,8 @@ void BaseTower::update(const double delta)
 		if (m_target_BaseEnemy != nullptr)
 		{
 			m_sound->play();
-			m_target_BaseEnemy->damage(m_damage);
+			double add = (damageList[(int)m_type_attack][(int)m_target_BaseEnemy->get_type()]);
+			m_target_BaseEnemy->damage(m_damage * add);
 			damage(m_target_BaseEnemy);
 		}
 		m_cur_time = 0;
@@ -117,4 +119,27 @@ glm::vec3 BaseTower::get_pos()
 BaseEnemy* BaseTower::get_target()
 {
 	return m_target_BaseEnemy;
+}
+
+std::string BaseTower::get_type_attack(TypeAttack type)
+{
+	switch (type)
+	{
+	case TypeAttack::Piercing:
+		return "Piercing";
+	case TypeAttack::Cutting:
+		return "Cutting";
+	case TypeAttack::Heavy:
+		return "Heavy";
+	case TypeAttack::Magic:
+		return "Magic";
+	case TypeAttack::Chaotic:
+		return "Chaotic";
+	}
+	return "";
+}
+
+std::string BaseTower::get_self_type_str()
+{
+	return get_type_attack(m_type_attack);
 }

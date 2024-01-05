@@ -26,6 +26,8 @@ public:
 
 	std::string get_add_distance() override { return " -3"; }
 	std::string get_add_custom() override { return " +5"; };
+
+	static std::string get_type_str();
 private:
 	double m_time_freeze;
 };

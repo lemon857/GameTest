@@ -1,11 +1,13 @@
 #include "Games/Tower_Defense/FreezeEffect.h"
 
 #include "Games/Tower_Defense/BaseEnemy.h"
+#include "Games/Tower_Defense/DamageList.h"
 
 FreezeEffect::FreezeEffect(double time_freeze)
 	: BaseEffect(1, 3, time_freeze)
 	, m_last_vel(0)
 {
+	m_type_attack = TypeAttack::Magic;
 }
 
 void FreezeEffect::modify_enemy()

@@ -13,6 +13,7 @@ class Castle;
 class ObjModel;
 class HealthBar;
 class BaseEffect;
+enum class TypeArmor;
 
 namespace RenderEngine
 {
@@ -47,11 +48,13 @@ public:
 
 	unsigned int get_reward() { return m_reward; }
 
+	TypeArmor get_type() { return m_type_armor; }
+
 protected:
 
 	std::vector<Target> m_targets;
 	int curtarget;
-
+	TypeArmor m_type_armor;
 	Castle* m_target_castle;
 	ObjModel* m_model;
 	HealthBar* m_bar;

@@ -32,6 +32,7 @@ public:
 	std::string get_add_damage() override { return " +1"; }
 	std::string get_add_custom() override { return " +1"; };
 
+	static std::string get_type_str();
 private:
 
 	unsigned int m_radius;

@@ -20,6 +20,8 @@ public:
 	std::string get_add_cooldown() override { return " +1"; }
 	std::string get_add_distance() override { return " +3"; }
 	std::string get_add_damage() override { return " +1"; }
+
+	static std::string get_type_str();
 private:
 
 };

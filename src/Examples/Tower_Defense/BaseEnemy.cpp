@@ -6,7 +6,7 @@
 #include "EngineCore/Meshes/ObjModel.h"
 #include "EngineCore/Components/Transform.h"
 #include "EngineCore/System/SysFunc.h"
-#include "Games/Tower_Defense/DamageList.h"
+#include "Games/Tower_Defense/DamageTable.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/vector_angle.hpp>

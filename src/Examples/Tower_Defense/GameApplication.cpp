@@ -39,6 +39,7 @@
 #include "EngineCore/GUI/ChatBox.h"
 #include "EngineCore/GUI/ScrollBox.h"
 #include "EngineCore/GUI/Font.h"
+#include "EngineCore/GUI/Table.h"
 
 #include "EngineCore/Network/WinSock.h"
 
@@ -1266,6 +1267,14 @@ void GameApp::press_button(KeyCode key)
             isKeyPressed = true;
         }
     }
+    else if (key == k_table)
+    {
+        if (!isKeyPressed)
+        {
+            m_gui->get_element<GUI::Table>("Damage_table")->switch_active();
+            isKeyPressed = true;
+        }
+    }
 
     switch (key)
     {
@@ -1483,6 +1492,19 @@ void GameApp::init_gui()
     m_gui->add_element<GUI::TextRenderer>(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
         std::to_string(g_coins), glm::vec3(1.f), glm::vec2(89.f, 96.f), glm::vec2(1.f), "Coins_count", false);
 
+    std::vector<std::string> data = {
+        "armor: ","null", "simple", "heavy", "magic", "chaotic",
+        "piercing", "110%", "90%", "70%", "110%", "80%",
+        "cutting", "100%", "110%", "80%", "100%", "90%",
+        "shock", "90%", "80%", "100%", "90%", "100%",
+        "sorcery", "80%", "100%", "100%", "90%", "120%",
+        "wither", "100%", "90%", "120%", "80%", "90%" };
+
+    m_gui->add_element<GUI::Table>(gamegui, new GUI::Sprite(ResourceManager::getMaterial("defaultSprite")),
+        glm::vec2(82.f, 36.f), glm::vec2(16.f, 15.f), glm::vec2(5.f, 4.f), "Damage_table",
+        ResourceManager::get_font("calibriChat"), ResourceManager::getShaderProgram("textShader"),
+        glm::vec3(1.f), 6, 6, data);
+
     //m_gui->add_element<GUI::ScrollBox>(gamegui, 1, new GUI::Sprite(ResourceManager::getMaterial("defaultSprite")),
      //      glm::vec2(89.f, 78.f), glm::vec2(10.f, 20.f), "Towers", 10);
 
@@ -1683,6 +1705,10 @@ void GameApp::init_gui()
     m_gui->add_element<GUI::BindButton>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(6.f, 83.f), glm::vec2(5.f, 5.f), ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"),
         glm::vec3(1.f), &k_chat, "BindChat");
+
+    m_gui->add_element<GUI::BindButton>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(6.f, 94.f), glm::vec2(5.f, 5.f), ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"),
+        glm::vec3(1.f), &k_table, "BindChat");
 
     // left
 

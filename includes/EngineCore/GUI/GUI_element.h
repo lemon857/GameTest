@@ -55,6 +55,8 @@ namespace GUI
 
 		virtual void set_active(const bool state) { m_isActive = state; set_tree_active(state); }
 		
+		void switch_active() { m_isActive = !m_isActive; set_tree_active(m_isActive); };
+
 		void set_layer(int layer) { m_layer = layer; set_tree_layer(layer); }
 
 		void add_position(glm::vec2 pos) { m_position += pos; }

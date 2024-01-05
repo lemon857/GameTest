@@ -5,7 +5,7 @@
 #include "Games/Tower_Defense/FreezeEffect.h"
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Sound/Sound.h"
-#include "Games/Tower_Defense/DamageList.h"
+#include "Games/Tower_Defense/DamageTable.h"
 
 IceTower::IceTower(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<RenderEngine::Material> pMaterial,
 	linked_list<BaseEnemy*>* list, glm::vec3 pos, RenderEngine::Line* line, std::shared_ptr<RenderEngine::Material> pMaterialLine)
@@ -15,7 +15,7 @@ IceTower::IceTower(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<RenderEn
 	m_sound = std::move(ResourceManager::get_unique_sound("freeze_attak"));
 	m_coast = p_coast;
 	m_coast_upgrade = p_coast_upgrade;
-	m_type_attack = TypeAttack::Magic;
+	m_type_attack = TypeAttack::Sorcery;
 }
 
 void IceTower::upgrade()
@@ -63,5 +63,5 @@ std::string IceTower::get_custom()
 
 std::string IceTower::get_type_str()
 {
-	return BaseTower::get_type_attack(TypeAttack::Magic);
+	return BaseTower::get_type_attack(TypeAttack::Sorcery);
 }

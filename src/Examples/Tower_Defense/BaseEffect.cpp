@@ -1,7 +1,7 @@
 #include "Games/Tower_Defense/BaseEffect.h"
 
 #include "Games/Tower_Defense/BaseEnemy.h"
-#include "Games/Tower_Defense/DamageList.h"
+#include "Games/Tower_Defense/DamageTable.h"
 
 BaseEffect::BaseEffect(unsigned int damage, double cooldown, double duration)
 	: m_damage(damage)
@@ -23,7 +23,7 @@ void BaseEffect::update(const double delta)
 	if (m_cur_time < m_cool_down) m_cur_time += delta;
 	else
 	{
-		m_cur_enemy->damage(m_damage * damageList[(int)m_type_attack][(int)m_cur_enemy->get_type()]);
+		m_cur_enemy->damage(m_damage * damageTable[(int)m_type_attack][(int)m_cur_enemy->get_type()]);
 		m_cur_time = 0;
 	}
 	if (m_live_time < m_duration) m_live_time += delta;

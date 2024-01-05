@@ -7,7 +7,7 @@
 #include "EngineCore/Components/MeshRenderer.h"
 #include "EngineCore/Renderer/Line.h"
 #include "Games/Tower_Defense/HealthBar.h"
-#include "Games/Tower_Defense/DamageList.h"
+#include "Games/Tower_Defense/DamageTable.h"
 
 #include "EngineCore/Sound/Sound.h"
 
@@ -58,7 +58,7 @@ void BaseTower::update(const double delta)
 		if (m_target_BaseEnemy != nullptr)
 		{
 			m_sound->play();
-			double add = (damageList[(int)m_type_attack][(int)m_target_BaseEnemy->get_type()]);
+			double add = (damageTable[(int)m_type_attack][(int)m_target_BaseEnemy->get_type()]);
 			m_target_BaseEnemy->damage(m_damage * add);
 			damage(m_target_BaseEnemy);
 		}
@@ -126,15 +126,15 @@ std::string BaseTower::get_type_attack(TypeAttack type)
 	switch (type)
 	{
 	case TypeAttack::Piercing:
-		return "Piercing";
+		return "piercing";
 	case TypeAttack::Cutting:
-		return "Cutting";
-	case TypeAttack::Heavy:
-		return "Heavy";
-	case TypeAttack::Magic:
-		return "Magic";
-	case TypeAttack::Chaotic:
-		return "Chaotic";
+		return "cutting";
+	case TypeAttack::Shock:
+		return "shock";
+	case TypeAttack::Sorcery:
+		return "sorcery";
+	case TypeAttack::Wither:
+		return "wither";
 	}
 	return "";
 }

@@ -37,6 +37,7 @@ BaseTower::~BaseTower()
 
 void BaseTower::update(const double delta)
 {
+	updating(delta);
 	double distance = 100; // <-------
 	for (size_t i = 0; i < m_enemies->size(); i++)
 	{
@@ -73,6 +74,7 @@ void BaseTower::render()
 			m_target_BaseEnemy->get_pos(), glm::vec4(1.f, 0.1f, 0.1f, 1.f));
 		m_bar->update();
 	}
+	rendering();
 }
 
 void BaseTower::upgrade()

@@ -33,7 +33,8 @@ public:
 
 	virtual void upgrade();
 	virtual void damage(BaseEnemy* target) {}
-
+	virtual void rendering() {}
+	virtual void updating(const double delta) {}
 	virtual void target(size_t i, double dis, double& all_dis);
 
 	void set_target(BaseEnemy* target);
@@ -45,7 +46,8 @@ public:
 	double get_cooldown() { return m_cooldown / 1000.0; }
 	double get_distance() { return m_distance; }
 	unsigned int get_damage() { return m_damage; }
-
+	virtual std::string get_custom() { return ""; };
+	
 protected:
 	BaseEnemy* m_target_BaseEnemy;
 

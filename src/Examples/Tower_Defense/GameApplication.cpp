@@ -551,6 +551,7 @@ void GameApp::on_key_update(const double delta)
                             m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: 0");
                             m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text("Colldown: 0");
                             m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text("Radius: 0");
+                            m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text("");
                             //map[cur] = true;
                             //m_spawn_towers.push(cur);
                             //buff[0] = 't';
@@ -571,6 +572,7 @@ void GameApp::on_key_update(const double delta)
                                     m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " + std::to_string(m_select_tower->get_damage()));
                                     m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text("Colldown: " + std::to_string((int)m_select_tower->get_cooldown()));
                                     m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text("Radius: " + std::to_string((int)m_select_tower->get_distance()));
+                                    m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text(m_select_tower->get_custom());
                                     place_querry = null;
                                     break;
                                 }
@@ -1462,8 +1464,11 @@ void GameApp::init_gui()
      m_gui->add_element<GUI::TextRenderer>(gamegui, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
          "Radius: 0", glm::vec3(1.f), glm::vec2(0.2f, 81.f), glm::vec2(1.f), "Radius_prop", false);
 
+     m_gui->add_element<GUI::TextRenderer>(gamegui, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
+         "", glm::vec3(1.f), glm::vec2(0.2f, 76.f), glm::vec2(1.f), "Custom_prop", false);
+
      m_gui->add_element<GUI::TextRenderer>(gamegui, ResourceManager::get_font("calibriChat"), ResourceManager::getShaderProgram("textShader"),
-         "", glm::vec3(1.f), glm::vec2(0.2f, 76.f), glm::vec2(1.f), "Description_prop", false);
+         "", glm::vec3(1.f), glm::vec2(0.2f, 71.f), glm::vec2(1.f), "Description_prop", false);
 
      m_gui->add_element<GUI::Button>(gamegui, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
          glm::vec2(9.f, 62.f), glm::vec2(8.f, 5.f),
@@ -1485,6 +1490,7 @@ void GameApp::init_gui()
                      m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " + std::to_string(m_select_tower->get_damage()));
                      m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text("Colldown: " + std::to_string((int)m_select_tower->get_cooldown()));
                      m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text("Radius: " + std::to_string((int)m_select_tower->get_distance()));
+                     m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text(m_select_tower->get_custom());
                  }
              });
 
@@ -1496,6 +1502,7 @@ void GameApp::init_gui()
                 m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " + std::to_string(IceTower::p_damage));
                 m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text("Colldown: " + std::to_string(IceTower::p_cooldown));
                 m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text("Radius: " + std::to_string(IceTower::p_distance));
+                m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text("Time freeze: " + std::to_string(IceTower::p_time_freeze));
                 m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("Well freezing enemies");
                 m_gui->get_element<GUI::Button>("Upgrade_place")->set_text("Place");
                 place_querry = Ice;
@@ -1509,6 +1516,7 @@ void GameApp::init_gui()
                 m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " + std::to_string(ArcherTower::p_damage));
                 m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text("Colldown: " + std::to_string(ArcherTower::p_cooldown));
                 m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text("Radius: " + std::to_string(ArcherTower::p_distance));
+                m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text("");
                 m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("Just a Archer, faster");
                 m_gui->get_element<GUI::Button>("Upgrade_place")->set_text("Place");
                 place_querry = Archer;
@@ -1522,6 +1530,7 @@ void GameApp::init_gui()
                 m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " + std::to_string(MortarTower::p_damage));
                 m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text("Colldown: " + std::to_string(MortarTower::p_cooldown));
                 m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text("Radius: " + std::to_string(MortarTower::p_distance));
+                m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text("Radius attack: " + std::to_string(MortarTower::p_radius_attack));
                 m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("Just a Mortar");
                 m_gui->get_element<GUI::Button>("Upgrade_place")->set_text("Place");
                 place_querry = Mortar;

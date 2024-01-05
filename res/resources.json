@@ -450,6 +450,10 @@
       "path": "res/sounds/mortar_attack.flac"
     },
     {
+      "name": "mortar_fall",
+      "path": "res/sounds/mortar_fall.flac"
+    },
+    {
       "name": "bow_attack",
       "path": "res/sounds/bow_attack.flac"
     },

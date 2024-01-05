@@ -5,7 +5,7 @@
 
 #define BUILD_NAME "Tower_defense_0.0.5_alfa"
 
-//#define DEBUG_CONSOLE // chanage on release build here
+#define DEBUG_CONSOLE // chanage on release build here
 
 #ifdef DEBUG_CONSOLE
 #define DEBUG_CONSOLE_LOG

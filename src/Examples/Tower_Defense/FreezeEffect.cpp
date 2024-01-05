@@ -2,8 +2,8 @@
 
 #include "Games/Tower_Defense/BaseEnemy.h"
 
-FreezeEffect::FreezeEffect()
-	: BaseEffect(1, 3, 15)
+FreezeEffect::FreezeEffect(double time_freeze)
+	: BaseEffect(1, 3, time_freeze)
 	, m_last_vel(0)
 {
 }

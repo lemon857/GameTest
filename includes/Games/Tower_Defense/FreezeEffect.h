@@ -5,7 +5,7 @@
 class FreezeEffect : public BaseEffect
 {
 public:
-	FreezeEffect();
+	FreezeEffect(double time_freeze);
 	~FreezeEffect() = default;
 
 	void modify_enemy() override;

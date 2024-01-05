@@ -15,10 +15,13 @@ public:
 
 	void target(size_t i, double dis, double& all_dis) override;
 
+	std::string get_custom() override;
+
 	static const unsigned int p_damage = 1;
-	static const unsigned int p_distance = 14;
+	static const unsigned int p_distance = 16;
 	static const unsigned int p_cooldown = 3;
+	static const unsigned int p_time_freeze = 10;
 
 private:
-
+	double m_time_freeze;
 };

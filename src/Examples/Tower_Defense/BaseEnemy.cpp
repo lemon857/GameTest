@@ -55,7 +55,22 @@ void BaseEnemy::update(const double delta)
 		if (m_rotation_break < 86)
 		{
 			m_rotation_break += 0.04 * delta;
-			m_model->getComponent<Transform>()->add_rotation(glm::vec3(0.04 * delta, 0.f, 0.f));
+			if (-m_last_dir.x > m_last_dir.z)
+			{
+				m_model->getComponent<Transform>()->add_rotation(glm::vec3(0.04 * delta, 0.f, 0.f));
+			}										
+			else if (m_last_dir.x > m_last_dir.z)	
+			{										
+				m_model->getComponent<Transform>()->add_rotation(glm::vec3(-0.04 * delta, 0.f, 0.f));
+			}										
+			else if (m_last_dir.z > m_last_dir.x)	
+			{										
+				m_model->getComponent<Transform>()->add_rotation(glm::vec3(0.f, 0.f, -0.04 * delta));
+			}										
+			else if (-m_last_dir.z > m_last_dir.x)	
+			{										
+				m_model->getComponent<Transform>()->add_rotation(glm::vec3(0.f, 0.f, 0.04 * delta));
+			}
 		}
 		else
 		{
@@ -66,18 +81,24 @@ void BaseEnemy::update(const double delta)
 	on_update(delta);
 	if (curtarget < m_targets.size())
 	{
-		glm::vec3 a = m_targets[curtarget].get_pos() - m_model->getComponent<Transform>()->get_position();
-		if (sqrt(a.x * a.x + a.z * a.z) > 0.1f)
+		m_last_dir = m_targets[curtarget].get_pos() - m_model->getComponent<Transform>()->get_position();
+		if (sqrt(m_last_dir.x * m_last_dir.x + m_last_dir.z * m_last_dir.z) > 0.1f)
 		{
 			//if (m_model->getComponent<Transform>()->get_position().x > HALF_PLANE)
 			//{
-				m_model->getComponent<Transform>()->set_rotation(glm::vec3(0.f, glm::degrees(glm::angle(glm::normalize(a), glm::vec3(0.f, 0.f, -1.f))), 0.f));
+			float add = 0.f;
+			if (abs(m_last_dir.x) > abs(m_last_dir.z))
+			{
+				if (m_last_dir.x > 0) add = 180.f;
+			}
+			else if (abs(m_last_dir.z) > abs(m_last_dir.x)) add = 0.f;
+			m_model->getComponent<Transform>()->set_rotation(glm::vec3(0.f, add + glm::degrees(glm::angle(glm::normalize(m_last_dir), glm::vec3(0.f, 0.f, -1.f))), 0.f));
 			//}
 			//else
 			//{
 			//	m_model->getComponent<Transform>()->set_rotation(glm::vec3(0.f, -1 * glm::degrees(glm::angle(glm::normalize(a), glm::vec3(0.f, 0.f, -1.f))), 0.f));
 			//}
-			m_model->getComponent<Transform>()->add_position(glm::normalize(a)* (float)delta* (float)m_velocity);
+			m_model->getComponent<Transform>()->add_position(glm::normalize(m_last_dir)* (float)delta* (float)m_velocity);
 			m_bar->set_pos(m_model->getComponent<Transform>()->get_position() + glm::vec3(0.f, 2.5f, 0.f));
 			m_bar_effect->set_pos(m_model->getComponent<Transform>()->get_position() + glm::vec3(0.f, 4.5f, 0.f));
 		}
@@ -88,18 +109,24 @@ void BaseEnemy::update(const double delta)
 	}
 	else if (curtarget == m_targets.size())
 	{
-		glm::vec3 a = m_target_castle->get_pos() - m_model->getComponent<Transform>()->get_position();
-		if (sqrt(a.x * a.x + a.z * a.z) > MIN_DISTANCE_TO_CASTLE)
+		m_last_dir = m_target_castle->get_pos() - m_model->getComponent<Transform>()->get_position();
+		if (sqrt(m_last_dir.x * m_last_dir.x + m_last_dir.z * m_last_dir.z) > MIN_DISTANCE_TO_CASTLE)
 		{
 			//if (m_model->getComponent<Transform>()->get_position().x > HALF_PLANE)
 			//{
-				m_model->getComponent<Transform>()->set_rotation(glm::vec3(0.f, glm::degrees(glm::angle(glm::normalize(a), glm::vec3(0.f, 0.f, -1.f))), 0.f));
+			float add = 0.f;
+			if (abs(m_last_dir.x) > abs(m_last_dir.z))
+			{
+				if (m_last_dir.x > 0) add = 180.f;
+			}
+			else if (abs(m_last_dir.z) > abs(m_last_dir.x)) add = 0.f;
+			m_model->getComponent<Transform>()->set_rotation(glm::vec3(0.f, add + glm::degrees(glm::angle(glm::normalize(m_last_dir), glm::vec3(0.f, 0.f, -1.f))), 0.f));
 			//}
 			//else
 			//{
 			//	m_model->getComponent<Transform>()->set_rotation(glm::vec3(0.f, -1 * glm::degrees(glm::angle(glm::normalize(a), glm::vec3(0.f, 0.f, -1.f))), 0.f));
 			//}
-			m_model->getComponent<Transform>()->add_position(glm::normalize(a) * (float)delta * (float)m_velocity);
+			m_model->getComponent<Transform>()->add_position(glm::normalize(m_last_dir) * (float)delta * (float)m_velocity);
 			m_bar->set_pos(m_model->getComponent<Transform>()->get_position() + glm::vec3(0.f, 2.5f, 0.f));
 			m_bar_effect->set_pos(m_model->getComponent<Transform>()->get_position() + glm::vec3(0.f, 4.5f, 0.f));
 		}

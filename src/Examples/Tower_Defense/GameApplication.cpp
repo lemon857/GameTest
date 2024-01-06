@@ -2279,6 +2279,7 @@ void GameApp::start_game_single()
     countKills = 0;
     countEnemies = 0; 
     countEnemiesPerm = 0;
+    selected_enemy = -1;
     g_coins = count_start_coins;
     m_gui->get_element<GUI::TextRenderer>("Coins_count")->set_text(std::to_string(g_coins));
     cur = 0;

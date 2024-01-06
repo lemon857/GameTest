@@ -72,7 +72,7 @@ protected:
 	HealthBar* m_bar;
 	HealthBar* m_bar_effect;
 	std::unique_ptr<BaseEffect> m_effect;
-
+	glm::vec3 m_last_dir;
 	double m_rotation_break;
 
 	double m_hp;

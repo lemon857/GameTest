@@ -52,6 +52,9 @@
 
 #include "Games/Tower_Defense/EnemyMonkey.h"
 #include "Games/Tower_Defense/EnemyMagician.h"
+#include "Games/Tower_Defense/EnemyRobot.h"
+#include "Games/Tower_Defense/EnemySpider.h"
+#include "Games/Tower_Defense/EnemyProfessor.h"
 
 #include <array>
 #include <memory>
@@ -114,6 +117,9 @@ bool GameApp::init()
     std::vector<std::string> mats_ens;
     mats_ens.push_back("monkey");
     mats_ens.push_back("magician");
+    mats_ens.push_back("robot");
+    mats_ens.push_back("spider");
+    mats_ens.push_back("professor");
 
     for (auto& me : mats_ens)
     {
@@ -616,7 +622,7 @@ void GameApp::on_key_update(const double delta)
                                         m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(true);
                                         m_gui->get_element<GUI::TextRenderer>("Coast_prop")->set_text("Coast: " + std::to_string(m_select_tower->get_upgrade_coast()));
                                         m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " +
-                                            std::to_string(m_select_tower->get_damage()) + m_select_tower->get_add_damage());
+                                            std::to_string(m_select_tower->get_damage()).substr(0, 4) + m_select_tower->get_add_damage());
                                         m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text("Colldown: " +
                                             std::to_string(m_select_tower->get_cooldown()).substr(0, 4) + m_select_tower->get_add_cooldown());
                                         m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text("Radius: " +
@@ -808,9 +814,17 @@ void GameApp::on_update(const double delta)
         m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text("HP: " + std::to_string(m_main_castle->get_hp()).substr(0, 5));
     }
 
-    if (m_select_tower != nullptr)
+    if (m_select_tower != nullptr && place_querry == TypeTower::null)
     {
-        m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " + std::to_string(m_select_tower->get_damage()).substr(0, 4));
+        if (m_select_tower->is_upgradable()) 
+        {
+            m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " + 
+                std::to_string(m_select_tower->get_damage()).substr(0, 4) + m_select_tower->get_add_damage());
+        }
+        else 
+        {
+            m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " + std::to_string(m_select_tower->get_damage()).substr(0, 4));
+        }
     }
 
     m_gui->on_update(delta);
@@ -934,6 +948,21 @@ void GameApp::on_update(const double delta)
                         m_main_castle, targets,
                         glm::vec3(pos.x + (rand() % 100 - 50) / 100.f, pos.y, pos.z + (rand() % 100 - 50) / 100.f), ResourceManager::getMaterial("default"), &m_enemies));
                     break;
+            case TypeEnemy::Robot:
+                m_enemies.push_back(new RobotEnemy(new ObjModel(ResourceManager::get_OBJ_model("robot"), ResourceManager::getMaterial("robot")),
+                    m_main_castle, targets,
+                    glm::vec3(pos.x + (rand() % 100 - 50) / 100.f, pos.y, pos.z + (rand() % 100 - 50) / 100.f), ResourceManager::getMaterial("default")));
+                break;
+            case TypeEnemy::Spider:
+                m_enemies.push_back(new SpiderEnemy(new ObjModel(ResourceManager::get_OBJ_model("spider"), ResourceManager::getMaterial("spider")),
+                    m_main_castle, targets,
+                    glm::vec3(pos.x + (rand() % 100 - 50) / 100.f, pos.y, pos.z + (rand() % 100 - 50) / 100.f), ResourceManager::getMaterial("default")));
+                break;
+            case TypeEnemy::Professor:
+                m_enemies.push_back(new ProfessorEnemy(new ObjModel(ResourceManager::get_OBJ_model("professor"), ResourceManager::getMaterial("professor")),
+                    m_main_castle, targets,
+                    glm::vec3(pos.x + (rand() % 100 - 50) / 100.f, pos.y, pos.z + (rand() % 100 - 50) / 100.f), ResourceManager::getMaterial("default")));
+                break;
             }
             ResourceManager::get_sound("enemy_spawn")->play();
             m_spawn_enemies.pop();
@@ -1363,7 +1392,7 @@ void GameApp::press_button(KeyCode key)
             int add = rand() % 10;
             unsigned int spawn = 841 + add;
             int tp = rand() % 10;
-            m_spawn_enemies.push({ spawn, tp <= 5 ? TypeEnemy::Monkey : TypeEnemy::Magician });
+            m_spawn_enemies.push({ spawn, tp <= 2 ? TypeEnemy::Monkey : tp <= 4 ? TypeEnemy::Magician : tp <= 6 ? TypeEnemy::Robot : tp <= 8 ? TypeEnemy::Spider : TypeEnemy::Professor });
             isKeyPressed = true;
         }
     }
@@ -1377,7 +1406,7 @@ void GameApp::press_button(KeyCode key)
                 int add = rand() % 10;
                 unsigned int spawn = 841 + add;
                 int tp = rand() % 10;
-                m_spawn_enemies.push({ spawn, tp <= 5 ? TypeEnemy::Monkey : TypeEnemy::Magician });
+                m_spawn_enemies.push({ spawn, tp <= 2 ? TypeEnemy::Monkey : tp <= 4 ? TypeEnemy::Magician : tp <= 6 ? TypeEnemy::Robot : tp <= 8 ? TypeEnemy::Spider : TypeEnemy::Professor });
             }
             isKeyPressed = true;
         }
@@ -1387,6 +1416,30 @@ void GameApp::press_button(KeyCode key)
         if (!isKeyPressed)
         {
             m_gui->get_element<GUI::Table>("Damage_table")->switch_active();
+            isKeyPressed = true;
+        }
+    }
+    else if (key == k_view)
+    {
+        if (!isKeyPressed)
+        {
+            if (g_cam_view + 1 <= 3) g_cam_view++;
+            else g_cam_view = 0;
+            switch (g_cam_view)
+            {
+            case 0:
+                m_cam->set_position_rotation(glm::vec3(12.5f, 55.f, 30.f), glm::vec3(-75.f, -90.f, 0.f));
+                break;
+            case 1:
+                m_cam->set_position_rotation(glm::vec3(30.f, 55.f, 12.5f), glm::vec3(-75.f, 0.f, 0.f));
+                break;
+            case 2:
+                m_cam->set_position_rotation(glm::vec3(48.f, 55.f, 30.f), glm::vec3(-75.f, 90.f, 0.f));
+                break;
+            case 3:
+                m_cam->set_position_rotation(glm::vec3(30.f, 55.f, 48.f), glm::vec3(-75.f, 180.f, 0.f));
+                break;
+            }
             isKeyPressed = true;
         }
     }
@@ -1611,6 +1664,7 @@ void GameApp::init_gui()
     // ------------------------------------------------------------ game gui ------------------------------------------------
     offset = 88.f;
     auto gamegui = m_gui->add_element<GUI::GUI_element>("game_gui_place");
+    auto gamegui1 = m_gui->add_element<GUI::GUI_element>("game_gui1_place");
 
     m_gui->add_element<GUI::Sprite>(ResourceManager::getMaterial("coin"), "default",
         glm::vec2(87.f, 97.5f), glm::vec2(2.f, 2.f), "g_coins");
@@ -1626,10 +1680,10 @@ void GameApp::init_gui()
         "sorcery", "80%", "100%", "100%", "90%", "120%",
         "wither", "100%", "90%", "120%", "80%", "90%" };
 
-    m_gui->add_element<GUI::Table>(gamegui, new GUI::Sprite(ResourceManager::getMaterial("defaultSprite")),
+    m_gui->add_element<GUI::Table>(gamegui1, new GUI::Sprite(ResourceManager::getMaterial("defaultSprite")),
         glm::vec2(82.f, 17.f), glm::vec2(16.f, 15.f), glm::vec2(5.f, 4.f), "Damage_table",
         ResourceManager::get_font("calibriChat"), ResourceManager::getShaderProgram("textShader"),
-        glm::vec3(1.f), 6, 6, data);
+        glm::vec3(1.f), 6, 6, data)->set_active(false);
 
      //m_gui->add_element<GUI::ScrollBox>(gamegui, 1, new GUI::Sprite(ResourceManager::getMaterial("defaultSprite")),
      //      glm::vec2(50.f, 50.f), glm::vec2(10.f, 20.f), "Towers", 10, false);
@@ -1914,6 +1968,12 @@ void GameApp::init_gui()
     m_gui->add_element<GUI::TextRenderer>(settings, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
         "Open damage table", glm::vec3(1.f), glm::vec2(12.f, 64.f), glm::vec2(1.f), "DmgTable", false);
 
+    m_gui->add_element<GUI::BindButton>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(6.f, 75.f), glm::vec2(5.f, 5.f), ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"),
+        glm::vec3(1.f), &k_view, "BindSwitchView");
+
+    m_gui->add_element<GUI::TextRenderer>(settings, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
+        "Switch view", glm::vec3(1.f), glm::vec2(12.f, 75.f), glm::vec2(1.f), "SwitchView", false);
     // left
 
     m_gui->add_element<GUI::Button>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),

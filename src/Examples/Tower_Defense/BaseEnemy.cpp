@@ -124,7 +124,7 @@ void BaseEnemy::render()
 
 void BaseEnemy::damage(const double damage_hp)
 {
-	if (m_hp -= damage_hp <= m_max_hp) m_hp -= damage_hp;
+	if (m_hp - damage_hp <= m_max_hp) m_hp -= damage_hp;
 	if (m_hp <= 0)
 	{
 		m_isDestroyed = true;

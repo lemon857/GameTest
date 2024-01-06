@@ -12,6 +12,7 @@ public:
 	~ArcherTower() = default;
 
 	void upgrade() override;
+	void target(size_t i, double dis, double& all_dis) override;
 
 	static const unsigned int p_damage = 3;
 	static const unsigned int p_distance = 10;

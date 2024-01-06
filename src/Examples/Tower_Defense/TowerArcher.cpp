@@ -13,6 +13,7 @@ ArcherTower::ArcherTower(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<Re
 	m_coast_upgrade = p_coast_upgrade;
 	m_coast = p_coast;
 	m_type_attack = TypeAttack::Piercing;
+	m_start_dis = 0;
 }
 
 void ArcherTower::upgrade()
@@ -23,6 +24,26 @@ void ArcherTower::upgrade()
 	m_cooldown += 1000;
 	m_bar->set_max_value(m_cooldown);
 	m_isUpgraded = true;
+}
+
+void ArcherTower::target(size_t i, double dis, double& all_dis)
+{
+	if (dis <= m_distance && dis >= all_dis)
+	{
+		all_dis = dis;
+		if (m_target_BaseEnemy == nullptr)
+		{
+			m_target_BaseEnemy = m_enemies->at(i);
+		}
+		else if (m_target_BaseEnemy != m_enemies->at(i))
+		{
+			m_target_BaseEnemy = m_enemies->at(i);
+		}
+	}
+	else if (dis > m_distance && m_target_BaseEnemy == m_enemies->at(i))
+	{
+		m_target_BaseEnemy = nullptr;
+	}
 }
 
 std::string ArcherTower::get_type_str()

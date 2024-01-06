@@ -28,20 +28,20 @@ public:
 
 	void render() override;
 
-	void damage(const unsigned int damage_hp);
+	void damage(const double damage_hp);
 		
 	glm::vec3 get_pos();
 
 	bool isDestroyed();
 
-	int get_hp();
-	int get_max_hp();
+	double get_hp();
+	double get_max_hp();
 
 private:
 	HealthBar* m_bar;
 
-	int m_hp;
-	int m_max_hp;
+	double m_hp;
+	double m_max_hp;
 
 	bool m_isDestroyed;
 };

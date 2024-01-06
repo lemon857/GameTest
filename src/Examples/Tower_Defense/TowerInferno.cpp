@@ -50,11 +50,16 @@ void InfernoTower::target(size_t i, double dis, double& all_dis)
 			m_damage = P_INFERNO_DAMAGE;
 			m_target_BaseEnemy = m_enemies->at(i);
 		}
-		//if (curTower->get_target() != m_enemies[i]) curTower->set_target(m_enemies[i]);
+		else if (m_target_BaseEnemy != m_enemies->at(i))
+		{
+			m_damage = P_INFERNO_DAMAGE;
+			m_target_BaseEnemy = m_enemies->at(i);
+		}
 	}
 	else if (dis > m_distance && m_target_BaseEnemy == m_enemies->at(i))
 	{
-
+		m_damage = P_INFERNO_DAMAGE;
+		m_target_BaseEnemy = nullptr;
 	}
 }
 

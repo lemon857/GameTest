@@ -60,7 +60,10 @@ enum class TypeEnemy
 {
 	null = 0,
 	Monkey,
-	Magician
+	Magician,
+	Robot,
+	Spider,
+	Professor
 };
 
 struct WaveInfo
@@ -244,6 +247,7 @@ private:
 	KeyCode k_spawn_en_pack = KeyCode::KEY_K;
 	KeyCode k_chat = KeyCode::KEY_T;
 	KeyCode k_table = KeyCode::KEY_H;
+	KeyCode k_view = KeyCode::KEY_Q;
 
 	GUI::GUI_place* m_gui;
 

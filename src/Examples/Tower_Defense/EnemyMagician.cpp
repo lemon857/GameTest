@@ -10,7 +10,7 @@
 MagicianEnemy::MagicianEnemy(ObjModel* model, Castle* target, std::vector<Target> targets, glm::vec3 pos,
 	std::shared_ptr<RenderEngine::Material> pMaterial, linked_list<BaseEnemy*>* list)
 	: BaseEnemy(std::move(model), std::move(target), targets, pos, P_MAGICIAN_COOLDOWN, P_MAGICIAN_VELOCITY, P_MAGICIAN_HP, P_MAGICIAN_DAMAGE, pMaterial,
-		glm::vec3(1.f, 0.4f, 0.f))
+		glm::vec3(0.7f, 0.3f, 0.8f))
 	, m_isActiveCircle(false)
 	, m_cur_time_cir(0)
 	, m_dur_time_cir(2000)
@@ -53,7 +53,10 @@ void MagicianEnemy::on_update(const double delta)
 			if (p == pos) continue;
 			if (((p.x - pos.x) * (p.x - pos.x)) + ((p.z - pos.z) * (p.z - pos.z)) < P_MAGICIAN_RADIUS_TREAT * P_MAGICIAN_RADIUS_TREAT)
 			{
-				m_list->at(i)->set_effect(std::make_unique<HealthEffect>(4));
+				if (!m_list->at(i)->has_effect())
+				{
+					m_list->at(i)->set_effect(std::make_unique<HealthEffect>(4));
+				}
 			}
 		}
 		m_cur_time_treat = 0;

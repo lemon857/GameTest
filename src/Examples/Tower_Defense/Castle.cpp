@@ -29,7 +29,7 @@ void Castle::render()
 	updateComponents(0);
 }
 
-void Castle::damage(const unsigned int damage_hp)
+void Castle::damage(const double damage_hp)
 {
 	m_hp -= damage_hp;
 	m_bar->set_value(m_hp);
@@ -49,12 +49,12 @@ bool Castle::isDestroyed()
 	return m_isDestroyed;
 }
 
-int Castle::get_hp()
+double Castle::get_hp()
 {
 	return m_hp;
 }
 
-int Castle::get_max_hp()
+double Castle::get_max_hp()
 {
 	return m_max_hp;
 }

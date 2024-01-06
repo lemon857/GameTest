@@ -79,6 +79,8 @@ protected:
 	double m_cooldown;
 	double m_distance;
 
+	double m_start_dis;
+
 	double m_damage;
 	unsigned int m_coast;
 	unsigned int m_coast_upgrade;

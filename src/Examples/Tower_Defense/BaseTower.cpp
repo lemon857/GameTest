@@ -23,6 +23,7 @@ BaseTower::BaseTower(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<Render
 	, m_cur_time(0)
 	, m_damage(damage)
 	, m_isUpgraded(false)
+	, m_start_dis(100)
 	, m_bar(new HealthBar(pMaterialLine, pos + glm::vec3(0.f, 3.f, 0.f), 25, 2, m_cooldown, glm::vec3(1.f), glm::vec3(0.4f, 0.1f, 0.7f)))
 	, IGameObject("Tower")
 {	
@@ -33,13 +34,13 @@ BaseTower::BaseTower(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<Render
 
 BaseTower::~BaseTower()
 {
-	m_sound->terminate();
+	if (m_sound != nullptr) m_sound->terminate();
 }
 
 void BaseTower::update(const double delta)
 {
 	updating(delta);
-	double distance = 100; // <-------
+	double distance = m_start_dis; // <-------
 	for (size_t i = 0; i < m_enemies->size(); i++)
 	{
 		if (m_enemies->at(i) == nullptr) continue;

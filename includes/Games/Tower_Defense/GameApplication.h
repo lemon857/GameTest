@@ -27,7 +27,9 @@
 
 const int size_x = 30, size_y = 30;
 
-const int count_start_coins = 100;
+const int count_start_coins = 1000000;
+
+const int time_before_start = 5000;
 
 struct INIregionUSER : BaseINIregion
 {
@@ -58,6 +60,14 @@ enum class TypeEnemy
 {
 	null = 0,
 	Monkey,
+	Magician
+};
+
+struct WaveInfo
+{
+	double time_before;
+	int count_monkeys;
+	int count_magicans;
 };
 
 struct SpawnTower
@@ -143,6 +153,9 @@ private:
 	std::vector<glm::vec3> parts;
 
 	std::vector<Target> targets;
+
+	std::vector<WaveInfo> waves;
+	int cur_wave = -1;
 
 	GameMode m_mode = GameMode::Single;
 

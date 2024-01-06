@@ -198,11 +198,22 @@
     },
     {
       "name": "MonkeyTexture",
-      "filePath": "res/textures/monkey.png",
+      "filePath": "res/textures/Enemies/monkey.png",
       "width": 512,
       "height": 512,
       "subTexture_w": 512,
       "subTexture_h": 512,
+      "subTextures": [
+        "default"
+      ]
+    },
+    {
+      "name": "Magician_enemy",
+      "filePath": "res/textures/Enemies/magician.png",
+      "width": 128,
+      "height": 128,
+      "subTexture_w": 128,
+      "subTexture_h": 128,
       "subTextures": [
         "default"
       ]
@@ -437,6 +448,11 @@
       "nameTexture": "MonkeyTexture"
     },
     {
+      "name": "magician",
+      "nameShader": "default3DShader",
+      "nameTexture": "Magician_enemy"
+    },
+    {
       "name": "button",
       "nameShader": "spriteShader",
       "nameTexture": "Button_1"
@@ -538,6 +554,10 @@
     {
       "name": "monkey",
       "path": "res/models/monkey.obj"
+    },
+    {
+      "name": "magician",
+      "path": "res/models/magician.obj"
     },
     {
       "name": "archer_tower",

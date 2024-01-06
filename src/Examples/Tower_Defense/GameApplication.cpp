@@ -20,6 +20,8 @@
 
 #include "EngineCore/Renderer3D/GraphicsObject.h"
 
+#include "EngineCore/System/Timer.h"
+
 #include "EngineCore/Meshes/EmptyObject.h"
 #include "EngineCore/Meshes/Cube.h"
 #include "EngineCore/Meshes/ObjModel.h"
@@ -49,6 +51,7 @@
 #include "EngineCore/Sound/SoundEngine.h"
 
 #include "Games/Tower_Defense/EnemyMonkey.h"
+#include "Games/Tower_Defense/EnemyMagician.h"
 
 #include <array>
 #include <memory>
@@ -93,14 +96,14 @@ bool GameApp::init()
     GET_DATA_MATERIAL("dirt", float, "specular_factor", 0) = 0.0f;
     GET_DATA_MATERIAL("dirt", float, "metalic_factor", 0) = 0.0f;
 
-    std::vector<std::string> mats;
-    mats.push_back("inferno_tower");
-    mats.push_back("executioner_tower");
-    mats.push_back("ice_tower");
-    mats.push_back("mortar_tower");
-    mats.push_back("archer_tower");
+    std::vector<std::string> mats_tows;
+    mats_tows.push_back("inferno_tower");
+    mats_tows.push_back("executioner_tower");
+    mats_tows.push_back("ice_tower");
+    mats_tows.push_back("mortar_tower");
+    mats_tows.push_back("archer_tower");
         
-    for (auto& mt : mats)
+    for (auto& mt : mats_tows)
     {
         GET_DATA_MATERIAL(mt, float, "ambient_factor", 0) = 0.3f;
         GET_DATA_MATERIAL(mt, float, "diffuse_factor", 0) = 0.4f;
@@ -108,16 +111,23 @@ bool GameApp::init()
         GET_DATA_MATERIAL(mt, float, "metalic_factor", 0) = 0.0f;
     }
 
+    std::vector<std::string> mats_ens;
+    mats_ens.push_back("monkey");
+    mats_ens.push_back("magician");
+
+    for (auto& me : mats_ens)
+    {
+        GET_DATA_MATERIAL(me, float, "ambient_factor", 0) = 0.5f;
+        GET_DATA_MATERIAL(me, float, "diffuse_factor", 0) = 0.4f;
+        GET_DATA_MATERIAL(me, float, "specular_factor", 0) = 0.0f;
+        GET_DATA_MATERIAL(me, float, "metalic_factor", 0) = 0.0f;
+        GET_DATA_MATERIAL(me, float, "shininess", 0) = 0.1f;
+    }
+
     GET_DATA_MATERIAL("castle", float, "ambient_factor", 0) = 0.3f;
     GET_DATA_MATERIAL("castle", float, "diffuse_factor", 0) = 0.4f;
     GET_DATA_MATERIAL("castle", float, "specular_factor", 0) = 0.0f;
     GET_DATA_MATERIAL("castle", float, "metalic_factor", 0) = 0.0f;
-
-    GET_DATA_MATERIAL("monkey", float, "ambient_factor", 0) = 0.5f;
-    GET_DATA_MATERIAL("monkey", float, "diffuse_factor", 0) = 0.4f;
-    GET_DATA_MATERIAL("monkey", float, "specular_factor", 0) = 0.0f;
-    GET_DATA_MATERIAL("monkey", float, "metalic_factor", 0) = 0.0f;
-    GET_DATA_MATERIAL("monkey", float, "shininess", 0) = 0.1f;
 
     std::vector<std::string> names;
     names.push_back("default3DShader");
@@ -563,6 +573,7 @@ void GameApp::on_key_update(const double delta)
                         m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text("HP: " + std::to_string(m_main_castle->get_hp()).substr(0, 4));
                         m_gui->get_element<GUI::TextRenderer>("Type_prop")->set_text("");
                         m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("This your castle, protect it");
+                        selected_enemy = -1;
                     }
                     else
                     {
@@ -573,7 +584,7 @@ void GameApp::on_key_update(const double delta)
                         {
                             if (m_enemies.at(i) == nullptr) continue;
                             glm::vec3 p = m_enemies.at(i)->get_pos();
-                            if (((p.x - pos.x) * (p.x - pos.x)) + ((p.z - pos.z) * (p.z - pos.z)) < 3)
+                            if (((p.x - pos.x) * (p.x - pos.x)) + ((p.z - pos.z) * (p.z - pos.z)) < 4)
                             {
                                 intrs = true;
                                 selected_enemy = i;
@@ -586,7 +597,7 @@ void GameApp::on_key_update(const double delta)
                             m_gui->get_element<GUI::TextRenderer>("Coast_prop")->set_text("Reward: " + std::to_string(m_enemies[selected_enemy]->get_reward()));
                             m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " + std::to_string(m_enemies[selected_enemy]->get_damage()));
                             m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text("Cooldown: " + std::to_string(m_enemies[selected_enemy]->get_cooldown()).substr(0, 3));
-                            m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text("Max HP: " + std::to_string(m_enemies[selected_enemy]->get_max_hp()).substr(0, 4));
+                            m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text("Velocity: " + std::to_string(m_enemies[selected_enemy]->get_vel()).substr(0, 4));
                             m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text("HP: " + std::to_string(m_enemies[selected_enemy]->get_hp()).substr(0, 4));
                             m_gui->get_element<GUI::TextRenderer>("Type_prop")->set_text("Type armor: " + BaseEnemy::get_type_str(m_enemies[selected_enemy]->get_type()));
                             m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text(m_enemies[selected_enemy]->get_description());
@@ -792,6 +803,10 @@ void GameApp::on_update(const double delta)
             m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text("HP: " + std::to_string(m_enemies[selected_enemy]->get_hp()).substr(0, 5));
         }
     }
+    else if (cur == 86)
+    {
+        m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text("HP: " + std::to_string(m_main_castle->get_hp()).substr(0, 5));
+    }
 
     if (m_select_tower != nullptr)
     {
@@ -914,6 +929,11 @@ void GameApp::on_update(const double delta)
                     m_main_castle, targets,
                     glm::vec3(pos.x + (rand() % 100 - 50) / 100.f, pos.y, pos.z + (rand() % 100 - 50) / 100.f), ResourceManager::getMaterial("default")));
                 break;
+            case TypeEnemy::Magician:
+                    m_enemies.push_back(new MagicianEnemy(new ObjModel(ResourceManager::get_OBJ_model("magician"), ResourceManager::getMaterial("magician")),
+                        m_main_castle, targets,
+                        glm::vec3(pos.x + (rand() % 100 - 50) / 100.f, pos.y, pos.z + (rand() % 100 - 50) / 100.f), ResourceManager::getMaterial("default")));
+                    break;
             }
             ResourceManager::get_sound("enemy_spawn")->play();
             m_spawn_enemies.pop();
@@ -1342,7 +1362,8 @@ void GameApp::press_button(KeyCode key)
         {
             int add = rand() % 10;
             unsigned int spawn = 841 + add;
-            m_spawn_enemies.push({ spawn, TypeEnemy::Monkey });
+            int tp = rand() % 10;
+            m_spawn_enemies.push({ spawn, tp <= 5 ? TypeEnemy::Monkey : TypeEnemy::Magician });
             isKeyPressed = true;
         }
     }
@@ -1355,7 +1376,8 @@ void GameApp::press_button(KeyCode key)
             {
                 int add = rand() % 10;
                 unsigned int spawn = 841 + add;
-                m_spawn_enemies.push({ spawn, TypeEnemy::Monkey });
+                int tp = rand() % 10;
+                m_spawn_enemies.push({ spawn, tp <= 5 ? TypeEnemy::Monkey : TypeEnemy::Magician });
             }
             isKeyPressed = true;
         }
@@ -1387,7 +1409,13 @@ void GameApp::press_button(KeyCode key)
         if (m_gui->get_element<GUI::GUI_element>("game_gui_place")->get_active() && !isKeyPressed)
         {
             m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(false);
-            if (place_querry != TypeTower::null) is_active_cursor = is_active_cursor_tmp;
+            if (place_querry != TypeTower::null)
+            {
+                is_active_cursor = is_active_cursor_tmp;
+                place_querry = TypeTower::null;
+                m_gui->get_element<GUI::Button>("Upgrade_place")->set_text("Upgrade");
+                m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("");
+            }
             isKeyPressed = true;
             break;
         }

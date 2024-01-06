@@ -12,7 +12,7 @@ FreezeEffect::FreezeEffect(double time_freeze)
 
 void FreezeEffect::modify_enemy()
 {
-	m_last_vel = m_cur_enemy->get_vel();
+	m_last_vel = m_cur_enemy->get_vel() * 0.001;
 	m_cur_enemy->set_vel(m_last_vel * 0.4);
 	m_cur_enemy->set_color_effect(glm::vec3(1.f), glm::vec3(0.f, 0.5f, 0.9f));
 }

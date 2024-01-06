@@ -37,7 +37,7 @@ public:
 	bool is_destroy() { return m_isDestroyed; }
 
 	double get_cooldown() { return m_cooldown / 1000.0; }
-	double get_vel() { return m_velocity; }
+	double get_vel() { return m_velocity * 1000; }
 	void set_vel(const double vel) { if (vel >= 0) m_velocity = vel; else m_velocity = 0; }
 
 	glm::vec3 get_pos();

@@ -220,7 +220,18 @@
     },
     {
       "name": "Ice_tower",
-      "filePath": "res/textures/Towers/tower.png",
+      "filePath": "res/textures/Towers/Ice_tower.png",
+      "width": 128,
+      "height": 128,
+      "subTexture_w": 128,
+      "subTexture_h": 128,
+      "subTextures": [
+        "default"
+      ]
+    },
+    {
+      "name": "Executioner_tower",
+      "filePath": "res/textures/Towers/Executioner_tower.png",
       "width": 128,
       "height": 128,
       "subTexture_w": 128,
@@ -243,6 +254,17 @@
     {
       "name": "Mortar_tower",
       "filePath": "res/textures/Towers/Mortar_tower.png",
+      "width": 128,
+      "height": 128,
+      "subTexture_w": 128,
+      "subTexture_h": 128,
+      "subTextures": [
+        "default"
+      ]
+    },
+    {
+      "name": "Inferno_tower",
+      "filePath": "res/textures/Towers/Inferno_tower.png",
       "width": 128,
       "height": 128,
       "subTexture_w": 128,
@@ -375,6 +397,11 @@
       "nameTexture": "Ice_tower"
     },
     {
+      "name": "executioner_tower",
+      "nameShader": "default3DShader",
+      "nameTexture": "Executioner_tower"
+    },
+    {
       "name": "archer_tower",
       "nameShader": "default3DShader",
       "nameTexture": "Archer_tower"
@@ -383,6 +410,11 @@
       "name": "mortar_tower",
       "nameShader": "default3DShader",
       "nameTexture": "Mortar_tower"
+    },
+    {
+      "name": "inferno_tower",
+      "nameShader": "default3DShader",
+      "nameTexture": "Inferno_tower"
     },
     {
       "name": "castle",
@@ -482,6 +514,10 @@
       "path": "res/sounds/freeze_attack.flac"
     },
     {
+      "name": "executioner_attack",
+      "path": "res/sounds/executioner_attack.flac"
+    },
+    {
       "name": "enemy_spawn",
       "path": "res/sounds/enemy_spawn.flac"
     }
@@ -496,6 +532,10 @@
       "path": "res/models/ice_tower.obj"
     },
     {
+      "name": "executioner_tower",
+      "path": "res/models/executioner_tower.obj"
+    },
+    {
       "name": "monkey",
       "path": "res/models/monkey.obj"
     },
@@ -506,6 +546,10 @@
     {
       "name": "mortar_tower",
       "path": "res/models/mortar_tower.obj"
+    },
+    {
+      "name": "inferno_tower",
+      "path": "res/models/inferno_tower.obj"
     }
   ]
 }

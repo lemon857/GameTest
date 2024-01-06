@@ -121,7 +121,7 @@ void BaseEnemy::render()
 	}
 }
 
-void BaseEnemy::damage(const unsigned int damage_hp)
+void BaseEnemy::damage(const double damage_hp)
 {
 	m_hp -= damage_hp;
 	if (m_hp <= 0)

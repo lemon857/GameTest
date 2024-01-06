@@ -4,7 +4,7 @@
 
 #define P_MONKEY_VELOCITY 1.3
 #define P_MONKEY_COOLDOWN 1.4
-#define P_MONKEY_HP 50
+#define P_MONKEY_HP 35
 #define P_MONKEY_DAMAGE 1
 #define P_MONKEY_DESCRIPTION "Funny monkey"
 

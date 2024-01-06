@@ -10,10 +10,10 @@ Castle::Castle(glm::vec3 initPos, const unsigned int hp, std::shared_ptr<Graphic
 	: m_hp(hp)
 	, m_max_hp(hp)
 	, m_isDestroyed(false)
-	, m_bar(new HealthBar(pMaterialBar, initPos + glm::vec3(0.f, 3.f, 0.f), 25, 2, hp, glm::vec3(1.f), colorBar))
+	, m_bar(new HealthBar(pMaterialBar, initPos + glm::vec3(0.f, 7.f, 0.f), 25, 2, hp, glm::vec3(1.f), colorBar))
 	, IGameObject("MainCastle")
 {
-	addComponent<Transform>(initPos);
+	addComponent<Transform>(initPos, glm::vec3(2.f));
 	addComponent<MeshRenderer>(std::move(obj), pMaterial);
 }
 

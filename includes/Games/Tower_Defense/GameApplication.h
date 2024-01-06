@@ -22,14 +22,17 @@
 #include "Games/Tower_Defense/TowerArcher.h"
 #include "Games/Tower_Defense/TowerIce.h"
 #include "Games/Tower_Defense/TowerMortar.h"
+#include "Games/Tower_Defense/TowerExecutioner.h"
+#include "Games/Tower_Defense/TowerInferno.h"
 
 const int size_x = 30, size_y = 30;
 
-const int count_start_coins = 1000000;
+const int count_start_coins = 100;
 
 struct INIregionUSER : BaseINIregion
 {
 	std::string* nickname;
+	int* view_pos;
 
 	void parse(std::string name, std::string value) override;
 	std::string get_str_data() override;
@@ -47,7 +50,9 @@ enum class TypeTower
 	null = 0,
 	Ice = IceTower::p_coast,
 	Archer = ArcherTower::p_coast,
-	Mortar = MortarTower::p_coast
+	Mortar = MortarTower::p_coast,
+	Executioner = ExecutionerTower::p_coast,
+	Inferno = InfernoTower::p_coast
 };
 enum class TypeEnemy
 {
@@ -213,6 +218,7 @@ private:
 	size_t cur_chat_index = 0;
 
 	int g_cam_view = 0;
+	size_t selected_enemy = -1;
 
 	const unsigned int max_buffer_chat_last = 32;
 

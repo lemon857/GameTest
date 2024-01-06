@@ -32,7 +32,7 @@ public:
 
 	virtual void render();
 
-	void damage(const unsigned int damage_hp);
+	void damage(const double damage_hp);
 	
 	bool is_destroy() { return m_isDestroyed; }
 
@@ -48,8 +48,8 @@ public:
 
 	void set_color_effect(glm::vec3 colorFore, glm::vec3 colorBack);
 
-	int get_hp() { return m_hp; }
-	int get_max_hp() { return m_max_hp; }
+	double get_hp() { return m_hp; }
+	double get_max_hp() { return m_max_hp; }
 	unsigned int get_damage() { return m_dmg; }
 	virtual std::string get_description() { return ""; }
 
@@ -70,8 +70,8 @@ protected:
 	HealthBar* m_bar_effect;
 	std::unique_ptr<BaseEffect> m_effect;
 
-	int m_hp;
-	int m_max_hp;
+	double m_hp;
+	double m_max_hp;
 	unsigned int m_dmg;
 	double m_cur_time;
 

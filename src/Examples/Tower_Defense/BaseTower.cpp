@@ -57,7 +57,7 @@ void BaseTower::update(const double delta)
 	{
 		if (m_target_BaseEnemy != nullptr)
 		{
-			m_sound->play();
+			if (m_sound != nullptr) m_sound->play();
 			double add = (damageTable[(int)m_type_attack][(int)m_target_BaseEnemy->get_type()]);
 			m_target_BaseEnemy->damage(m_damage * add);
 			damage(m_target_BaseEnemy);

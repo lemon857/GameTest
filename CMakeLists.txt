@@ -63,6 +63,8 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/Games/Tower_Defense/TowerMortar.h
 	includes/Games/Tower_Defense/TowerArcher.h
 	includes/Games/Tower_Defense/TowerIce.h
+	includes/Games/Tower_Defense/TowerExecutioner.h
+	includes/Games/Tower_Defense/TowerInferno.h
 	includes/Games/Tower_Defense/EnemyMonkey.h
 	includes/Games/Tower_Defense/Target.h
 	includes/Games/Tower_Defense/DamageTable.h
@@ -154,6 +156,8 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Examples/Tower_Defense/BaseEffect.cpp
 	src/Examples/Tower_Defense/TowerMortar.cpp
 	src/Examples/Tower_Defense/TowerArcher.cpp
+	src/Examples/Tower_Defense/TowerExecutioner.cpp
+	src/Examples/Tower_Defense/TowerInferno.cpp
 	src/Examples/Tower_Defense/TowerIce.cpp
 	src/Examples/Tower_Defense/EnemyMonkey.cpp
 	src/Examples/Tower_Defense/FreezeEffect.cpp

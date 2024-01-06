@@ -1,5 +1,6 @@
 #include "Games/Tower_Defense/TowerArcher.h"
 
+#include "Games/Tower_Defense/BaseEnemy.h"
 #include "Games/Tower_Defense/HealthBar.h"
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Sound/Sound.h"

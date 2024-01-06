@@ -590,7 +590,7 @@ void GameApp::on_key_update(const double delta)
                         {
                             if (m_enemies.at(i) == nullptr) continue;
                             glm::vec3 p = m_enemies.at(i)->get_pos();
-                            if (((p.x - pos.x) * (p.x - pos.x)) + ((p.z - pos.z) * (p.z - pos.z)) < 4)
+                            if (((p.x - pos.x) * (p.x - pos.x)) + ((p.z - pos.z) * (p.z - pos.z)) < 5)
                             {
                                 intrs = true;
                                 selected_enemy = i;
@@ -989,6 +989,13 @@ void GameApp::on_update(const double delta)
         for (size_t i = 0; i < m_enemies.size(); i++)
         {
             if (m_enemies[i] == nullptr) continue;
+            if (m_enemies[i]->is_broken())
+            {
+                for (auto curTower : m_towers)
+                {
+                    if (curTower.tow->get_target() == m_enemies[i]) curTower.tow->set_target(nullptr);
+                }
+            }
             if (m_enemies[i]->is_destroy())
             {
                 //if (is_funny_spawn_mode)
@@ -998,17 +1005,12 @@ void GameApp::on_update(const double delta)
                 //    //m_spawn_enemies.push({ spawn,  });
                 //}
                 countEnemiesPerm--;
-                for (auto curTower : m_towers)
-                {
-                    if (curTower.tow->get_target() == m_enemies[i]) curTower.tow->set_target(nullptr);
-                }
                 g_coins += m_enemies[i]->get_reward();
                 m_gui->get_element<GUI::TextRenderer>("Coins_count")->set_text(std::to_string(g_coins));
                 delete m_enemies[i];
                 m_enemies.remove(i);
                 countKills++;
                 m_gui->get_element<GUI::TextRenderer>("kills")->set_text("Kills: " + std::to_string(countKills));
-                m_gui->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));
                 m_gui->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));
                 continue;
             }
@@ -1750,7 +1752,7 @@ void GameApp::init_gui()
                      m_spawn_towers.push({ cur, place_querry });
                      map[cur] = true;
                      place_querry = TypeTower::null;
-                     is_active_cursor = is_active_cursor_tmp;
+                     is_active_cursor = false;
                      m_scene.at(curObj)->getComponent<Highlight>()->set_color(glm::vec3(1.f));
                      g_coins -= coast;
                      m_gui->get_element<GUI::TextRenderer>("Coins_count")->set_text(std::to_string(g_coins));

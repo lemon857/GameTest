@@ -23,12 +23,14 @@ BaseEnemy::BaseEnemy(ObjModel* model, Castle* target, std::vector<Target> target
 	, m_bar(new HealthBar(pMaterial, pos + glm::vec3(0.f, 2.5f, 0.f), 25, 2, hp, glm::vec3(1.f), color))
 	, m_bar_effect(new HealthBar(pMaterial, pos + glm::vec3(0.f, 4.5f, 0.f), 25, 2, hp, glm::vec3(1.f), glm::vec3(1.f)))
 	, m_isDestroyed(false)
+	, m_isBroken(false)
 	, m_has_effect(false)
 	, m_hp(hp)
 	, m_max_hp(hp)
 	, m_dmg(damage)
 	, m_effect(nullptr)
 	, curtarget(0)
+	, m_rotation_break(0)
 	, m_targets(targets)
 {
 	m_model->addComponent<Transform>(pos, glm::vec3(1.f));
@@ -48,6 +50,19 @@ BaseEnemy::~BaseEnemy()
 void BaseEnemy::update(const double delta)
 {
 	if (m_isDestroyed) return;
+	if (m_isBroken)
+	{
+		if (m_rotation_break < 86)
+		{
+			m_rotation_break += 0.04 * delta;
+			m_model->getComponent<Transform>()->add_rotation(glm::vec3(0.04 * delta, 0.f, 0.f));
+		}
+		else
+		{
+			m_isDestroyed = true;
+		}
+		return;
+	}
 	on_update(delta);
 	if (curtarget < m_targets.size())
 	{
@@ -114,6 +129,7 @@ void BaseEnemy::render()
 {
 	if (m_isDestroyed) return;
 	m_model->update(0);
+	if (m_isBroken) return;
 	m_bar->update();
 	if (m_effect != nullptr)
 	{
@@ -127,7 +143,7 @@ void BaseEnemy::damage(const double damage_hp)
 	if (m_hp - damage_hp <= m_max_hp) m_hp -= damage_hp;
 	if (m_hp <= 0)
 	{
-		m_isDestroyed = true;
+		m_isBroken = true;
 		return;
 	}
 	m_bar->set_value(m_hp);

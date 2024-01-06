@@ -37,6 +37,7 @@ public:
 	void damage(const double damage_hp);
 	
 	bool is_destroy() { return m_isDestroyed; }
+	bool is_broken() { return m_isBroken; }
 
 	double get_cooldown() { return m_cooldown / 1000.0; }
 	double get_vel() { return m_velocity * 1000; }
@@ -72,6 +73,8 @@ protected:
 	HealthBar* m_bar_effect;
 	std::unique_ptr<BaseEffect> m_effect;
 
+	double m_rotation_break;
+
 	double m_hp;
 	double m_max_hp;
 	unsigned int m_dmg;
@@ -82,5 +85,6 @@ protected:
 
 	double m_velocity;
 	bool m_isDestroyed;
+	bool m_isBroken;
 	bool m_has_effect;
 };

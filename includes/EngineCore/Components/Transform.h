@@ -14,6 +14,7 @@ public:
 	void set_rotation(glm::vec3 rot);
 
 	void add_position(glm::vec3 pos);
+	void add_rotation(glm::vec3 rot);
 
 	glm::vec3 get_position();
 	glm::vec3 get_scale();

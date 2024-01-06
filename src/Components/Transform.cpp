@@ -28,6 +28,11 @@ void Transform::add_position(glm::vec3 pos)
 	m_position += pos;
 }
 
+void Transform::add_rotation(glm::vec3 rot)
+{
+	m_rotation += rot;
+}
+
 glm::vec3 Transform::get_position()
 {
 	return m_position;

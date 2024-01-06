@@ -2,6 +2,8 @@
 
 #include "Games/Tower_Defense/BaseTower.h"
 
+#define P_MORTAR_DESCRIPTION "Have radius damage, good vs. heap"
+
 namespace RenderEngine
 {
 	class Circle;
@@ -31,6 +33,7 @@ public:
 	std::string get_add_distance() override { return " +5"; }
 	std::string get_add_damage() override { return " +1"; }
 	std::string get_add_custom() override { return " +1"; };
+	std::string get_description() override { return P_MORTAR_DESCRIPTION; }
 
 	static std::string get_type_str();
 private:

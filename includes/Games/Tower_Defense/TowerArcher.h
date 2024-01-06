@@ -2,6 +2,8 @@
 
 #include "Games/Tower_Defense/BaseTower.h"
 
+#define P_ARCHER_DESCRIPTION "Just a Archer, faster"
+
 class ArcherTower : public BaseTower
 {
 public:
@@ -20,6 +22,7 @@ public:
 	std::string get_add_cooldown() override { return " +1"; }
 	std::string get_add_distance() override { return " +3"; }
 	std::string get_add_damage() override { return " +1"; }
+	std::string get_description() override { return P_ARCHER_DESCRIPTION; }
 
 	static std::string get_type_str();
 private:

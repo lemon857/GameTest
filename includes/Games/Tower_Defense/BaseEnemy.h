@@ -6,6 +6,7 @@
 
 #include <glm/vec3.hpp>
 
+#include <string>
 #include <memory>
 #include <vector>
 
@@ -35,6 +36,7 @@ public:
 	
 	bool is_destroy() { return m_isDestroyed; }
 
+	double get_cooldown() { return m_cooldown / 1000.0; }
 	double get_vel() { return m_velocity; }
 	void set_vel(const double vel) { if (vel >= 0) m_velocity = vel; else m_velocity = 0; }
 
@@ -46,9 +48,16 @@ public:
 
 	void set_color_effect(glm::vec3 colorFore, glm::vec3 colorBack);
 
+	int get_hp() { return m_hp; }
+	int get_max_hp() { return m_max_hp; }
+	unsigned int get_damage() { return m_dmg; }
+	virtual std::string get_description() { return ""; }
+
 	unsigned int get_reward() { return m_reward; }
 
 	TypeArmor get_type() { return m_type_armor; }
+
+	static std::string get_type_str(TypeArmor type);
 
 protected:
 
@@ -62,11 +71,12 @@ protected:
 	std::unique_ptr<BaseEffect> m_effect;
 
 	int m_hp;
+	int m_max_hp;
 	unsigned int m_dmg;
 	double m_cur_time;
 
 	unsigned int m_reward = 2;
-	double m_cool_down;
+	double m_cooldown;
 
 	double m_velocity;
 	bool m_isDestroyed;

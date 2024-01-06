@@ -12,7 +12,7 @@ enum class TypeAttack
 enum class TypeArmor
 {
 	Null = 0, // нет
-	Simple, // простая
+	Light, // лёгкая
 	Heavy, // тяжёлая
 	Magic, // магическая
 	Chaotic // хаотическая

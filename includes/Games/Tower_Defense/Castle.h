@@ -34,10 +34,14 @@ public:
 
 	bool isDestroyed();
 
+	int get_hp();
+	int get_max_hp();
+
 private:
 	HealthBar* m_bar;
 
 	int m_hp;
+	int m_max_hp;
 
 	bool m_isDestroyed;
 };

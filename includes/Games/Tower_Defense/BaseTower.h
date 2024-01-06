@@ -53,6 +53,7 @@ public:
 	unsigned int get_coast() { return m_coast; }
 	unsigned int get_upgrade_coast() { return m_coast_upgrade; }
 	virtual std::string get_custom() { return ""; };
+	virtual std::string get_description() { return ""; }
 
 	virtual std::string get_add_cooldown() { return ""; }
 	virtual std::string get_add_distance() { return ""; }
@@ -62,6 +63,7 @@ public:
 	static std::string get_type_attack(TypeAttack type);
 
 	std::string get_self_type_str();
+
 
 protected:
 	BaseEnemy* m_target_BaseEnemy;

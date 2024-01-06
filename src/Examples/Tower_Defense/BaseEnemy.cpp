@@ -15,7 +15,7 @@
 
 BaseEnemy::BaseEnemy(ObjModel* model, Castle* target, std::vector<Target> targets, glm::vec3 pos, const double cooldown, const double velocity, const unsigned int hp, const unsigned int damage,
 	std::shared_ptr<RenderEngine::Material> pMaterial, glm::vec3 color)
-	: m_cool_down(cooldown * 1000)
+	: m_cooldown(cooldown * 1000)
 	, m_target_castle(std::move(target))
 	, m_cur_time(0)
 	, m_velocity(velocity * 0.001)
@@ -25,6 +25,7 @@ BaseEnemy::BaseEnemy(ObjModel* model, Castle* target, std::vector<Target> target
 	, m_isDestroyed(false)
 	, m_has_effect(false)
 	, m_hp(hp)
+	, m_max_hp(hp)
 	, m_dmg(damage)
 	, m_effect(nullptr)
 	, curtarget(0)
@@ -88,7 +89,7 @@ void BaseEnemy::update(const double delta)
 		}
 		else
 		{
-			if (m_cur_time < m_cool_down) m_cur_time += delta;
+			if (m_cur_time < m_cooldown) m_cur_time += delta;
 			else
 			{
 				m_target_castle->damage(m_dmg);
@@ -149,4 +150,22 @@ void BaseEnemy::set_color_effect(glm::vec3 colorFore, glm::vec3 colorBack)
 {
 	m_bar_effect->set_fore_color(colorFore);
 	m_bar_effect->set_back_color(colorBack);
+}
+
+std::string BaseEnemy::get_type_str(TypeArmor type)
+{
+	switch (type)
+	{
+	case TypeArmor::Null:
+		return "null";
+	case TypeArmor::Light:
+		return "light";
+	case TypeArmor::Heavy:
+		return "heavy";
+	case TypeArmor::Magic:
+		return "magic";
+	case TypeArmor::Chaotic:
+		return "chaotic";
+	}
+	return "";
 }

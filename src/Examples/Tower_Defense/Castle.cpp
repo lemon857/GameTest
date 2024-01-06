@@ -8,6 +8,7 @@
 Castle::Castle(glm::vec3 initPos, const unsigned int hp, std::shared_ptr<GraphicsObject> obj,
 	std::shared_ptr<RenderEngine::Material> pMaterial, std::shared_ptr<RenderEngine::Material> pMaterialBar, glm::vec3 colorBar)
 	: m_hp(hp)
+	, m_max_hp(hp)
 	, m_isDestroyed(false)
 	, m_bar(new HealthBar(pMaterialBar, initPos + glm::vec3(0.f, 3.f, 0.f), 25, 2, hp, glm::vec3(1.f), colorBar))
 	, IGameObject("MainCastle")
@@ -46,4 +47,14 @@ glm::vec3 Castle::get_pos()
 bool Castle::isDestroyed()
 {
 	return m_isDestroyed;
+}
+
+int Castle::get_hp()
+{
+	return m_hp;
+}
+
+int Castle::get_max_hp()
+{
+	return m_max_hp;
 }

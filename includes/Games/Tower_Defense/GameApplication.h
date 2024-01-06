@@ -25,6 +25,8 @@
 
 const int size_x = 30, size_y = 30;
 
+const int count_start_coins = 1000000;
+
 struct INIregionUSER : BaseINIregion
 {
 	std::string* nickname;
@@ -157,7 +159,7 @@ private:
 	bool m_isLose = false;
 
 	std::array <bool, size_x* size_y> map;
-
+	glm::vec3 size_place;
 	unsigned int cur = 0;
 	unsigned int cur_player = 0;
 	int curObj = 3;
@@ -178,7 +180,8 @@ private:
 	bool is_special_move = false;
 	bool is_mute = false;
 	bool is_game_paused = false;
-	bool is_funny_spawn_mode = false;
+	bool is_active_cursor = false;
+	bool is_active_cursor_tmp = false;
 
 	bool moveCamMoue = false;
 	bool isKeyPressed = false;
@@ -199,7 +202,7 @@ private:
 	unsigned int tps = 0;
 	unsigned int frames = 0;
 	unsigned int ticks = 0;
-	unsigned int g_coins = 100;
+	unsigned int g_coins = count_start_coins;
 	double times = 0;
 	double timesTicks = 0;
 
@@ -209,14 +212,12 @@ private:
 
 	size_t cur_chat_index = 0;
 
+	int g_cam_view = 0;
+
 	const unsigned int max_buffer_chat_last = 32;
 
 	// settings
-	double _set_velosity = 1.3;
 	double _set_max_hp_castle = 100;
-	double _set_max_hp_enemy = 50;
-	double _set_damage_enemy = 1;
-
 	// binds
 
 	KeyCode k_debug = KeyCode::KEY_F3;

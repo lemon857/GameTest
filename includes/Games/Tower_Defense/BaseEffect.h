@@ -9,11 +9,11 @@ class BaseEffect
 {
 public:
 	// set damage per second
-	BaseEffect(unsigned int damage, double cooldown, double duration);
+	BaseEffect(int damage, double cooldown, double duration);
 	~BaseEffect();
 
 	// get damage
-	void update(const double delta);
+	virtual void update(const double delta);
 
 	virtual void modify_enemy() {}
 	virtual void unmodify_enemy() {}
@@ -26,7 +26,7 @@ public:
 
 	double get_live_time() { return m_live_time; }
 protected:
-	unsigned int m_damage;
+	int m_damage;
 
 	double m_cur_time;
 

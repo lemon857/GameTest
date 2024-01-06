@@ -48,6 +48,7 @@ BaseEnemy::~BaseEnemy()
 void BaseEnemy::update(const double delta)
 {
 	if (m_isDestroyed) return;
+	on_update(delta);
 	if (curtarget < m_targets.size())
 	{
 		glm::vec3 a = m_targets[curtarget].get_pos() - m_model->getComponent<Transform>()->get_position();
@@ -123,7 +124,7 @@ void BaseEnemy::render()
 
 void BaseEnemy::damage(const double damage_hp)
 {
-	m_hp -= damage_hp;
+	if (m_hp -= damage_hp <= m_max_hp) m_hp -= damage_hp;
 	if (m_hp <= 0)
 	{
 		m_isDestroyed = true;

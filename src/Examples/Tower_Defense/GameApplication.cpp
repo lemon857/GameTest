@@ -932,7 +932,7 @@ void GameApp::on_update(const double delta)
             case TypeEnemy::Magician:
                     m_enemies.push_back(new MagicianEnemy(new ObjModel(ResourceManager::get_OBJ_model("magician"), ResourceManager::getMaterial("magician")),
                         m_main_castle, targets,
-                        glm::vec3(pos.x + (rand() % 100 - 50) / 100.f, pos.y, pos.z + (rand() % 100 - 50) / 100.f), ResourceManager::getMaterial("default")));
+                        glm::vec3(pos.x + (rand() % 100 - 50) / 100.f, pos.y, pos.z + (rand() % 100 - 50) / 100.f), ResourceManager::getMaterial("default"), &m_enemies));
                     break;
             }
             ResourceManager::get_sound("enemy_spawn")->play();

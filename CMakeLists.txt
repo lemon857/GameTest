@@ -70,6 +70,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/Games/Tower_Defense/Target.h
 	includes/Games/Tower_Defense/DamageTable.h
 	includes/Games/Tower_Defense/FreezeEffect.h
+	includes/Games/Tower_Defense/HealthEffect.h
 )
 
 set(ENGINE_PRIVATE_INCLUDES
@@ -163,6 +164,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Examples/Tower_Defense/EnemyMonkey.cpp
 	src/Examples/Tower_Defense/EnemyMagician.cpp
 	src/Examples/Tower_Defense/FreezeEffect.cpp
+	src/Examples/Tower_Defense/HealthEffect.cpp
 	
 	src/Resources/ResourceManager.cpp
 	src/Resources/Scene.cpp

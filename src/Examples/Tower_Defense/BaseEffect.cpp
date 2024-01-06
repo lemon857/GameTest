@@ -3,7 +3,7 @@
 #include "Games/Tower_Defense/BaseEnemy.h"
 #include "Games/Tower_Defense/DamageTable.h"
 
-BaseEffect::BaseEffect(unsigned int damage, double cooldown, double duration)
+BaseEffect::BaseEffect(int damage, double cooldown, double duration)
 	: m_damage(damage)
 	, m_cool_down(cooldown * 1000)
 	, m_cur_time(0)

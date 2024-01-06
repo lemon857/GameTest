@@ -32,6 +32,8 @@ public:
 
 	virtual void render();
 
+	virtual void on_update(const double delta) {};
+
 	void damage(const double damage_hp);
 	
 	bool is_destroy() { return m_isDestroyed; }

@@ -82,7 +82,7 @@ void SpriteRenderer::setSubTexture(std::string subTexture)
 	m_textureCoordsBuffer->update(&textureCoords, 2 * 4 * sizeof(GLfloat));
 }
 
-void SpriteRenderer::update(const double delta)
+void SpriteRenderer::render()
 {
 	Transform* transform = m_targetObj->getComponent<Transform>();
 	glm::vec3 pos;

@@ -13,6 +13,8 @@ public:
 
 	void upgrade() override;
 
+	void rendering() override;
+
 	void damage(BaseEnemy* target) override;
 
 	void target(size_t i, double dis, double& all_dis) override;

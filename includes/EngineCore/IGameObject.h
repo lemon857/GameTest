@@ -9,13 +9,13 @@
 class IGameObject
 {
 public:
-	virtual void update(const double delta) { updateComponents(delta); };
+	virtual void update(const double delta) { updateComponents(delta); }
 
-	virtual void render() { updateComponents(0); };
+	virtual void render() { renderComponents(); }
 
-	std::string get_name() { return m_name; };
+	std::string get_name() { return m_name; }
 
-	void set_name(const std::string name) { m_name = name; };
+	void set_name(const std::string name) { m_name = name; }
 
 	// Возврат nullptr означает уже наличие добавляемого компонента, либо неудачное создание компонента
 	template <class _Ty, class... _Types>
@@ -26,7 +26,7 @@ public:
 		component->set_target_object(this);
 		m_components.emplace(typeid(_Ty).name(), component);
 		return (_Ty*)component;
-	};
+	}
 
 	template <class _Ty>
 	_Ty* getComponent()
@@ -37,7 +37,7 @@ public:
 			return (_Ty*)it->second;
 		}
 		return nullptr;
-	};
+	}
 
 	template <class _Ty>
 	void deleteComponent()
@@ -54,7 +54,7 @@ public:
 				++pos;
 			}
 		}
-	};
+	}
 
 protected:
 	IGameObject(const std::string name)
@@ -71,7 +71,14 @@ protected:
 	{
 		for (auto curCom : m_components)
 		{
-			curCom.second->update(delta);
+			curCom.second->render();
+		}
+	};
+	void renderComponents()
+	{
+		for (auto curCom : m_components)
+		{
+			curCom.second->render();
 		}
 	};
 

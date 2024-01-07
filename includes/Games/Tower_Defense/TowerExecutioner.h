@@ -12,6 +12,7 @@ public:
 	~ExecutionerTower() = default;
 
 	void upgrade() override;
+	void rendering() override;
 
 	static const unsigned int p_damage = 4;
 	static const unsigned int p_distance = 13;

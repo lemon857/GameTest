@@ -29,11 +29,11 @@ void MagicianEnemy::render()
 {
 	if (m_isDestroyed) return;
 	m_model->update(0);
-	m_bar->update();
+	m_bar->render();
 	if (m_effect != nullptr)
 	{
 		m_bar_effect->set_value(m_effect->get_live_time());
-		m_bar_effect->update();
+		m_bar_effect->render();
 	}
 	m_health->render();
 }

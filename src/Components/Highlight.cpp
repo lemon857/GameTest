@@ -24,7 +24,7 @@ Highlight::Highlight(std::shared_ptr<RenderEngine::Material> material, bool isAc
 {
 }
 
-void Highlight::update(const double delta)
+void Highlight::render()
 {
 	if (!m_isActive) return;
 	Transform* transform = m_targetObj->getComponent<Transform>();

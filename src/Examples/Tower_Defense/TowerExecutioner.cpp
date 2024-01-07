@@ -6,6 +6,8 @@
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Sound/Sound.h"
 #include "Games/Tower_Defense/DamageTable.h"
+#include "EngineCore/Components/Transform.h"
+#include "EngineCore/Renderer/Line.h"
 
 ExecutionerTower::ExecutionerTower(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<RenderEngine::Material> pMaterial,
 	linked_list<BaseEnemy*>* list, glm::vec3 pos, RenderEngine::Line* line, std::shared_ptr<RenderEngine::Material> pMaterialLine)
@@ -25,6 +27,15 @@ void ExecutionerTower::upgrade()
 	m_cooldown -= 1000;
 	m_bar->set_max_value(m_cooldown);
 	m_isUpgraded = true;
+}
+
+void ExecutionerTower::rendering()
+{
+	if (m_target_BaseEnemy != nullptr)
+	{
+		m_line->render_from_to(getComponent<Transform>()->get_position() + glm::vec3(0.f, 2.5f, 0.f),
+			m_target_BaseEnemy->get_pos(), glm::vec4(1.f, 0.6f, 0.1f, 1.f));
+	}
 }
 
 std::string ExecutionerTower::get_type_str()

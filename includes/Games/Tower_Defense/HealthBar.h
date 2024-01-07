@@ -18,7 +18,7 @@ public:
 
 	~HealthBar();
 
-	void update();
+	void render();
 
 	void set_value(const double value);
 

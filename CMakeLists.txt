@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 
-set(PROJECT_NAME Engine)
+set(PROJECT_NAME Tower_defense)
 
 #set(EDITOR_BUILD)
 
@@ -69,7 +69,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/Games/Tower_Defense/TowerInferno.h
 	includes/Games/Tower_Defense/EnemyMonkey.h
 	includes/Games/Tower_Defense/EnemyMagician.h
-	includes/Games/Tower_Defense/EnemySpider.h
+	includes/Games/Tower_Defense/EnemyBug.h
 	includes/Games/Tower_Defense/EnemyRobot.h
 	includes/Games/Tower_Defense/EnemyProfessor.h
 	includes/Games/Tower_Defense/Target.h
@@ -168,7 +168,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Examples/Tower_Defense/TowerIce.cpp
 	src/Examples/Tower_Defense/EnemyRobot.cpp
 	src/Examples/Tower_Defense/EnemyMonkey.cpp
-	src/Examples/Tower_Defense/EnemySpider.cpp
+	src/Examples/Tower_Defense/EnemyBug.cpp
 	src/Examples/Tower_Defense/EnemyMagician.cpp
 	src/Examples/Tower_Defense/EnemyProfessor.cpp
 	src/Examples/Tower_Defense/FreezeEffect.cpp

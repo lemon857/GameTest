@@ -24,7 +24,7 @@ public:
 
 	void setSubTexture(std::string subTexture);
 
-	void update(const double delta) override;
+	void render() override;
 
 	std::shared_ptr<RenderEngine::Material> get_material_ptr();
 private:

@@ -11,7 +11,7 @@ public:
 
 	virtual void render() {};
 
-	virtual void update(const double delta) {};
+	//virtual void update(const double delta) {};
 
 	void set_target_object(IGameObject* targetObj) { m_targetObj = targetObj; };
 

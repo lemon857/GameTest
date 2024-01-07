@@ -62,7 +62,7 @@ enum class TypeEnemy
 	Monkey,
 	Magician,
 	Robot,
-	Spider,
+	Bug,
 	Professor
 };
 

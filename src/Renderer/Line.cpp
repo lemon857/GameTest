@@ -132,4 +132,8 @@ namespace RenderEngine
 
 		Renderer::drawLine(*m_vertexArray, m_size);
 	}
+	void Line::set_size(float size)
+	{
+		m_size = size;
+	}
 }

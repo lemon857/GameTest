@@ -17,7 +17,7 @@ namespace Physics
 		Collider()
 		{};
 
-		void update(const double delta) override;
+		void update(const double delta);
 		// Каллбэк который вызовет функцию при касании и передаст в неё имя объекта
 		void setOnCollisionCallback(onCollisionCallback callback);
 

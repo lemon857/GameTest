@@ -1,7 +1,5 @@
 #pragma once
 
-#define MIN_DISTANCE_TO_CASTLE 2.7f
-
 #include "Games/Tower_Defense/Target.h"
 
 #include <glm/vec3.hpp>
@@ -79,6 +77,9 @@ protected:
 	double m_max_hp;
 	unsigned int m_dmg;
 	double m_cur_time;
+
+	float m_distance_attack;
+	int m_stop_target_walking;
 
 	unsigned int m_reward = 2;
 	double m_cooldown;

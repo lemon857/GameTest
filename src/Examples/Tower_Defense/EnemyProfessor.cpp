@@ -9,4 +9,6 @@ ProfessorEnemy::ProfessorEnemy(ObjModel* model, Castle* target, std::vector<Targ
 {
 	m_type_armor = TypeArmor::Chaotic;
 	m_reward = 7;
+	m_distance_attack = 7.f;
+	m_stop_target_walking = m_targets.size() - 1;
 }

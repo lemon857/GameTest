@@ -29,7 +29,7 @@ MeshRenderer::~MeshRenderer()
     m_obj.reset();
 }
 
-void MeshRenderer::update(double delta)
+void MeshRenderer::render()
 {
     if (m_obj == nullptr) return;
 	Transform* transform = m_targetObj->getComponent<Transform>();

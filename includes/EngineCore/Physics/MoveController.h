@@ -8,7 +8,7 @@ class MoveController : public IComponent
 public:
 	MoveController(IGameObject& targetObj);
 
-	void update(const double delta) override;
+	void update(const double delta);
 
 private:
 

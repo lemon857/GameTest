@@ -22,7 +22,7 @@ public:
 		std::shared_ptr<RenderEngine::Material> pMaterial);
 	~MeshRenderer();
 
-	void update(const double delta) override;
+	void render() override;
 
 	void update_object(std::shared_ptr<GraphicsObject> obj);
 

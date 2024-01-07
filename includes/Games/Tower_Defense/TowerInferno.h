@@ -17,6 +17,7 @@ public:
 	void upgrade() override;
 	void damage(BaseEnemy* target) override;
 	void updating(const double delta) override;
+	void rendering() override;
 	void target(size_t i, double dis, double& all_dis) override;
 
 	static const unsigned int p_distance = 14;
@@ -28,6 +29,7 @@ public:
 
 	static std::string get_type_str();
 private:
+	float m_line_size;
 
 	double m_cur_time;
 

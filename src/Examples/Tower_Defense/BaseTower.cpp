@@ -70,13 +70,8 @@ void BaseTower::update(const double delta)
 
 void BaseTower::render()
 {
-	updateComponents(0);
-	if (m_target_BaseEnemy != nullptr)
-	{
-		m_line->render_from_to(getComponent<Transform>()->get_position() + glm::vec3(0.f, 2.f, 0.f),
-			m_target_BaseEnemy->get_pos(), glm::vec4(1.f, 0.1f, 0.1f, 1.f));
-		m_bar->update();
-	}
+	renderComponents();	
+	if (m_target_BaseEnemy != nullptr) m_bar->render();
 	rendering();
 }
 

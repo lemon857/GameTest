@@ -27,6 +27,8 @@ namespace RenderEngine
 		void render(const glm::vec3& position, const glm::vec3& dir, glm::vec4& color) const;
 		void render_from_to(const glm::vec3& position, const glm::vec3& to, glm::vec4& color) const;
 
+		void set_size(float size);
+
 		std::shared_ptr<Material> get_material() { return m_pMaterial; }
 	private:
 		std::shared_ptr<Material> m_pMaterial;

@@ -6,6 +6,8 @@
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Sound/Sound.h"
 #include "Games/Tower_Defense/DamageTable.h"
+#include "EngineCore/Components/Transform.h"
+#include "EngineCore/Renderer/Line.h"
 
 IceTower::IceTower(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<RenderEngine::Material> pMaterial,
 	linked_list<BaseEnemy*>* list, glm::vec3 pos, RenderEngine::Line* line, std::shared_ptr<RenderEngine::Material> pMaterialLine)
@@ -25,6 +27,15 @@ void IceTower::upgrade()
 	m_time_freeze += 5;
 	m_bar->set_max_value(m_cooldown);
 	m_isUpgraded = true;
+}
+
+void IceTower::rendering()
+{
+	if (m_target_BaseEnemy != nullptr)
+	{
+		m_line->render_from_to(getComponent<Transform>()->get_position() + glm::vec3(0.f, 2.4f, 0.f),
+			m_target_BaseEnemy->get_pos(), glm::vec4(0.1f, 0.4f, 0.8f, 1.f));
+	}
 }
 
 void IceTower::damage(BaseEnemy* target)

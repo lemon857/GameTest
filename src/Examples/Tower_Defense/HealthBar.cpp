@@ -24,7 +24,7 @@ HealthBar::~HealthBar()
 	delete m_foreground_line;
 }
 
-void HealthBar::update()
+void HealthBar::render()
 {
 	m_background_line->render_from_to(glm::vec3(m_pos.x, m_pos.y, m_pos.z + 2 * m_lenght * m_value / m_max_value - m_lenght),
 		glm::vec3(m_pos.x, m_pos.y, m_pos.z + m_lenght), m_background_color);

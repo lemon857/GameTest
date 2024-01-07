@@ -25,8 +25,8 @@ void Castle::update(const double delta)
 void Castle::render()
 {
 	if (m_isDestroyed) return;
-	m_bar->update();
-	updateComponents(0);
+	m_bar->render();
+	renderComponents();
 }
 
 void Castle::damage(const double damage_hp)

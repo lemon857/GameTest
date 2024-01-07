@@ -53,7 +53,7 @@
 #include "Games/Tower_Defense/EnemyMonkey.h"
 #include "Games/Tower_Defense/EnemyMagician.h"
 #include "Games/Tower_Defense/EnemyRobot.h"
-#include "Games/Tower_Defense/EnemySpider.h"
+#include "Games/Tower_Defense/EnemyBug.h"
 #include "Games/Tower_Defense/EnemyProfessor.h"
 
 #include <array>
@@ -93,11 +93,13 @@ bool GameApp::init()
     GET_DATA_MATERIAL("cube", float, "diffuse_factor", 0) = 0.1f;
     GET_DATA_MATERIAL("cube", float, "specular_factor", 0) = 0.0f;
     GET_DATA_MATERIAL("cube", float, "metalic_factor", 0) = 0.0f;
+    GET_DATA_MATERIAL("cube", float, "shininess", 0) = 0.1f;
 
     GET_DATA_MATERIAL("dirt", float, "ambient_factor", 0) = 0.25f;
     GET_DATA_MATERIAL("dirt", float, "diffuse_factor", 0) = 0.1f;
     GET_DATA_MATERIAL("dirt", float, "specular_factor", 0) = 0.0f;
     GET_DATA_MATERIAL("dirt", float, "metalic_factor", 0) = 0.0f;
+    GET_DATA_MATERIAL("dirt", float, "shininess", 0) = 0.1f;
 
     std::vector<std::string> mats_tows;
     mats_tows.push_back("inferno_tower");
@@ -112,6 +114,7 @@ bool GameApp::init()
         GET_DATA_MATERIAL(mt, float, "diffuse_factor", 0) = 0.4f;
         GET_DATA_MATERIAL(mt, float, "specular_factor", 0) = 0.0f;
         GET_DATA_MATERIAL(mt, float, "metalic_factor", 0) = 0.0f;
+        GET_DATA_MATERIAL(mt, float, "shininess", 0) = 0.1f;
     }
 
     std::vector<std::string> mats_ens;
@@ -134,6 +137,7 @@ bool GameApp::init()
     GET_DATA_MATERIAL("castle", float, "diffuse_factor", 0) = 0.4f;
     GET_DATA_MATERIAL("castle", float, "specular_factor", 0) = 0.0f;
     GET_DATA_MATERIAL("castle", float, "metalic_factor", 0) = 0.0f;
+    GET_DATA_MATERIAL("castle", float, "shininess", 0) = 0.1f;
 
     std::vector<std::string> names;
     names.push_back("default3DShader");
@@ -835,7 +839,7 @@ void GameApp::on_update(const double delta)
         m_scene.at(i)->update(delta);
     }    
 
-    m_circle->add_rot(glm::vec3(0.f, 0.05f * delta, 0.f));
+    m_circle->add_rot(glm::vec3(0.f, 0.01f * delta, 0.f));
 
     // ================================================================================ game logic ===========================================================
     if (restart_querry)
@@ -954,8 +958,8 @@ void GameApp::on_update(const double delta)
                     m_main_castle, targets,
                     glm::vec3(pos.x + (rand() % 100 - 50) / 100.f, pos.y, pos.z + (rand() % 100 - 50) / 100.f), ResourceManager::getMaterial("default")));
                 break;
-            case TypeEnemy::Spider:
-                m_enemies.push_back(new SpiderEnemy(new ObjModel(ResourceManager::get_OBJ_model("spider"), ResourceManager::getMaterial("spider")),
+            case TypeEnemy::Bug:
+                m_enemies.push_back(new BugEnemy(new ObjModel(ResourceManager::get_OBJ_model("spider"), ResourceManager::getMaterial("spider")),
                     m_main_castle, targets,
                     glm::vec3(pos.x + (rand() % 100 - 50) / 100.f, pos.y, pos.z + (rand() % 100 - 50) / 100.f), ResourceManager::getMaterial("default")));
                 break;
@@ -1427,7 +1431,7 @@ void GameApp::press_button(KeyCode key)
             int add = rand() % 10;
             unsigned int spawn = 841 + add;
             int tp = rand() % 10;
-            m_spawn_enemies.push({ spawn, tp <= 2 ? TypeEnemy::Monkey : tp <= 4 ? TypeEnemy::Magician : tp <= 6 ? TypeEnemy::Robot : tp <= 8 ? TypeEnemy::Spider : TypeEnemy::Professor });
+            m_spawn_enemies.push({ spawn, tp <= 2 ? TypeEnemy::Monkey : tp <= 4 ? TypeEnemy::Magician : tp <= 6 ? TypeEnemy::Robot : tp <= 8 ? TypeEnemy::Bug : TypeEnemy::Professor });
             isKeyPressed = true;
         }
     }
@@ -1441,7 +1445,7 @@ void GameApp::press_button(KeyCode key)
                 int add = rand() % 10;
                 unsigned int spawn = 841 + add;
                 int tp = rand() % 10;
-                m_spawn_enemies.push({ spawn, tp <= 2 ? TypeEnemy::Monkey : tp <= 4 ? TypeEnemy::Magician : tp <= 6 ? TypeEnemy::Robot : tp <= 8 ? TypeEnemy::Spider : TypeEnemy::Professor });
+                m_spawn_enemies.push({ spawn, tp <= 2 ? TypeEnemy::Monkey : tp <= 4 ? TypeEnemy::Magician : tp <= 6 ? TypeEnemy::Robot : tp <= 8 ? TypeEnemy::Bug : TypeEnemy::Professor });
             }
             isKeyPressed = true;
         }

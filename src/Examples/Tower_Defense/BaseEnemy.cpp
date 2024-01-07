@@ -32,12 +32,14 @@ BaseEnemy::BaseEnemy(ObjModel* model, Castle* target, std::vector<Target> target
 	, curtarget(0)
 	, m_rotation_break(0)
 	, m_targets(targets)
+	, m_distance_attack(2.7f)
 {
 	m_model->addComponent<Transform>(pos, glm::vec3(1.f));
 	for (size_t i = 0; i < m_targets.size(); i++)
 	{
 		m_targets[i].set_pos(m_targets[i].get_pos() + glm::vec3((float)sysfunc::get_random(-25, 25) / 10.f, 0.f, (float)sysfunc::get_random(-25, 25) / 10.f));
 	}
+	m_stop_target_walking = m_targets.size();
 }
 
 BaseEnemy::~BaseEnemy()
@@ -107,10 +109,10 @@ void BaseEnemy::update(const double delta)
 			curtarget++;
 		}
 	}
-	else if (curtarget == m_targets.size())
+	else if (curtarget == m_stop_target_walking)
 	{
 		m_last_dir = m_target_castle->get_pos() - m_model->getComponent<Transform>()->get_position();
-		if (sqrt(m_last_dir.x * m_last_dir.x + m_last_dir.z * m_last_dir.z) > MIN_DISTANCE_TO_CASTLE)
+		if (sqrt(m_last_dir.x * m_last_dir.x + m_last_dir.z * m_last_dir.z) > m_distance_attack)
 		{
 			//if (m_model->getComponent<Transform>()->get_position().x > HALF_PLANE)
 			//{
@@ -157,11 +159,11 @@ void BaseEnemy::render()
 	if (m_isDestroyed) return;
 	m_model->update(0);
 	if (m_isBroken) return;
-	m_bar->update();
+	m_bar->render();
 	if (m_effect != nullptr)
 	{
 		m_bar_effect->set_value(m_effect->get_live_time());
-		m_bar_effect->update();
+		m_bar_effect->render();
 	}
 }
 

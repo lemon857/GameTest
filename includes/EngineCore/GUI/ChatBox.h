@@ -14,6 +14,7 @@ namespace RenderEngine
 }
 namespace GUI
 {
+	class GUI_place;
 	class TextRenderer;
 	class Font;
 	class Sprite;
@@ -24,7 +25,7 @@ namespace GUI
 	public:
 		ChatBox(Sprite* backgrond, glm::vec2 pos, glm::vec2 scale,
 			std::string name, int max_count_message, 
-			std::shared_ptr<Font> font, std::shared_ptr<RenderEngine::ShaderProgram> shader, glm::vec3 textColor);
+			std::shared_ptr<Font> font, std::shared_ptr<RenderEngine::ShaderProgram> shader, glm::vec3 textColor, GUI_place* place = nullptr);
 		~ChatBox();
 
 		void on_render_prj(glm::mat4& prj) override;

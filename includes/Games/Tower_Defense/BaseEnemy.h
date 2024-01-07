@@ -23,7 +23,7 @@ class BaseEnemy
 {
 public:
 	BaseEnemy(ObjModel* model, Castle* target, std::vector<Target> targets, glm::vec3 pos, const double cooldown, const double velocity,
-		const unsigned int maxHP, const unsigned int damage, std::shared_ptr<RenderEngine::Material> pMaterial, glm::vec3 color = glm::vec3(1.f, 0.f, 0.f));
+		const unsigned int maxHP, const double damage, std::shared_ptr<RenderEngine::Material> pMaterial, glm::vec3 color = glm::vec3(1.f, 0.f, 0.f));
 	~BaseEnemy();
 
 	void update(const double delta);
@@ -49,9 +49,10 @@ public:
 
 	void set_color_effect(glm::vec3 colorFore, glm::vec3 colorBack);
 
+	float get_distance() { return m_distance_attack; }
 	double get_hp() { return m_hp; }
 	double get_max_hp() { return m_max_hp; }
-	unsigned int get_damage() { return m_dmg; }
+	double get_damage() { return m_dmg; }
 	virtual std::string get_description() { return ""; }
 
 	unsigned int get_reward() { return m_reward; }
@@ -75,7 +76,7 @@ protected:
 
 	double m_hp;
 	double m_max_hp;
-	unsigned int m_dmg;
+	double m_dmg;
 	double m_cur_time;
 
 	float m_distance_attack;

@@ -36,7 +36,7 @@ void InfernoTower::updating(const double delta)
 	if (m_target_BaseEnemy != nullptr)
 	{
 		m_damage += m_damage * delta * P_INFERNO_ADD;
-		m_line_size += m_damage * delta * P_INFERNO_ADD * 4;
+		m_line_size += m_damage * delta * P_INFERNO_ADD * 5;
 		m_line->set_size(m_line_size);
 	}
 	else
@@ -68,11 +68,8 @@ void InfernoTower::target(size_t i, double dis, double& all_dis)
 			m_line->set_size(m_line_size);
 			m_target_BaseEnemy = m_enemies->at(i);
 		}
-		else if (m_target_BaseEnemy != m_enemies->at(i))
+		else if (m_target_BaseEnemy != m_enemies->at(i) && m_damage == P_INFERNO_DAMAGE)
 		{
-			m_damage = P_INFERNO_DAMAGE;
-			m_line_size = 1;
-			m_line->set_size(m_line_size);
 			m_target_BaseEnemy = m_enemies->at(i);
 		}
 	}

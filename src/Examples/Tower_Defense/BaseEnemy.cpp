@@ -13,7 +13,7 @@
 
 #define HALF_PLANE 30.f
 
-BaseEnemy::BaseEnemy(ObjModel* model, Castle* target, std::vector<Target> targets, glm::vec3 pos, const double cooldown, const double velocity, const unsigned int hp, const unsigned int damage,
+BaseEnemy::BaseEnemy(ObjModel* model, Castle* target, std::vector<Target> targets, glm::vec3 pos, const double cooldown, const double velocity, const unsigned int hp, const double damage,
 	std::shared_ptr<RenderEngine::Material> pMaterial, glm::vec3 color)
 	: m_cooldown(cooldown * 1000)
 	, m_target_castle(std::move(target))

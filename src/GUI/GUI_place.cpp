@@ -119,8 +119,8 @@ namespace GUI
 	void GUI_place::on_mouse_press(int x, int y)
 	{
 		if (!m_isActive) return;
-		glm::vec2 VPsize = m_render_cam->get_viewport_size();
-		y = VPsize.y - y; // set null pos in left down
+		m_vp_size = m_render_cam->get_viewport_size();
+		y = m_vp_size.y - y; // set null pos in left down
 		for (auto cur : m_elements)
 		{
 			if (!cur.second->get_active()) continue;

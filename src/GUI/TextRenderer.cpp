@@ -13,6 +13,7 @@
 
 namespace GUI
 {
+    static unsigned int g_current_text_ID = 0;
 	TextRenderer::TextRenderer(std::shared_ptr<Font> font, std::shared_ptr<RenderEngine::ShaderProgram> shader,
         std::string text, glm::vec3 color, glm::vec2 pos, glm::vec2 scale, std::string name, bool isCenterCoord)
 		: m_font(std::move(font))
@@ -20,7 +21,7 @@ namespace GUI
         , m_color(color)
         , m_text(text)
         , m_isCenterCoords(isCenterCoord)
-        , GUI_element(name)
+        , GUI_element(name == "default" ? "Text" + std::to_string(g_current_text_ID++) : name)
 	{
         m_layer = 1;
         m_position_p = pos;

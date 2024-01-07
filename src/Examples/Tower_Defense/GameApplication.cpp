@@ -55,6 +55,7 @@
 #include "Games/Tower_Defense/EnemyRobot.h"
 #include "Games/Tower_Defense/EnemyBug.h"
 #include "Games/Tower_Defense/EnemyProfessor.h"
+#include "Games/Tower_Defense/DamageTable.h"
 
 #include <array>
 #include <memory>
@@ -567,6 +568,13 @@ void GameApp::on_key_update(const double delta)
                         m_gui->get_element<GUI::TextRenderer>("Type_prop")->set_text("");
                         m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("");
                         selected_enemy = -1;
+                        if (place_querry != TypeTower::null)
+                        {
+                            is_active_cursor = is_active_cursor_tmp;
+                            place_querry = TypeTower::null;
+                            m_gui->get_element<GUI::Button>("Upgrade_place")->set_text("Upgrade");
+                            m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("");
+                        }
                         //map[cur] = true;
                         //m_spawn_towers.push(cur);
                         //buff[0] = 't';
@@ -585,10 +593,23 @@ void GameApp::on_key_update(const double delta)
                         m_gui->get_element<GUI::TextRenderer>("Type_prop")->set_text("");
                         m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("This your castle, protect it");
                         selected_enemy = -1;
+                        if (place_querry != TypeTower::null)
+                        {
+                            is_active_cursor = is_active_cursor_tmp;
+                            place_querry = TypeTower::null;
+                            m_gui->get_element<GUI::Button>("Upgrade_place")->set_text("Upgrade");
+                            m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("");
+                        }
                     }
                     else
                     {
-                        if (place_querry != TypeTower::null) is_active_cursor = is_active_cursor_tmp;
+                        if (place_querry != TypeTower::null)
+                        {
+                            is_active_cursor = is_active_cursor_tmp;
+                            place_querry = TypeTower::null;
+                            m_gui->get_element<GUI::Button>("Upgrade_place")->set_text("Upgrade");
+                            m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("");
+                        }
                         glm::vec3 pos = glm::vec3(x * size_place.x, 0.f, y * size_place.z);
                         bool intrs = false;
                         for (size_t i = 0; i < m_enemies.size(); i++)
@@ -606,7 +627,7 @@ void GameApp::on_key_update(const double delta)
                         {
                             m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(true);
                             m_gui->get_element<GUI::TextRenderer>("Coast_prop")->set_text("Reward: " + std::to_string(m_enemies[selected_enemy]->get_reward()));
-                            m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " + std::to_string(m_enemies[selected_enemy]->get_damage()));
+                            m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " + std::to_string(m_enemies[selected_enemy]->get_damage()).substr(0, 3));
                             m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text("Cooldown: " + std::to_string(m_enemies[selected_enemy]->get_cooldown()).substr(0, 3));
                             m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text("Velocity: " + std::to_string(m_enemies[selected_enemy]->get_vel()).substr(0, 4));
                             m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text("HP: " + std::to_string(m_enemies[selected_enemy]->get_hp()).substr(0, 4));
@@ -627,7 +648,7 @@ void GameApp::on_key_update(const double delta)
                                         m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(true);
                                         m_gui->get_element<GUI::TextRenderer>("Coast_prop")->set_text("Coast: " + std::to_string(m_select_tower->get_upgrade_coast()));
                                         m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " +
-                                            std::to_string(m_select_tower->get_damage()).substr(0, 4) + m_select_tower->get_add_damage());
+                                            std::to_string(m_select_tower->get_damage()).substr(0, 5) + m_select_tower->get_add_damage());
                                         m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text("Colldown: " +
                                             std::to_string(m_select_tower->get_cooldown()).substr(0, 4) + m_select_tower->get_add_cooldown());
                                         m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text("Radius: " +
@@ -641,7 +662,7 @@ void GameApp::on_key_update(const double delta)
                                     {
                                         m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(true);
                                         m_gui->get_element<GUI::TextRenderer>("Coast_prop")->set_text("Coast: " + std::to_string(m_select_tower->get_coast()));
-                                        m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " + std::to_string(m_select_tower->get_damage()).substr(0, 4));
+                                        m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " + std::to_string(m_select_tower->get_damage()).substr(0, 5));
                                         m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text("Colldown: " + std::to_string(m_select_tower->get_cooldown()).substr(0, 4));
                                         m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text("Radius: " + std::to_string(m_select_tower->get_distance()).substr(0, 4));
                                         m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text(m_select_tower->get_custom());
@@ -824,11 +845,11 @@ void GameApp::on_update(const double delta)
         if (m_select_tower->is_upgradable()) 
         {
             m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " + 
-                std::to_string(m_select_tower->get_damage()).substr(0, 4) + m_select_tower->get_add_damage());
+                std::to_string(m_select_tower->get_damage()).substr(0, 5) + m_select_tower->get_add_damage());
         }
         else 
         {
-            m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " + std::to_string(m_select_tower->get_damage()).substr(0, 4));
+            m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("Damage: " + std::to_string(m_select_tower->get_damage()).substr(0, 5));
         }
     }
 
@@ -974,8 +995,8 @@ void GameApp::on_update(const double delta)
             m_gui->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));
         }
 
-        if (m_select_tower == nullptr && place_querry == TypeTower::null) m_circle->set_pos(uPos);
-        else if (!restart_querry && place_querry == TypeTower::null)
+        if (m_select_tower == nullptr && place_querry == TypeTower::null && selected_enemy == -1) m_circle->set_pos(uPos);
+        else if (!restart_querry && place_querry == TypeTower::null && m_select_tower != nullptr)
         {
             m_circle->set_pos(m_select_tower->get_pos());
             m_circle->set_rad(m_select_tower->get_distance());
@@ -983,6 +1004,11 @@ void GameApp::on_update(const double delta)
         else if (place_querry != TypeTower::null)
         {
             m_circle->set_pos(parts[cur]);
+        }
+        else if (selected_enemy != -1)
+        {
+            m_circle->set_pos(m_enemies[selected_enemy]->get_pos());
+            m_circle->set_rad(m_enemies[selected_enemy]->get_distance());
         }
 
         for (auto curTower : m_towers)
@@ -1301,7 +1327,7 @@ bool GameApp::init_events()
         });
     m_event_dispather.add_event_listener<EventMouseScrolled>([&](EventMouseScrolled& e)
         {
-            //m_gui->get_element<GUI::ScrollBox>("Towers")->on_scroll(-e.y_offset);
+            m_gui->get_element<GUI::ScrollBox>("Towers")->on_scroll(-e.y_offset);
             if (is_chat_active) m_gui->get_element<GUI::ChatBox>("Chat")->on_scroll(-e.y_offset);
             if (is_event_logging_active) LOG_INFO("[EVENT] Scroll: {0}x{1}", e.x_offset, e.y_offset);
         });
@@ -1538,7 +1564,8 @@ void GameApp::init_gui()
     auto chat = m_gui->add_element<GUI::GUI_element>(1, "chat_place");
 
     m_gui->add_element<GUI::ChatBox>(chat, new GUI::Sprite(ResourceManager::getMaterial("defaultSprite")),
-        glm::vec2(13.f, 36.f), glm::vec2(12.f, 30.f), "Chat", 128, ResourceManager::get_font("calibriChat"), ResourceManager::getShaderProgram("textShader"), glm::vec3(1.f));
+        glm::vec2(13.f, 36.f), glm::vec2(12.f, 30.f), "Chat", 128, ResourceManager::get_font("calibriChat"),
+        ResourceManager::getShaderProgram("textShader"), glm::vec3(1.f), m_gui);
 
     m_gui->add_element<GUI::InputField>(chat, new GUI::Sprite(ResourceManager::getMaterial("default_input"), "static"),
         glm::vec2(13.f, 3.f), glm::vec2(12.f, 3.f), "SendMessage", ResourceManager::getShaderProgram("textShader"),
@@ -1590,22 +1617,23 @@ void GameApp::init_gui()
 
     std::vector<std::string> data = {
         "armor: ","null", "light", "heavy", "magic", "chaotic",
-        "piercing", "110%", "90%", "70%", "110%", "80%",
-        "cutting", "100%", "110%", "80%", "100%", "90%",
-        "shock", "90%", "80%", "100%", "90%", "100%",
-        "sorcery", "80%", "100%", "100%", "90%", "120%",
-        "wither", "100%", "90%", "120%", "80%", "90%" };
+        "piercing", std::to_string((int)(damageTable[0][0] * 100)) + "%", std::to_string((int)(damageTable[0][1] * 100)) + "%", std::to_string((int)(damageTable[0][2] * 100)) + "%", std::to_string((int)(damageTable[0][3] * 100)) + "%", std::to_string((int)(damageTable[0][4] * 100)) + "%",
+        "cutting", std::to_string((int)(damageTable[1][0] * 100)) + "%", std::to_string((int)(damageTable[1][1] * 100)) + "%", std::to_string((int)(damageTable[1][2] * 100)) + "%", std::to_string((int)(damageTable[1][3] * 100)) + "%", std::to_string((int)(damageTable[1][4] * 100)) + "%",
+        "shock", std::to_string((int)(damageTable[2][0] * 100)) + "%", std::to_string((int)(damageTable[2][1] * 100)) + "%", std::to_string((int)(damageTable[2][2] * 100)) + "%", std::to_string((int)(damageTable[2][3] * 100)) + "%", std::to_string((int)(damageTable[2][4] * 100)) + "%",
+        "sorcery", std::to_string((int)(damageTable[3][0] * 100)) + "%", std::to_string((int)(damageTable[3][1] * 100)) + "%", std::to_string((int)(damageTable[3][2] * 100)) + "%", std::to_string((int)(damageTable[3][3] * 100)) + "%", std::to_string((int)(damageTable[3][4] * 100)) + "%",
+        "wither", std::to_string((int)(damageTable[4][0] * 100)) + "%", std::to_string((int)(damageTable[4][1] * 100)) + "%", std::to_string((int)(damageTable[4][2] * 100)) + "%", std::to_string((int)(damageTable[4][3] * 100)) + "%", std::to_string((int)(damageTable[4][4] * 100)) + "%",
+        };
 
     m_gui->add_element<GUI::Table>(gamegui1, new GUI::Sprite(ResourceManager::getMaterial("defaultSprite")),
         glm::vec2(82.f, 17.f), glm::vec2(16.f, 15.f), glm::vec2(5.f, 4.f), "Damage_table",
         ResourceManager::get_font("calibriChat"), ResourceManager::getShaderProgram("textShader"),
         glm::vec3(1.f), 6, 6, data)->set_active(false);
 
-     //m_gui->add_element<GUI::ScrollBox>(gamegui, 1, new GUI::Sprite(ResourceManager::getMaterial("defaultSprite")),
-     //      glm::vec2(50.f, 50.f), glm::vec2(10.f, 20.f), "Towers", 10, false);
+     m_gui->add_element<GUI::ScrollBox>(gamegui, -2, new GUI::Sprite(ResourceManager::getMaterial("defaultSprite")),
+           glm::vec2(89.f, 64.f), glm::vec2(10.f, 30.f), "Towers", 10);
 
-     m_gui->add_element<GUI::Sprite>(gamegui, -2, ResourceManager::getMaterial("defaultSprite"), "default",
-        glm::vec2(89.f, 64.f), glm::vec2(10.f, 30.f), "1.BG_tows");
+     //m_gui->add_element<GUI::Sprite>(gamegui, -2, ResourceManager::getMaterial("defaultSprite"), "default",
+     //   glm::vec2(89.f, 64.f), glm::vec2(10.f, 30.f), "1.BG_tows");
      
      m_gui->add_element<GUI::Sprite>(gamegui, -2, ResourceManager::getMaterial("defaultSprite"), "default",
             glm::vec2(9.f, 75.f), glm::vec2(10.f, 25.f), "1.BG_props");
@@ -1792,9 +1820,11 @@ void GameApp::init_gui()
                 place_querry = TypeTower::Inferno;
             });
 
-    //m_gui->get_element<GUI::ScrollBox>("Towers")->add_element(m_gui->get_element<GUI::Button>("Tower3"));
-
-    //m_gui->get_element<GUI::ScrollBox>("Towers")->set_open(true);
+    m_gui->get_element<GUI::ScrollBox>("Towers")->add_element(m_gui->get_element<GUI::Button>("Ice"));
+    m_gui->get_element<GUI::ScrollBox>("Towers")->add_element(m_gui->get_element<GUI::Button>("Archer"));
+    m_gui->get_element<GUI::ScrollBox>("Towers")->add_element(m_gui->get_element<GUI::Button>("Mortar"));
+    m_gui->get_element<GUI::ScrollBox>("Towers")->add_element(m_gui->get_element<GUI::Button>("Executioner"));
+    m_gui->get_element<GUI::ScrollBox>("Towers")->add_element(m_gui->get_element<GUI::Button>("Inferno"));
 
     gamegui->set_active(false);
 

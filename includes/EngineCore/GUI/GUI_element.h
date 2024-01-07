@@ -59,9 +59,9 @@ namespace GUI
 
 		void set_layer(float layer) { m_layer = layer; set_tree_layer(layer); }
 
-		void add_position(glm::vec2 pos) { m_position += pos; }
+		virtual void add_position(glm::vec2 pos) { m_position += pos; set_tree_pos(m_position); }
 
-		virtual void set_position(glm::vec2 pos) { m_position = pos; }
+		virtual void set_position(glm::vec2 pos) { m_position = pos; set_tree_pos(pos); }
 		virtual void set_scale(glm::vec2 scale) { m_scale = scale; }
 
 		GUI_element* add_tree_element(GUI_element* element) { m_tree.push_back(element); set_tree_active(m_isActive); return std::move(element); }
@@ -79,6 +79,13 @@ namespace GUI
 			for (auto& i : m_tree)
 			{
 				i->set_active(state);
+			}
+		}
+		void set_tree_pos(const glm::vec2 pos)
+		{
+			for (auto& i : m_tree)
+			{
+				i->set_position(pos);
 			}
 		}
 

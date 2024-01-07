@@ -1,0 +1,36 @@
+#include "EngineCore/System/AppInfo.h"
+
+#ifndef DEBUG
+#define VER_DEBUG                   0
+#else
+#define VER_DEBUG                   VS_FF_DEBUG
+#endif
+
+MAINICON ICON APPINFO_PATH_TO_ICON
+// (VER_PRIVATEBUILD|VER_PRERELEASE|VER_DEBUG|VS_FF_SPECIALBUILD)
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION     APPINFO_FILE_VERSION
+PRODUCTVERSION  APPINFO_PRODUCT_VERSION
+FILEFLAGS       VER_DEBUG
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904E4"
+        BEGIN
+            VALUE "CompanyName",      APPINFO_COMPANY_NAME
+            VALUE "FileDescription",  APPINFO_FILE_DESCRIPTION
+            VALUE "FileVersion",      APPINFO_FILE_VERSION
+            VALUE "InternalName",     APPINFO_INTERNAL_NAME
+            VALUE "LegalCopyright",   APPINFO_LEGAL_COPYRIGHT
+            VALUE "OriginalFilename", APPINFO_ORIGINAL_FILE_NAME
+            VALUE "ProductName",      APPINFO_PRODUCT_NAME
+            VALUE "ProductVersion",   APPINFO_PRODUCT_VERSION
+        END
+    END
+
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x419, 1200
+
+    END
+END

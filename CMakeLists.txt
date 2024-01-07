@@ -38,6 +38,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/System/SysFunc.h	
 	includes/EngineCore/System/CommandManager.h	
 	includes/EngineCore/System/INI_loader.h	
+	includes/EngineCore/System/AppInfo.h	
 	  
 	includes/EngineCore/GUI/GUI_place.h
 	includes/EngineCore/GUI/GUI_element.h
@@ -243,6 +244,7 @@ project(${PROJECT_NAME})
 
 	add_executable(${PROJECT_NAME}
 		src/main.cpp
+		src/appinfo.rc
 		${ENGINE_PRIVATE_SOURCES}
 		${ENGINE_PUBLIC_INCLUDES}
 		${ENGINE_PRIVATE_INCLUDES}	

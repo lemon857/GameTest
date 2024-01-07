@@ -7,16 +7,18 @@
 
 struct INIregionSTARTUP : BaseINIregion
 {
-	INIregionSTARTUP(glm::ivec2* size, glm::ivec2* pos, bool* max)
+	INIregionSTARTUP(glm::ivec2* size, glm::ivec2* pos, bool* max, bool* fs)
 		: window_position(std::move(pos))
 		, window_size(std::move(size))
 		, maximized_window(std::move(max))
+		, fullscreen(std::move(fs))
 	{
 
 	}
 	glm::ivec2* window_size;
 	glm::ivec2* window_position;
 	bool* maximized_window;
+	bool* fullscreen;
 
 	void parse(std::string name, std::string value) override;
 	std::string get_str_data() override;
@@ -58,6 +60,7 @@ protected:
 	std::unique_ptr<class Window> m_pWindow;
 	bool m_pCloseWindow = true;
 	bool m_maximized_window = false;
+	bool m_fullscreen_window = false;
 	glm::ivec2& m_window_position = glm::ivec2(100);
 	glm::ivec2& m_window_size = glm::ivec2(800, 600);
 	INIdata m_ini_data;

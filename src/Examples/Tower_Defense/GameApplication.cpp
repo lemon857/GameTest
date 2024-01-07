@@ -1898,6 +1898,14 @@ void GameApp::init_gui()
             });
 
     m_gui->add_element<GUI::Button>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(67.f, 72.f), glm::vec2(10.f, 5.f),
+        "Fullscreen", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), "fsToggle")->set_click_callback([&]()
+            {
+                m_pWindow->set_fullscreen(!m_pWindow->is_fullscreen());
+                m_gui->get_element<GUI::Button>("fsToggle")->set_text(m_pWindow->is_fullscreen() ? "Window" : "Fullscreen");
+            });
+
+    m_gui->add_element<GUI::Button>(settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, 72.f), glm::vec2(10.f, 5.f),
         "Mute", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), "muteToggle")->set_click_callback([&]()
             {

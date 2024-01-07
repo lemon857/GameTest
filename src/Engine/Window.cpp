@@ -8,8 +8,8 @@
 
 #include <GLFW/glfw3.h>
 
-Window::Window(std::string title, std::string path_icon_png, glm::ivec2& window_position, glm::ivec2& window_size, bool maximized)
-    : m_data({ std::move(title), window_size, window_position, maximized, nullptr })
+Window::Window(std::string title, std::string path_icon_png, glm::ivec2& window_position, glm::ivec2& window_size, bool maximized, bool fullscreen)
+    : m_data({ std::move(title), window_size, window_position, maximized, fullscreen, nullptr })
     , m_path_icon_png(path_icon_png)
 {
 	init();
@@ -40,6 +40,22 @@ void Window::set_pos(glm::ivec2& pos)
 void Window::set_cursor_visible(bool isVisible)
 {
     glfwSetInputMode(m_pWindow, GLFW_CURSOR, isVisible ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+}
+
+void Window::set_fullscreen(bool isFullscreen)
+{
+    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+    glfwSetWindowMonitor(m_pWindow, isFullscreen ? monitor : nullptr, 0, 0, mode->width, mode->height, mode->refreshRate);
+    if (!isFullscreen)
+    {
+        glfwSetWindowPos(m_pWindow, m_data.window_position.x, m_data.window_position.y);
+    }
+}
+
+bool Window::is_fullscreen()
+{
+    return glfwGetWindowMonitor(m_pWindow) != nullptr;
 }
 
 glm::vec2 Window::get_current_cursor_position() const
@@ -81,7 +97,8 @@ int Window::init()
     glfwMakeContextCurrent(m_pWindow);
     set_pos(m_data.window_position);
     if (m_data.maximized) maximize();
-    
+    if (m_data.fullscreen) set_fullscreen(true);
+
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         LOG_CRIT("Glad load failed");

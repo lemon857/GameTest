@@ -19,7 +19,7 @@ using EventCallback = std::function<void(BaseEvent&)>;
 class Window
 {
 public:
-	Window(std::string title, std::string path_icon_png, glm::ivec2& window_position, glm::ivec2& window_size, bool maximized);
+	Window(std::string title, std::string path_icon_png, glm::ivec2& window_position, glm::ivec2& window_size, bool maximized, bool fullscreen);
 	~Window();
 
 	Window(const Window&) = delete;
@@ -32,6 +32,8 @@ public:
 	void set_pos(glm::ivec2& pos);
 
 	void set_cursor_visible(bool isVisible);
+	void set_fullscreen(bool isFullscreen);
+	bool is_fullscreen();
 
 	glm::ivec2& get_size() { return m_data.window_size; }
 	glm::ivec2& get_pos() { return m_data.window_position; }
@@ -47,6 +49,7 @@ private:
 		glm::ivec2 window_size;
 		glm::ivec2 window_position;
 		bool maximized;
+		bool fullscreen;
 		EventCallback event_callback;
 	};
 	std::string m_path_icon_png;

@@ -23,14 +23,14 @@ int Application::start(glm::ivec2& window_size, const char* title, const char* j
 
     m_window_size = window_size;
 
-    INIregionSTARTUP startup{ &m_window_size, &m_window_position, &m_maximized_window };
+    INIregionSTARTUP startup{ &m_window_size, &m_window_position, &m_maximized_window, &m_fullscreen_window };
 
     m_ini_data.add_region("STARTUP", &startup);
 
     ResourceManager::load_INI_settings(ini_rel_path, m_ini_data, false);
 
     m_pCloseWindow = false;
-    m_pWindow = std::make_unique<Window>(title, ResourceManager::getExeFilePath() + APPINFO_PATH_TO_ICON_PNG, m_window_position, m_window_size, m_maximized_window);
+    m_pWindow = std::make_unique<Window>(title, ResourceManager::getExeFilePath() + APPINFO_PATH_TO_ICON_PNG, m_window_position, m_window_size, m_maximized_window, m_fullscreen_window);
 
     if (SoundEngine::init_audio() != 0) LOG_ERROR("Fail init sound engine");
 
@@ -81,6 +81,7 @@ int Application::start(glm::ivec2& window_size, const char* title, const char* j
         m_pWindow->on_update();
     }
 
+    m_fullscreen_window = m_pWindow->is_fullscreen();
     m_window_size = m_pWindow->get_size();
 
     ResourceManager::load_INI_settings(ini_rel_path, m_ini_data, true);
@@ -105,7 +106,8 @@ void INIregionSTARTUP::parse(std::string name, std::string value)
     else if (name == "window_height") window_size->y = std::stoi(value);
     else if (name == "window_position_x") window_position->x = std::stoi(value);
     else if (name == "window_position_y") window_position->y = std::stoi(value);
-    else if (name == "window_maximized") *maximized_window = std::stoi(value) == 1 ? true : false;
+    else if (name == "window_maximized") *maximized_window = value == "true";
+    else if (name == "window_fullscreen") *fullscreen = value == "true";
 }
 
 std::string INIregionSTARTUP::get_str_data()
@@ -115,6 +117,7 @@ std::string INIregionSTARTUP::get_str_data()
     data += "window_height=" + std::to_string(window_size->y) + "\n";
     data += "window_position_x=" + std::to_string(window_position->x) + "\n";
     data += "window_position_y=" + std::to_string(window_position->y) + "\n";
-    data += "window_maximized=" + std::to_string(*maximized_window == true ? 1 : 0) + "\n";
+    data += "window_maximized=" + std::to_string(*maximized_window == true ? "true" : "false") + "\n";
+    data += "window_fullscreen=" + std::to_string(*fullscreen == true ? "true" : "false") + "\n";
     return data;
 }

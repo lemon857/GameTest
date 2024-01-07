@@ -11,6 +11,7 @@
 #include "EngineCore/System/Log.h"
 #include "EngineCore/Resources/Scene.h"
 #include "EngineCore/GUI/Font.h"
+#include "EngineCore/System/ImageLoader.h"
 
 #include "EngineCore/System/INI_loader.h" 
 
@@ -28,10 +29,6 @@
 
 #include <rapidjson/document.h>
 #include <rapidjson/error/en.h>
-
-#define STB_IMAGE_IMPLEMENTATION
-#define STBI_ONLY_PNG
-#include "EngineCore/Resources/stb_image.h"
 
 ResourceManager::ShaderProgramsMap ResourceManager::m_ShaderPrograms;
 ResourceManager::TexturesMap ResourceManager::m_textures;
@@ -721,8 +718,7 @@ std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTexture(const std:
 	int channels = 0;
 	int width = 0;
 	int height = 0;
-	stbi_set_flip_vertically_on_load(true);
-	unsigned char* pixels = stbi_load(std::string(m_path + "/" + texturePath).c_str(), &width, &height, &channels, 0);
+	unsigned char* pixels = load_image_png(std::string(m_path + "/" + texturePath).c_str(), &width, &height, &channels);
 
 	if (!pixels)
 	{
@@ -733,7 +729,7 @@ std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTexture(const std:
 	std::shared_ptr<RenderEngine::Texture2D> newTexture = m_textures.emplace(textureName,
 		std::make_shared<RenderEngine::Texture2D>(width, height, pixels, channels, GL_NEAREST, GL_CLAMP_TO_EDGE)).first->second;
 
-	stbi_image_free(pixels);
+	clear_image(pixels);
 
 	return newTexture;
 }

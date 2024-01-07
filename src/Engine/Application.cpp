@@ -5,6 +5,7 @@
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Renderer/Renderer.h"
 #include "EngineCore/Sound/SoundEngine.h"
+#include "EngineCore/System/AppInfo.h"
 
 Application::Application()
 {}
@@ -29,7 +30,7 @@ int Application::start(glm::ivec2& window_size, const char* title, const char* j
     ResourceManager::load_INI_settings(ini_rel_path, m_ini_data, false);
 
     m_pCloseWindow = false;
-    m_pWindow = std::make_unique<Window>(title, m_window_position, m_window_size, m_maximized_window);
+    m_pWindow = std::make_unique<Window>(title, ResourceManager::getExeFilePath() + APPINFO_PATH_TO_ICON_PNG, m_window_position, m_window_size, m_maximized_window);
 
     if (SoundEngine::init_audio() != 0) LOG_ERROR("Fail init sound engine");
 
@@ -49,14 +50,14 @@ int Application::start(glm::ivec2& window_size, const char* title, const char* j
     
     LOG_INFO("Time initialization: {0}", m_watch->stop());
     LOG_INFO("==========================================");
-
+    
     delete m_watch;
 
-    auto lastTime = std::chrono::high_resolution_clock::now();
+    auto lastTime = std::chrono::high_resolution_clock::now();      
 
     double sum_time = 0;
 
-    double max = 1000 / tps_max;
+    double max = 1000.0 / (tps_max + 1);
 
     while (!m_pCloseWindow)
     {
@@ -68,7 +69,7 @@ int Application::start(glm::ivec2& window_size, const char* title, const char* j
 
         if (sum_time >= max)
         {
-            on_update(sum_time);
+           on_update(sum_time);
             sum_time = 0;
         }
 

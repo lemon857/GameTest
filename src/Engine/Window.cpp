@@ -4,11 +4,13 @@
 #include "EngineCore/System/Log.h"
 #include "EngineCore/Renderer/Renderer.h"
 #include "EngineCore/Resources/ResourceManager.h"
+#include "EngineCore/System/ImageLoader.h"
 
 #include <GLFW/glfw3.h>
 
-Window::Window(std::string title, glm::ivec2& window_position, glm::ivec2& window_size, bool maximized)
+Window::Window(std::string title, std::string path_icon_png, glm::ivec2& window_position, glm::ivec2& window_size, bool maximized)
     : m_data({ std::move(title), window_size, window_position, maximized, nullptr })
+    , m_path_icon_png(path_icon_png)
 {
 	init();
     //UImodule::on_window_create(m_pWindow);
@@ -55,7 +57,7 @@ void Window::set_event_callback(const EventCallback& callback)
 int Window::init()
 {
     LOG_INFO("Creating window \"{0}\" size {1}x{2}", m_data.title, m_data.window_size.x, m_data.window_size.y);
-    
+
     if (!RenderEngine::Renderer::init(m_pWindow))
     {
         LOG_CRIT("Fail init OpenGL renderer");
@@ -85,6 +87,19 @@ int Window::init()
         LOG_CRIT("Glad load failed");
         return -1;
     }
+
+    GLFWimage icon;
+    int channels = 0;
+    icon.pixels = load_image_png(m_path_icon_png.c_str(), &icon.width, &icon.height, &channels, false);
+
+    if (!icon.pixels) {
+        LOG_WARN("Error loading icon window");
+    }
+    else {
+        glfwSetWindowIcon(m_pWindow, 1, &icon);
+        clear_image(icon.pixels);
+    }
+
 
 //#define OFF_CALLBACKS
 

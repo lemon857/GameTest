@@ -1,4 +1,5 @@
 #define APPINFO_PATH_TO_ICON "../res/icon.ico"
+#define APPINFO_PATH_TO_ICON_PNG "/res/icon.png"
 
 #define APPINFO_FILE_VERSION 0,0,6,0
 #define APPINFO_PRODUCT_VERSION 0,0,6,0

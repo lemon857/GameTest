@@ -38,7 +38,8 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/System/SysFunc.h	
 	includes/EngineCore/System/CommandManager.h	
 	includes/EngineCore/System/INI_loader.h	
-	includes/EngineCore/System/AppInfo.h	
+	includes/EngineCore/System/AppInfo.h
+	includes/EngineCore/System/ImageLoader.h		
 	  
 	includes/EngineCore/GUI/GUI_place.h
 	includes/EngineCore/GUI/GUI_element.h
@@ -206,6 +207,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/System/SysFunc.cpp	
 	src/System/CommandManager.cpp
 	src/System/INI_loader.cpp		
+	src/System/ImageLoader.cpp		
 	
 	src/Components/MeshRenderer.cpp	
 	src/Components/Transform.cpp

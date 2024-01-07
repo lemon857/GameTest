@@ -970,7 +970,6 @@ void GameApp::on_update(const double delta)
             m_gui->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));
         }
 
-
         if (m_select_tower == nullptr && place_querry == TypeTower::null) m_circle->set_pos(uPos);
         else if (!restart_querry && place_querry == TypeTower::null)
         {

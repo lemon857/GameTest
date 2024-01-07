@@ -22,5 +22,11 @@ namespace sysfunc
 	// if str full contains symbol return true
 	bool is_full(const char* str, int strLen, char symbol);
 		
-	int get_random(int min, int max);	
+	int get_random(int min, int max);
+
+	void swap(void** a, void** b);
+
+	int partition(void** arr, int low, int high);
+
+	void quickSort(void** arr, int low, int high);
 }

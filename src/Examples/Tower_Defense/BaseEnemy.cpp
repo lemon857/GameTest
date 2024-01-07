@@ -171,6 +171,7 @@ void BaseEnemy::damage(const double damage_hp)
 	if (m_hp <= 0)
 	{
 		m_isBroken = true;
+		m_bar->set_value(0);
 		return;
 	}
 	m_bar->set_value(m_hp);

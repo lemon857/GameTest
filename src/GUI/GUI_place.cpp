@@ -13,49 +13,15 @@
 
 #include "EngineCore/Sound/Sound.h"
 
-void swap(GUI::GUI_element** a, GUI::GUI_element** b) {
-	GUI::GUI_element* t = *a;
-	*a = *b;
-	*b = t;
-}
-
-int partition(GUI::GUI_element** arr, int low, int high) {
-
-	int pivot = arr[high]->get_layer();
-
-	int i = (low - 1);
-
-	for (int j = low; j < high; j++) {
-		if (arr[j]->get_layer() <= pivot) {
-
-			i++;
-
-			swap(&arr[i], &arr[j]);
-		}
-	}
-
-	swap(&arr[i + 1], &arr[high]);
-
-	return (i + 1);
-}
-
-void quickSort(GUI::GUI_element** arr, int low, int high) {
-	if (low < high) {
-
-		int pi = partition(arr, low, high);
-
-		quickSort(arr, low, pi - 1);
-
-		quickSort(arr, pi + 1, high);
-	}
-}
-
 namespace GUI
 {
+	glm::vec2 GUI_place::m_vp_size;
+
 	GUI_place::GUI_place(Camera* render_cam, std::shared_ptr<RenderEngine::Material> pMaterial)
 		: m_pMaterial(std::move(pMaterial))
 		, m_render_cam(std::move(render_cam))
 	{
+		m_vp_size = m_render_cam->get_viewport_size();
 	}
 
 	void GUI_place::on_update(const double delta)
@@ -71,20 +37,19 @@ namespace GUI
 		//m_pMaterial->use();
 		//m_pMaterial->get_shader_ptr()->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_render_cam->get_ui_matrix());
 		//glm::vec2 size = m_render_cam->get_viewport_size();
-		for (auto cur : m_render_list)
+		for (auto cur : m_elements)
 		{
-			cur->on_render_prj(m_render_cam->get_ui_matrix());
+			cur.second->on_render_prj(m_render_cam->get_ui_matrix());
 		}
 	}
 	void GUI_place::add_element(GUI_element* element)
 	{
 		glm::vec2 posp = element->get_position_p();
 		glm::vec2 scalep = element->get_scale_p();
-		glm::vec2 wsize = m_render_cam->get_viewport_size();
-		element->set_position(glm::vec2(posp.x / 100 * wsize.x, posp.y / 100 * wsize.y));
-		element->set_scale(glm::vec2(scalep.x / 100 * wsize.x, scalep.y / 100 * wsize.y));
-		m_render_list.push_back(element);
-		add_elements(element->get_elements(), wsize);
+		m_vp_size = m_render_cam->get_viewport_size();
+		element->set_position(glm::vec2(posp.x / 100 * m_vp_size.x, m_vp_size.y / 100 * m_vp_size.y));
+		element->set_scale(glm::vec2(scalep.x / 100 * m_vp_size.x, m_vp_size.y / 100 * m_vp_size.y));
+		add_elements(element->get_elements());
 		m_elements.emplace(element->get_name(), element);
 	}
 		
@@ -98,13 +63,13 @@ namespace GUI
 	}
 	void GUI_place::on_resize()
 	{
-		glm::vec2 wsize = m_render_cam->get_viewport_size();
-		for (auto cur : m_render_list)
+		m_vp_size = m_render_cam->get_viewport_size();
+		for (auto cur : m_elements)
 		{
-			glm::vec2 posp = cur->get_position_p();
-			glm::vec2 scalep = cur->get_scale_p();
-			cur->set_position(glm::vec2(posp.x / 100 * wsize.x, posp.y / 100 * wsize.y));
-			cur->set_scale(glm::vec2(scalep.x / 100 * wsize.x, scalep.y / 100 * wsize.y));
+			glm::vec2 posp = cur.second->get_position_p();
+			glm::vec2 scalep = cur.second->get_scale_p();
+			cur.second->set_position(glm::vec2(posp.x / 100 * m_vp_size.x, posp.y / 100 * m_vp_size.y));
+			cur.second->set_scale(glm::vec2(scalep.x / 100 * m_vp_size.x, scalep.y / 100 * m_vp_size.y));
 		}
 	}
 	bool GUI_place::get_focus()
@@ -119,38 +84,36 @@ namespace GUI
 	{
 		m_isActive = active;
 	}
-	void GUI_place::add_elements(std::vector<GUI_element*> elements, glm::vec2 wsize)
+	glm::vec2 GUI_place::get_pix_percent(glm::vec2 percent)
+	{
+		return glm::vec2(percent.x / 100 * m_vp_size.x, percent.y / 100 * m_vp_size.y);
+	}
+	void GUI_place::add_elements(std::vector<GUI_element*> elements)
 	{
 		if (elements.empty()) return;
 		for (auto cur : elements)
 		{
 			glm::vec2 posp = cur->get_position_p();
 			glm::vec2 scalep = cur->get_scale_p();
-			cur->set_position(glm::vec2(posp.x / 100 * wsize.x, posp.y / 100 * wsize.y));
-			cur->set_scale(glm::vec2(scalep.x / 100 * wsize.x, scalep.y / 100 * wsize.y));
-			m_render_list.push_back(cur); // need sort with layers
-			add_elements(cur->get_elements(), wsize);
+			cur->set_position(glm::vec2(posp.x / 100 * m_vp_size.x, posp.y / 100 * m_vp_size.y));
+			cur->set_scale(glm::vec2(scalep.x / 100 * m_vp_size.x, scalep.y / 100 * m_vp_size.y));
+			m_elements.emplace(cur->get_name(), cur);
+			add_elements(cur->get_elements());
 		}
 	}
-	void GUI_place::add_elements(std::vector<GUI_element*> elements, glm::vec2 wsize, GUI_element* tree_parent)
+	void GUI_place::add_elements(std::vector<GUI_element*> elements, GUI_element* tree_parent)
 	{
 		if (elements.empty()) return;
 		for (auto cur : elements)
 		{
 			glm::vec2 posp = cur->get_position_p();
 			glm::vec2 scalep = cur->get_scale_p();
-			cur->set_position(glm::vec2(posp.x / 100 * wsize.x, posp.y / 100 * wsize.y));
-			cur->set_scale(glm::vec2(scalep.x / 100 * wsize.x, scalep.y / 100 * wsize.y));
-			cur->set_layer(tree_parent->get_layer());
-			m_render_list.push_back(cur);
+			cur->set_position(glm::vec2(posp.x / 100 * m_vp_size.x, posp.y / 100 * m_vp_size.y));
+			cur->set_scale(glm::vec2(scalep.x / 100 * m_vp_size.x, scalep.y / 100 * m_vp_size.y));
 			tree_parent->add_tree_element(cur);
-			add_elements(cur->get_elements(), wsize);
+			m_elements.emplace(cur->get_name(), cur);
+			add_elements(cur->get_elements());
 		}
-	}
-
-	void GUI_place::sort_render_list()
-	{
-		quickSort(m_render_list.data(), 0, m_render_list.size() - 1);
 	}
 
 	void GUI_place::on_mouse_press(int x, int y)

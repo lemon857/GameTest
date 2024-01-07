@@ -22,6 +22,7 @@ namespace GUI
         , m_isCenterCoords(isCenterCoord)
         , GUI_element(name)
 	{
+        m_layer = 1;
         m_position_p = pos;
         m_scale_p = scale;
 
@@ -36,11 +37,12 @@ namespace GUI
 		vertexCoordsLayout.addElementLayoutFloat(4, false);
 		m_vertexArray->addBuffer(*m_vertexCoordsBuffer, vertexCoordsLayout);
 	}
-	void TextRenderer::render_text(std::string text, float x, float y, float scale, glm::vec3 color, glm::mat4& prj)
+	void TextRenderer::render_text(std::string text, float x, float y, float scale, glm::vec3 color, float layer, glm::mat4& prj)
 	{ 
         // activate corresponding render state	
         m_shader->use();
-        m_shader->setVec3("textColor", glm::vec3(color.x, color.y, color.z));
+        m_shader->setFloat(SS_LAYER_TEXT_PROP_NAME, layer);
+        m_shader->setVec3(SS_COLOR_PROP_NAME, glm::vec3(color.x, color.y, color.z));
         m_shader->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, prj);
         glActiveTexture(GL_TEXTURE0);  // trash        
         m_vertexArray->bind();
@@ -81,7 +83,7 @@ namespace GUI
     void TextRenderer::on_render_prj(glm::mat4& prj)
     {
         if (!m_isActive) return;
-        render_text(m_text, m_position.x, m_position.y, m_font->get_scale(), m_color, prj);
+        render_text(m_text, m_position.x, m_position.y, m_font->get_scale(), m_color, m_layer + 2, prj);
     }
     void TextRenderer::set_text(std::string text)
     {

@@ -57,16 +57,16 @@ namespace GUI
 		
 		void switch_active() { m_isActive = !m_isActive; set_tree_active(m_isActive); };
 
-		void set_layer(int layer) { m_layer = layer; set_tree_layer(layer); }
+		void set_layer(float layer) { m_layer = layer; set_tree_layer(layer); }
 
 		void add_position(glm::vec2 pos) { m_position += pos; }
 
 		virtual void set_position(glm::vec2 pos) { m_position = pos; }
 		virtual void set_scale(glm::vec2 scale) { m_scale = scale; }
 
-		GUI_element* add_tree_element(GUI_element* element) { m_tree.push_back(element); return std::move(element); }
+		GUI_element* add_tree_element(GUI_element* element) { m_tree.push_back(element); set_tree_active(m_isActive); return std::move(element); }
 
-		void set_tree_layer(int layer)
+		void set_tree_layer(float layer)
 		{
 			for (auto& i : m_tree)
 			{
@@ -109,7 +109,7 @@ namespace GUI
 		bool m_isFocused;
 		bool m_isActive;
 
-		int m_layer;
+		float m_layer;
 
 		std::function<void()> m_on_click;
 		// Real coords

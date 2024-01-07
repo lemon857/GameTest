@@ -39,8 +39,7 @@ namespace GUI
 			glm::vec2 wsize = m_render_cam->get_viewport_size();
 			element->set_position(glm::vec2(posp.x / 100 * wsize.x, posp.y / 100 * wsize.y));
 			element->set_scale(glm::vec2(scalep.x / 100 * wsize.x, scalep.y / 100 * wsize.y));
-			m_render_list.push_back(element);
-			add_elements(element->get_elements(), wsize);
+			add_elements(element->get_elements());
 			m_elements.emplace(element->get_name(), element);
 			return (_Ty*)element;
 		}
@@ -54,8 +53,7 @@ namespace GUI
 			glm::vec2 wsize = m_render_cam->get_viewport_size();
 			element->set_position(glm::vec2(posp.x / 100 * wsize.x, posp.y / 100 * wsize.y));
 			element->set_scale(glm::vec2(scalep.x / 100 * wsize.x, scalep.y / 100 * wsize.y));
-			m_render_list.push_back(element);
-			add_elements(element->get_elements(), wsize);
+			add_elements(element->get_elements());
 			m_elements.emplace(element->get_name(), element);
 			element->set_layer(layer);
 			return (_Ty*)element;
@@ -70,8 +68,7 @@ namespace GUI
 			glm::vec2 wsize = m_render_cam->get_viewport_size();
 			element->set_position(glm::vec2(posp.x / 100 * wsize.x, posp.y / 100 * wsize.y));
 			element->set_scale(glm::vec2(scalep.x / 100 * wsize.x, scalep.y / 100 * wsize.y));
-			m_render_list.push_back(element);
-			add_elements(element->get_elements(), wsize, element);
+			add_elements(element->get_elements(), element);
 			tree_parent->add_tree_element(element);
 			m_elements.emplace(element->get_name(), element);
 			return (_Ty*)element;
@@ -86,8 +83,7 @@ namespace GUI
 			glm::vec2 wsize = m_render_cam->get_viewport_size();
 			element->set_position(glm::vec2(posp.x / 100 * wsize.x, posp.y / 100 * wsize.y));
 			element->set_scale(glm::vec2(scalep.x / 100 * wsize.x, scalep.y / 100 * wsize.y));
-			m_render_list.push_back(element);
-			add_elements(element->get_elements(), wsize, element);
+			add_elements(element->get_elements(), element);
 			tree_parent->add_tree_element(element);
 			m_elements.emplace(element->get_name(), element);
 			element->set_layer(layer);
@@ -97,7 +93,7 @@ namespace GUI
 		template<class _Ty>
 		_Ty* get_element(std::string name) 
 		{
-			std::map<std::string, GUI_element*>::iterator it = m_elements.find(name);
+			std::multimap<std::string, GUI_element*>::iterator it = m_elements.find(name);
 			if (it != m_elements.end())
 			{
 				return (_Ty*)(it->second);
@@ -115,17 +111,18 @@ namespace GUI
 		void set_logging_active(bool active);
 		void set_active(bool active);
 
-		void sort_render_list();
+		static glm::vec2 get_pix_percent(glm::vec2 percent);
+
 	private:
-		void add_elements(std::vector<GUI_element*> elements, glm::vec2 wsize);
-		void add_elements(std::vector<GUI_element*> elements, glm::vec2 wsize, GUI_element* tree_parent);
+		void add_elements(std::vector<GUI_element*> elements);
+		void add_elements(std::vector<GUI_element*> elements, GUI_element* tree_parent);
+
+		static glm::vec2 m_vp_size;
 
 		Camera* m_render_cam;
 		std::shared_ptr<RenderEngine::Material> m_pMaterial;
 		
-		std::vector<GUI_element*> m_render_list;
-
-		std::map<std::string, GUI_element*> m_elements;
+		std::multimap<std::string, GUI_element*> m_elements;
 
 		bool m_isFocus = false;
 		bool m_isActive = false;

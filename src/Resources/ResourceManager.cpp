@@ -594,7 +594,7 @@ std::shared_ptr<GraphicsObject> ResourceManager::load_OBJ_model(const std::strin
 		{
 			LOG_WARN("Caused bug init index buffer");
 			file.close();
-			std::this_thread::sleep_for(std::chrono::milliseconds(10));
+			std::this_thread::sleep_for(std::chrono::milliseconds(500));
 			return nullptr;
 		}
 

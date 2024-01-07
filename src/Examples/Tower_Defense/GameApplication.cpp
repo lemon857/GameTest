@@ -562,6 +562,7 @@ void GameApp::on_key_update(const double delta)
                         m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text("");
                         m_gui->get_element<GUI::TextRenderer>("Type_prop")->set_text("");
                         m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("");
+                        selected_enemy = -1;
                         //map[cur] = true;
                         //m_spawn_towers.push(cur);
                         //buff[0] = 't';
@@ -1379,6 +1380,39 @@ void GameApp::press_button(KeyCode key)
         return;
     }
 
+    if (key == KeyCode::KEY_ESCAPE)
+    {
+        if (m_gui->get_element<GUI::GUI_element>("game_gui_place")->get_active() && !isKeyPressed)
+        {
+            m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(false);
+            if (place_querry != TypeTower::null)
+            {
+                is_active_cursor = is_active_cursor_tmp;
+                place_querry = TypeTower::null;
+                m_gui->get_element<GUI::Button>("Upgrade_place")->set_text("Upgrade");
+                m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("");
+            }
+            isKeyPressed = true;
+        }
+        if (is_gui_active && !isKeyPressed)
+        {
+            m_gui->get_element<GUI::GUI_element>("menu_place")->set_active(false);
+            m_gui->get_element<GUI::GUI_element>("settings_place")->set_active(false);
+            m_gui->get_element<GUI::GUI_element>("multiplayer_menu_place")->set_active(false);
+            is_gui_active = false;
+            isKeyPressed = true;
+        }
+        else if (!isKeyPressed)
+        {
+            m_gui->get_element<GUI::GUI_element>("multiplayer_menu_place")->set_active(false);
+            m_gui->get_element<GUI::GUI_element>("settings_place")->set_active(false);
+            m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(false);
+            is_gui_active = true;
+            m_gui->get_element<GUI::GUI_element>("menu_place")->set_active(true);
+            isKeyPressed = true;
+        }
+    }
+
     if (key == k_debug)
     {
         if (!isKeyPressed)
@@ -1446,130 +1480,7 @@ void GameApp::press_button(KeyCode key)
         }
     }
 
-    switch (key)
-    {
-    /*case KeyCode::KEY_F1:
-        if (is_chat_full_hide && !isKeyPressed)
-        {
-            is_chat_full_hide = false;
-            isKeyPressed = true;
-        }
-        else if (!isKeyPressed)
-        {
-            is_chat_full_hide = true;
-            isKeyPressed = true;
-        }
-        break;*/
-    case KeyCode::KEY_ESCAPE:
-        if (m_gui->get_element<GUI::GUI_element>("game_gui_place")->get_active() && !isKeyPressed)
-        {
-            m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(false);
-            if (place_querry != TypeTower::null)
-            {
-                is_active_cursor = is_active_cursor_tmp;
-                place_querry = TypeTower::null;
-                m_gui->get_element<GUI::Button>("Upgrade_place")->set_text("Upgrade");
-                m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("");
-            }
-            isKeyPressed = true;
-            break;
-        }
-        if (is_gui_active && !isKeyPressed)
-        {
-            m_gui->get_element<GUI::GUI_element>("menu_place")->set_active(false);
-            m_gui->get_element<GUI::GUI_element>("settings_place")->set_active(false);
-            m_gui->get_element<GUI::GUI_element>("multiplayer_menu_place")->set_active(false);
-            is_gui_active = false;
-            isKeyPressed = true;
-        }
-        else if (!isKeyPressed)
-        {
-            m_gui->get_element<GUI::GUI_element>("multiplayer_menu_place")->set_active(false);
-            m_gui->get_element<GUI::GUI_element>("settings_place")->set_active(false);
-            m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(false);
-            is_gui_active = true;
-            m_gui->get_element<GUI::GUI_element>("menu_place")->set_active(true);
-            isKeyPressed = true;
-        }
-        break;
-    //case KeyCode::KEY_L:
-    //    if (is_green_place_active && !isKeyPressed)
-    //    {
-    //        is_green_place_active = false;
-    //        //m_gui->set_logging_active(false);
-    //        isKeyPressed = true;
-    //    }
-    //    else if (!isKeyPressed)
-    //    {
-    //        is_green_place_active = true;
-    //        //m_gui->set_logging_active(true);
-    //        isKeyPressed = true;
-    //    }
-    //    break;
-    //case KeyCode::KEY_M:
-    //    /*if (is_spawn_enemy && !isKeyPressed)
-    //    {
-    //        if (is_spawn_mode)
-    //        {
-    //            m_scene.at(curObj)->getComponent<Highlight>()->set_color(glm::vec3(1.f, 1.f, 0.f));
-    //        }
-    //        else
-    //        {
-    //            m_scene.at(curObj)->getComponent<Highlight>()->set_color(glm::vec3(1.f));
-    //        }
-    //        is_spawn_enemy = false;
-    //        isKeyPressed = true;
-    //    }
-    //    else if (!isKeyPressed)
-    //    {
-    //        if (is_spawn_mode)
-    //        {
-    //            m_scene.at(curObj)->getComponent<Highlight>()->set_color(glm::vec3(0.f, 1.f, 1.f));
-    //        }
-    //        else
-    //        {
-    //            m_scene.at(curObj)->getComponent<Highlight>()->set_color(glm::vec3(1.f, 0.f, 1.f));
-    //        }
-    //        is_spawn_enemy = true;
-    //        isKeyPressed = true;
-    //    }*/
-    //    break;
-    /*case KeyCode::KEY_P:
-        if (!isKeyPressed)
-        {
-            glm::vec3 pos = m_cam->get_position();
-            glm::vec3 rot = m_cam->get_rotation();
-            LOG_INFO("Cam pos: {0} {1} {2}", pos.x, pos.y, pos.z);
-            LOG_INFO("Cam rot: {0} {1} {2}", rot.x, rot.y, rot.z);
-            m_cam->set_position_rotation(glm::vec3(12.5f, 55.f, 30.f), glm::vec3(-75.f, -90.f, 0.f));
-            isKeyPressed = true;
-        }
-        break;*/
-    /*case KeyCode::KEY_R:
-        if (is_line_active && !isKeyPressed)
-        {
-            is_line_active = false;
-            isKeyPressed = true;
-        }
-        else if (!isKeyPressed)
-        {
-            is_line_active = true;
-            isKeyPressed = true;
-        }
-        break;
-    case KeyCode::KEY_G:
-        if (is_grid_active && !isKeyPressed)
-        {
-            is_grid_active = false;
-            isKeyPressed = true;
-        }
-        else if (!isKeyPressed)
-        {
-            is_grid_active = true;
-            isKeyPressed = true;
-        }
-        break;*/
-    }    
+     
 }
 
 void GameApp::init_gui()
@@ -1584,7 +1495,7 @@ void GameApp::init_gui()
 
     glm::vec3 colorText(1.f);
 
-    auto debug = m_gui->add_element<GUI::GUI_element>(1, "debug_place");
+    auto debug = m_gui->add_element<GUI::GUI_element>("debug_place");
 
     m_gui->add_element<GUI::TextRenderer>(debug, ResourceManager::get_font("calibriChat"), ResourceManager::getShaderProgram("textShader"),
         BUILD_NAME, colorText, glm::vec2(0.1f, offset), glm::vec2(0.5f), "version_build", false);
@@ -1621,7 +1532,7 @@ void GameApp::init_gui()
 
     // ------------------------------------------------------ chat ------------------------------------------------------------------------
 
-    auto chat = m_gui->add_element<GUI::GUI_element>("chat_place");
+    auto chat = m_gui->add_element<GUI::GUI_element>(1, "chat_place");
 
     m_gui->add_element<GUI::ChatBox>(chat, new GUI::Sprite(ResourceManager::getMaterial("defaultSprite")),
         glm::vec2(13.f, 36.f), glm::vec2(12.f, 30.f), "Chat", 128, ResourceManager::get_font("calibriChat"), ResourceManager::getShaderProgram("textShader"), glm::vec3(1.f));
@@ -1665,13 +1576,13 @@ void GameApp::init_gui()
 
     // ------------------------------------------------------------ game gui ------------------------------------------------
     offset = 88.f;
-    auto gamegui = m_gui->add_element<GUI::GUI_element>("game_gui_place");
+    auto gamegui = m_gui->add_element<GUI::GUI_element>(1, "game_gui_place");
     auto gamegui1 = m_gui->add_element<GUI::GUI_element>("game_gui1_place");
 
-    m_gui->add_element<GUI::Sprite>(ResourceManager::getMaterial("coin"), "default",
+    m_gui->add_element<GUI::Sprite>(gamegui1, ResourceManager::getMaterial("coin"), "default",
         glm::vec2(87.f, 97.5f), glm::vec2(2.f, 2.f), "g_coins");
 
-    m_gui->add_element<GUI::TextRenderer>(ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
+    m_gui->add_element<GUI::TextRenderer>(gamegui1, -2, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
         std::to_string(g_coins), glm::vec3(1.f), glm::vec2(89.f, 96.f), glm::vec2(1.f), "Coins_count", false);
 
     std::vector<std::string> data = {
@@ -1690,11 +1601,11 @@ void GameApp::init_gui()
      //m_gui->add_element<GUI::ScrollBox>(gamegui, 1, new GUI::Sprite(ResourceManager::getMaterial("defaultSprite")),
      //      glm::vec2(50.f, 50.f), glm::vec2(10.f, 20.f), "Towers", 10, false);
 
-     m_gui->add_element<GUI::Sprite>(gamegui, 1, ResourceManager::getMaterial("defaultSprite"), "default",
-        glm::vec2(89.f, 64.f), glm::vec2(10.f, 30.f), "BG_tows");
+     m_gui->add_element<GUI::Sprite>(gamegui, -2, ResourceManager::getMaterial("defaultSprite"), "default",
+        glm::vec2(89.f, 64.f), glm::vec2(10.f, 30.f), "1.BG_tows");
      
-     m_gui->add_element<GUI::Sprite>(gamegui, 1, ResourceManager::getMaterial("defaultSprite"), "default",
-            glm::vec2(9.f, 75.f), glm::vec2(10.f, 25.f), "BG_props");
+     m_gui->add_element<GUI::Sprite>(gamegui, -2, ResourceManager::getMaterial("defaultSprite"), "default",
+            glm::vec2(9.f, 75.f), glm::vec2(10.f, 25.f), "1.BG_props");
 
      m_gui->add_element<GUI::TextRenderer>(gamegui, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
          "Coast: 0", glm::vec3(1.f), glm::vec2(0.2f, 96.f), glm::vec2(1.f), "Coast_prop", false);
@@ -1780,7 +1691,7 @@ void GameApp::init_gui()
 
     m_gui->add_element<GUI::Button>(gamegui, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, offset), glm::vec2(8.f, 5.f),
-        "Ice", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), "Tower1")->set_click_callback(
+        "Ice", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback(
             [&]()
             {
                 m_gui->get_element<GUI::TextRenderer>("Coast_prop")->set_text("Coast: " + std::to_string(IceTower::p_coast));
@@ -1800,7 +1711,7 @@ void GameApp::init_gui()
     offset -= 11.f;
     m_gui->add_element<GUI::Button>(gamegui, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, offset), glm::vec2(8.f, 5.f),
-        "Archer", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), "Tower2")->set_click_callback(
+        "Archer", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback(
             [&]()
             {
                 m_gui->get_element<GUI::TextRenderer>("Coast_prop")->set_text("Coast: " + std::to_string(ArcherTower::p_coast));
@@ -1820,7 +1731,7 @@ void GameApp::init_gui()
     offset -= 11.f;
     m_gui->add_element<GUI::Button>(gamegui, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, offset), glm::vec2(8.f, 5.f),
-        "Mortar", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), "Tower3")->set_click_callback(
+        "Mortar", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback(
             [&]()
             {
                 m_gui->get_element<GUI::TextRenderer>("Coast_prop")->set_text("Coast: " + std::to_string(MortarTower::p_coast));
@@ -1840,7 +1751,7 @@ void GameApp::init_gui()
     offset -= 11.f;
     m_gui->add_element<GUI::Button>(gamegui, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, offset), glm::vec2(8.f, 5.f),
-        "Executioner", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), "Tower4")->set_click_callback(
+        "Executioner", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback(
             [&]()
             {
                 m_gui->get_element<GUI::TextRenderer>("Coast_prop")->set_text("Coast: " + std::to_string(ExecutionerTower::p_coast));
@@ -1860,7 +1771,7 @@ void GameApp::init_gui()
     offset -= 11.f;
     m_gui->add_element<GUI::Button>(gamegui, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, offset), glm::vec2(8.f, 5.f),
-        "Inferno", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), "Tower5")->set_click_callback(
+        "Inferno", ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback(
             [&]()
             {
                 m_gui->get_element<GUI::TextRenderer>("Coast_prop")->set_text("Coast: " + std::to_string(InfernoTower::p_coast));
@@ -1908,7 +1819,7 @@ void GameApp::init_gui()
         });
 
     // ------------------------------------------------------------ settings ------------------------------------------------
-    auto settings = m_gui->add_element<GUI::GUI_element>("settings_place");
+    auto settings = m_gui->add_element<GUI::GUI_element>(1, "settings_place");
 
     m_gui->add_element<GUI::TextRenderer>(settings, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
         "Volume", glm::vec3(1.f), glm::vec2(89.f, 92.f), glm::vec2(1.f));
@@ -1926,9 +1837,6 @@ void GameApp::init_gui()
     volume = 1.f / 10.f;
 
     SoundEngine::set_volume(volume);
-
-    m_gui->add_element<GUI::Sprite>(settings, 1, ResourceManager::getMaterial("defaultSprite"), "default",
-        glm::vec2(100.f), glm::vec2(100.f), "BG");
 
     m_gui->add_element<GUI::TextRenderer>(settings, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
         "Settings", glm::vec3(1.f), glm::vec2(50.f, 90.f), glm::vec2(1.f));
@@ -2115,9 +2023,13 @@ void GameApp::init_gui()
                 m_gui->get_element<GUI::GUI_element>("menu_place")->set_active(true);
             });
 
+    settings->set_layer(3);
+
+    m_gui->add_element<GUI::Sprite>(settings, 1, ResourceManager::getMaterial("defaultSprite"), "default",
+        glm::vec2(100.f), glm::vec2(100.f), "BG_settings");
     
     // ------------------------------------------------------------ main menu ------------------------------------------------
-    auto menu = m_gui->add_element<GUI::GUI_element>("menu_place");
+    auto menu = m_gui->add_element<GUI::GUI_element>(1, "menu_place");
 
     m_gui->add_element<GUI::TextRenderer>(menu, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
         "Main menu", glm::vec3(1.f), glm::vec2(50.f, 90.f), glm::vec2(1.f));
@@ -2162,18 +2074,17 @@ void GameApp::init_gui()
                     m_gui->get_element<GUI::GUI_element>("menu_place")->set_active(false);
                 });     
 
+    menu->set_layer(3);
+
     m_gui->add_element<GUI::Sprite>(menu, 1, ResourceManager::getMaterial("defaultSprite"), "default",
-        glm::vec2(100.f), glm::vec2(100.f), "BG");
+        glm::vec2(100.f), glm::vec2(100.f), "BG_menu");
 
     // ------------------------------------------------------------ multiplayer menu ------------------------------------------------
 
-    auto multmenu = m_gui->add_element<GUI::GUI_element>("multiplayer_menu_place");
+    auto multmenu = m_gui->add_element<GUI::GUI_element>(1, "multiplayer_menu_place");
 
     m_gui->add_element<GUI::TextRenderer>(multmenu, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
         "Multiplayer menu", glm::vec3(1.f), glm::vec2(50.f, 90.f), glm::vec2(1.f));
-
-    m_gui->add_element<GUI::Sprite>(multmenu, 1, ResourceManager::getMaterial("defaultSprite"), "default",
-        glm::vec2(100.f), glm::vec2(100.f), "BG");
 
     m_gui->add_element<GUI::Button>(multmenu, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, 6.f), glm::vec2(10.f, 5.f),
@@ -2223,6 +2134,11 @@ void GameApp::init_gui()
             }
             });
 
+    multmenu->set_layer(3);
+
+    m_gui->add_element<GUI::Sprite>(multmenu, 1, ResourceManager::getMaterial("defaultSprite"), "default",
+        glm::vec2(100.f), glm::vec2(100.f), "BG_multipmenu");
+
     multmenu->set_active(false);
 
     m_gui->get_element<GUI::GUI_element>("Disconnect")->set_click_callback([&]() {
@@ -2267,8 +2183,6 @@ void GameApp::init_gui()
                 break;
             }
         });  
-
-    m_gui->sort_render_list();
 }
 
 void GameApp::start_game_single()

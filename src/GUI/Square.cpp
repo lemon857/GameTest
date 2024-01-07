@@ -64,7 +64,7 @@ namespace GUI
 			1, 0, 0, 0,
 			0, 1, 0, 0,
 			0, 0, 1, 0,
-			m_position[0], m_position[1], 0, 1);
+			m_position[0], m_position[1], m_layer, 1);
 
 		glm::mat4 model = translateMat * scaleMat;
 

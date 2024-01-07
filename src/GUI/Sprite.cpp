@@ -27,10 +27,10 @@ namespace GUI
 			//| /|
 			//0--3
 			//X --- Y
-			-1.f,-1.f, 0.f,
-			-1.f, 1.f, 0.f,
-			 1.f, 1.f, 0.f,
-			 1.f, -1.f, 0.f
+			-1.f,-1.f, 1.f,
+			-1.f, 1.f, 1.f,
+			 1.f, 1.f, 1.f,
+			 1.f, -1.f, 1.f
 		};
 
 		auto aSubTexture = m_pMaterial->get_texture_ptr()->getSubTexture(initSubTexture);
@@ -94,7 +94,7 @@ namespace GUI
 			1, 0, 0, 0,
 			0, 1, 0, 0,
 			0, 0, 1, 0,
-			m_position[0], m_position[1], 0, 1);
+			m_position[0], m_position[1], m_layer, 1);
 
 		glm::mat4 model = translateMat * scaleMat;
 

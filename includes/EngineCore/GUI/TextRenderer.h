@@ -26,7 +26,7 @@ namespace GUI
 			std::string text, glm::vec3 color, glm::vec2 pos, glm::vec2 scale,
 			std::string name = "default", bool isCenterCoord = true);
 
-		void render_text(std::string text, float x, float y, float scale, glm::vec3 color, glm::mat4& prj);
+		void render_text(std::string text, float x, float y, float scale, glm::vec3 color, float layer, glm::mat4& prj);
 
 		void on_render_prj(glm::mat4& prj);
 

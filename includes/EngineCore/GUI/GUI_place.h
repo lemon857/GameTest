@@ -39,6 +39,7 @@ namespace GUI
 			glm::vec2 wsize = m_render_cam->get_viewport_size();
 			element->set_position(glm::vec2(posp.x / 100 * wsize.x, posp.y / 100 * wsize.y));
 			element->set_scale(glm::vec2(scalep.x / 100 * wsize.x, scalep.y / 100 * wsize.y));
+			m_els.push_back(element);
 			add_elements(element->get_elements());
 			m_elements.emplace(element->get_name(), element);
 			return (_Ty*)element;
@@ -53,6 +54,7 @@ namespace GUI
 			glm::vec2 wsize = m_render_cam->get_viewport_size();
 			element->set_position(glm::vec2(posp.x / 100 * wsize.x, posp.y / 100 * wsize.y));
 			element->set_scale(glm::vec2(scalep.x / 100 * wsize.x, scalep.y / 100 * wsize.y));
+			m_els.push_back(element);
 			add_elements(element->get_elements());
 			m_elements.emplace(element->get_name(), element);
 			element->set_layer(layer);
@@ -68,6 +70,7 @@ namespace GUI
 			glm::vec2 wsize = m_render_cam->get_viewport_size();
 			element->set_position(glm::vec2(posp.x / 100 * wsize.x, posp.y / 100 * wsize.y));
 			element->set_scale(glm::vec2(scalep.x / 100 * wsize.x, scalep.y / 100 * wsize.y));
+			m_els.push_back(element);
 			add_elements(element->get_elements(), element);
 			tree_parent->add_tree_element(element);
 			m_elements.emplace(element->get_name(), element);
@@ -83,6 +86,7 @@ namespace GUI
 			glm::vec2 wsize = m_render_cam->get_viewport_size();
 			element->set_position(glm::vec2(posp.x / 100 * wsize.x, posp.y / 100 * wsize.y));
 			element->set_scale(glm::vec2(scalep.x / 100 * wsize.x, scalep.y / 100 * wsize.y));
+			m_els.push_back(element);
 			add_elements(element->get_elements(), element);
 			tree_parent->add_tree_element(element);
 			m_elements.emplace(element->get_name(), element);
@@ -123,6 +127,8 @@ namespace GUI
 		std::shared_ptr<RenderEngine::Material> m_pMaterial;
 		
 		std::multimap<std::string, GUI_element*> m_elements;
+
+		std::vector<GUI_element*> m_els;
 
 		bool m_isFocus = false;
 		bool m_isActive = false;

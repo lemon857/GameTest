@@ -18,7 +18,7 @@ class SpriteRenderer : public IComponent
 {
 public:
 	SpriteRenderer(std::shared_ptr<RenderEngine::Material> pMaterial,
-		std::string initialSubTexture);
+		std::string initialSubTexture = "default");
 
 	~SpriteRenderer();
 

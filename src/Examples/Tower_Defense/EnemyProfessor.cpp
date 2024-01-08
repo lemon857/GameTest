@@ -2,9 +2,9 @@
 
 #include "Games/Tower_Defense/DamageTable.h"
 
-ProfessorEnemy::ProfessorEnemy(ObjModel* model, Castle* target, std::vector<Target> targets,
-	glm::vec3 pos, std::shared_ptr<RenderEngine::Material> pMaterial) 
-	: BaseEnemy(std::move(model), std::move(target), targets, pos, P_PROFESSOR_COOLDOWN, P_PROFESSOR_VELOCITY, P_PROFESSOR_HP, P_PROFESSOR_DAMAGE, pMaterial,
+ProfessorEnemy::ProfessorEnemy(std::shared_ptr<GraphicsObject> model, std::shared_ptr<RenderEngine::Material> pMaterial,
+	Castle* target, std::vector<Target> targets, glm::vec3 pos, std::shared_ptr<RenderEngine::Material> pMaterialLine)
+	: BaseEnemy(std::move(model), std::move(pMaterial), std::move(target), targets, pos, P_PROFESSOR_COOLDOWN, P_PROFESSOR_VELOCITY, P_PROFESSOR_HP, P_PROFESSOR_DAMAGE, pMaterialLine,
 		glm::vec3(0.5f, 0.1f, 0.8f))
 {
 	m_type_armor = TypeArmor::Chaotic;

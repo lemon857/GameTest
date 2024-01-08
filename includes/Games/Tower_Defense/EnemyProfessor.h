@@ -11,7 +11,8 @@
 class ProfessorEnemy : public BaseEnemy
 {
 public:
-	ProfessorEnemy(ObjModel* model, Castle* target, std::vector<Target> targets, glm::vec3 pos, std::shared_ptr<RenderEngine::Material> pMaterial);
+	ProfessorEnemy(std::shared_ptr<GraphicsObject> model, std::shared_ptr<RenderEngine::Material> pMaterial,
+		Castle* target, std::vector<Target> targets, glm::vec3 pos, std::shared_ptr<RenderEngine::Material> pMaterialLine);
 	~ProfessorEnemy() = default;
 
 	std::string get_description() override { return P_PROFESSOR_DESCRIPTION; }

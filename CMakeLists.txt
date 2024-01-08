@@ -111,6 +111,8 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Sound/miniaudio.h
 	
 	includes/EngineCore/Renderer3D/GraphicsObject.h
+	includes/EngineCore/Renderer3D/ParticleSystem.h
+	includes/EngineCore/Renderer3D/Particle.h
 	
 	includes/EngineCore/System/ShadersSettings.h
 	
@@ -194,6 +196,9 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Renderer/ShaderProgramLayout.cpp
 	src/Renderer/Circle.cpp
 	
+	src/Renderer3D/ParticleSystem.cpp
+	src/Renderer3D/Particle.cpp
+
 	src/Physics/PhysicsEngine.cpp
 	src/Physics/Collider.cpp
 	src/Physics/MoveController.cpp

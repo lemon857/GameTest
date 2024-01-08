@@ -19,10 +19,11 @@ namespace RenderEngine
 class MagicianEnemy : public BaseEnemy
 {
 public:
-	MagicianEnemy(ObjModel* model, Castle* target, std::vector<Target> targets, glm::vec3 pos, std::shared_ptr<RenderEngine::Material> pMaterial, linked_list<BaseEnemy*>* list);
+	MagicianEnemy(std::shared_ptr<GraphicsObject> model, std::shared_ptr<RenderEngine::Material> pMaterial,
+		Castle* target, std::vector<Target> targets, glm::vec3 pos, std::shared_ptr<RenderEngine::Material> pMaterialLine, linked_list<BaseEnemy*>* list);
 	~MagicianEnemy() = default;
 
-	void render() override;
+	void on_render() override;
 	void on_update(const double delta) override;
 
 	std::string get_description() override { return P_MAGICIAN_DESCRIPTION; }

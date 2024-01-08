@@ -21,6 +21,7 @@
 #include "EngineCore/System/Input.h"
 
 #include "EngineCore/Renderer3D/GraphicsObject.h"
+#include "EngineCore/Renderer3D/ParticleSystem.h"
 
 #include "EngineCore/System/Timer.h"
 
@@ -151,14 +152,9 @@ bool GameApp::init()
     m_scene.add_object<DirectionalLight>(names);
     m_scene.add_object<Grid>(glm::vec3(size_x, 0.5f, size_y), glm::vec2(1.f), size_x, size_y, glm::vec4(1.f, 1.f, 1.f, 0.5f), ResourceManager::getMaterial("default"));
     m_scene.add_object<EmptyObject>();
-    m_scene.add_object<EmptyObject>();
 
     m_scene.at(curObj)->addComponent<Transform>();
     m_scene.at(curObj)->addComponent<Highlight>(ResourceManager::getMaterial("default"), true);
-
-    m_scene.at(4)->addComponent<Transform>();
-    m_scene.at(4)->addComponent<Highlight>(ResourceManager::getMaterial("default"), true, false, glm::vec3(1.f, 0.f, 0.f));
-    m_scene.at(4)->getComponent<Highlight>()->set_active(false);
 
     const auto& transform = m_scene.at(0)->getComponent<Transform>();
 
@@ -624,7 +620,20 @@ void GameApp::on_key_update(const double delta)
                             {
                                 intrs = true;
                                 selected_enemy = i;
-                                break;
+                            }
+                        }
+                        for (size_t i = 0; i < m_enemies_broken.size(); i++)
+                        {
+                            if (m_enemies_broken.at(i) == nullptr) continue;
+                            glm::vec3 p = m_enemies_broken.at(i)->get_pos();
+                            if (((p.x - pos.x) * (p.x - pos.x)) + ((p.z - pos.z) * (p.z - pos.z)) < 9)
+                            {
+                                m_psystems.push_back(new ParticleSystem(m_enemies_broken[i]->get_pos(), glm::vec3(0.5f),
+                                    glm::vec3(0.f, 0.5f, 0.f), glm::vec3(0.f, 0.4f, 0.f), glm::vec3(2.f, 10.f, 3.f), glm::vec3(0.f, 7.f, 2.f),
+                                    m_enemies_broken[i]->get_reward(), 5000, 1.f, ResourceManager::getMaterial("coin")));
+                                m_enemies_broken[i]->destroy();
+                                selected_enemy = -1;
+                                intrs = false;
                             }
                         }
                         if (intrs)
@@ -818,6 +827,7 @@ void GameApp::on_key_update(const double delta)
 void GameApp::on_update(const double delta)
 {       
     if (is_game_paused) return;
+
     if (is_special_move)
     {
         m_cam->add_movement_and_rotation(movDel, rotDel);
@@ -862,7 +872,19 @@ void GameApp::on_update(const double delta)
     for (size_t i = 0; i < m_scene.get_list().size(); i++)
     {   
         m_scene.at(i)->update(delta);
-    }    
+    }   
+
+    for (size_t i = 0; i < m_psystems.size(); i++)
+    {
+        if (m_psystems.at(i) == nullptr) continue;
+        if (m_psystems.at(i)->is_destroyed())
+        {
+            delete m_psystems.at(i);
+            m_psystems.remove(i);
+            continue;
+        }
+        m_psystems.at(i)->update(delta);
+    }
 
     m_circle->add_rot(glm::vec3(0.f, 0.01f * delta, 0.f));
 
@@ -969,27 +991,27 @@ void GameApp::on_update(const double delta)
             switch (m_spawn_enemies.front().type)
             {
             case TypeEnemy::Monkey:
-                m_enemies.push_back(new MonkeyEnemy(new ObjModel(ResourceManager::get_OBJ_model("monkey"), ResourceManager::getMaterial("monkey")),
+                m_enemies.push_back(new MonkeyEnemy(ResourceManager::get_OBJ_model("monkey"), ResourceManager::getMaterial("monkey"),
                     m_main_castle, targets,
                     glm::vec3(pos.x + (rand() % 100 - 50) / 100.f, pos.y, pos.z + (rand() % 100 - 50) / 100.f), ResourceManager::getMaterial("default")));
                 break;
             case TypeEnemy::Magician:
-                    m_enemies.push_back(new MagicianEnemy(new ObjModel(ResourceManager::get_OBJ_model("magician"), ResourceManager::getMaterial("magician")),
+                    m_enemies.push_back(new MagicianEnemy(ResourceManager::get_OBJ_model("magician"), ResourceManager::getMaterial("magician"),
                         m_main_castle, targets,
                         glm::vec3(pos.x + (rand() % 100 - 50) / 100.f, pos.y, pos.z + (rand() % 100 - 50) / 100.f), ResourceManager::getMaterial("default"), &m_enemies));
                     break;
             case TypeEnemy::Robot:
-                m_enemies.push_back(new RobotEnemy(new ObjModel(ResourceManager::get_OBJ_model("robot"), ResourceManager::getMaterial("robot")),
+                m_enemies.push_back(new RobotEnemy(ResourceManager::get_OBJ_model("robot"), ResourceManager::getMaterial("robot"),
                     m_main_castle, targets,
                     glm::vec3(pos.x + (rand() % 100 - 50) / 100.f, pos.y, pos.z + (rand() % 100 - 50) / 100.f), ResourceManager::getMaterial("default")));
                 break;
             case TypeEnemy::Bug:
-                m_enemies.push_back(new BugEnemy(new ObjModel(ResourceManager::get_OBJ_model("spider"), ResourceManager::getMaterial("spider")),
+                m_enemies.push_back(new BugEnemy(ResourceManager::get_OBJ_model("spider"), ResourceManager::getMaterial("spider"),
                     m_main_castle, targets,
                     glm::vec3(pos.x + (rand() % 100 - 50) / 100.f, pos.y, pos.z + (rand() % 100 - 50) / 100.f), ResourceManager::getMaterial("default")));
                 break;
             case TypeEnemy::Professor:
-                m_enemies.push_back(new ProfessorEnemy(new ObjModel(ResourceManager::get_OBJ_model("professor"), ResourceManager::getMaterial("professor")),
+                m_enemies.push_back(new ProfessorEnemy(ResourceManager::get_OBJ_model("professor"), ResourceManager::getMaterial("professor"),
                     m_main_castle, targets,
                     glm::vec3(pos.x + (rand() % 100 - 50) / 100.f, pos.y, pos.z + (rand() % 100 - 50) / 100.f), ResourceManager::getMaterial("default")));
                 break;
@@ -1020,6 +1042,30 @@ void GameApp::on_update(const double delta)
             curTower.tow->update(delta);
         }
 
+        for (size_t i = 0; i < m_enemies_broken.size(); i++)
+        {
+            if (m_enemies_broken[i] == nullptr) continue;
+            if (m_enemies_broken[i]->is_destroy())
+            {
+                //if (is_funny_spawn_mode)
+                //{
+                //    int add = rand() % 10;
+                //    unsigned int spawn = 841 + add;
+                //    //m_spawn_enemies.push({ spawn,  });
+                //}
+                countEnemiesPerm--;
+                g_coins += m_enemies_broken[i]->get_reward();
+                m_gui->get_element<GUI::TextRenderer>("Coins_count")->set_text(std::to_string(g_coins));
+                delete m_enemies_broken[i];
+                m_enemies_broken.remove(i);
+                countKills++;
+                m_gui->get_element<GUI::TextRenderer>("kills")->set_text("Kills: " + std::to_string(countKills));
+                m_gui->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));
+                continue;
+            }
+            m_enemies_broken[i]->update(delta);
+        }
+
         for (size_t i = 0; i < m_enemies.size(); i++)
         {
             if (m_enemies[i] == nullptr) continue;
@@ -1029,25 +1075,10 @@ void GameApp::on_update(const double delta)
                 {
                     if (curTower.tow->get_target() == m_enemies[i]) curTower.tow->set_target(nullptr);
                 }
-            }
-            if (m_enemies[i]->is_destroy())
-            {
-                //if (is_funny_spawn_mode)
-                //{
-                //    int add = rand() % 10;
-                //    unsigned int spawn = 841 + add;
-                //    //m_spawn_enemies.push({ spawn,  });
-                //}
-                countEnemiesPerm--;
-                g_coins += m_enemies[i]->get_reward();
-                m_gui->get_element<GUI::TextRenderer>("Coins_count")->set_text(std::to_string(g_coins));
-                delete m_enemies[i];
+                m_enemies_broken.push_back(m_enemies[i]);
                 m_enemies.remove(i);
-                countKills++;
-                m_gui->get_element<GUI::TextRenderer>("kills")->set_text("Kills: " + std::to_string(countKills));
-                m_gui->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));
                 continue;
-            }
+            }            
             m_enemies[i]->update(delta);
         }
     }    
@@ -1202,9 +1233,14 @@ void GameApp::on_render(const double delta)
     ResourceManager::getShaderProgram("default3DShader")->use();
     ResourceManager::getShaderProgram("default3DShader")->setVec3("cam_position", m_cam->get_position());
 
-    m_circle->render();
+    m_circle->render();  
 
-    m_scene.at(4)->getComponent<Transform>()->set_position(parts[cur_player]);
+    for (size_t i = 0; i < m_psystems.size(); i++)
+    {
+        m_psystems.at(i)->render(m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+    }
+
+    //m_scene.at(4)->getComponent<Transform>()->set_position(parts[cur_player]);
     if (is_line_active)
     {
         for (int i = 0; i < targets.size() - 1; i++)
@@ -1218,10 +1254,17 @@ void GameApp::on_render(const double delta)
     for (size_t i = 0; i < m_scene.get_list().size(); i++)
     {
         MeshRenderer* mesh = m_scene.at(i)->getComponent<MeshRenderer>();
+        SpriteRenderer* sprite = m_scene.at(i)->getComponent<SpriteRenderer>();
         if (mesh != nullptr)
         {            
             std::shared_ptr<RenderEngine::ShaderProgram> shader = mesh->get_material_ptr()->get_shader_ptr();
             shader->use();            
+            shader->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
+        }
+        else if (sprite != nullptr)
+        {
+            std::shared_ptr<RenderEngine::ShaderProgram> shader = sprite->get_material_ptr()->get_shader_ptr();
+            shader->use();
             shader->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
         }
         if (i != 2 && i != curObj) m_scene.at(i)->render();
@@ -1238,6 +1281,11 @@ void GameApp::on_render(const double delta)
     {
         if (m_enemies[i] == nullptr) continue;
         m_enemies[i]->render();
+    }
+    for (size_t i = 0; i < m_enemies_broken.size(); i++)
+    {
+        if (m_enemies_broken[i] == nullptr) continue;
+        m_enemies_broken[i]->render();
     }
 
     // fps counter

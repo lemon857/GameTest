@@ -2,6 +2,9 @@
 
 #include "Games/Tower_Defense/Target.h"
 
+#include "EngineCore/Renderer3D/GraphicsObject.h"
+#include "EngineCore/IGameObject.h"
+
 #include <glm/vec3.hpp>
 
 #include <string>
@@ -9,7 +12,6 @@
 #include <vector>
 
 class Castle;
-class ObjModel;
 class HealthBar;
 class BaseEffect;
 enum class TypeArmor;
@@ -19,27 +21,33 @@ namespace RenderEngine
 	class Material;
 }
 
-class BaseEnemy
+class BaseEnemy : public IGameObject
 {
 public:
-	BaseEnemy(ObjModel* model, Castle* target, std::vector<Target> targets, glm::vec3 pos, const double cooldown, const double velocity,
-		const unsigned int maxHP, const double damage, std::shared_ptr<RenderEngine::Material> pMaterial, glm::vec3 color = glm::vec3(1.f, 0.f, 0.f));
+	BaseEnemy(std::shared_ptr<GraphicsObject> model, std::shared_ptr<RenderEngine::Material> pMaterial, Castle* target, std::vector<Target> targets, glm::vec3 pos, const double cooldown, const double velocity,
+		const unsigned int maxHP, const double damage, std::shared_ptr<RenderEngine::Material> pMaterialLine, glm::vec3 color = glm::vec3(1.f, 0.f, 0.f));
 	~BaseEnemy();
 
-	void update(const double delta);
+	void update(const double delta) override;
 
-	virtual void render();
+	void render() override;
+
+	virtual void on_render() {};
 
 	virtual void on_update(const double delta) {};
 
 	void damage(const double damage_hp);
 	
+	void destroy() { m_isDestroyed = true; }
+
 	bool is_destroy() { return m_isDestroyed; }
 	bool is_broken() { return m_isBroken; }
 
 	double get_cooldown() { return m_cooldown / 1000.0; }
 	double get_vel() { return m_velocity * 1000; }
 	void set_vel(const double vel) { if (vel >= 0) m_velocity = vel; else m_velocity = 0; }
+
+	void set_scale(glm::vec3 scale);
 
 	glm::vec3 get_pos();
 
@@ -67,12 +75,13 @@ protected:
 	int curtarget;
 	TypeArmor m_type_armor;
 	Castle* m_target_castle;
-	ObjModel* m_model;
 	HealthBar* m_bar;
 	HealthBar* m_bar_effect;
 	std::unique_ptr<BaseEffect> m_effect;
 	glm::vec3 m_last_dir;
 	double m_rotation_break;
+
+	IGameObject* m_obj;
 
 	double m_hp;
 	double m_max_hp;

@@ -4,7 +4,8 @@
 #include <string>
 #include <map>
 
-#include "IComponent.h"
+#include "EngineCore/IComponent.h"
+#include "EngineCore/System/List.h"
 
 class IGameObject
 {
@@ -25,6 +26,7 @@ public:
 		IComponent* component = (IComponent*)(new _Ty(std::forward<_Types>(_Args)...));
 		component->set_target_object(this);
 		m_components.emplace(typeid(_Ty).name(), component);
+		m_com_render.push_back(component);
 		return (_Ty*)component;
 	}
 
@@ -46,6 +48,7 @@ public:
 		{
 			if (pos->first == typeid(_Ty).name())
 			{
+				m_com_render.remove(pos->second);
 				delete pos->second;
 				pos = m_components.erase(pos);
 			}
@@ -55,9 +58,8 @@ public:
 			}
 		}
 	}
-
 protected:
-	IGameObject(const std::string name)
+	IGameObject(const std::string name = "default")
 		: m_name(name)
 	{
 
@@ -76,14 +78,15 @@ protected:
 	};
 	void renderComponents()
 	{
-		for (auto curCom : m_components)
+		for (int i = 0; i < m_com_render.size(); i++)
 		{
-			curCom.second->render();
+			m_com_render.at(i)->render();
 		}
 	};
 
 private:
 	typedef std::map<std::string, IComponent*> componentsMap;
 	componentsMap m_components;
+	linked_list<IComponent*> m_com_render;
 	std::string m_name;
 };

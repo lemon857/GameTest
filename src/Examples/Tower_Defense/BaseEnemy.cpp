@@ -3,25 +3,29 @@
 #include "Games/Tower_Defense/Castle.h"
 #include "Games/Tower_Defense/BaseEffect.h"
 #include "Games/Tower_Defense/HealthBar.h"
-#include "EngineCore/Meshes/ObjModel.h"
-#include "EngineCore/Components/Transform.h"
-#include "EngineCore/System/SysFunc.h"
 #include "Games/Tower_Defense/DamageTable.h"
+
+#include "EngineCore/Renderer3D/GraphicsObject.h"
+#include "EngineCore/Renderer/Material.h"
+
+#include "EngineCore/Components/Transform.h"
+#include "EngineCore/Components/MeshRenderer.h"
+#include "EngineCore/System/SysFunc.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/vector_angle.hpp>
 
 #define HALF_PLANE 30.f
 
-BaseEnemy::BaseEnemy(ObjModel* model, Castle* target, std::vector<Target> targets, glm::vec3 pos, const double cooldown, const double velocity, const unsigned int hp, const double damage,
-	std::shared_ptr<RenderEngine::Material> pMaterial, glm::vec3 color)
+BaseEnemy::BaseEnemy(std::shared_ptr<GraphicsObject> model, std::shared_ptr<RenderEngine::Material> pMaterial, 
+	Castle* target, std::vector<Target> targets, glm::vec3 pos, const double cooldown, const double velocity, const unsigned int hp, const double damage,
+	std::shared_ptr<RenderEngine::Material> pMaterialLine, glm::vec3 color)
 	: m_cooldown(cooldown * 1000)
 	, m_target_castle(std::move(target))
 	, m_cur_time(0)
 	, m_velocity(velocity * 0.001)
-	, m_model(std::move(model))
-	, m_bar(new HealthBar(pMaterial, pos + glm::vec3(0.f, 2.5f, 0.f), 25, 2, hp, glm::vec3(1.f), color))
-	, m_bar_effect(new HealthBar(pMaterial, pos + glm::vec3(0.f, 4.5f, 0.f), 25, 2, hp, glm::vec3(1.f), glm::vec3(1.f)))
+	, m_bar(new HealthBar(pMaterialLine, pos + glm::vec3(0.f, 2.5f, 0.f), 25, 2, hp, glm::vec3(1.f), color))
+	, m_bar_effect(new HealthBar(pMaterialLine, pos + glm::vec3(0.f, 4.5f, 0.f), 25, 2, hp, glm::vec3(1.f), glm::vec3(1.f)))
 	, m_isDestroyed(false)
 	, m_isBroken(false)
 	, m_has_effect(false)
@@ -34,7 +38,8 @@ BaseEnemy::BaseEnemy(ObjModel* model, Castle* target, std::vector<Target> target
 	, m_targets(targets)
 	, m_distance_attack(2.7f)
 {
-	m_model->addComponent<Transform>(pos, glm::vec3(1.f));
+	addComponent<Transform>(pos, glm::vec3(1.f));
+	addComponent<MeshRenderer>(model, pMaterial);
 	for (size_t i = 0; i < m_targets.size(); i++)
 	{
 		m_targets[i].set_pos(m_targets[i].get_pos() + glm::vec3((float)sysfunc::get_random(-25, 25) / 10.f, 0.f, (float)sysfunc::get_random(-25, 25) / 10.f));
@@ -59,31 +64,27 @@ void BaseEnemy::update(const double delta)
 			m_rotation_break += 0.04 * delta;
 			if (-m_last_dir.x > m_last_dir.z)
 			{
-				m_model->getComponent<Transform>()->add_rotation(glm::vec3(0.04 * delta, 0.f, 0.f));
+				getComponent<Transform>()->add_rotation(glm::vec3(0.04 * delta, 0.f, 0.f));
 			}										
 			else if (m_last_dir.x > m_last_dir.z)	
 			{										
-				m_model->getComponent<Transform>()->add_rotation(glm::vec3(-0.04 * delta, 0.f, 0.f));
+				getComponent<Transform>()->add_rotation(glm::vec3(-0.04 * delta, 0.f, 0.f));
 			}										
 			else if (m_last_dir.z > m_last_dir.x)	
 			{										
-				m_model->getComponent<Transform>()->add_rotation(glm::vec3(0.f, 0.f, -0.04 * delta));
+				getComponent<Transform>()->add_rotation(glm::vec3(0.f, 0.f, -0.04 * delta));
 			}										
 			else if (-m_last_dir.z > m_last_dir.x)	
 			{										
-				m_model->getComponent<Transform>()->add_rotation(glm::vec3(0.f, 0.f, 0.04 * delta));
+				getComponent<Transform>()->add_rotation(glm::vec3(0.f, 0.f, 0.04 * delta));
 			}
-		}
-		else
-		{
-			m_isDestroyed = true;
 		}
 		return;
 	}
 	on_update(delta);
 	if (curtarget < m_targets.size())
 	{
-		m_last_dir = m_targets[curtarget].get_pos() - m_model->getComponent<Transform>()->get_position();
+		m_last_dir = m_targets[curtarget].get_pos() - getComponent<Transform>()->get_position();
 		if (sqrt(m_last_dir.x * m_last_dir.x + m_last_dir.z * m_last_dir.z) > 0.1f)
 		{
 			//if (m_model->getComponent<Transform>()->get_position().x > HALF_PLANE)
@@ -94,15 +95,15 @@ void BaseEnemy::update(const double delta)
 				if (m_last_dir.x > 0) add = 180.f;
 			}
 			else if (abs(m_last_dir.z) > abs(m_last_dir.x)) add = 0.f;
-			m_model->getComponent<Transform>()->set_rotation(glm::vec3(0.f, add + glm::degrees(glm::angle(glm::normalize(m_last_dir), glm::vec3(0.f, 0.f, -1.f))), 0.f));
+			getComponent<Transform>()->set_rotation(glm::vec3(0.f, add + glm::degrees(glm::angle(glm::normalize(m_last_dir), glm::vec3(0.f, 0.f, -1.f))), 0.f));
 			//}
 			//else
 			//{
 			//	m_model->getComponent<Transform>()->set_rotation(glm::vec3(0.f, -1 * glm::degrees(glm::angle(glm::normalize(a), glm::vec3(0.f, 0.f, -1.f))), 0.f));
 			//}
-			m_model->getComponent<Transform>()->add_position(glm::normalize(m_last_dir)* (float)delta* (float)m_velocity);
-			m_bar->set_pos(m_model->getComponent<Transform>()->get_position() + glm::vec3(0.f, 2.5f, 0.f));
-			m_bar_effect->set_pos(m_model->getComponent<Transform>()->get_position() + glm::vec3(0.f, 4.5f, 0.f));
+			getComponent<Transform>()->add_position(glm::normalize(m_last_dir)* (float)delta* (float)m_velocity);
+			m_bar->set_pos(getComponent<Transform>()->get_position() + glm::vec3(0.f, 2.5f, 0.f));
+			m_bar_effect->set_pos(getComponent<Transform>()->get_position() + glm::vec3(0.f, 4.5f, 0.f));
 		}
 		else
 		{
@@ -111,7 +112,7 @@ void BaseEnemy::update(const double delta)
 	}
 	else if (curtarget == m_stop_target_walking)
 	{
-		m_last_dir = m_target_castle->get_pos() - m_model->getComponent<Transform>()->get_position();
+		m_last_dir = m_target_castle->get_pos() - getComponent<Transform>()->get_position();
 		if (sqrt(m_last_dir.x * m_last_dir.x + m_last_dir.z * m_last_dir.z) > m_distance_attack)
 		{
 			//if (m_model->getComponent<Transform>()->get_position().x > HALF_PLANE)
@@ -122,15 +123,15 @@ void BaseEnemy::update(const double delta)
 				if (m_last_dir.x > 0) add = 180.f;
 			}
 			else if (abs(m_last_dir.z) > abs(m_last_dir.x)) add = 0.f;
-			m_model->getComponent<Transform>()->set_rotation(glm::vec3(0.f, add + glm::degrees(glm::angle(glm::normalize(m_last_dir), glm::vec3(0.f, 0.f, -1.f))), 0.f));
+			getComponent<Transform>()->set_rotation(glm::vec3(0.f, add + glm::degrees(glm::angle(glm::normalize(m_last_dir), glm::vec3(0.f, 0.f, -1.f))), 0.f));
 			//}
 			//else
 			//{
 			//	m_model->getComponent<Transform>()->set_rotation(glm::vec3(0.f, -1 * glm::degrees(glm::angle(glm::normalize(a), glm::vec3(0.f, 0.f, -1.f))), 0.f));
 			//}
-			m_model->getComponent<Transform>()->add_position(glm::normalize(m_last_dir) * (float)delta * (float)m_velocity);
-			m_bar->set_pos(m_model->getComponent<Transform>()->get_position() + glm::vec3(0.f, 2.5f, 0.f));
-			m_bar_effect->set_pos(m_model->getComponent<Transform>()->get_position() + glm::vec3(0.f, 4.5f, 0.f));
+			getComponent<Transform>()->add_position(glm::normalize(m_last_dir) * (float)delta * (float)m_velocity);
+			m_bar->set_pos(getComponent<Transform>()->get_position() + glm::vec3(0.f, 2.5f, 0.f));
+			m_bar_effect->set_pos(getComponent<Transform>()->get_position() + glm::vec3(0.f, 4.5f, 0.f));
 		}
 		else
 		{
@@ -152,12 +153,13 @@ void BaseEnemy::update(const double delta)
 		}
 		else m_effect->update(delta);
 	}
+	updateComponents(delta);
 }
 
 void BaseEnemy::render()
 {
 	if (m_isDestroyed) return;
-	m_model->update(0);
+	renderComponents();
 	if (m_isBroken) return;
 	m_bar->render();
 	if (m_effect != nullptr)
@@ -165,6 +167,7 @@ void BaseEnemy::render()
 		m_bar_effect->set_value(m_effect->get_live_time());
 		m_bar_effect->render();
 	}
+	on_render();
 }
 
 void BaseEnemy::damage(const double damage_hp)
@@ -179,9 +182,14 @@ void BaseEnemy::damage(const double damage_hp)
 	m_bar->set_value(m_hp);
 }
 
+void BaseEnemy::set_scale(glm::vec3 scale)
+{
+	getComponent<Transform>()->set_scale(scale);
+}
+
 glm::vec3 BaseEnemy::get_pos()
 {
-	return m_model->getComponent<Transform>()->get_position();
+	return getComponent<Transform>()->get_position();
 }
 
 void BaseEnemy::set_effect(std::unique_ptr<BaseEffect> effect)

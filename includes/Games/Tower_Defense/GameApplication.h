@@ -40,6 +40,8 @@ struct INIregionUSER : BaseINIregion
 	std::string get_str_data() override;
 };
 
+class ParticleSystem;
+
 enum class KeyCode;
 
 namespace GUI
@@ -133,6 +135,7 @@ private:
 	//Castle* m_adv_castle;
 
 	linked_list<BaseEnemy*> m_enemies;
+	linked_list<BaseEnemy*> m_enemies_broken;
 	//linked_list<BaseEnemy*> m_enemies_self;
 
 	std::vector<Tower> m_towers;
@@ -146,6 +149,8 @@ private:
 
 	std::queue<SpawnEnemy> m_spawn_enemies;
 	//std::queue<unsigned int> m_spawn_enemies_self;
+
+	linked_list<ParticleSystem*> m_psystems;
 
 	Camera* m_cam;
 

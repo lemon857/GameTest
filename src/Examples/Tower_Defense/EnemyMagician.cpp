@@ -3,13 +3,12 @@
 #include "Games/Tower_Defense/DamageTable.h"
 #include "Games/Tower_Defense/HealthEffect.h"
 #include "Games/Tower_Defense/HealthBar.h"
-#include "EngineCore/Meshes/ObjModel.h"
-#include "EngineCore/Components/Transform.h"
+
 #include "EngineCore/Renderer/Circle.h"
 
-MagicianEnemy::MagicianEnemy(ObjModel* model, Castle* target, std::vector<Target> targets, glm::vec3 pos,
-	std::shared_ptr<RenderEngine::Material> pMaterial, linked_list<BaseEnemy*>* list)
-	: BaseEnemy(std::move(model), std::move(target), targets, pos, P_MAGICIAN_COOLDOWN, P_MAGICIAN_VELOCITY, P_MAGICIAN_HP, P_MAGICIAN_DAMAGE, pMaterial,
+MagicianEnemy::MagicianEnemy(std::shared_ptr<GraphicsObject> model, std::shared_ptr<RenderEngine::Material> pMaterial,
+	Castle* target, std::vector<Target> targets, glm::vec3 pos, std::shared_ptr<RenderEngine::Material> pMaterialLine, linked_list<BaseEnemy*>* list)
+	: BaseEnemy(std::move(model), std::move(pMaterial), std::move(target), targets, pos, P_MAGICIAN_COOLDOWN, P_MAGICIAN_VELOCITY, P_MAGICIAN_HP, P_MAGICIAN_DAMAGE, pMaterialLine,
 		glm::vec3(0.7f, 0.3f, 0.8f))
 	, m_isActiveCircle(false)
 	, m_cur_time_cir(0)
@@ -20,22 +19,14 @@ MagicianEnemy::MagicianEnemy(ObjModel* model, Castle* target, std::vector<Target
 {
 	m_type_armor = TypeArmor::Magic;
 	m_reward = 6;
-	m_model->getComponent<Transform>()->set_scale(glm::vec3(0.5f));
-	m_health = new RenderEngine::Circle(pMaterial, pos - glm::vec3(0.f, 100.f, 0.f), glm::vec3(1.f), glm::vec3(0.f),
+	set_scale(glm::vec3(0.5f));
+	m_health = new RenderEngine::Circle(pMaterialLine, pos - glm::vec3(0.f, 100.f, 0.f), glm::vec3(1.f), glm::vec3(0.f),
 		glm::vec4(0.f, 1.f, 0.3f, 0.7f), P_MAGICIAN_RADIUS_TREAT, 90, 3);
 }
 
-void MagicianEnemy::render()
+void MagicianEnemy::on_render()
 {
-	if (m_isDestroyed) return;
-	m_model->update(0);
-	m_bar->render();
-	if (m_effect != nullptr)
-	{
-		m_bar_effect->set_value(m_effect->get_live_time());
-		m_bar_effect->render();
-	}
-	m_health->render();
+	m_health->render();	
 }
 
 void MagicianEnemy::on_update(const double delta)

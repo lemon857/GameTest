@@ -11,7 +11,8 @@
 class RobotEnemy : public BaseEnemy
 {
 public:
-	RobotEnemy(ObjModel* model, Castle* target, std::vector<Target> targets, glm::vec3 pos, std::shared_ptr<RenderEngine::Material> pMaterial);
+	RobotEnemy(std::shared_ptr<GraphicsObject> model, std::shared_ptr<RenderEngine::Material> pMaterial,
+		Castle* target, std::vector<Target> targets, glm::vec3 pos, std::shared_ptr<RenderEngine::Material> pMaterialLine);
 	~RobotEnemy() = default;
 
 	std::string get_description() override { return P_ROBOT_DESCRIPTION; }

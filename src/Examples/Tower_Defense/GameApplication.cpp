@@ -13,6 +13,8 @@
 #include "EngineCore/Engine/Window.h"
 
 #include "EngineCore/Resources/ResourceManager.h"
+#include "EngineCore/Resources/RegistryManager.h"
+
 #include "EngineCore/Renderer/Renderer.h"
 #include "EngineCore/Renderer/Material.h"
 
@@ -77,6 +79,8 @@ GameApp::~GameApp()
 
 bool GameApp::init()
 {
+    RegistryManager::set_reg_path("Tower_defense\\");
+
     LOG_INFO("Your number: {0}", sysfunc::get_random(0, 100000));
 
     lock_key_update = new bool(false);

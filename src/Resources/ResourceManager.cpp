@@ -10,6 +10,7 @@
 #include "EngineCore/Renderer/ShaderProgramLayout.h"
 #include "EngineCore/System/Log.h"
 #include "EngineCore/Resources/Scene.h"
+#include "EngineCore/Resources/LanguagePack.h"
 #include "EngineCore/GUI/Font.h"
 #include "EngineCore/System/ImageLoader.h"
 
@@ -37,6 +38,7 @@ ResourceManager::OBJMap ResourceManager::m_obj_models;
 ResourceManager::FontsMap ResourceManager::m_fonts_map;
 ResourceManager::SoundsMap ResourceManager::m_sounds_map;
 ResourceManager::UniqueSoundsMap ResourceManager::m_uSounds_map;
+ResourceManager::LangPacksMap ResourceManager::m_lang_packs_map;
 //ResourceManager::SpriteRenderersMap ResourceManager::m_SpriteRenderers;
 //ResourceManager::GraphObjMap ResourceManager::m_graph_objs;
 //ResourceManager::AnimatorsMap ResourceManager::m_animators;
@@ -169,6 +171,16 @@ bool ResourceManager::load_JSON_resources(const std::string & JSONpath)
 			{
 
 			}
+		}
+	}
+	auto langIt = doc.FindMember("languages");
+	if (langIt != doc.MemberEnd())
+	{
+		for (const auto& currentLang : langIt->value.GetArray())
+		{
+			const std::string name = currentLang["name"].GetString();
+			const std::string path = currentLang["path"].GetString();
+			load_lang_pack(path, name);
 		}
 	}
 	LOG_INFO("Loadind data from JSON file complete");
@@ -616,6 +628,23 @@ std::shared_ptr<GraphicsObject> ResourceManager::get_OBJ_model(const std::string
 		return it->second;
 	}
 	LOG_ERROR("Can't find OBJ model: {0}", name);
+	return nullptr;
+}
+std::shared_ptr<LanguagePack> ResourceManager::load_lang_pack(std::string relativePath, std::string pack_name)
+{
+	std::shared_ptr<LanguagePack> pack = std::make_shared<LanguagePack>();
+	pack->load_pack(m_path + "/" + relativePath);
+	m_lang_packs_map.emplace(pack_name, pack);
+	return pack;
+}
+std::shared_ptr<LanguagePack> ResourceManager::get_lang_pack(std::string pack_name)
+{
+	LangPacksMap::const_iterator it = m_lang_packs_map.find(pack_name);
+	if (it != m_lang_packs_map.end())
+	{
+		return it->second;
+	}
+	LOG_ERROR("Can't find lang pack: {0}", pack_name);
 	return nullptr;
 }
 bool ResourceManager::start_with(std::string& line, const char* text)

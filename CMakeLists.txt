@@ -85,6 +85,7 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Resources/stb_image.h
 	includes/EngineCore/Resources/Scene.h
 	includes/EngineCore/Resources/RegistryManager.h
+	includes/EngineCore/Resources/LanguagePack.h
 	
 	includes/EngineCore/Renderer/ShaderProgram.h
 	includes/EngineCore/Renderer/Texture2D.h
@@ -181,6 +182,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Resources/ResourceManager.cpp
 	src/Resources/Scene.cpp
 	src/Resources/RegistryManager.cpp	
+	src/Resources/LanguagePack.cpp	
 	
 	src/Renderer/ShaderProgram.cpp
 	src/Renderer/Texture2D.cpp

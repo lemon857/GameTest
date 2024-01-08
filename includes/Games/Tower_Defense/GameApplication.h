@@ -41,6 +41,7 @@ struct INIregionUSER : BaseINIregion
 };
 
 class ParticleSystem;
+class LanguagePack;
 
 enum class KeyCode;
 
@@ -237,6 +238,8 @@ private:
 	std::vector<std::string> chat_last; // need optimization
 
 	size_t cur_chat_index = 0;
+
+	std::shared_ptr<LanguagePack> m_lang_pack;
 
 	int g_cam_view = 0;
 	size_t selected_enemy = -1;

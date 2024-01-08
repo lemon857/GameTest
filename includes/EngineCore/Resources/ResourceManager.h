@@ -9,6 +9,7 @@
 
 class Scene;
 class Sound;
+class LanguagePack;
 
 struct INIdata;
 struct GraphicsObject;
@@ -65,17 +66,16 @@ namespace RenderEngine
 		static std::shared_ptr<GraphicsObject> load_OBJ_model(const std::string& name, const std::string& OBJrelativePath);
 		static std::shared_ptr<GraphicsObject> get_OBJ_model(const std::string& name);
 
-		static std::shared_ptr<GUI::Font> load_font(std::string relativePath, std::string font_name, unsigned int font_size);
+		static std::shared_ptr<LanguagePack> load_lang_pack(std::string relativePath, std::string pack_name);
+		static std::shared_ptr<LanguagePack> get_lang_pack(std::string pack_name);
 
+		static std::shared_ptr<GUI::Font> load_font(std::string relativePath, std::string font_name, unsigned int font_size);
 		static std::shared_ptr<GUI::Font> get_font(std::string font_name);
 
-
 		static std::shared_ptr<Sound> load_sound(std::string relativePath, std::string name);
-
 		static std::shared_ptr<Sound> get_sound(std::string name);
 
 		static void load_unique_sound(std::string relativePath, std::string name);
-
 		static std::unique_ptr<Sound> get_unique_sound(std::string name);
 
 		static std::shared_ptr<RenderEngine::ShaderProgram> loadShaders(
@@ -157,6 +157,8 @@ namespace RenderEngine
 		typedef std::map<const std::string, std::string> UniqueSoundsMap;
 		static UniqueSoundsMap m_uSounds_map;
 
+		typedef std::map<const std::string, std::shared_ptr<LanguagePack>> LangPacksMap;
+		static LangPacksMap m_lang_packs_map;
 		//typedef std::map<const std::string, std::shared_ptr<RenderEngine::SpriteRenderer>> SpriteRenderersMap;
 		//static SpriteRenderersMap m_SpriteRenderers;
 

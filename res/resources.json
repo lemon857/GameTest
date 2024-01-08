@@ -639,5 +639,11 @@
       "name": "inferno_tower",
       "path": "res/models/inferno_tower.obj"
     }
+  ],
+  "languages": [
+    {
+      "name": "en",
+      "path": "res/langpacks/en.language"
+    }
   ]
 }

@@ -81,6 +81,13 @@ GameApp::~GameApp()
 bool GameApp::init()
 {
     RegistryManager::set_reg_path("Tower_defense\\");
+    std::string val;
+    if (!RegistryManager::get_value("lang", val))
+    {
+        val = "en"; 
+        RegistryManager::set_value("lang", val);
+    }
+    m_lang_pack = ResourceManager::get_lang_pack(val);
 
     lock_key_update = new bool(false);
 

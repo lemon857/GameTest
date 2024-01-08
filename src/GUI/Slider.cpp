@@ -28,7 +28,21 @@ namespace GUI
 	void Slider::on_press()
 	{
 		m_slider->setSubTexture(NAME_TEXTURE_CLICKED);
-		is_pressed = true;
+		is_pressed = true; 
+		float y = (float)(m_position_mouse_click.x - m_position.x + m_scale.x) / (float)(m_scale.x * 2.f);
+		m_value = y * (float)(m_max - m_min);
+		if (m_value < m_min)
+		{
+			m_value = m_min;
+			return;
+		}
+		else if (m_value > m_max)
+		{
+			m_value = m_max;
+			return;
+		}
+		m_slider->set_position(glm::vec2(y * (m_scale.x + m_scale.x) + m_position.x - m_scale.x, m_position.y));
+		if (m_slide_callback != nullptr) m_slide_callback(m_value);
 	}
 	void Slider::on_release()
 	{

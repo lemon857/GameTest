@@ -41,7 +41,7 @@ namespace GUI
 	}
 	void ChatBox::set_open(bool isOpen)
 	{
-		set_tree_active(isOpen);		
+		set_tree_active(isOpen);
 	}
 	void ChatBox::clear()
 	{

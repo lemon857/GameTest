@@ -58,7 +58,7 @@ namespace GUI
 	// need fix overscrolling
 	void ScrollBox::on_scroll(int offset)
 	{
-		if (!m_isActive) return;
+		if (!m_isActive && m_isFocused) return;
 		for (size_t i = 0; i < m_elements.size(); i++)
 		{
 			m_elements[i]->add_position(glm::vec2(0.f, offset * SCROLL_MYLTIPLIER));

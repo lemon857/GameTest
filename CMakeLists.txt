@@ -107,6 +107,7 @@ set(ENGINE_PRIVATE_INCLUDES
 		
 	includes/EngineCore/Sound/SoundEngine.h	
 	includes/EngineCore/Sound/Sound.h	
+	includes/EngineCore/Sound/SoundSet.h
 	includes/EngineCore/Sound/miniaudio.h
 	
 	includes/EngineCore/Renderer3D/GraphicsObject.h
@@ -200,6 +201,7 @@ set(ENGINE_PRIVATE_SOURCES
 
 	src/Sound/SoundEngine.cpp
 	src/Sound/Sound.cpp	
+	src/Sound/SoundSet.cpp	
 	src/Sound/miniaudio.cpp
 	
 	src/System/Timer.cpp

@@ -4,6 +4,8 @@
 
 #define P_MORTAR_DESCRIPTION "Have radius damage, good vs. heap"
 
+class Sound;
+
 namespace RenderEngine
 {
 	class Circle;

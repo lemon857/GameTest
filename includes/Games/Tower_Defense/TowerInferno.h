@@ -32,6 +32,4 @@ private:
 	float m_line_size;
 
 	double m_cur_time;
-
-	std::unique_ptr<Sound> m_sound_attack;
 };

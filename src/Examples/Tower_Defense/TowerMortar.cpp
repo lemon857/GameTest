@@ -4,6 +4,7 @@
 #include "Games/Tower_Defense/BaseEnemy.h"
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Sound/Sound.h"
+#include "EngineCore/Sound/SoundSet.h"
 #include "EngineCore/Renderer/Circle.h"
 #include "Games/Tower_Defense/DamageTable.h"
 #include "EngineCore/Components/Transform.h"
@@ -17,8 +18,10 @@ MortarTower::MortarTower(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<Re
 	, m_cur_time(0)
 	, m_isActiveCircle(false)
 {
-	m_sound = std::move(ResourceManager::get_unique_sound("mortar_attack"));
-	m_sound_attack = std::move(ResourceManager::get_unique_sound("mortar_fall"));
+	m_sounds->add_sound(std::move(ResourceManager::get_unique_sound("mortar_attack_0")));
+	m_sounds->add_sound(std::move(ResourceManager::get_unique_sound("mortar_attack_1")));
+	m_sounds->add_sound(std::move(ResourceManager::get_unique_sound("mortar_attack_2")));
+	//m_sound_attack = std::move(ResourceManager::get_unique_sound("mortar_fall"));
 	m_attack = new RenderEngine::Circle(pMaterialLine, pos - glm::vec3(0.f, 100.f, 0.f), glm::vec3(1.f), glm::vec3(0.f),
 		glm::vec4(1.f, 0.f, 0.3f, 0.7f), m_radius, 90, 3);
 	m_coast = p_coast;
@@ -60,7 +63,7 @@ void MortarTower::damage(BaseEnemy* target)
 		if (p == pos) continue;
 		if (((p.x - pos.x) * (p.x - pos.x)) + ((p.z - pos.z) * (p.z - pos.z)) < m_radius * m_radius)
 		{
-			m_sound_attack->play();
+			//m_sound_attack->play();
 			m_enemies->at(i)->damage(m_damage);
 		}
 	}

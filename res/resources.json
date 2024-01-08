@@ -562,8 +562,16 @@
       "path": "res/sounds/tower_spawn.flac"
     },
     {
-      "name": "mortar_attack",
-      "path": "res/sounds/mortar_attack.flac"
+      "name": "mortar_attack_0",
+      "path": "res/sounds/mortar_attack_0.flac"
+    },
+    {
+      "name": "mortar_attack_1",
+      "path": "res/sounds/mortar_attack_1.flac"
+    },
+    {
+      "name": "mortar_attack_2",
+      "path": "res/sounds/mortar_attack_2.flac"
     },
     {
       "name": "mortar_fall",

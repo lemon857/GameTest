@@ -54,6 +54,9 @@ namespace GUI
 		virtual void on_release() {};
 
 		virtual void set_active(const bool state) { m_isActive = state; set_tree_active(state); }
+
+
+		void set_focus(const bool state) { m_isFocused = state; }
 		
 		void switch_active() { m_isActive = !m_isActive; set_tree_active(m_isActive); };
 
@@ -73,7 +76,6 @@ namespace GUI
 				i->set_layer(layer);
 			}
 		}
-
 		void set_tree_active(const bool state)
 		{
 			for (auto& i : m_tree)
@@ -91,6 +93,8 @@ namespace GUI
 
 		void set_position_p(glm::vec2 pos) { m_position_p = pos; }
 		void set_scale_p(glm::vec2 scale) { m_scale_p = scale; }
+
+		void set_pos_mouse_click(glm::vec2 pos) { m_position_mouse_click = pos; }
 
 		int get_layer() { return m_layer; }
 
@@ -113,6 +117,7 @@ namespace GUI
 		virtual std::vector<GUI_element*> get_elements() { return std::vector<GUI_element*>(); }
 	protected:
 
+		bool m_isHovered;
 		bool m_isFocused;
 		bool m_isActive;
 
@@ -125,6 +130,8 @@ namespace GUI
 		// % screen range 0 100
 		glm::vec2 m_position_p;
 		glm::vec2 m_scale_p;
+
+		glm::vec2 m_position_mouse_click;
 
 		std::string m_name;
 		std::shared_ptr<RenderEngine::Material> m_pMaterial;

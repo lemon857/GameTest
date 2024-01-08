@@ -10,7 +10,7 @@
 
 class HealthBar;
 class ObjModel;
-class Sound;
+class SoundSet;
 class BaseEnemy;
 enum class TypeAttack;
 
@@ -87,7 +87,7 @@ protected:
 
 	RenderEngine::Line* m_line;
 
-	std::unique_ptr<Sound> m_sound;
+	std::unique_ptr<SoundSet> m_sounds;
 
 	bool m_isUpgraded;
 };

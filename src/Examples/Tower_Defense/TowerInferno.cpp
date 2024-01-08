@@ -2,6 +2,7 @@
 
 #include "Games/Tower_Defense/BaseEnemy.h"
 #include "EngineCore/Sound/Sound.h"
+#include "EngineCore/Sound/SoundSet.h"
 #include "Games/Tower_Defense/DamageTable.h"
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Components/Transform.h"
@@ -13,7 +14,7 @@ InfernoTower::InfernoTower(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<
 	, m_line_size(1)
 {
 	//m_sound = std::move(ResourceManager::get_unique_sound("mortar_attack"));
-	m_sound = nullptr;
+	m_sounds = nullptr;
 	m_coast = p_coast;
 	m_coast_upgrade = p_coast_upgrade;
 	m_type_attack = TypeAttack::Wither;

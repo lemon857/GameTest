@@ -9,6 +9,7 @@
 #include "Games/Tower_Defense/HealthBar.h"
 #include "Games/Tower_Defense/DamageTable.h"
 
+#include "EngineCore/Sound/SoundSet.h"
 #include "EngineCore/Sound/Sound.h"
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -25,6 +26,7 @@ BaseTower::BaseTower(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<Render
 	, m_isUpgraded(false)
 	, m_start_dis(100)
 	, m_bar(new HealthBar(pMaterialLine, pos + glm::vec3(0.f, 3.f, 0.f), 25, 2, m_cooldown, glm::vec3(1.f), glm::vec3(0.4f, 0.1f, 0.7f)))
+	, m_sounds(std::make_unique<SoundSet>())
 	, IGameObject("Tower")
 {	
 	addComponent<Transform>(pos);
@@ -34,7 +36,7 @@ BaseTower::BaseTower(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<Render
 
 BaseTower::~BaseTower()
 {
-	if (m_sound != nullptr) m_sound->terminate();
+	if (m_sounds != nullptr) m_sounds->terminate();
 }
 
 void BaseTower::update(const double delta)
@@ -58,7 +60,7 @@ void BaseTower::update(const double delta)
 	{
 		if (m_target_BaseEnemy != nullptr)
 		{
-			if (m_sound != nullptr) m_sound->play();
+			if (m_sounds != nullptr) m_sounds->play_random();
 			double add = (damageTable[(int)m_type_attack][(int)m_target_BaseEnemy->get_type()]);
 			m_target_BaseEnemy->damage(m_damage * add);
 			damage(m_target_BaseEnemy);

@@ -81,8 +81,6 @@ bool GameApp::init()
 {
     RegistryManager::set_reg_path("Tower_defense\\");
 
-    LOG_INFO("Your number: {0}", sysfunc::get_random(0, 100000));
-
     lock_key_update = new bool(false);
 
     m_cam = new Camera(glm::vec3(12.5f, 55.f, 30.f), glm::vec3(-75.f, -90.f, 0.f));

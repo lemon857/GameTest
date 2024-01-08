@@ -39,7 +39,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/System/CommandManager.h	
 	includes/EngineCore/System/INI_loader.h	
 	includes/EngineCore/System/AppInfo.h
-	includes/EngineCore/System/ImageLoader.h		
+	includes/EngineCore/System/ImageLoader.h			
 	  
 	includes/EngineCore/GUI/GUI_place.h
 	includes/EngineCore/GUI/GUI_element.h
@@ -84,6 +84,7 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Resources/ResourceManager.h
 	includes/EngineCore/Resources/stb_image.h
 	includes/EngineCore/Resources/Scene.h
+	includes/EngineCore/Resources/RegistryManager.h
 	
 	includes/EngineCore/Renderer/ShaderProgram.h
 	includes/EngineCore/Renderer/Texture2D.h
@@ -176,6 +177,7 @@ set(ENGINE_PRIVATE_SOURCES
 	
 	src/Resources/ResourceManager.cpp
 	src/Resources/Scene.cpp
+	src/Resources/RegistryManager.cpp	
 	
 	src/Renderer/ShaderProgram.cpp
 	src/Renderer/Texture2D.cpp
@@ -207,7 +209,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/System/SysFunc.cpp	
 	src/System/CommandManager.cpp
 	src/System/INI_loader.cpp		
-	src/System/ImageLoader.cpp		
+	src/System/ImageLoader.cpp			
 	
 	src/Components/MeshRenderer.cpp	
 	src/Components/Transform.cpp

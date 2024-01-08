@@ -15,7 +15,24 @@ namespace sysfunc
 
 	int get_random(int min, int max)
 	{		
-		return (rand() % (max - min)) + min;
+		std::random_device rd;
+		std::default_random_engine generator(rd());
+		std::uniform_int_distribution<int> distribution(min, max);
+		return distribution(generator);
+	}
+	float get_random(float min, float max)
+	{
+		std::random_device rd;
+		std::default_random_engine generator(rd());
+		std::uniform_real_distribution<float> distribution(min, max);
+		return distribution(generator);
+	}
+	double get_random(double min, double max)
+	{
+		std::random_device rd;
+		std::default_random_engine generator(rd());
+		std::uniform_real_distribution<double> distribution(min, max);
+		return distribution(generator);
 	}
 	void swap(void** a, void** b)
 	{

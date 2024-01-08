@@ -70,13 +70,15 @@ GameApp::GameApp()
 {
     m_ini_region_user.nickname = &m_nickname;
     m_ini_region_user.view_pos = &g_cam_view;
-    m_ini_data.add_region("USER", &m_ini_region_user);
+    m_ini_data.add_region("USER", &m_ini_region_user);        
 }
 GameApp::~GameApp()
 {}
 
 bool GameApp::init()
 {
+    LOG_INFO("Your number: {0}", sysfunc::get_random(0, 100000));
+
     lock_key_update = new bool(false);
 
     m_cam = new Camera(glm::vec3(12.5f, 55.f, 30.f), glm::vec3(-75.f, -90.f, 0.f));
@@ -1454,9 +1456,8 @@ void GameApp::press_button(KeyCode key)
     {
         if (!isKeyPressed)
         {
-            int add = rand() % 10;
-            unsigned int spawn = 841 + add;
-            int tp = rand() % 10;
+            unsigned int spawn = 841 + sysfunc::get_random(0, 10);
+            int tp = sysfunc::get_random(0, 10);
             m_spawn_enemies.push({ spawn, tp <= 2 ? TypeEnemy::Monkey : tp <= 4 ? TypeEnemy::Magician : tp <= 6 ? TypeEnemy::Robot : tp <= 8 ? TypeEnemy::Bug : TypeEnemy::Professor });
             isKeyPressed = true;
         }
@@ -1465,12 +1466,11 @@ void GameApp::press_button(KeyCode key)
     {
         if (!isKeyPressed)
         {
-            int count = (rand() % countSpawnEnemies);
+            int count = sysfunc::get_random(0, countSpawnEnemies);
             for (unsigned int i = 0; i < count; i++)
             {
-                int add = rand() % 10;
-                unsigned int spawn = 841 + add;
-                int tp = rand() % 10;
+                unsigned int spawn = 841 + sysfunc::get_random(0, 10);
+                int tp = sysfunc::get_random(0, 10);
                 m_spawn_enemies.push({ spawn, tp <= 2 ? TypeEnemy::Monkey : tp <= 4 ? TypeEnemy::Magician : tp <= 6 ? TypeEnemy::Robot : tp <= 8 ? TypeEnemy::Bug : TypeEnemy::Professor });
             }
             isKeyPressed = true;

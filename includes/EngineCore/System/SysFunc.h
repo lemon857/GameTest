@@ -23,6 +23,8 @@ namespace sysfunc
 	bool is_full(const char* str, int strLen, char symbol);
 		
 	int get_random(int min, int max);
+	float get_random(float min, float max);
+	double get_random(double min, double max);
 
 	void swap(void** a, void** b);
 

@@ -27,7 +27,7 @@
 
 const int size_x = 30, size_y = 30;
 
-const int count_start_coins = 1000000;
+const int count_start_coins = 500;
 
 const int time_before_start = 5000;
 
@@ -221,6 +221,7 @@ private:
 	bool moveCamMoue = false;
 	bool isKeyPressed = false;
 	bool isKeyPressedmouse = false;
+	bool isKeySelect = false;
 
 	bool isServer = false;
 	bool restart_querry = false;

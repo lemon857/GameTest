@@ -62,14 +62,14 @@ void InfernoTower::target(size_t i, double dis, double& all_dis)
 	if (dis <= m_distance && dis <= all_dis)
 	{
 		all_dis = dis;
-		if (m_target_BaseEnemy == nullptr && !m_enemies->at(i)->is_broken())
+		if (m_target_BaseEnemy == nullptr)
 		{
 			m_damage = P_INFERNO_DAMAGE;
 			m_line_size = 1;
 			m_line->set_size(m_line_size);
 			m_target_BaseEnemy = m_enemies->at(i);
 		}
-		else if (m_target_BaseEnemy != m_enemies->at(i) && m_damage == P_INFERNO_DAMAGE && !m_enemies->at(i)->is_broken())
+		else if (m_target_BaseEnemy != m_enemies->at(i) && m_damage == P_INFERNO_DAMAGE)
 		{
 			m_target_BaseEnemy = m_enemies->at(i);
 		}

@@ -64,20 +64,20 @@ int Application::start(glm::ivec2& window_size, const char* title, const char* j
         auto currentTime = std::chrono::high_resolution_clock::now();
         double duration = std::chrono::duration<double, std::milli>(currentTime - lastTime).count();
         lastTime = currentTime;
-        
+
         sum_time += duration;
 
         if (sum_time >= max)
         {
-           on_update(sum_time);
+            on_update(sum_time);
             sum_time = 0;
         }
 
         on_render(duration);
 
         on_ui_render();
-
         on_key_update(duration);
+
         m_pWindow->on_update();
     }
 

@@ -49,6 +49,7 @@ void BaseTower::update(const double delta)
 	for (size_t i = 0; i < m_enemies->size(); i++)
 	{
 		if (m_enemies->at(i) == nullptr) continue;
+		if (m_enemies->at(i)->is_broken()) continue;
 		glm::vec3 a = m_enemies->at(i)->get_pos() - get_pos();
 		double d = sqrt(a.x * a.x + a.z * a.z);
 		target(i, d, distance);
@@ -94,7 +95,7 @@ void BaseTower::target(size_t i, double dis, double& all_dis)
 	if (dis <= m_distance && dis <= all_dis)
 	{
 		all_dis = dis;
-		if (m_target_BaseEnemy == nullptr && !m_enemies->at(i)->is_broken())
+		if (m_target_BaseEnemy == nullptr)
 		{
 			m_target_BaseEnemy = m_enemies->at(i);
 		}

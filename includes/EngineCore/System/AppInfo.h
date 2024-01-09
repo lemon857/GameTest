@@ -1,11 +1,11 @@
 #define APPINFO_PATH_TO_ICON "../systemres/icon.ico"
 #define APPINFO_PATH_TO_ICON_PNG "/systemres/icon.png"
 
-#define APPINFO_FILE_VERSION 0,0,7,0
-#define APPINFO_PRODUCT_VERSION 0,0,7,0
+#define APPINFO_FILE_VERSION 0,0,7,1
+#define APPINFO_PRODUCT_VERSION 0,0,7,1
 
-#define APPINFO_NAME_STR "Tower_defense_0.0.7_alfa"
-#define APPINFO_FILE_NAME_STR "0.0.7.0"
+#define APPINFO_NAME_STR "Tower_defense_0.0.7.1_alfa"
+#define APPINFO_FILE_NAME_STR "0.0.7.1"
 
 #define APPINFO_COMPANY_NAME "CoolsGamesDevelopers"
 #define APPINFO_LEGAL_COPYRIGHT "© CoolsGamesDevelopers"

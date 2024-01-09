@@ -54,7 +54,7 @@ void IceTower::target(size_t i, double dis, double& all_dis)
 	if (dis <= m_distance && dis <= all_dis)
 	{
 		all_dis = dis;
-		if (m_target_BaseEnemy == nullptr && !m_enemies->at(i)->has_effect() && !m_enemies->at(i)->is_broken())
+		if (m_target_BaseEnemy == nullptr && !m_enemies->at(i)->has_effect())
 		{
 			m_target_BaseEnemy = m_enemies->at(i);
 		}

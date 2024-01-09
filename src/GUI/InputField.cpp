@@ -81,12 +81,12 @@ std::vector<GUI::GUI_element*> GUI::InputField::get_elements()
 	return vec;
 }
 
-std::string GUI::InputField::get_text()
+std::wstring GUI::InputField::get_text()
 {
 	return m_text;
 }
 
-void GUI::InputField::set_text(std::string text)
+void GUI::InputField::set_text(std::wstring text)
 {
 	m_text = text;
 	m_textRenderer->set_text(m_text);
@@ -121,7 +121,7 @@ void GUI::InputField::press_button(KeyCode key)
 		{
 			if (OpenClipboard(0))
 			{
-				m_text += (char*)GetClipboardData(CF_TEXT);
+				m_text += (wchar_t*)GetClipboardData(CF_TEXT);
 				CloseClipboard();
 			}
 		}
@@ -133,13 +133,13 @@ void GUI::InputField::press_button(KeyCode key)
 	else if (key == KeyCode::KEY_ENTER && !m_text.empty() && m_on_enter != nullptr)
 	{
 		m_on_enter(m_text);
-		if (m_clear_after_send) m_text = "";
+		if (m_clear_after_send) m_text = L"";
 		else set_focus(false);
 	}
 	m_textRenderer->set_text(m_text);
 }
 
-void GUI::InputField::press_char(char key_char)
+void GUI::InputField::press_char(wchar_t key_char)
 {
 	if (!m_isFocused) return;
 	m_text += key_char;

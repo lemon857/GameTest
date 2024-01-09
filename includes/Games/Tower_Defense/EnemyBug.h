@@ -6,7 +6,6 @@
 #define P_BUG_COOLDOWN 1
 #define P_BUG_HP 25
 #define P_BUG_DAMAGE 0.5
-#define P_BUG_DESCRIPTION "Faster disgusting bug"
 
 class BugEnemy : public BaseEnemy
 {
@@ -15,7 +14,6 @@ public:
 		Castle* target, std::vector<Target> targets, glm::vec3 pos, std::shared_ptr<RenderEngine::Material> pMaterialLine);
 	~BugEnemy() = default;
 
-	std::string get_description() override { return P_BUG_DESCRIPTION; }
 private:
 
 };

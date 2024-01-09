@@ -31,6 +31,29 @@ namespace GUI
 			y_offset -= scale_cell.y;
 		}
 	}
+	Table::Table(Sprite* backgrond, glm::vec2 pos, glm::vec2 scale, glm::vec2 scale_cell,
+		std::string name, std::shared_ptr<Font> font, std::shared_ptr<RenderEngine::ShaderProgram> shader, glm::vec3 textColor,
+		int colls, int rows, std::vector<std::wstring> data)
+		: GUI_element(name)
+		, m_background(std::move(backgrond))
+	{
+		m_position_p = pos;
+		m_scale_p = scale;
+		m_background->set_position_p(pos);
+		m_background->set_scale_p(scale);
+		float x_offset = pos.x - scale.x + SHIFT_TABLE_X;
+		float y_offset = pos.y + scale.y - SHIFT_TABLE_Y;
+		for (int i = 0; i < rows; i++)
+		{
+			for (int j = 0; j < colls; j++)
+			{
+				m_texts.push_back(new TextRenderer(font, shader, data[j + i * colls], textColor, glm::vec2(x_offset, y_offset), glm::vec2(1.f)));
+				x_offset += scale_cell.x;
+			}
+			x_offset = pos.x - scale.x + SHIFT_TABLE_X;
+			y_offset -= scale_cell.y;
+		}
+	}
 	Table::~Table()
 	{
 	}

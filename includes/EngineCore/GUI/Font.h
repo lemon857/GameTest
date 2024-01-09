@@ -21,13 +21,13 @@ namespace GUI
 
 		bool load(std::string& font_path, unsigned int font_size);
 
-		Font_Glyph get_glyph(const char sym);
+		Font_Glyph get_glyph(const wchar_t sym);
 
 		void set_scale(float scale) { m_scale = scale; }
 		float get_scale() { return m_scale; }
 
 	private:
-		std::map<const char, Font_Glyph> m_glyphs;
+		std::map<const wchar_t, Font_Glyph> m_glyphs;
 
 		float m_scale;
 	};

@@ -52,20 +52,23 @@ public:
 	double get_damage() { return m_damage; }
 	unsigned int get_coast() { return m_coast; }
 	unsigned int get_upgrade_coast() { return m_coast_upgrade; }
-	virtual std::string get_custom() { return ""; };
-	virtual std::string get_description() { return ""; }
+	virtual std::wstring get_custom() { return L""; };
+	std::wstring get_description() { return m_description; }
 
-	virtual std::string get_add_cooldown() { return ""; }
-	virtual std::string get_add_distance() { return ""; }
-	virtual std::string get_add_damage() { return ""; }
-	virtual std::string get_add_custom() { return ""; };
+	virtual std::wstring get_add_cooldown() { return L""; }
+	virtual std::wstring get_add_distance() { return L""; }
+	virtual std::wstring get_add_damage() { return L""; }
+	virtual std::wstring get_add_custom() { return L""; };
 
-	static std::string get_type_attack(TypeAttack type);
+	static std::wstring get_type_attack(TypeAttack type);
 
-	std::string get_self_type_str();
+	std::wstring get_self_type_str();
 
+	void set_desc(std::wstring desc);
 
 protected:
+	std::wstring m_description;
+
 	BaseEnemy* m_target_BaseEnemy;
 
 	linked_list<BaseEnemy*>* m_enemies;

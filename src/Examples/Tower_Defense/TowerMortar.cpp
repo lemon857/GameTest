@@ -9,6 +9,7 @@
 #include "Games/Tower_Defense/DamageTable.h"
 #include "EngineCore/Components/Transform.h"
 #include "EngineCore/Renderer/Line.h"
+#include "EngineCore/Resources/LanguagePack.h"
 
 MortarTower::MortarTower(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<RenderEngine::Material> pMaterial,
 	linked_list<BaseEnemy*>* list, glm::vec3 pos, RenderEngine::Line* line, std::shared_ptr<RenderEngine::Material> pMaterialLine)
@@ -81,12 +82,12 @@ void MortarTower::updating(const double delta)
 	}		
 }
 
-std::string MortarTower::get_custom()
+std::wstring MortarTower::get_custom()
 {
-	return "Radius attack: " + std::to_string(m_radius);
+	return ResourceManager::get_current_lang_pack()->get("rdatt") + L": " + std::to_wstring(m_radius);
 }
 
-std::string MortarTower::get_type_str()
+std::wstring MortarTower::get_type_str()
 {
 	return BaseTower::get_type_attack(TypeAttack::Shock);
 }

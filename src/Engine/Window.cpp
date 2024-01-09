@@ -182,7 +182,7 @@ int Window::init()
 
     glfwSetCharCallback(m_pWindow, [](GLFWwindow* pWindow, unsigned int codepoint) {
         WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(pWindow));
-        EventCharSet e(static_cast<char>(codepoint));
+        EventCharSet e(static_cast<wchar_t>(codepoint));
         data.event_callback(e);
         });
 

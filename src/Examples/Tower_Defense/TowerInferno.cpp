@@ -83,7 +83,7 @@ void InfernoTower::target(size_t i, double dis, double& all_dis)
 	}
 }
 
-std::string InfernoTower::get_type_str()
+std::wstring InfernoTower::get_type_str()
 {
 	return BaseTower::get_type_attack(TypeAttack::Wither);
 }

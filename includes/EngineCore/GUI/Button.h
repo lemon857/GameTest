@@ -24,7 +24,12 @@ namespace GUI
 	{
 	public:
 		Button(Sprite* face, glm::vec2 pos, glm::vec2 scale,
-			std::string text, std::shared_ptr<RenderEngine::ShaderProgram> textShader, std::shared_ptr<Font> font, glm::vec3 textColor, std::string name = "default");
+			std::string text, std::shared_ptr<RenderEngine::ShaderProgram> textShader, 
+			std::shared_ptr<Font> font, glm::vec3 textColor, std::string name = "default");
+
+		Button(Sprite* face, glm::vec2 pos, glm::vec2 scale,
+			std::wstring text, std::shared_ptr<RenderEngine::ShaderProgram> textShader,
+			std::shared_ptr<Font> font, glm::vec3 textColor, std::string name = "default");
 		~Button();
 
 		void on_render_prj(glm::mat4& prj) override;
@@ -35,6 +40,7 @@ namespace GUI
 		std::vector<GUI_element*> get_elements() override;
 
 		void set_text(std::string text);
+		void set_text(std::wstring text);
 
 	private:
 		Sprite* m_face;

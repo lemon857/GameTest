@@ -39,7 +39,7 @@ void ExecutionerTower::rendering()
 	}
 }
 
-std::string ExecutionerTower::get_type_str()
+std::wstring ExecutionerTower::get_type_str()
 {
 	return BaseTower::get_type_attack(TypeAttack::Cutting);
 }

@@ -107,6 +107,9 @@ namespace RenderEngine
 		static std::string getNameShaderProgram(std::shared_ptr<RenderEngine::ShaderProgram> pShader);
 		static std::string getNameTexture2D(std::shared_ptr<RenderEngine::Texture2D> pTexture);
 
+		static std::shared_ptr<LanguagePack> get_current_lang_pack();
+		static void set_current_lang_pack(std::shared_ptr<LanguagePack> lang_pack);
+
 		/*static std::shared_ptr<RenderEngine::SpriteRenderer>  loadSpriteRenderer(
 			const std::string& SpriteRendererName, 
 			const std::string& textureName,
@@ -169,4 +172,6 @@ namespace RenderEngine
 		//static GraphObjMap m_graph_objs;
 
 		static std::string m_path;
+
+		static std::shared_ptr<LanguagePack> m_current_lang_pack;
 	};

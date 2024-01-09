@@ -1,6 +1,8 @@
 #include "EngineCore/System/SysFunc.h"
 
 #include <random>
+#include <locale>
+#include <codecvt>
 
 namespace sysfunc
 {
@@ -70,5 +72,13 @@ namespace sysfunc
 
 			quickSort(arr, pi + 1, high);
 		}
+	}
+	std::string ctostr(std::wstring str)
+	{
+		return std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t>().to_bytes(str);
+	}
+	std::wstring ctowstr(std::string str)
+	{
+		return std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t>().from_bytes(str);
 	}
 }

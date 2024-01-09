@@ -1,6 +1,7 @@
 #include "EngineCore/System/LogSystem.h"
 
 #include "EngineCore/Resources/ResourceManager.h"
+#include "EngineCore/System/SysFunc.h"
 
 #include <iostream>
 #include <Windows.h>
@@ -59,7 +60,7 @@ void LogSystem::log_info(std::string msg)
 	SetConsoleTextAttribute(h, (((0 << 4) | 7)));
 	std::cout << "] " << msg << std::endl;
 #endif
-	if (m_stream->is_open()) *m_stream << "[" << currentDateTime() << "] [info] " << msg << std::endl;
+	if (m_stream->is_open()) *m_stream << "[" + currentDateTime() + "] [info] " + msg + "\n";
 }
 
 void LogSystem::log_warn(std::string msg)
@@ -73,7 +74,7 @@ void LogSystem::log_warn(std::string msg)
 	SetConsoleTextAttribute(h, (((0 << 4) | 7)));
 	std::cout << "] " << msg << std::endl;
 #endif
-	if (m_stream->is_open()) *m_stream << "[" << currentDateTime() << "] [warn] " << msg << std::endl;
+	if (m_stream->is_open()) *m_stream << "[" + currentDateTime() + "] [warn] " + msg + "\n";
 }
 
 void LogSystem::log_error(std::string msg)
@@ -87,7 +88,7 @@ void LogSystem::log_error(std::string msg)
 	SetConsoleTextAttribute(h, (((0 << 4) | 7)));
 	std::cout << "] " << msg << std::endl;
 #endif
-	if (m_stream->is_open()) *m_stream << "[" << currentDateTime() << "] [error] " << msg << std::endl;
+	if (m_stream->is_open()) *m_stream << "[" + currentDateTime() + "] [error] " + msg + "\n";
 }
 
 void LogSystem::log_crit(std::string msg)
@@ -101,10 +102,15 @@ void LogSystem::log_crit(std::string msg)
 	SetConsoleTextAttribute(h, (((0 << 4) | 7)));
 	std::cout << "] " << msg << std::endl;
 #endif
-	if (m_stream->is_open()) *m_stream << "[" << currentDateTime() << "] [critical] " << msg << std::endl;
+	if (m_stream->is_open()) *m_stream << "[" + currentDateTime() + "] [critical] " + msg + "\n";
 }
 
 std::string std::to_string(string str)
 {
 	return str;
+}
+
+std::string std::to_string(wstring str)
+{
+	return sysfunc::ctostr(str);
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 namespace sysfunc
 {
 	template<class _Ty>
@@ -31,4 +33,7 @@ namespace sysfunc
 	int partition(void** arr, int low, int high);
 
 	void quickSort(void** arr, int low, int high);
+
+	std::string ctostr(std::wstring str);
+	std::wstring ctowstr(std::string str);
 }

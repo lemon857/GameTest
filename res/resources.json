@@ -644,6 +644,10 @@
     {
       "name": "en",
       "path": "res/langpacks/en.language"
+    },
+    {
+      "name": "ru",
+      "path": "res/langpacks/ru.language"
     }
   ]
 }

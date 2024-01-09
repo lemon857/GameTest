@@ -32,7 +32,7 @@ namespace GUI
 
 		std::vector<GUI_element*> get_elements() override;
 
-		void add_message(std::string message);
+		void add_message(std::wstring message);
 
 		void set_open(bool isOpen);
 

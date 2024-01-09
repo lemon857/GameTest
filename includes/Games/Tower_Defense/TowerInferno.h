@@ -2,7 +2,6 @@
 
 #include "Games/Tower_Defense/BaseTower.h"
 
-#define P_INFERNO_DESCRIPTION "Increases damage over time with one enemy"
 #define P_INFERNO_COOLDOWN 0.2
 #define P_INFERNO_DAMAGE 0.1
 #define P_INFERNO_ADD 0.0003
@@ -24,10 +23,9 @@ public:
 	static const unsigned int p_coast = 35;
 	static const unsigned int p_coast_upgrade = 15;
 
-	std::string get_add_distance() override { return " +4"; }
-	std::string get_description() override { return P_INFERNO_DESCRIPTION; }
+	std::wstring get_add_distance() override { return L" +4"; }
 
-	static std::string get_type_str();
+	static std::wstring get_type_str();
 private:
 	float m_line_size;
 

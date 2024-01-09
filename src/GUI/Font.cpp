@@ -38,13 +38,14 @@ namespace GUI
 			return false;
 		}
 
+		FT_Select_Charmap(face, ft_encoding_unicode);
 		FT_Set_Pixel_Sizes(face, 0, font_size);
-
+		
 		// disable byte-alignment restriction
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 		// load first 128 characters of ASCII set
-		for (unsigned char c = 0; c < 128; c++)
+		for (wchar_t c = 0; c < face->num_glyphs; c++)
 		{
 			// Load character glyph 
 			if (FT_Load_Char(face, c, FT_LOAD_RENDER))
@@ -79,7 +80,7 @@ namespace GUI
 				glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
 				static_cast<unsigned int>(face->glyph->advance.x)
 			};
-			m_glyphs.insert(std::pair<char, Font_Glyph>(c, character));
+			m_glyphs.insert(std::pair<wchar_t, Font_Glyph>(c, character));
 		}
 
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -91,7 +92,7 @@ namespace GUI
 		return true;
 	}
 
-	Font_Glyph Font::get_glyph(const char sym)
+	Font_Glyph Font::get_glyph(const wchar_t sym)
 	{
 		return m_glyphs[sym];
 	}

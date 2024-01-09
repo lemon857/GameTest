@@ -143,7 +143,7 @@ private:
 	BaseTower* m_select_tower = nullptr;
 	//std::vector<BaseTower*> m_towers_self;
 
-	std::queue<std::string> m_chat_mes;
+	std::queue<std::wstring> m_chat_mes;
 
 	std::queue<SpawnTower> m_spawn_towers;
 	//std::queue<unsigned int> m_spawn_towers_self;
@@ -235,11 +235,9 @@ private:
 
 	double angle = 0;
 
-	std::vector<std::string> chat_last; // need optimization
+	std::vector<std::wstring> chat_last; // need optimization
 
 	size_t cur_chat_index = 0;
-
-	std::shared_ptr<LanguagePack> m_lang_pack;
 
 	int g_cam_view = 0;
 	size_t selected_enemy = -1;
@@ -264,4 +262,6 @@ private:
 	glm::vec3 movDel = glm::vec3(0);
 	glm::vec3 rotDel = glm::vec3(0);
 	glm::vec3 uPos = glm::vec3(25.f, -10.f, 25.f);
+
+	std::shared_ptr<LanguagePack> m_lang_pack;
 };

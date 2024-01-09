@@ -39,6 +39,7 @@ ResourceManager::FontsMap ResourceManager::m_fonts_map;
 ResourceManager::SoundsMap ResourceManager::m_sounds_map;
 ResourceManager::UniqueSoundsMap ResourceManager::m_uSounds_map;
 ResourceManager::LangPacksMap ResourceManager::m_lang_packs_map;
+std::shared_ptr<LanguagePack> ResourceManager::m_current_lang_pack;
 //ResourceManager::SpriteRenderersMap ResourceManager::m_SpriteRenderers;
 //ResourceManager::GraphObjMap ResourceManager::m_graph_objs;
 //ResourceManager::AnimatorsMap ResourceManager::m_animators;
@@ -887,6 +888,14 @@ std::string ResourceManager::getNameTexture2D(std::shared_ptr<RenderEngine::Text
 		}
 	}
 	return outStr;
+}
+std::shared_ptr<LanguagePack> ResourceManager::get_current_lang_pack()
+{
+	return m_current_lang_pack;
+}
+void ResourceManager::set_current_lang_pack(std::shared_ptr<LanguagePack> lang_pack)
+{
+	m_current_lang_pack = std::move(lang_pack);
 }
 //std::shared_ptr<RenderEngine::SpriteRenderer>  ResourceManager::loadSpriteRenderer(const std::string& SpriteRendererName, const std::string& textureName,
 //	const std::string& shaderName, const std::string& subTextureName)

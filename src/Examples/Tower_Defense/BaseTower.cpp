@@ -12,6 +12,9 @@
 #include "EngineCore/Sound/SoundSet.h"
 #include "EngineCore/Sound/Sound.h"
 
+#include "EngineCore/Resources/LanguagePack.h"
+#include "EngineCore/Resources/ResourceManager.h"
+
 #include <glm/gtc/matrix_transform.hpp>
 
 BaseTower::BaseTower(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<RenderEngine::Material> pMaterial, linked_list<BaseEnemy*>* list, 
@@ -119,25 +122,31 @@ BaseEnemy* BaseTower::get_target()
 	return m_target_BaseEnemy;
 }
 
-std::string BaseTower::get_type_attack(TypeAttack type)
+std::wstring BaseTower::get_type_attack(TypeAttack type)
 {
+	std::shared_ptr<LanguagePack> lang_pack = ResourceManager::get_current_lang_pack();
 	switch (type)
 	{
 	case TypeAttack::Piercing:
-		return "piercing";
+		return lang_pack->get("piercing");
 	case TypeAttack::Cutting:
-		return "cutting";
+		return lang_pack->get("cutting");
 	case TypeAttack::Shock:
-		return "shock";
+		return lang_pack->get("shock");
 	case TypeAttack::Sorcery:
-		return "sorcery";
+		return lang_pack->get("sorcery");
 	case TypeAttack::Wither:
-		return "wither";
+		return lang_pack->get("wither");
 	}
-	return "";
+	return L"";
 }
 
-std::string BaseTower::get_self_type_str()
+std::wstring BaseTower::get_self_type_str()
 {
 	return get_type_attack(m_type_attack);
+}
+
+void BaseTower::set_desc(std::wstring desc)
+{
+	m_description = desc;
 }

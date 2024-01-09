@@ -2,6 +2,7 @@
 
 #include <string>
 #include <map>
+#include <memory>
 
 class LanguagePack
 {
@@ -13,7 +14,7 @@ public:
 
 	std::wstring operator[](std::string name);
 
-	std::wstring get_field(std::string name);
+	std::wstring get(std::string name);
 private:
 	void add_field(std::string name, std::wstring value);
 

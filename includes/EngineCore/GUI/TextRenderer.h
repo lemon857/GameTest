@@ -26,18 +26,23 @@ namespace GUI
 			std::string text, glm::vec3 color, glm::vec2 pos, glm::vec2 scale,
 			std::string name = "default", bool isCenterCoord = true);
 
-		void render_text(std::string text, float x, float y, float scale, glm::vec3 color, float layer, glm::mat4& prj);
+		TextRenderer(std::shared_ptr<Font> font, std::shared_ptr<RenderEngine::ShaderProgram> shader,
+			std::wstring text, glm::vec3 color, glm::vec2 pos, glm::vec2 scale,
+			std::string name = "default", bool isCenterCoord = true);
+
+		void render_text(std::wstring text, float x, float y, float scale, glm::vec3 color, float layer, glm::mat4& prj);
 
 		void on_render_prj(glm::mat4& prj);
 
 		void set_text(std::string text);
+		void set_text(std::wstring text);
 
 		void set_position(glm::vec2 pos) override;
 	private:
 		std::shared_ptr<Font> m_font;
 		std::shared_ptr<RenderEngine::ShaderProgram> m_shader;
 
-		std::string m_text;
+		std::wstring m_text;
 		glm::vec3 m_color;
 
 		glm::vec2 m_p_pos;

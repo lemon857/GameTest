@@ -9,6 +9,8 @@
 #include "Games/Tower_Defense/DamageTable.h"
 #include "EngineCore/Components/Transform.h"
 #include "EngineCore/Renderer/Line.h"
+#include "EngineCore/Resources/LanguagePack.h"
+#include "EngineCore/Resources/ResourceManager.h"
 
 IceTower::IceTower(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<RenderEngine::Material> pMaterial,
 	linked_list<BaseEnemy*>* list, glm::vec3 pos, RenderEngine::Line* line, std::shared_ptr<RenderEngine::Material> pMaterialLine)
@@ -68,12 +70,12 @@ void IceTower::target(size_t i, double dis, double& all_dis)
 	}
 }
 
-std::string IceTower::get_custom()
+std::wstring IceTower::get_custom()
 {
-	return "Time freeze: " + std::to_string((int)m_time_freeze);
+	return ResourceManager::get_current_lang_pack()->get("timefrz") + L": " + std::to_wstring((int)m_time_freeze);
 }
 
-std::string IceTower::get_type_str()
+std::wstring IceTower::get_type_str()
 {
 	return BaseTower::get_type_attack(TypeAttack::Sorcery);
 }

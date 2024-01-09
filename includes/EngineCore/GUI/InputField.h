@@ -40,22 +40,22 @@ namespace GUI
 
 		std::vector<GUI_element*> get_elements() override;
 
-		std::string get_text();
-		void set_text(std::string text);
+		std::wstring get_text();
+		void set_text(std::wstring text);
 
 		bool get_focus();
 		void set_focus(bool focus);
 
 		void press_button(KeyCode key);
-		void press_char(char key_char);
+		void press_char(wchar_t key_char);
 
-		void set_enter_callback(std::function<void(std::string text)> on_enter) { m_on_enter = on_enter; }
+		void set_enter_callback(std::function<void(std::wstring text)> on_enter) { m_on_enter = on_enter; }
 	private:
-		std::function<void(std::string text)> m_on_enter;
+		std::function<void(std::wstring text)> m_on_enter;
 
 		Sprite* m_face;
 		TextRenderer* m_textRenderer;
-		std::string m_text;
+		std::wstring m_text;
 
 		bool* m_focus_trigger;
 		bool m_isClicked;

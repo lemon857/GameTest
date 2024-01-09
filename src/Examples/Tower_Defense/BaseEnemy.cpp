@@ -11,6 +11,8 @@
 #include "EngineCore/Components/Transform.h"
 #include "EngineCore/Components/MeshRenderer.h"
 #include "EngineCore/System/SysFunc.h"
+#include "EngineCore/Resources/LanguagePack.h"
+#include "EngineCore/Resources/ResourceManager.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/vector_angle.hpp>
@@ -207,20 +209,21 @@ void BaseEnemy::set_color_effect(glm::vec3 colorFore, glm::vec3 colorBack)
 	m_bar_effect->set_back_color(colorBack);
 }
 
-std::string BaseEnemy::get_type_str(TypeArmor type)
+std::wstring BaseEnemy::get_type_str(TypeArmor type)
 {
+	std::shared_ptr<LanguagePack> lang_pack = ResourceManager::get_current_lang_pack();
 	switch (type)
 	{
 	case TypeArmor::Null:
-		return "null";
+		return lang_pack->get("null");
 	case TypeArmor::Light:
-		return "light";
+		return lang_pack->get("light");
 	case TypeArmor::Heavy:
-		return "heavy";
+		return lang_pack->get("heavy");
 	case TypeArmor::Magic:
-		return "magic";
+		return lang_pack->get("magic");
 	case TypeArmor::Chaotic:
-		return "chaotic";
+		return lang_pack->get("chaotic");
 	}
-	return "";
+	return L"";
 }

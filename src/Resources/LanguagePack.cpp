@@ -1,5 +1,8 @@
 #include "EngineCore/Resources/LanguagePack.h"
 
+#include "EngineCore/System/SysFunc.h"
+#include "EngineCore/System/Log.h"
+
 #include <fstream>
 #include <locale>
 #include <codecvt>
@@ -15,6 +18,7 @@ LanguagePack::~LanguagePack()
 bool LanguagePack::load_pack(std::string path)
 {
 	std::wifstream f;
+	f.imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
 	f.open(path, std::ios::in);
 
 	if (f.is_open())
@@ -22,7 +26,7 @@ bool LanguagePack::load_pack(std::string path)
 		std::wstring line;
 		while (std::getline(f, line))
 		{
-			std::string name = std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t>().to_bytes(line.substr(0, line.find('=')));
+			std::string name = sysfunc::ctostr(line.substr(0, line.find('=')));
 			std::wstring value = line.substr(line.find('=') + 1);
 			add_field(name, value);
 		}
@@ -45,12 +49,13 @@ void LanguagePack::add_field(std::string name, std::wstring value)
 	m_data.emplace(name, value);
 }
 
-std::wstring LanguagePack::get_field(std::string name)
+std::wstring LanguagePack::get(std::string name)
 {
 	std::map<std::string, std::wstring>::const_iterator it = m_data.find(name);
 	if (it != m_data.end())
 	{
 		return it->second;
 	}
+	LOG_WARN("Can't find: {0}", name);
 	return L"";
 }

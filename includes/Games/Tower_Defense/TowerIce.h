@@ -2,8 +2,6 @@
 
 #include "Games/Tower_Defense/BaseTower.h"
 
-#define P_ICE_DESCRIPTION "Well freezing enemies"
-
 class IceTower : public BaseTower
 {
 public:
@@ -19,7 +17,7 @@ public:
 
 	void target(size_t i, double dis, double& all_dis) override;
 
-	std::string get_custom() override;
+	std::wstring get_custom() override;
 
 	static const unsigned int p_damage = 1;
 	static const unsigned int p_distance = 16;
@@ -28,11 +26,10 @@ public:
 	static const unsigned int p_coast = 24;
 	static const unsigned int p_coast_upgrade = 11;
 
-	std::string get_add_distance() override { return " -3"; }
-	std::string get_add_custom() override { return " +5"; };
-	std::string get_description() override { return P_ICE_DESCRIPTION; }
+	std::wstring get_add_distance() override { return L" -3"; }
+	std::wstring get_add_custom() override { return L" +5"; };
 
-	static std::string get_type_str();
+	static std::wstring get_type_str();
 private:
 	double m_time_freeze;
 };

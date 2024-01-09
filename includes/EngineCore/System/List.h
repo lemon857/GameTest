@@ -57,6 +57,11 @@ public:
 		m_last = p; 
 	};
 
+	_Ty last()
+	{
+		return m_last->value;
+	}
+
 	ListNode* find(_Ty _val) {
 		ListNode* p = m_first;
 		while (p && p->value != _val) p = p->m_next;

@@ -9,7 +9,6 @@
 #define P_MAGICIAN_HP 30
 #define P_MAGICIAN_DAMAGE 1.4
 #define P_MAGICIAN_RADIUS_TREAT 4
-#define P_MAGICIAN_DESCRIPTION "Evil magician, treats enemy around self"
 
 namespace RenderEngine
 {
@@ -25,8 +24,7 @@ public:
 
 	void on_render() override;
 	void on_update(const double delta) override;
-
-	std::string get_description() override { return P_MAGICIAN_DESCRIPTION; }
+	
 private:
 	double m_dur_time_treat;
 	double m_cur_time_treat;

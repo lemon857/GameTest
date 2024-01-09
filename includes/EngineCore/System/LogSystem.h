@@ -14,6 +14,9 @@
 namespace std
 {
 	string to_string(string str);
+	string to_string(wstring str);
+	wstring to_wstring(string str);
+	wstring to_wstring(wstring str);
 }
 
 class LogSystem

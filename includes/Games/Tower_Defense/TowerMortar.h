@@ -2,8 +2,6 @@
 
 #include "Games/Tower_Defense/BaseTower.h"
 
-#define P_MORTAR_DESCRIPTION "Have radius damage, good vs. heap"
-
 class Sound;
 
 namespace RenderEngine
@@ -22,7 +20,7 @@ public:
 	void rendering() override;
 	void damage(BaseEnemy* target) override;
 	void updating(const double delta) override;
-	std::string get_custom() override;
+	std::wstring get_custom() override;
 
 	static const unsigned int p_damage = 6;
 	static const unsigned int p_distance = 20;
@@ -31,13 +29,12 @@ public:
 	static const unsigned int p_coast = 30;
 	static const unsigned int p_coast_upgrade = 13;
 
-	std::string get_add_cooldown() override { return " +2"; }
-	std::string get_add_distance() override { return " +5"; }
-	std::string get_add_damage() override { return " +1"; }
-	std::string get_add_custom() override { return " +1"; };
-	std::string get_description() override { return P_MORTAR_DESCRIPTION; }
+	std::wstring get_add_cooldown() override { return L" +2"; }
+	std::wstring get_add_distance() override { return L" +5"; }
+	std::wstring get_add_damage() override { return L" +1"; }
+	std::wstring get_add_custom() override { return L" +1"; };
 
-	static std::string get_type_str();
+	static std::wstring get_type_str();
 private:
 
 	unsigned int m_radius;

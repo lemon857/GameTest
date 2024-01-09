@@ -61,16 +61,18 @@ public:
 	double get_hp() { return m_hp; }
 	double get_max_hp() { return m_max_hp; }
 	double get_damage() { return m_dmg; }
-	virtual std::string get_description() { return ""; }
+	std::wstring get_description() { return m_description; }
+
+	void set_desc(std::wstring desc) { m_description = desc; }
 
 	unsigned int get_reward() { return m_reward; }
 
 	TypeArmor get_type() { return m_type_armor; }
 
-	static std::string get_type_str(TypeArmor type);
+	static std::wstring get_type_str(TypeArmor type);
 
 protected:
-
+	std::wstring m_description;
 	std::vector<Target> m_targets;
 	int curtarget;
 	TypeArmor m_type_armor;

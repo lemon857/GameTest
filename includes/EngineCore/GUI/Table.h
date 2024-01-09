@@ -24,6 +24,10 @@ namespace GUI
 			glm::vec2 scale_cell, std::string name,
 			std::shared_ptr<Font> font, std::shared_ptr<RenderEngine::ShaderProgram> shader,
 			glm::vec3 textColor, int colls, int rows, std::vector<std::string> data);
+		Table(Sprite* backgrond, glm::vec2 pos, glm::vec2 scale,
+			glm::vec2 scale_cell, std::string name,
+			std::shared_ptr<Font> font, std::shared_ptr<RenderEngine::ShaderProgram> shader,
+			glm::vec3 textColor, int colls, int rows, std::vector<std::wstring> data);
 		~Table();
 
 		void on_render_prj(glm::mat4& prj) override;

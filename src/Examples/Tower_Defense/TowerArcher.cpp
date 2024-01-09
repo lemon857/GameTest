@@ -59,7 +59,7 @@ void ArcherTower::target(size_t i, double dis, double& all_dis)
 	}
 }
 
-std::string ArcherTower::get_type_str()
+std::wstring ArcherTower::get_type_str()
 {
 	return BaseTower::get_type_attack(TypeAttack::Piercing);
 }

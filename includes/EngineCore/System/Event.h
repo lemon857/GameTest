@@ -110,7 +110,7 @@ struct EventWindowClose : public BaseEvent
 
 struct EventCharSet : public BaseEvent
 {
-    EventCharSet(const char key_char)
+    EventCharSet(const wchar_t key_char)
         : key_char(key_char)
     {
     }
@@ -120,7 +120,7 @@ struct EventCharSet : public BaseEvent
         return type;
     }
 
-    char key_char;
+    wchar_t key_char;
 
     static const EventType type = EventType::CharSet;
 };

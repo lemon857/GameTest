@@ -2,8 +2,6 @@
 
 #include "Games/Tower_Defense/BaseTower.h"
 
-#define P_EXECUTIONER_DESCRIPTION "Just cutting"
-
 class ExecutionerTower : public BaseTower
 {
 public:
@@ -20,11 +18,10 @@ public:
 	static const unsigned int p_coast = 20;
 	static const unsigned int p_coast_upgrade = 12;
 
-	std::string get_add_cooldown() override { return " -1"; }
-	std::string get_add_distance() override { return " +3"; }
-	std::string get_add_damage() override { return " +2"; }
-	std::string get_description() override { return P_EXECUTIONER_DESCRIPTION; }
+	std::wstring get_add_cooldown() override { return L" -1"; }
+	std::wstring get_add_distance() override { return L" +3"; }
+	std::wstring get_add_damage() override { return L" +2"; }
 
-	static std::string get_type_str();
+	static std::wstring get_type_str();
 private:
 };

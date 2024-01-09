@@ -352,7 +352,7 @@ void GameApp::on_key_update(const double delta)
                             isKeySelect = true;
                             glm::vec3 pos = glm::vec3(x * size_place.x, 0.f, y * size_place.z);
                             bool intrs = false;
-                            for (size_t i = 0; i < m_enemies.size(); i++)
+                            /*for (size_t i = 0; i < m_enemies.size(); i++)
                             {
                                 if (m_enemies.at(i) == nullptr) continue;
                                 glm::vec3 p = m_enemies.at(i)->get_pos();
@@ -361,20 +361,18 @@ void GameApp::on_key_update(const double delta)
                                     intrs = true;
                                     selected_enemy = i;
                                 }
-                            }
+                            }*//*
                             for (size_t i = 0; i < m_enemies_broken.size(); i++)
                             {
                                 if (m_enemies_broken.at(i) == nullptr) continue;
                                 glm::vec3 p = m_enemies_broken.at(i)->get_pos();
                                 if (((p.x - pos.x) * (p.x - pos.x)) + ((p.z - pos.z) * (p.z - pos.z)) < 9)
                                 {
-                                    m_psystems.push_back(new ParticleSystem(m_enemies_broken[i]->get_pos(), glm::vec3(0.5f),
-                                        glm::vec3(0.f, 0.7f, 0.f), glm::vec3(0.f, 1.8f, 0.f), glm::vec3(7.f, 10.f, 3.f), glm::vec3(10.f, 7.f, 2.f),
-                                        m_enemies_broken[i]->get_reward(), 5000, 0.3f, ResourceManager::getMaterial("coin")));
+                                    ///m_spawn_particles.push({ m_enemies_broken[i]->get_reward(), m_enemies_broken[i]->get_pos() });
                                     m_enemies_broken[i]->destroy();
                                     intrs = false; selected_enemy = -1;
                                 }
-                            }
+                            }*/
                             if (intrs)
                             {
                                 m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(true);
@@ -668,7 +666,8 @@ void GameApp::on_update(const double delta)
         + " " + std::to_string((int)m_cam->get_rotation().z));
     if (selected_enemy != -1)
     {
-        if (m_enemies[selected_enemy] != nullptr)
+        if (m_enemies[selected_enemy] == nullptr) selected_enemy = -1;
+        else if (m_enemies[selected_enemy] != nullptr)
         {
             m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text(m_lang_pack->get("hp") + L": " + std::to_wstring(m_enemies[selected_enemy]->get_hp()).substr(0, 5));
         }
@@ -697,6 +696,14 @@ void GameApp::on_update(const double delta)
     {   
         m_scene.at(i)->update(delta);
     }   
+
+    while (!m_spawn_particles.empty())
+    {
+        m_psystems.push_back(new ParticleSystem(m_spawn_particles.front().pos, glm::vec3(0.5f),
+            glm::vec3(0.f, 0.7f, 0.f), glm::vec3(0.f, 1.8f, 0.f), glm::vec3(7.f, 10.f, 3.f), glm::vec3(10.f, 7.f, 2.f),
+            m_spawn_particles.front().reward , 5000, 0.3f, ResourceManager::getMaterial("coin")));
+        m_spawn_particles.pop();
+    }
 
     for (size_t i = 0; i < m_psystems.size(); i++)
     {
@@ -842,26 +849,26 @@ void GameApp::on_update(const double delta)
             m_gui->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));
         }
                      
-        for (size_t i = 0; i < m_enemies_broken.size(); i++)
-        {
-            if (m_enemies_broken[i] == nullptr) continue;
-            if (m_enemies_broken[i]->is_destroy())
-            {
-                //if (is_funny_spawn_mode)
-                //{
-                //    int add = rand() % 10;
-                //    unsigned int spawn = 841 + add;
-                //    //m_spawn_enemies.push({ spawn,  });
-                //}
-                if (selected_enemy == i) selected_enemy = -1;
-                g_coins += m_enemies_broken[i]->get_reward();
-                m_gui->get_element<GUI::TextRenderer>("Coins_count")->set_text(std::to_string(g_coins));
-                delete m_enemies_broken[i];
-                m_enemies_broken.remove(i);
-                continue;
-            }
-            m_enemies_broken[i]->update(delta);
-        }
+        //for (size_t i = 0; i < m_enemies_broken.size(); i++)
+        //{
+        //    if (m_enemies_broken[i] == nullptr) continue;
+        //    if (m_enemies_broken[i]->is_destroy())
+        //    {
+        //        //if (is_funny_spawn_mode)
+        //        //{
+        //        //    int add = rand() % 10;
+        //        //    unsigned int spawn = 841 + add;
+        //        //    //m_spawn_enemies.push({ spawn,  });
+        //        //}
+        //        if (selected_enemy == i) selected_enemy = -1;
+        //        g_coins += m_enemies_broken[i]->get_reward();
+        //        m_gui->get_element<GUI::TextRenderer>("Coins_count")->set_text(std::to_string(g_coins));
+        //        delete m_enemies_broken[i];
+        //        m_enemies_broken.remove(i);
+        //        continue;
+        //    }
+        //    m_enemies_broken[i]->update(delta);
+        //}
 
         for (size_t i = 0; i < m_enemies.size(); i++)
         {
@@ -877,7 +884,10 @@ void GameApp::on_update(const double delta)
                 m_gui->get_element<GUI::TextRenderer>("kills")->set_text("Kills: " + std::to_string(countKills));
                 m_gui->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));
                 if (selected_enemy == i) selected_enemy = -1;
-                m_enemies_broken.push_back(m_enemies[i]);
+                g_coins += m_enemies[i]->get_reward();
+                m_gui->get_element<GUI::TextRenderer>("Coins_count")->set_text(std::to_string(g_coins));
+                //m_enemies_broken.push_back(m_enemies[i]);
+                delete m_enemies[i];
                 m_enemies.remove(i);
                 continue;
             }            
@@ -900,11 +910,11 @@ void GameApp::on_update(const double delta)
         {
             m_circle->set_pos(parts[cur]);
         }
-        else if (selected_enemy != -1)
-        {
-            m_circle->set_pos(m_enemies[selected_enemy]->get_pos());
-            m_circle->set_rad(m_enemies[selected_enemy]->get_distance());
-        }
+        //else if (selected_enemy != -1)
+        //{
+        //    m_circle->set_pos(m_enemies[selected_enemy]->get_pos());
+        //    m_circle->set_rad(m_enemies[selected_enemy]->get_distance());
+        //}
     }    
     //else
     //{
@@ -1063,6 +1073,7 @@ void GameApp::on_render(const double delta)
 
     for (size_t i = 0; i < m_psystems.size(); i++)
     {
+        if (m_psystems.at(i) == nullptr) continue;
         m_psystems.at(i)->render(m_cam->get_projection_matrix() * m_cam->get_view_matrix());
     }
 
@@ -1104,11 +1115,11 @@ void GameApp::on_render(const double delta)
         if (m_enemies[i] == nullptr) continue;
         m_enemies[i]->render();
     }
-    for (size_t i = 0; i < m_enemies_broken.size(); i++)
+    /*for (size_t i = 0; i < m_enemies_broken.size(); i++)
     {
         if (m_enemies_broken[i] == nullptr) continue;
         m_enemies_broken[i]->render();
-    }
+    }*/
     for (auto curTower : m_towers)
     {
         curTower.tow->render();

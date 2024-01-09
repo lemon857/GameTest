@@ -73,13 +73,13 @@ public:
 		ListNode* p = m_first;
 		m_first = p->m_next;
 		delete p;
+		m_size--;
 	}
 
 	void remove_last() {
 		if (is_empty()) return;
 		if (m_first == m_last) {
 			remove_first();
-			m_size--;
 			return;
 		}
 		ListNode* p = m_first;
@@ -87,13 +87,13 @@ public:
 		p->m_next = nullptr;
 		delete m_last;
 		m_last = p;
+		m_size--;
 	}
 
 	void remove(_Ty _val) {
 		if (is_empty()) return;
 		if (m_first->value == _val) {
 			remove_first();
-			m_size--;
 			return;
 		}
 		else if (m_last->value == _val) {
@@ -120,7 +120,6 @@ public:
 		_Ty _val = at(index);
 		if (m_first->value == _val) {
 			remove_first();
-			m_size--;
 			return;
 		}
 		else if (m_last->value == _val) {

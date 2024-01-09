@@ -8,6 +8,35 @@
 
 #include <GLFW/glfw3.h>
 
+const char* gl_source_to_str(const GLenum source)
+{
+    switch (source)
+    {
+    case GL_DEBUG_SOURCE_API: return "DEBUG SOURCE API";
+    case GL_DEBUG_SOURCE_WINDOW_SYSTEM: return "DEBUG SOURCE WINDOW SYSTEM";
+    case GL_DEBUG_SOURCE_SHADER_COMPILER: return "DEBUG SOURCE SHADER COMPILER";
+    case GL_DEBUG_SOURCE_THIRD_PARTY: return "DEBUG SOURCE THIRD PARTY";
+    case GL_DEBUG_SOURCE_APPLICATION: return "DEBUG SOURCE APPLICATION";
+    case GL_DEBUG_SOURCE_OTHER: return "DEBUG SOURCE OTHER";
+    }
+    return "DEBUG SOURCE UNKNOWN";
+}
+const char* gl_type_to_str(const GLenum type)
+{
+    switch (type)
+    {
+    case GL_DEBUG_TYPE_ERROR: return "DEBUG TYPE ERROR";
+    case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: return "DEBUG TYPE DEPRECATED BEHAVIOR";
+    case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR: return "DEBUG TYPE UNDEFINED BEHAVIOR";
+    case GL_DEBUG_TYPE_PORTABILITY: return "DEBUG TYPE PORTABILITY";
+    case GL_DEBUG_TYPE_PERFORMANCE: return "DEBUG TYPE PERFORMANCE";
+    case GL_DEBUG_TYPE_MARKER: return "DEBUG TYPE MARKER";
+    case GL_DEBUG_TYPE_PUSH_GROUP: return "DEBUG TYPE PUSH GROUP";
+    case GL_DEBUG_TYPE_POP_GROUP: return "DEBUG TYPE POP GROUP";
+    case GL_DEBUG_TYPE_OTHER: return "DEBUG TYPE OTHER";
+    }
+    return "DEBUG TYPE UNKNOWN";
+}
 Window::Window(std::string title, std::string path_icon_png, glm::ivec2& window_position, glm::ivec2& window_size, bool maximized, bool fullscreen)
     : m_data({ std::move(title), window_size, window_position, maximized, fullscreen, nullptr })
     , m_path_icon_png(path_icon_png)
@@ -87,6 +116,8 @@ int Window::init()
     m_pWindow = glfwCreateWindow(m_data.window_size.x, m_data.window_size.y,
         m_data.title.c_str(), nullptr, nullptr);
    
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+
     if (!m_pWindow)
     {
         LOG_CRIT("Generate window failed");
@@ -104,6 +135,32 @@ int Window::init()
         LOG_CRIT("Glad load failed");
         return -1;
     }
+
+    //glEnable(GL_DEBUG_OUTPUT);
+    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);
+
+    glDebugMessageCallback([](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
+        {
+            switch (severity)
+            {
+            case GL_DEBUG_SEVERITY_HIGH:
+                LOG_ERROR("OpenGL Error: [{0}:{1}]({2}): {3}", gl_source_to_str(source), gl_type_to_str(type), id, message);
+                break;
+            case GL_DEBUG_SEVERITY_MEDIUM:
+                LOG_WARN("OpenGL Warning: [{0}:{1}]({2}): {3}", gl_source_to_str(source), gl_type_to_str(type), id, message);
+                break;
+            case GL_DEBUG_SEVERITY_LOW:
+                LOG_INFO("OpenGL Info: [{0}:{1}]({2}): {3}", gl_source_to_str(source), gl_type_to_str(type), id, message);
+                break;
+            case GL_DEBUG_SEVERITY_NOTIFICATION:
+                LOG_INFO("OpenGL Notification: [{0}:{1}]({2}): {3}", gl_source_to_str(source), gl_type_to_str(type), id, message);
+                break;
+            default:
+                LOG_ERROR("OpenGL Error: [{0}:{1}]({2}): {3}", gl_source_to_str(source), gl_type_to_str(type), id, message);
+                break;
+            }
+        }, nullptr);
 
     GLFWimage icon;
     int channels = 0;

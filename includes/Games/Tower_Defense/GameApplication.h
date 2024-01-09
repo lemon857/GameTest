@@ -76,6 +76,12 @@ struct WaveInfo
 	int count_magicans;
 };
 
+struct SpawnParticles
+{
+	unsigned int reward;
+	glm::vec3 pos;
+};
+
 struct SpawnTower
 {
 	unsigned int num;
@@ -140,7 +146,7 @@ private:
 	//Castle* m_adv_castle;
 
 	linked_list<BaseEnemy*> m_enemies;
-	linked_list<BaseEnemy*> m_enemies_broken;
+	//linked_list<BaseEnemy*> m_enemies_broken;
 	//linked_list<BaseEnemy*> m_enemies_self;
 
 	std::vector<Tower> m_towers;
@@ -154,6 +160,8 @@ private:
 
 	std::queue<SpawnEnemy> m_spawn_enemies;
 	//std::queue<unsigned int> m_spawn_enemies_self;
+
+	std::queue<SpawnParticles> m_spawn_particles;
 
 	linked_list<ParticleSystem*> m_psystems;
 

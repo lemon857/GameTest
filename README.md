@@ -11,4 +11,5 @@ Be seriously my engine have:
 - Game object and component system
 - includes miniaudio lib for sound playing
 
-And I know it have just terrible realization
+And I know it have just terrible realization   
+Additional releases, such as 0.0.7.1, may have critical bugs

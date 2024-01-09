@@ -1,6 +1,7 @@
 build
 # Prerequisites
 *.d
+*.aps
 
 # Compiled Object files
 *.slo

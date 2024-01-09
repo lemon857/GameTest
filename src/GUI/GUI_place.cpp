@@ -33,7 +33,7 @@ namespace GUI
 	}
 	void GUI_place::on_render()
 	{
-		if (!m_isActive) return;
+		//if (!m_isActive) return;
 		//m_pMaterial->use();
 		//m_pMaterial->get_shader_ptr()->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_render_cam->get_ui_matrix());
 		//glm::vec2 size = m_render_cam->get_viewport_size();
@@ -124,18 +124,19 @@ namespace GUI
 		if (!m_isActive) return;
 		m_vp_size = m_render_cam->get_viewport_size();
 		y = m_vp_size.y - y; // set null pos in left down
-		for (auto cur : m_elements)
+		for (auto cur : m_els)
 		{
-			if (!cur.second->get_active()) continue;
-			glm::vec2 scale = cur.second->get_scale();
-			glm::vec2 pos = cur.second->get_position() - scale;
+			if (!cur->get_active()) continue;
+			glm::vec2 scale = cur->get_scale();
+			glm::vec2 pos = cur->get_position() - scale;
 			scale *= 2;
 			if ((x >= pos.x && y >= pos.y && x <= pos.x + scale.x && y <= pos.y + scale.y))
 			{
-				cur.second->on_press();
+				cur->set_pos_mouse_click(glm::vec2(x, y));
+				cur->on_press();
 				m_isFocus = true;
 				ResourceManager::get_sound("click")->play();
-				if (m_is_event_logging_active) LOG_INFO("[GUI] Click on object: {0}", cur.second->get_name());
+				if (m_is_event_logging_active) LOG_INFO("[GUI] Click on object: {0}", cur->get_name());
 			}
 		}
 	}

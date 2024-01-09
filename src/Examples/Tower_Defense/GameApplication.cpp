@@ -74,7 +74,7 @@ GameApp::GameApp()
 {
     m_ini_region_user.nickname = &m_nickname;
     m_ini_region_user.view_pos = &g_cam_view;
-    m_ini_data.add_region("USER", &m_ini_region_user);        
+    m_ini_data.add_region("USER", &m_ini_region_user);
 }
 GameApp::~GameApp()
 {}
@@ -91,6 +91,8 @@ bool GameApp::init()
     m_lang_pack = ResourceManager::get_lang_pack(val);
     ResourceManager::set_current_lang_pack(m_lang_pack);
 
+    m_gui = nullptr;
+
     lock_key_update = new bool(false);
 
     m_cam = new Camera(glm::vec3(12.5f, 55.f, 30.f), glm::vec3(-75.f, -90.f, 0.f));
@@ -99,98 +101,15 @@ bool GameApp::init()
 
     m_circle = new RenderEngine::Circle(ResourceManager::getMaterial("default"), uPos, glm::vec3(1.f), glm::vec3(0.f), glm::vec4(1.f, 0.f, 0.f, 0.4f), 1, 120, 4);
 
-    m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
-    // init materials
-    GET_DATA_MATERIAL("green_place", float, "sourceColor", 1) = 1.f;
-    GET_DATA_MATERIAL("green_place", float, "sourceColor", 3) = 0.2f;
+    ResourceManager::get_font("calibri")->set_scale(0.5f);
+    ResourceManager::get_font("calibriChat")->set_scale(0.27f);
 
-    GET_DATA_MATERIAL("cube", float, "ambient_factor", 0) = 0.25f;
-    GET_DATA_MATERIAL("cube", float, "diffuse_factor", 0) = 0.1f;
-    GET_DATA_MATERIAL("cube", float, "specular_factor", 0) = 0.0f;
-    GET_DATA_MATERIAL("cube", float, "metalic_factor", 0) = 0.0f;
-    GET_DATA_MATERIAL("cube", float, "shininess", 0) = 0.1f;
+    m_gui_main_menu = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
 
-    GET_DATA_MATERIAL("dirt", float, "ambient_factor", 0) = 0.25f;
-    GET_DATA_MATERIAL("dirt", float, "diffuse_factor", 0) = 0.1f;
-    GET_DATA_MATERIAL("dirt", float, "specular_factor", 0) = 0.0f;
-    GET_DATA_MATERIAL("dirt", float, "metalic_factor", 0) = 0.0f;
-    GET_DATA_MATERIAL("dirt", float, "shininess", 0) = 0.1f;
+    init_main_menu_gui();
 
-    std::vector<std::string> mats_tows;
-    mats_tows.push_back("inferno_tower");
-    mats_tows.push_back("executioner_tower");
-    mats_tows.push_back("ice_tower");
-    mats_tows.push_back("mortar_tower");
-    mats_tows.push_back("archer_tower");
-        
-    for (auto& mt : mats_tows)
-    {
-        GET_DATA_MATERIAL(mt, float, "ambient_factor", 0) = 0.3f;
-        GET_DATA_MATERIAL(mt, float, "diffuse_factor", 0) = 0.4f;
-        GET_DATA_MATERIAL(mt, float, "specular_factor", 0) = 0.0f;
-        GET_DATA_MATERIAL(mt, float, "metalic_factor", 0) = 0.0f;
-        GET_DATA_MATERIAL(mt, float, "shininess", 0) = 0.1f;
-    }
-
-    std::vector<std::string> mats_ens;
-    mats_ens.push_back("monkey");
-    mats_ens.push_back("magician");
-    mats_ens.push_back("robot");
-    mats_ens.push_back("spider");
-    mats_ens.push_back("professor");
-
-    for (auto& me : mats_ens)
-    {
-        GET_DATA_MATERIAL(me, float, "ambient_factor", 0) = 0.5f;
-        GET_DATA_MATERIAL(me, float, "diffuse_factor", 0) = 0.4f;
-        GET_DATA_MATERIAL(me, float, "specular_factor", 0) = 0.0f;
-        GET_DATA_MATERIAL(me, float, "metalic_factor", 0) = 0.0f;
-        GET_DATA_MATERIAL(me, float, "shininess", 0) = 0.1f;
-    }
-
-    GET_DATA_MATERIAL("castle", float, "ambient_factor", 0) = 0.3f;
-    GET_DATA_MATERIAL("castle", float, "diffuse_factor", 0) = 0.4f;
-    GET_DATA_MATERIAL("castle", float, "specular_factor", 0) = 0.0f;
-    GET_DATA_MATERIAL("castle", float, "metalic_factor", 0) = 0.0f;
-    GET_DATA_MATERIAL("castle", float, "shininess", 0) = 0.1f;
-
-    std::vector<std::string> names;
-    names.push_back("default3DShader");
-
-    m_scene.add_object<Plane>(ResourceManager::getMaterial("dirt"), glm::vec3(size_x, 0.f, size_y), glm::vec3(size_x, 0.f, size_y));
-    m_scene.add_object<DirectionalLight>(names);
-    m_scene.add_object<Grid>(glm::vec3(size_x, 0.5f, size_y), glm::vec2(1.f), size_x, size_y, glm::vec4(1.f, 1.f, 1.f, 0.5f), ResourceManager::getMaterial("default"));
-    m_scene.add_object<EmptyObject>();
-
-    m_scene.at(curObj)->addComponent<Transform>();
-    m_scene.at(curObj)->addComponent<Highlight>(ResourceManager::getMaterial("default"), true);
-
-    const auto& transform = m_scene.at(0)->getComponent<Transform>();
-
-    size_place = glm::vec3(transform->get_scale().x / size_x * 2, transform->get_scale().y, transform->get_scale().z / size_y * 2);
-
-    glm::vec3 startPos = transform->get_position() - transform->get_scale() + glm::vec3(1.f);
-
-    for (int i = 0; i < size_x; i++)
-    {
-        for (int j = 0; j < size_y; j++)
-        {
-            parts.push_back(startPos + glm::vec3((float)i * size_place.x, 0, (float)j * size_place.z));
-        }
-    }
-
-    // game system init
-    init_gui();
-    start_game_single();
-    //init_winSock(); // network features
-
-    m_gui->set_active(true);
-
-    m_gui->get_element<GUI::Button>("Disconnect")->set_active(false);
-
-    m_gui->get_element<GUI::ChatBox>("chat_place")->set_open(false);
-
-    m_scene.at(curObj)->getComponent<Transform>()->set_position(parts[0]);
+    start_game();
+            
     //  --------------------------------------------- commands init -------------------------------
     CommandManager::add_command("cen", [&](std::vector<std::string> args) {
         if (args.empty())
@@ -332,58 +251,7 @@ bool GameApp::init()
         //m_chat_mes.push("/reload <shaders/textures/fonts> - reload resources");
         });
     //  --------------------------------------------- commands init -------------------------------
-
-    targets.push_back(Target(parts[814]));
-    targets.push_back(Target(parts[124]));
-    targets.push_back(Target(parts[135]));
-    targets.push_back(Target(parts[765]));
-    targets.push_back(Target(parts[776]));
-    targets.push_back(Target(parts[116]));
-
-    // --------------------------- fills dead zones -------------------------------
-    for (size_t i = 0; i < 4; i++)
-    {
-        for (size_t j = 0; j < 13; j++)
-        {
-            map[780 + 30 * i + j] = true;
-        }
-    }
-    for (size_t i = 0; i < 24; i++)
-    {
-        for (size_t j = 0; j < 5; j++)
-        {
-            map[62 + 30 * i + j] = true;
-        }
-    }
-    for (size_t i = 0; i < 5; i++)
-    {
-        for (size_t j = 0; j < 6; j++)
-        {
-            map[67 + 30 * i + j] = true;
-        }
-    }
-    for (size_t i = 0; i < 26; i++)
-    {
-        for (size_t j = 0; j < 5; j++)
-        {
-            map[73 + 30 * i + j] = true;
-        }
-    }
-    for (size_t i = 0; i < 5; i++)
-    {
-        for (size_t j = 0; j < 6; j++)
-        {
-            map[708 + 30 * i + j] = true;
-        }
-    }
-    for (size_t i = 0; i < 27; i++)
-    {
-        for (size_t j = 0; j < 5; j++)
-        {
-            map[54 + 30 * i + j] = true;
-        }
-    }
-
+        
     return true;
 }
 
@@ -391,8 +259,12 @@ void GameApp::terminate()
 {
     delete m_cam;
     delete lock_key_update;
+    delete m_circle;
+    delete m_line;
+    delete m_gui;
+    delete m_gui_main_menu;
     WinSock::close_WinSock();
-    chat_last.clear();
+    terminate_game();
 }
 
 void GameApp::on_key_update(const double delta)
@@ -429,44 +301,46 @@ void GameApp::on_key_update(const double delta)
 
     if (is_gui_active) return; // block move in menu
 
-    if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT) && !m_gui->get_focus())
+    if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT) && m_gui)
     {
-        int x = (int)floor(m_world_mouse_pos_x / 2.f);
-        int y = (int)floor(m_world_mouse_pos_z / 2.f);
-        if ((x * y <= (size_x - 1) * (size_y - 1)) && (x >= 0 && y >= 0))
+        if  (!m_gui->get_focus())
         {
-            if (x <= (size_x - 1) && y <= (size_y - 1))
+            int x = (int)floor(m_world_mouse_pos_x / 2.f);
+            int y = (int)floor(m_world_mouse_pos_z / 2.f);
+            if ((x * y <= (size_x - 1) * (size_y - 1)) && (x >= 0 && y >= 0))
             {
-                if (cur != x * size_y + y)
+                if (x <= (size_x - 1) && y <= (size_y - 1))
                 {
-                    cur = x * size_y + y;
-                    //LOG_INFO("CUR: {0}", cur);
-                    m_scene.at(curObj)->getComponent<Transform>()->set_position(parts[cur]);
-                    m_select_tower = nullptr;
-                    isKeyPressedmouse = true;
-
-                    if (is_spawn_mode)
+                    if (cur != x * size_y + y)
                     {
-                        int x = cur / size_y;
-                        int y = cur % size_x;
-
+                        cur = x * size_y + y;
+                        //LOG_INFO("CUR: {0}", cur);
+                        m_scene.at(curObj)->getComponent<Transform>()->set_position(parts[cur]);
+                        m_select_tower = nullptr;
                         isKeyPressedmouse = true;
 
-                        //char buff[sizeof(unsigned int) + 1];
+                        if (is_spawn_mode)
+                        {
+                            int x = cur / size_y;
+                            int y = cur % size_x;
 
-                        //if (m_mode == GameMode::Single)
-                        //{
-                            //if (is_spawn_enemy)
+                            isKeyPressedmouse = true;
+
+                            //char buff[sizeof(unsigned int) + 1];
+
+                            //if (m_mode == GameMode::Single)
                             //{
-                            //    /*for (unsigned int i = 0; i < countSpawnEnemies; i++)
-                            //    {
-                            //        m_spawn_enemies.push(cur);
-                            //    }
-                            //    buff[0] = 's';
-                            //    sysfunc::type_to_char(&cur, buff, 1);
+                                //if (is_spawn_enemy)
+                                //{
+                                //    /*for (unsigned int i = 0; i < countSpawnEnemies; i++)
+                                //    {
+                                //        m_spawn_enemies.push(cur);
+                                //    }
+                                //    buff[0] = 's';
+                                //    sysfunc::type_to_char(&cur, buff, 1);
 
-                            //    WinSock::send_data(buff, sizeof(unsigned int) + 1);*/
-                            //}
+                                //    WinSock::send_data(buff, sizeof(unsigned int) + 1);*/
+                                //}
                             if (!map[cur])
                             {
                                 //m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(true);
@@ -478,19 +352,235 @@ void GameApp::on_key_update(const double delta)
                                 //WinSock::send_data(buff, sizeof(unsigned int) + 1);
                                 //LOG_INFO("Add tower at {0}x{1}", x, y);
                             }
+                            //}
+                            //else
+                            //{
+                            //    if (is_spawn_enemy)
+                            //    {
+                            //       /* if (isServer)
+                            //        {
+                            //            if (x < 5 && y > 16 && y < 30)
+                            //            {
+                            //                for (unsigned int i = 0; i < countSpawnEnemies; i++)
+                            //                {
+                            //                    m_spawn_enemies_self.push(cur);
+                            //                }
+                            //                buff[0] = 's';
+                            //                sysfunc::type_to_char(&cur, buff, 1);
+                            //                WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                            //            }
+                            //        }
+                            //        else
+                            //        {
+                            //            if (x > 25 && y < 14 && y > 1)
+                            //            {
+                            //                for (unsigned int i = 0; i < countSpawnEnemies; i++)
+                            //                {
+                            //                    m_spawn_enemies_self.push(cur);
+                            //                }
+                            //                buff[0] = 's';
+                            //                sysfunc::type_to_char(&cur, buff, 1);
+                            //                WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                            //            }
+                            //        }*/
+                            //    }
+                            //    else if (!map[cur])
+                            //    {
+                            //        if (isServer)
+                            //        {
+                            //            if ((x > 6 && x < 25) && ((y > 0 && y < 3) || (y > 8 && y < 16)))
+                            //            {
+                            //                map[cur] = true;
+                            //                m_spawn_towers.push(cur);
+                            //                buff[0] = 't';
+                            //                sysfunc::type_to_char(&cur, buff, 1);
+                            //                WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                            //            }
+                            //        }
+                            //        else
+                            //        {
+                            //            if ((x > 6 && x < 25) && ((y > 16 && y < 19) || (y > 22 && y < 30)))
+                            //            {
+                            //                map[cur] = true;
+                            //                m_spawn_towers.push(cur);
+                            //                buff[0] = 't';
+                            //                sysfunc::type_to_char(&cur, buff, 1);
+                            //                WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                            //            }
+                            //        }
+                            //    }
+                            //}
+
+                            //LOG_INFO("Pos: X:{0} Y:{1}", x, y);
+                        }
+
+                        //char buff[sizeof(unsigned int) + 1];
+                        //buff[0] = 'd';
+                        //sysfunc::type_to_char(&cur, buff, 1);
+                        //WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                    }
+                    else if (!is_spawn_mode && !isKeyPressedmouse)
+                    {
+                        //int x = cur / size_y;
+                        //int y = cur % size_x;
+
+                        isKeyPressedmouse = true;
+
+                        //char buff[sizeof(unsigned int) + 1];
+                        //if (m_mode == GameMode::Single)
+                        //{
+                            //if (is_spawn_enemy)
+                            //{
+                                /*for (unsigned int i = 0; i < countSpawnEnemies; i++)
+                                {
+                                    m_spawn_enemies.push(cur);
+                                }
+                                buff[0] = 's';
+                                sysfunc::type_to_char(&cur, buff, 1);
+
+                                WinSock::send_data(buff, sizeof(unsigned int) + 1);*/
+                                //}
+                        if (!map[cur])
+                        {
+                            m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(true);
+                            m_gui->get_element<GUI::TextRenderer>("Coast_prop")->set_text("");
+                            m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("");
+                            m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text("");
+                            m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text("");
+                            m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text("");
+                            m_gui->get_element<GUI::TextRenderer>("Type_prop")->set_text("");
+                            m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("");
+                            selected_enemy = -1;
+                            if (place_querry != TypeTower::null)
+                            {
+                                is_active_cursor = is_active_cursor_tmp;
+                                place_querry = TypeTower::null;
+                                m_gui->get_element<GUI::Button>("Upgrade_place")->set_text(m_lang_pack->get("upgrade"));
+                                m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("");
+                            }
+                            //map[cur] = true;
+                            //m_spawn_towers.push(cur);
+                            //buff[0] = 't';
+                            //sysfunc::type_to_char(&cur, buff, 1);
+                            //WinSock::send_data(buff, sizeof(unsigned int) + 1);
+                            //LOG_INFO("Add tower at {0}x{1}", x, y);
+                        }
+                        else if (cur == 86)
+                        {
+                            m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(true);
+                            m_gui->get_element<GUI::TextRenderer>("Coast_prop")->set_text("");
+                            m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("");
+                            m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text("");
+                            m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text(m_lang_pack->get("max") + L" " + m_lang_pack->get("hp") + L": " + std::to_wstring(m_main_castle->get_max_hp()).substr(0, 4));
+                            m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text(m_lang_pack->get("hp") + L": " + std::to_wstring(m_main_castle->get_hp()).substr(0, 4));
+                            m_gui->get_element<GUI::TextRenderer>("Type_prop")->set_text("");
+                            m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text(m_lang_pack->get("castledesc"));
+                            selected_enemy = -1;
+                            if (place_querry != TypeTower::null)
+                            {
+                                is_active_cursor = is_active_cursor_tmp;
+                                place_querry = TypeTower::null;
+                                m_gui->get_element<GUI::Button>("Upgrade_place")->set_text(m_lang_pack->get("upgrade"));
+                                m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("");
+                            }
+                        }
+                        else
+                        {
+                            if (place_querry != TypeTower::null)
+                            {
+                                is_active_cursor = is_active_cursor_tmp;
+                                place_querry = TypeTower::null;
+                                m_gui->get_element<GUI::Button>("Upgrade_place")->set_text(m_lang_pack->get("upgrade"));
+                                m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("");
+                            }
+                            glm::vec3 pos = glm::vec3(x * size_place.x, 0.f, y * size_place.z);
+                            bool intrs = false;
+                            for (size_t i = 0; i < m_enemies.size(); i++)
+                            {
+                                if (m_enemies.at(i) == nullptr) continue;
+                                glm::vec3 p = m_enemies.at(i)->get_pos();
+                                if (((p.x - pos.x) * (p.x - pos.x)) + ((p.z - pos.z) * (p.z - pos.z)) < 5)
+                                {
+                                    intrs = true;
+                                    selected_enemy = i;
+                                }
+                            }
+                            for (size_t i = 0; i < m_enemies_broken.size(); i++)
+                            {
+                                if (m_enemies_broken.at(i) == nullptr) continue;
+                                glm::vec3 p = m_enemies_broken.at(i)->get_pos();
+                                if (((p.x - pos.x) * (p.x - pos.x)) + ((p.z - pos.z) * (p.z - pos.z)) < 9)
+                                {
+                                    m_psystems.push_back(new ParticleSystem(m_enemies_broken[i]->get_pos(), glm::vec3(0.5f),
+                                        glm::vec3(0.f, 0.5f, 0.f), glm::vec3(0.f, 0.4f, 0.f), glm::vec3(2.f, 10.f, 3.f), glm::vec3(0.f, 7.f, 2.f),
+                                        m_enemies_broken[i]->get_reward(), 5000, 1.f, ResourceManager::getMaterial("coin")));
+                                    m_enemies_broken[i]->destroy();
+                                    selected_enemy = -1;
+                                    intrs = false;
+                                }
+                            }
+                            if (intrs)
+                            {
+                                m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(true);
+                                m_gui->get_element<GUI::TextRenderer>("Coast_prop")->set_text(m_lang_pack->get("reward") + L": " + std::to_wstring(m_enemies[selected_enemy]->get_reward()));
+                                m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text(m_lang_pack->get("damage") + L": " + std::to_wstring(m_enemies[selected_enemy]->get_damage()).substr(0, 3));
+                                m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text(m_lang_pack->get("cooldown") + L": " + std::to_wstring(m_enemies[selected_enemy]->get_cooldown()).substr(0, 3));
+                                m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text(m_lang_pack->get("radius") + L": " + std::to_wstring(m_enemies[selected_enemy]->get_vel()).substr(0, 4));
+                                m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text(m_lang_pack->get("hp") + L": " + std::to_wstring(m_enemies[selected_enemy]->get_hp()).substr(0, 4));
+                                m_gui->get_element<GUI::TextRenderer>("Type_prop")->set_text(m_lang_pack->get("typearm") + L": " + BaseEnemy::get_type_str(m_enemies[selected_enemy]->get_type()));
+                                m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text(m_enemies[selected_enemy]->get_description());
+                            }
+                            else
+                            {
+                                selected_enemy = -1;
+                                m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(false);
+                                for (auto& it : m_towers)
+                                {
+                                    if (it.num == cur)
+                                    {
+                                        m_select_tower = it.tow;
+
+                                        if (m_select_tower->is_upgradable()) {
+                                            m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(true);
+                                            m_gui->get_element<GUI::TextRenderer>("Coast_prop")->set_text(m_lang_pack->get("coast") + L": " + std::to_wstring(m_select_tower->get_upgrade_coast()));
+                                            m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text(m_lang_pack->get("damage") + L": " +
+                                                std::to_wstring(m_select_tower->get_damage()).substr(0, 5) + m_select_tower->get_add_damage());
+                                            m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text(m_lang_pack->get("cooldown") + L": " +
+                                                std::to_wstring(m_select_tower->get_cooldown()).substr(0, 4) + m_select_tower->get_add_cooldown());
+                                            m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text(m_lang_pack->get("radius") + L": " +
+                                                std::to_wstring(m_select_tower->get_distance()).substr(0, 4) + m_select_tower->get_add_distance());
+                                            m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text(m_select_tower->get_custom() + m_select_tower->get_add_custom());
+                                            m_gui->get_element<GUI::TextRenderer>("Type_prop")->set_text(m_lang_pack->get("typeatt") + L": "
+                                                + m_select_tower->get_self_type_str());
+                                            m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text(m_select_tower->get_description());
+                                        }
+                                        else
+                                        {
+                                            m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(true);
+                                            m_gui->get_element<GUI::TextRenderer>("Coast_prop")->set_text(m_lang_pack->get("coast") + L": " + std::to_wstring(m_select_tower->get_coast()));
+                                            m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text(m_lang_pack->get("damage") + L": " + std::to_wstring(m_select_tower->get_damage()).substr(0, 5));
+                                            m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text(m_lang_pack->get("cooldown") + L": " + std::to_wstring(m_select_tower->get_cooldown()).substr(0, 4));
+                                            m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text(m_lang_pack->get("radius") + L": " + std::to_wstring(m_select_tower->get_distance()).substr(0, 4));
+                                            m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text(m_select_tower->get_custom());
+                                            m_gui->get_element<GUI::TextRenderer>("Type_prop")->set_text((m_lang_pack->get("typeatt") + L": " + m_select_tower->get_self_type_str()));
+                                            m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text(m_select_tower->get_description());
+                                        }
+                                        place_querry = TypeTower::null;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
                         //}
                         //else
                         //{
                         //    if (is_spawn_enemy)
                         //    {
-                        //       /* if (isServer)
+                        //        /*if (isServer)
                         //        {
                         //            if (x < 5 && y > 16 && y < 30)
                         //            {
-                        //                for (unsigned int i = 0; i < countSpawnEnemies; i++)
-                        //                {
-                        //                    m_spawn_enemies_self.push(cur);
-                        //                }
+                        //                m_spawn_enemies_self.push(cur);
                         //                buff[0] = 's';
                         //                sysfunc::type_to_char(&cur, buff, 1);
                         //                WinSock::send_data(buff, sizeof(unsigned int) + 1);
@@ -500,12 +590,9 @@ void GameApp::on_key_update(const double delta)
                         //        {
                         //            if (x > 25 && y < 14 && y > 1)
                         //            {
-                        //                for (unsigned int i = 0; i < countSpawnEnemies; i++)
-                        //                {
-                        //                    m_spawn_enemies_self.push(cur);
-                        //                }
+                        //                m_spawn_enemies_self.push(cur);
                         //                buff[0] = 's';
-                        //                sysfunc::type_to_char(&cur, buff, 1);
+                        //                sysfunc::type_to_char(&cur, buff, 1);                        
                         //                WinSock::send_data(buff, sizeof(unsigned int) + 1);
                         //            }
                         //        }*/
@@ -539,218 +626,6 @@ void GameApp::on_key_update(const double delta)
 
                         //LOG_INFO("Pos: X:{0} Y:{1}", x, y);
                     }
-
-                    //char buff[sizeof(unsigned int) + 1];
-                    //buff[0] = 'd';
-                    //sysfunc::type_to_char(&cur, buff, 1);
-                    //WinSock::send_data(buff, sizeof(unsigned int) + 1);
-                }
-                else if (!is_spawn_mode && !isKeyPressedmouse)
-                {
-                    //int x = cur / size_y;
-                    //int y = cur % size_x;
-
-                    isKeyPressedmouse = true;
-
-                    //char buff[sizeof(unsigned int) + 1];
-                    //if (m_mode == GameMode::Single)
-                    //{
-                        //if (is_spawn_enemy)
-                        //{
-                            /*for (unsigned int i = 0; i < countSpawnEnemies; i++)
-                            {
-                                m_spawn_enemies.push(cur);
-                            }
-                            buff[0] = 's';
-                            sysfunc::type_to_char(&cur, buff, 1);
-
-                            WinSock::send_data(buff, sizeof(unsigned int) + 1);*/
-                        //}
-                    if (!map[cur])
-                    {
-                        m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(true);
-                        m_gui->get_element<GUI::TextRenderer>("Coast_prop")->set_text("");
-                        m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("");
-                        m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text("");
-                        m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text("");
-                        m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text("");
-                        m_gui->get_element<GUI::TextRenderer>("Type_prop")->set_text("");
-                        m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("");
-                        selected_enemy = -1;
-                        if (place_querry != TypeTower::null)
-                        {
-                            is_active_cursor = is_active_cursor_tmp;
-                            place_querry = TypeTower::null;
-                            m_gui->get_element<GUI::Button>("Upgrade_place")->set_text(m_lang_pack->get("upgrade"));
-                            m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("");
-                        }
-                        //map[cur] = true;
-                        //m_spawn_towers.push(cur);
-                        //buff[0] = 't';
-                        //sysfunc::type_to_char(&cur, buff, 1);
-                        //WinSock::send_data(buff, sizeof(unsigned int) + 1);
-                        //LOG_INFO("Add tower at {0}x{1}", x, y);
-                    }
-                    else if (cur == 86)
-                    {
-                        m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(true);
-                        m_gui->get_element<GUI::TextRenderer>("Coast_prop")->set_text("");
-                        m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text("");
-                        m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text("");
-                        m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text(m_lang_pack->get("max") + L" " + m_lang_pack->get("hp") + L": " + std::to_wstring(m_main_castle->get_max_hp()).substr(0, 4));
-                        m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text(m_lang_pack->get("hp") + L": " + std::to_wstring(m_main_castle->get_hp()).substr(0, 4));
-                        m_gui->get_element<GUI::TextRenderer>("Type_prop")->set_text("");
-                        m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text(m_lang_pack->get("castledesc"));
-                        selected_enemy = -1;
-                        if (place_querry != TypeTower::null)
-                        {
-                            is_active_cursor = is_active_cursor_tmp;
-                            place_querry = TypeTower::null;
-                            m_gui->get_element<GUI::Button>("Upgrade_place")->set_text(m_lang_pack->get("upgrade"));
-                            m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("");
-                        }
-                    }
-                    else
-                    {
-                        if (place_querry != TypeTower::null)
-                        {
-                            is_active_cursor = is_active_cursor_tmp;
-                            place_querry = TypeTower::null;
-                            m_gui->get_element<GUI::Button>("Upgrade_place")->set_text(m_lang_pack->get("upgrade"));
-                            m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("");
-                        }
-                        glm::vec3 pos = glm::vec3(x * size_place.x, 0.f, y * size_place.z);
-                        bool intrs = false;
-                        for (size_t i = 0; i < m_enemies.size(); i++)
-                        {
-                            if (m_enemies.at(i) == nullptr) continue;
-                            glm::vec3 p = m_enemies.at(i)->get_pos();
-                            if (((p.x - pos.x) * (p.x - pos.x)) + ((p.z - pos.z) * (p.z - pos.z)) < 5)
-                            {
-                                intrs = true;
-                                selected_enemy = i;
-                            }
-                        }
-                        for (size_t i = 0; i < m_enemies_broken.size(); i++)
-                        {
-                            if (m_enemies_broken.at(i) == nullptr) continue;
-                            glm::vec3 p = m_enemies_broken.at(i)->get_pos();
-                            if (((p.x - pos.x) * (p.x - pos.x)) + ((p.z - pos.z) * (p.z - pos.z)) < 9)
-                            {
-                                m_psystems.push_back(new ParticleSystem(m_enemies_broken[i]->get_pos(), glm::vec3(0.5f),
-                                    glm::vec3(0.f, 0.5f, 0.f), glm::vec3(0.f, 0.4f, 0.f), glm::vec3(2.f, 10.f, 3.f), glm::vec3(0.f, 7.f, 2.f),
-                                    m_enemies_broken[i]->get_reward(), 5000, 1.f, ResourceManager::getMaterial("coin")));
-                                m_enemies_broken[i]->destroy();
-                                selected_enemy = -1;
-                                intrs = false;
-                            }
-                        }
-                        if (intrs)
-                        {
-                            m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(true);
-                            m_gui->get_element<GUI::TextRenderer>("Coast_prop")->set_text(m_lang_pack->get("reward") + L": " + std::to_wstring(m_enemies[selected_enemy]->get_reward()));
-                            m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text(m_lang_pack->get("damage") + L": " + std::to_wstring(m_enemies[selected_enemy]->get_damage()).substr(0, 3));
-                            m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text(m_lang_pack->get("cooldown") + L": " + std::to_wstring(m_enemies[selected_enemy]->get_cooldown()).substr(0, 3));
-                            m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text(m_lang_pack->get("radius") + L": " + std::to_wstring(m_enemies[selected_enemy]->get_vel()).substr(0, 4));
-                            m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text(m_lang_pack->get("hp") + L": " + std::to_wstring(m_enemies[selected_enemy]->get_hp()).substr(0, 4));
-                            m_gui->get_element<GUI::TextRenderer>("Type_prop")->set_text(m_lang_pack->get("typearm") + L": " + BaseEnemy::get_type_str(m_enemies[selected_enemy]->get_type()));
-                            m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text(m_enemies[selected_enemy]->get_description());
-                        }
-                        else
-                        {
-                            selected_enemy = -1;
-                            m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(false);
-                            for (auto& it : m_towers)
-                            {
-                                if (it.num == cur)
-                                {
-                                    m_select_tower = it.tow;
-
-                                    if (m_select_tower->is_upgradable()) {
-                                        m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(true);
-                                        m_gui->get_element<GUI::TextRenderer>("Coast_prop")->set_text(m_lang_pack->get("coast") + L": " + std::to_wstring(m_select_tower->get_upgrade_coast()));
-                                        m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text(m_lang_pack->get("damage") + L": " +
-                                            std::to_wstring(m_select_tower->get_damage()).substr(0, 5) + m_select_tower->get_add_damage());
-                                        m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text(m_lang_pack->get("cooldown") + L": " +
-                                            std::to_wstring(m_select_tower->get_cooldown()).substr(0, 4) + m_select_tower->get_add_cooldown());
-                                        m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text(m_lang_pack->get("radius") + L": " +
-                                            std::to_wstring(m_select_tower->get_distance()).substr(0, 4) + m_select_tower->get_add_distance());
-                                        m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text(m_select_tower->get_custom() + m_select_tower->get_add_custom());
-                                        m_gui->get_element<GUI::TextRenderer>("Type_prop")->set_text(m_lang_pack->get("typeatt") + L": "
-                                            + m_select_tower->get_self_type_str());
-                                        m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text(m_select_tower->get_description());
-                                    }
-                                    else
-                                    {
-                                        m_gui->get_element<GUI::GUI_element>("game_gui_place")->set_active(true);
-                                        m_gui->get_element<GUI::TextRenderer>("Coast_prop")->set_text(m_lang_pack->get("coast") + L": " + std::to_wstring(m_select_tower->get_coast()));
-                                        m_gui->get_element<GUI::TextRenderer>("Damage_prop")->set_text(m_lang_pack->get("damage") + L": " + std::to_wstring(m_select_tower->get_damage()).substr(0, 5));
-                                        m_gui->get_element<GUI::TextRenderer>("Cooldown_prop")->set_text(m_lang_pack->get("cooldown") + L": " + std::to_wstring(m_select_tower->get_cooldown()).substr(0, 4));
-                                        m_gui->get_element<GUI::TextRenderer>("Radius_prop")->set_text(m_lang_pack->get("radius") + L": " + std::to_wstring(m_select_tower->get_distance()).substr(0, 4));
-                                        m_gui->get_element<GUI::TextRenderer>("Custom_prop")->set_text(m_select_tower->get_custom());
-                                        m_gui->get_element<GUI::TextRenderer>("Type_prop")->set_text((m_lang_pack->get("typeatt") + L": " + m_select_tower->get_self_type_str()));
-                                        m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text(m_select_tower->get_description());
-                                    }
-                                    place_querry = TypeTower::null;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    //}
-                    //else
-                    //{
-                    //    if (is_spawn_enemy)
-                    //    {
-                    //        /*if (isServer)
-                    //        {
-                    //            if (x < 5 && y > 16 && y < 30)
-                    //            {
-                    //                m_spawn_enemies_self.push(cur);
-                    //                buff[0] = 's';
-                    //                sysfunc::type_to_char(&cur, buff, 1);
-                    //                WinSock::send_data(buff, sizeof(unsigned int) + 1);
-                    //            }
-                    //        }
-                    //        else
-                    //        {
-                    //            if (x > 25 && y < 14 && y > 1)
-                    //            {
-                    //                m_spawn_enemies_self.push(cur);
-                    //                buff[0] = 's';
-                    //                sysfunc::type_to_char(&cur, buff, 1);                        
-                    //                WinSock::send_data(buff, sizeof(unsigned int) + 1);
-                    //            }
-                    //        }*/
-                    //    }
-                    //    else if (!map[cur])
-                    //    {
-                    //        if (isServer)
-                    //        {
-                    //            if ((x > 6 && x < 25) && ((y > 0 && y < 3) || (y > 8 && y < 16)))
-                    //            {
-                    //                map[cur] = true;
-                    //                m_spawn_towers.push(cur);
-                    //                buff[0] = 't';
-                    //                sysfunc::type_to_char(&cur, buff, 1);
-                    //                WinSock::send_data(buff, sizeof(unsigned int) + 1);
-                    //            }
-                    //        }
-                    //        else
-                    //        {
-                    //            if ((x > 6 && x < 25) && ((y > 16 && y < 19) || (y > 22 && y < 30)))
-                    //            {
-                    //                map[cur] = true;
-                    //                m_spawn_towers.push(cur);
-                    //                buff[0] = 't';
-                    //                sysfunc::type_to_char(&cur, buff, 1);
-                    //                WinSock::send_data(buff, sizeof(unsigned int) + 1);
-                    //            }
-                    //        }
-                    //    }
-                    //}
-
-                    //LOG_INFO("Pos: X:{0} Y:{1}", x, y);
                 }
             }
         }
@@ -833,7 +708,12 @@ void GameApp::on_key_update(const double delta)
 }
 
 void GameApp::on_update(const double delta)
-{       
+{
+    if (!started_game)
+    {
+        m_gui_main_menu->on_update(delta);
+        return;
+    }
     if (is_game_paused) return;
 
     if (is_special_move)
@@ -897,20 +777,7 @@ void GameApp::on_update(const double delta)
     m_circle->add_rot(glm::vec3(0.f, 0.01f * delta, 0.f));
 
     // ================================================================================ game logic ===========================================================
-    if (restart_querry)
-    {
-        start_game_single();
-        /*if (m_mode == GameMode::Single)
-        {
-        }
-        else
-        {
-            start_game_multi();
-        }*/
-        restart_querry = false;
-    }
-
-    if (m_mode == GameMode::Single)
+     if (m_mode == GameMode::Single)
     {
         if (m_isLose) return;
 
@@ -1053,6 +920,12 @@ void GameApp::on_update(const double delta)
         {
             m_circle->set_pos(m_enemies[selected_enemy]->get_pos());
             m_circle->set_rad(m_enemies[selected_enemy]->get_distance());
+        }
+
+        if (restart_querry)
+        {
+            start_game();
+            restart_querry = false;
         }
 
         for (auto curTower : m_towers)
@@ -1239,7 +1112,9 @@ void GameApp::on_update(const double delta)
 }
 
 void GameApp::on_render(const double delta)
-{// clear screen
+{
+    if (!started_game) return;
+    // clear screen
     RenderEngine::Renderer::setClearColor(m_colors[0], m_colors[1], m_colors[2], m_colors[3]);
 
     RenderEngine::Renderer::clearColor();
@@ -1323,6 +1198,11 @@ void GameApp::on_render(const double delta)
 
 void GameApp::on_ui_render()
 {
+    if (!started_game)
+    {
+        m_gui_main_menu->on_render();
+        return;
+    }
     // for correct write message in other thread
     while (!m_chat_mes.empty())
     {
@@ -1344,8 +1224,8 @@ bool GameApp::init_events()
             {
                 RenderEngine::Renderer::setViewport(e.width, e.height);
                 m_cam->set_viewport_size(e.width, e.height);
-                m_gui->on_resize();
-
+                m_gui_main_menu->on_resize();
+                if (m_gui) m_gui->on_resize();
             }
         });
     m_event_dispather.add_event_listener<EventKeyPressed>([&](EventKeyPressed& e)
@@ -1364,15 +1244,21 @@ bool GameApp::init_events()
             }
             Input::pressKey(e.key_code);
             press_button(e.key_code);
-            m_gui->get_element<GUI::InputField>("InputNick")->press_button(e.key_code);
-            m_gui->get_element<GUI::InputField>("InputIP")->press_button(e.key_code);
-            m_gui->get_element<GUI::InputField>("SendMessage")->press_button(e.key_code);
+            if (m_gui)
+            {
+                m_gui->get_element<GUI::InputField>("InputNick")->press_button(e.key_code);
+                m_gui->get_element<GUI::InputField>("InputIP")->press_button(e.key_code);
+                m_gui->get_element<GUI::InputField>("SendMessage")->press_button(e.key_code);
+            }
         });
     m_event_dispather.add_event_listener<EventCharSet>([&](EventCharSet& e)
         {
-            m_gui->get_element<GUI::InputField>("InputNick")->press_char(e.key_char);
-            m_gui->get_element<GUI::InputField>("InputIP")->press_char(e.key_char);
-            m_gui->get_element<GUI::InputField>("SendMessage")->press_char(e.key_char);
+            if (m_gui)
+            {
+                m_gui->get_element<GUI::InputField>("InputNick")->press_char(e.key_char);
+                m_gui->get_element<GUI::InputField>("InputIP")->press_char(e.key_char);
+                m_gui->get_element<GUI::InputField>("SendMessage")->press_char(e.key_char);
+            }
         });
     m_event_dispather.add_event_listener<EventKeyReleased>([&](EventKeyReleased& e)
         {
@@ -1383,7 +1269,7 @@ bool GameApp::init_events()
         });
     m_event_dispather.add_event_listener<EventMouseMoved>([&](EventMouseMoved& e)
         {
-            m_gui->get_element<GUI::Slider>("slider_volume")->move_mouse(e.x);
+            if (m_gui != nullptr) m_gui->get_element<GUI::Slider>("slider_volume")->move_mouse(e.x);
             glm::vec3 objcoord = m_cam->get_world_mouse_position(glm::vec2(e.x, e.y), m_pWindow->get_size());
 
             m_world_mouse_pos_x = objcoord.x;
@@ -1397,8 +1283,11 @@ bool GameApp::init_events()
         });
     m_event_dispather.add_event_listener<EventMouseScrolled>([&](EventMouseScrolled& e)
         {
-            m_gui->get_element<GUI::ScrollBox>("Towers")->on_scroll(-e.y_offset);
-            if (is_chat_active) m_gui->get_element<GUI::ChatBox>("Chat")->on_scroll(-e.y_offset);
+            if (m_gui)
+            {
+                m_gui->get_element<GUI::ScrollBox>("Towers")->on_scroll(-e.y_offset);
+                if (is_chat_active) m_gui->get_element<GUI::ChatBox>("Chat")->on_scroll(-e.y_offset);
+            }
             if (is_event_logging_active) LOG_INFO("[EVENT] Scroll: {0}x{1}", e.x_offset, e.y_offset);
         });
     m_event_dispather.add_event_listener<EventWindowClose>([&](EventWindowClose& e)
@@ -1409,7 +1298,8 @@ bool GameApp::init_events()
         });
     m_event_dispather.add_event_listener<EventMouseButtonPressed>([&](EventMouseButtonPressed& e)
         {
-            m_gui->on_mouse_press(e.x_pos, e.y_pos);
+            if (m_gui) m_gui->on_mouse_press(e.x_pos, e.y_pos);
+            m_gui_main_menu->on_mouse_press(e.x_pos, e.y_pos);
             if (is_event_logging_active) LOG_INFO("[EVENT] Mouse button pressed at ({0}x{1})", e.x_pos, e.y_pos);
 
             Input::pressMouseButton(e.mouse_button);
@@ -1419,7 +1309,8 @@ bool GameApp::init_events()
     m_event_dispather.add_event_listener<EventMouseButtonReleased>([&](EventMouseButtonReleased& e)
         {
             isKeyPressedmouse = false;
-            m_gui->on_mouse_release(e.x_pos, e.y_pos);
+            if (m_gui) m_gui->on_mouse_release(e.x_pos, e.y_pos);
+            m_gui_main_menu->on_mouse_release(e.x_pos, e.y_pos);
             if (is_event_logging_active) LOG_INFO("[EVENT] Mouse button released at ({0}x{1})", e.x_pos, e.y_pos);
 
             Input::releaseMouseButton(e.mouse_button);
@@ -1444,6 +1335,163 @@ bool GameApp::init_events()
             m_event_dispather.dispatch(e);
         });
     return true;
+}
+
+void GameApp::start_game()
+{
+    if (!started_game) return;
+    m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
+    // init materials
+    GET_DATA_MATERIAL("green_place", float, "sourceColor", 1) = 1.f;
+    GET_DATA_MATERIAL("green_place", float, "sourceColor", 3) = 0.2f;
+
+    GET_DATA_MATERIAL("cube", float, "ambient_factor", 0) = 0.25f;
+    GET_DATA_MATERIAL("cube", float, "diffuse_factor", 0) = 0.1f;
+    GET_DATA_MATERIAL("cube", float, "specular_factor", 0) = 0.0f;
+    GET_DATA_MATERIAL("cube", float, "metalic_factor", 0) = 0.0f;
+    GET_DATA_MATERIAL("cube", float, "shininess", 0) = 0.1f;
+
+    GET_DATA_MATERIAL("dirt", float, "ambient_factor", 0) = 0.25f;
+    GET_DATA_MATERIAL("dirt", float, "diffuse_factor", 0) = 0.1f;
+    GET_DATA_MATERIAL("dirt", float, "specular_factor", 0) = 0.0f;
+    GET_DATA_MATERIAL("dirt", float, "metalic_factor", 0) = 0.0f;
+    GET_DATA_MATERIAL("dirt", float, "shininess", 0) = 0.1f;
+
+    std::vector<std::string> mats_tows;
+    mats_tows.push_back("inferno_tower");
+    mats_tows.push_back("executioner_tower");
+    mats_tows.push_back("ice_tower");
+    mats_tows.push_back("mortar_tower");
+    mats_tows.push_back("archer_tower");
+
+    for (auto& mt : mats_tows)
+    {
+        GET_DATA_MATERIAL(mt, float, "ambient_factor", 0) = 0.3f;
+        GET_DATA_MATERIAL(mt, float, "diffuse_factor", 0) = 0.4f;
+        GET_DATA_MATERIAL(mt, float, "specular_factor", 0) = 0.0f;
+        GET_DATA_MATERIAL(mt, float, "metalic_factor", 0) = 0.0f;
+        GET_DATA_MATERIAL(mt, float, "shininess", 0) = 0.1f;
+    }
+
+    std::vector<std::string> mats_ens;
+    mats_ens.push_back("monkey");
+    mats_ens.push_back("magician");
+    mats_ens.push_back("robot");
+    mats_ens.push_back("spider");
+    mats_ens.push_back("professor");
+
+    for (auto& me : mats_ens)
+    {
+        GET_DATA_MATERIAL(me, float, "ambient_factor", 0) = 0.5f;
+        GET_DATA_MATERIAL(me, float, "diffuse_factor", 0) = 0.4f;
+        GET_DATA_MATERIAL(me, float, "specular_factor", 0) = 0.0f;
+        GET_DATA_MATERIAL(me, float, "metalic_factor", 0) = 0.0f;
+        GET_DATA_MATERIAL(me, float, "shininess", 0) = 0.1f;
+    }
+
+    GET_DATA_MATERIAL("castle", float, "ambient_factor", 0) = 0.3f;
+    GET_DATA_MATERIAL("castle", float, "diffuse_factor", 0) = 0.4f;
+    GET_DATA_MATERIAL("castle", float, "specular_factor", 0) = 0.0f;
+    GET_DATA_MATERIAL("castle", float, "metalic_factor", 0) = 0.0f;
+    GET_DATA_MATERIAL("castle", float, "shininess", 0) = 0.1f;
+
+    std::vector<std::string> names;
+    names.push_back("default3DShader");
+
+    m_scene.add_object<Plane>(ResourceManager::getMaterial("dirt"), glm::vec3(size_x, 0.f, size_y), glm::vec3(size_x, 0.f, size_y));
+    m_scene.add_object<DirectionalLight>(names);
+    m_scene.add_object<Grid>(glm::vec3(size_x, 0.5f, size_y), glm::vec2(1.f), size_x, size_y, glm::vec4(1.f, 1.f, 1.f, 0.5f), ResourceManager::getMaterial("default"));
+    m_scene.add_object<EmptyObject>();
+
+    m_scene.at(curObj)->addComponent<Transform>();
+    m_scene.at(curObj)->addComponent<Highlight>(ResourceManager::getMaterial("default"), true);
+
+    const auto& transform = m_scene.at(0)->getComponent<Transform>();
+
+    size_place = glm::vec3(transform->get_scale().x / size_x * 2, transform->get_scale().y, transform->get_scale().z / size_y * 2);
+
+    glm::vec3 startPos = transform->get_position() - transform->get_scale() + glm::vec3(1.f);
+
+    for (int i = 0; i < size_x; i++)
+    {
+        for (int j = 0; j < size_y; j++)
+        {
+            parts.push_back(startPos + glm::vec3((float)i * size_place.x, 0, (float)j * size_place.z));
+        }
+    }
+
+    // game system init
+    init_gui();
+    start_game_single();
+    //init_winSock(); // network features
+
+    m_gui->set_active(true);
+
+    m_gui->get_element<GUI::Button>("Disconnect")->set_active(false);
+
+    m_gui->get_element<GUI::ChatBox>("chat_place")->set_open(false);
+
+    m_scene.at(curObj)->getComponent<Transform>()->set_position(parts[0]);
+
+    // --------------------------- fills dead zones -------------------------------
+    for (size_t i = 0; i < 4; i++)
+    {
+        for (size_t j = 0; j < 13; j++)
+        {
+            map[780 + 30 * i + j] = true;
+        }
+    }
+    for (size_t i = 0; i < 24; i++)
+    {
+        for (size_t j = 0; j < 5; j++)
+        {
+            map[62 + 30 * i + j] = true;
+        }
+    }
+    for (size_t i = 0; i < 5; i++)
+    {
+        for (size_t j = 0; j < 6; j++)
+        {
+            map[67 + 30 * i + j] = true;
+        }
+    }
+    for (size_t i = 0; i < 26; i++)
+    {
+        for (size_t j = 0; j < 5; j++)
+        {
+            map[73 + 30 * i + j] = true;
+        }
+    }
+    for (size_t i = 0; i < 5; i++)
+    {
+        for (size_t j = 0; j < 6; j++)
+        {
+            map[708 + 30 * i + j] = true;
+        }
+    }
+    for (size_t i = 0; i < 27; i++)
+    {
+        for (size_t j = 0; j < 5; j++)
+        {
+            map[54 + 30 * i + j] = true;
+        }
+    }
+
+
+    targets.push_back(Target(parts[814]));
+    targets.push_back(Target(parts[124]));
+    targets.push_back(Target(parts[135]));
+    targets.push_back(Target(parts[765]));
+    targets.push_back(Target(parts[776]));
+    targets.push_back(Target(parts[116]));
+}
+
+void GameApp::terminate_game()
+{
+    chat_last.clear();
+    m_scene.clear();
+    parts.clear();
+    targets.clear();
 }
 
 void GameApp::press_button(KeyCode key)
@@ -1582,9 +1630,6 @@ void GameApp::press_button(KeyCode key)
 
 void GameApp::init_gui()
 {
-    ResourceManager::get_font("calibri")->set_scale(0.5f);
-    ResourceManager::get_font("calibriChat")->set_scale(0.27f);
-
     m_gui = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
 
     // ------------------------------------------------------ debug panel ------------------------------------------------------------------------
@@ -2160,7 +2205,7 @@ void GameApp::init_gui()
     auto menu = m_gui->add_element<GUI::GUI_element>(1, "menu_place");
 
     m_gui->add_element<GUI::TextRenderer>(menu, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        m_lang_pack->get("main") + L" " + m_lang_pack->get("menu"), glm::vec3(1.f), glm::vec2(50.f, 90.f), glm::vec2(1.f));
+        m_lang_pack->get("menu"), glm::vec3(1.f), glm::vec2(50.f, 90.f), glm::vec2(1.f));
 
     m_gui->add_element<GUI::Button>(menu, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, 6.f), glm::vec2(10.f, 5.f),
@@ -2309,6 +2354,38 @@ void GameApp::init_gui()
                 break;
             }
         });  
+}
+
+void GameApp::init_main_menu_gui()
+{
+    auto mainmenu = m_gui_main_menu->add_element<GUI::GUI_element>(1, "main_menu_place");
+
+    m_gui_main_menu->add_element<GUI::TextRenderer>(mainmenu, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
+        m_lang_pack->get("main") + L" " + m_lang_pack->get("menu"), glm::vec3(1.f), glm::vec2(50.f, 90.f), glm::vec2(1.f));
+
+    m_gui_main_menu->add_element<GUI::Button>(mainmenu, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(89.f, 6.f), glm::vec2(10.f, 5.f),
+        m_lang_pack->get("quit"), ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
+            {
+                m_pCloseWindow = true;
+            });
+
+    m_gui_main_menu->add_element<GUI::Button>(mainmenu, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(89.f, 17.f), glm::vec2(10.f, 5.f),
+        m_lang_pack->get("start"), ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), "RestartInMenu")->set_click_callback([&]()
+            {
+                ResourceManager::load_JSON_resources("gameres/resources.json");
+                started_game = true;
+                start_game();
+                m_gui_main_menu->set_active(false);
+            });
+
+    mainmenu->set_layer(3);
+
+    m_gui_main_menu->add_element<GUI::Sprite>(mainmenu, 1, ResourceManager::getMaterial("coin"), "default",
+        glm::vec2(100.f), glm::vec2(100.f), "BG_main_menu");
+
+    m_gui_main_menu->set_active(true);
 }
 
 void GameApp::start_game_single()

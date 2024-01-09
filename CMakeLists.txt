@@ -291,8 +291,11 @@ set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAK
 #Для игры копирование ресурсов из источника в билд
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 					COMMAND ${CMAKE_COMMAND} -E copy_directory
-					${CMAKE_SOURCE_DIR}/res $<TARGET_FILE_DIR:${PROJECT_NAME}>/res)
-
+					${CMAKE_SOURCE_DIR}/gameres $<TARGET_FILE_DIR:${PROJECT_NAME}>/gameres)
+					
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+					COMMAND ${CMAKE_COMMAND} -E copy_directory
+					${CMAKE_SOURCE_DIR}/systemres $<TARGET_FILE_DIR:${PROJECT_NAME}>/systemres)
 if (DEFINED EDITOR_BUILD)
 	set(IMGUI_INCLUDES
 	external/imgui/imgui.h

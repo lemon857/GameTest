@@ -21,7 +21,7 @@ int main(int argc, char** argv)
     GameApp* gameApp = new GameApp();
     try
     {
-        gameApp->start(windowSize, "Tower defence", "res/resources.json", "Tower_defense.ini", 25);
+        gameApp->start(windowSize, "Tower defence", "systemres/resources.json", "Tower_defense.ini", 25);
     }
     catch (const std::exception& ex)
     {

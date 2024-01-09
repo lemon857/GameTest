@@ -116,9 +116,13 @@ private:
 	void on_ui_render() override;
 	bool init_events() override;
 
+	void start_game();
+	void terminate_game();
+
 	void press_button(KeyCode key);
 
 	void init_gui();
+	void init_main_menu_gui();
 
 	void start_game_single();
 	void start_game_multi();
@@ -181,6 +185,8 @@ private:
 
 	float m_cam_velocity = 0.01f;
 	float m_cam_sensetivity = 0.5f;
+
+	bool started_game = false;
 
 	bool m_isInversiveMouseY = false;
 	bool m_isLose = false;
@@ -256,6 +262,7 @@ private:
 	KeyCode k_view = KeyCode::KEY_Q;
 
 	GUI::GUI_place* m_gui;
+	GUI::GUI_place* m_gui_main_menu;
 
 	INIregionUSER m_ini_region_user;
 

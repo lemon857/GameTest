@@ -31,6 +31,8 @@ public:
 
 	std::vector<std::string> get_items_str() { return m_items_str; };
 
+	void clear();
+
 	template <class _Ty, class... _Types>
 	void add_object(_Types&&... _Args)
 	{

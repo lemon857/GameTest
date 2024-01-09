@@ -5,7 +5,7 @@
 
 #include "EngineCore/System/AppInfo.h"
 
-#define BUILD_NAME "APPINFO_NAME_STR
+#define BUILD_NAME APPINFO_NAME_STR
 
 #ifdef DEBUG
 #define DEBUG_CONSOLE 

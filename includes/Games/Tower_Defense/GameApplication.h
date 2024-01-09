@@ -146,7 +146,7 @@ private:
 	//Castle* m_adv_castle;
 
 	linked_list<BaseEnemy*> m_enemies;
-	//linked_list<BaseEnemy*> m_enemies_broken;
+	linked_list<BaseEnemy*> m_enemies_broken;
 	//linked_list<BaseEnemy*> m_enemies_self;
 
 	std::vector<Tower> m_towers;

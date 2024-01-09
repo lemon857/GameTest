@@ -69,10 +69,10 @@ int Application::start(glm::ivec2& window_size, const char* title, const char* j
 
         if (sum_time >= max)
         {
+            on_update(sum_time);
             sum_time = 0;
         }
 
-        on_update(duration);
         on_render(duration);
 
         on_ui_render();

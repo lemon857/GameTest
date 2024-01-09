@@ -61,7 +61,6 @@ void BaseEnemy::update(const double delta)
 	if (m_isDestroyed) return;
 	if (m_isBroken)
 	{
-		m_isDestroyed = true;
 		if (m_rotation_break < 86)
 		{
 			m_rotation_break += 0.04 * delta;

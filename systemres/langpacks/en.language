@@ -6,6 +6,7 @@ settings=settings
 restart=restart
 start=start
 quit=quit
+to=to
 enternick=enter nickname
 enterip=enter IP
 disconnect=disconnect

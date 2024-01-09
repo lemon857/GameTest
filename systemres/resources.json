@@ -120,6 +120,17 @@
       ]
     },
     {
+      "name": "main_menu_bg",
+      "filePath": "systemres/textures/main_menu.png",
+      "width": 1920,
+      "height": 1080,
+      "subTexture_w": 1920,
+      "subTexture_h": 1080,
+      "subTextures": [
+        "default"
+      ]
+    },
+    {
       "name": "Slider_face",
       "filePath": "systemres/textures/Slider_face.png",
       "width": 200,
@@ -177,6 +188,11 @@
       "name": "slider_face",
       "nameShader": "spriteShader",
       "nameTexture": "Slider_face"
+    },
+    {
+      "name": "main_menu_bg",
+      "nameShader": "spriteShader",
+      "nameTexture": "main_menu_bg"
     }
   ],
   "fonts": [

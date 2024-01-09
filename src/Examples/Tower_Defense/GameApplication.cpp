@@ -104,6 +104,8 @@ bool GameApp::init()
     ResourceManager::get_font("calibri")->set_scale(0.5f);
     ResourceManager::get_font("calibriChat")->set_scale(0.27f);
 
+    m_cam->set_viewport_size(static_cast<float>(m_pWindow->get_size().x), static_cast<float>(m_pWindow->get_size().y));
+
     m_gui_main_menu = new GUI::GUI_place(m_cam, ResourceManager::getMaterial("default"));
 
     init_main_menu_gui();
@@ -119,6 +121,32 @@ bool GameApp::init()
         }
         countSpawnEnemies = std::stoi(args[0]);
         m_chat_mes.push(L"Set spawn enemies count: " + std::to_wstring(countSpawnEnemies));
+        //buff[1] = 'a';
+        //sysfunc::type_to_char(&_set_min_distance, buff, 2);
+        //WinSock::send_data(buff, sizeof(double) + 2);
+        });
+    CommandManager::add_command("sparts", [&](std::vector<std::string> args) {
+        if (args.empty())
+        {
+            return;
+        }
+        int countPrt = std::stoi(args[0]);
+
+        auto mat = ResourceManager::getMaterial("coin");
+        bool cyclic = false;
+
+        if (args.size() > 1)
+        {            
+            mat = ResourceManager::getMaterial(args[1]) != nullptr ? ResourceManager::getMaterial(args[1]) : mat;
+        }
+        if (args.size() > 2)
+        {
+            cyclic = args[2] == "true" ? true : false;
+        }
+
+        m_psystems.push_back(new ParticleSystem(parts[cur], glm::vec3(0.5f),
+            glm::vec3(0.f, 0.7f, 0.f), glm::vec3(0.f, 1.8f, 0.f), glm::vec3(7.f, 10.f, 3.f), glm::vec3(10.f, 7.f, 2.f),
+            countPrt, 5000, 0.3f, mat, cyclic));
         //buff[1] = 'a';
         //sysfunc::type_to_char(&_set_min_distance, buff, 2);
         //WinSock::send_data(buff, sizeof(double) + 2);
@@ -269,7 +297,7 @@ void GameApp::terminate()
 
 void GameApp::on_key_update(const double delta)
 {// need more additions
-    if (m_isLose || *lock_key_update)
+    if (m_isLose || *lock_key_update || !started_game)
     {
         return;
     }
@@ -512,8 +540,8 @@ void GameApp::on_key_update(const double delta)
                                 if (((p.x - pos.x) * (p.x - pos.x)) + ((p.z - pos.z) * (p.z - pos.z)) < 9)
                                 {
                                     m_psystems.push_back(new ParticleSystem(m_enemies_broken[i]->get_pos(), glm::vec3(0.5f),
-                                        glm::vec3(0.f, 0.5f, 0.f), glm::vec3(0.f, 0.4f, 0.f), glm::vec3(2.f, 10.f, 3.f), glm::vec3(0.f, 7.f, 2.f),
-                                        m_enemies_broken[i]->get_reward(), 5000, 1.f, ResourceManager::getMaterial("coin")));
+                                        glm::vec3(0.f, 0.7f, 0.f), glm::vec3(0.f, 1.8f, 0.f), glm::vec3(7.f, 10.f, 3.f), glm::vec3(10.f, 7.f, 2.f),
+                                        m_enemies_broken[i]->get_reward(), 5000, 0.3f, ResourceManager::getMaterial("coin")));
                                     m_enemies_broken[i]->destroy();
                                     selected_enemy = -1;
                                     intrs = false;
@@ -714,7 +742,13 @@ void GameApp::on_update(const double delta)
         m_gui_main_menu->on_update(delta);
         return;
     }
-    if (is_game_paused) return;
+    if (is_game_paused || restarting_game) return;
+
+    if (restart_querry)
+    {
+        restarting_game = true;
+        start_game();
+    }
 
     if (is_special_move)
     {
@@ -905,29 +939,7 @@ void GameApp::on_update(const double delta)
             m_spawn_enemies.pop();
             m_gui->get_element<GUI::TextRenderer>("enemies")->set_text("Enemies: " + std::to_string(countEnemiesPerm));
         }
-
-        if (m_select_tower == nullptr && place_querry == TypeTower::null && selected_enemy == -1) m_circle->set_pos(uPos);
-        else if (!restart_querry && place_querry == TypeTower::null && m_select_tower != nullptr)
-        {
-            m_circle->set_pos(m_select_tower->get_pos());
-            m_circle->set_rad(m_select_tower->get_distance());
-        }
-        else if (place_querry != TypeTower::null)
-        {
-            m_circle->set_pos(parts[cur]);
-        }
-        else if (selected_enemy != -1)
-        {
-            m_circle->set_pos(m_enemies[selected_enemy]->get_pos());
-            m_circle->set_rad(m_enemies[selected_enemy]->get_distance());
-        }
-
-        if (restart_querry)
-        {
-            start_game();
-            restart_querry = false;
-        }
-
+                     
         for (auto curTower : m_towers)
         {            
             curTower.tow->update(delta);
@@ -966,11 +978,29 @@ void GameApp::on_update(const double delta)
                 {
                     if (curTower.tow->get_target() == m_enemies[i]) curTower.tow->set_target(nullptr);
                 }
+                if (selected_enemy == i) selected_enemy = -1;
                 m_enemies_broken.push_back(m_enemies[i]);
                 m_enemies.remove(i);
                 continue;
             }            
             m_enemies[i]->update(delta);
+        }
+
+        if (!m_select_tower && place_querry == TypeTower::null && selected_enemy == -1) m_circle->set_pos(uPos);
+        else if (!restart_querry && place_querry == TypeTower::null && m_select_tower)
+        {
+            glm::vec3 pos = m_select_tower->get_pos();
+            m_circle->set_pos(glm::vec3(pos.x, parts[0].y, pos.z));
+            m_circle->set_rad(m_select_tower->get_distance());
+        }
+        else if (place_querry != TypeTower::null)
+        {
+            m_circle->set_pos(parts[cur]);
+        }
+        else if (selected_enemy != -1)
+        {
+            m_circle->set_pos(m_enemies[selected_enemy]->get_pos());
+            m_circle->set_rad(m_enemies[selected_enemy]->get_distance());
         }
     }    
     //else
@@ -1113,11 +1143,11 @@ void GameApp::on_update(const double delta)
 
 void GameApp::on_render(const double delta)
 {
-    if (!started_game) return;
     // clear screen
     RenderEngine::Renderer::setClearColor(m_colors[0], m_colors[1], m_colors[2], m_colors[3]);
 
     RenderEngine::Renderer::clearColor();
+    if (!started_game || restarting_game) return;
     // set matrix
     ResourceManager::getShaderProgram("colorShader")->use();
     ResourceManager::getShaderProgram("colorShader")->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_cam->get_projection_matrix() * m_cam->get_view_matrix());
@@ -1484,6 +1514,9 @@ void GameApp::start_game()
     targets.push_back(Target(parts[765]));
     targets.push_back(Target(parts[776]));
     targets.push_back(Target(parts[116]));
+
+    restart_querry = false;
+    restarting_game = false;
 }
 
 void GameApp::terminate_game()
@@ -1492,10 +1525,19 @@ void GameApp::terminate_game()
     m_scene.clear();
     parts.clear();
     targets.clear();
+    for (size_t i = 0; i < m_psystems.size(); i++)
+    {
+        delete m_psystems[i];
+    }
+    m_psystems.clear();
 }
 
 void GameApp::press_button(KeyCode key)
 {    
+    if (!started_game)
+    {
+        return;
+    }
     if (m_isLose || *lock_key_update)
     {
         if (key == KeyCode::KEY_ESCAPE)
@@ -1694,7 +1736,7 @@ void GameApp::init_gui()
                 std::string argsStr = sysfunc::ctostr(text.substr(name.length() + 1));
                 if (name.find(' ') != -1) name.pop_back();
 
-                while (argsStr.find(' ') != -1 && sysfunc::is_full(argsStr.c_str(), argsStr.size(), ' '))
+                while (argsStr.find(' ') != -1 && !sysfunc::is_full(argsStr.c_str(), argsStr.size(), ' '))
                 {
                     args.push_back(argsStr.substr(0, argsStr.find(' ')));
                     argsStr = argsStr.substr(argsStr.find(' ') + 1);
@@ -1959,8 +2001,11 @@ void GameApp::init_gui()
         glm::vec2(89.f, 6.f), glm::vec2(10.f, 5.f),
         m_lang_pack->get("restart"), ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
         {
-            if (isServer) WinSock::send_data("r", 1);
-            restart_querry = true;
+                if (isServer) WinSock::send_data("r", 1);
+                restart_querry = true;
+                is_gui_active = false;
+                m_gui->get_element<GUI::GUI_element>("menu_place")->set_active(false);
+                terminate_game();
         });
 
     // ------------------------------------------------------------ settings ------------------------------------------------
@@ -2209,9 +2254,11 @@ void GameApp::init_gui()
 
     m_gui->add_element<GUI::Button>(menu, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, 6.f), glm::vec2(10.f, 5.f),
-        m_lang_pack->get("quit"), ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
+        m_lang_pack->get("to") + L" " + m_lang_pack->get("main") + L" " + m_lang_pack->get("menu"), ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f))->set_click_callback([&]()
             {
-                m_pCloseWindow = true;
+                started_game = false;
+                m_gui_main_menu->set_active(true);
+                terminate_game();
             });
 
     m_gui->add_element<GUI::Button>(menu, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
@@ -2245,6 +2292,7 @@ void GameApp::init_gui()
                     restart_querry = true;
                     is_gui_active = false;
                     m_gui->get_element<GUI::GUI_element>("menu_place")->set_active(false);
+                    terminate_game();
                 });     
 
     menu->set_layer(3);
@@ -2361,7 +2409,7 @@ void GameApp::init_main_menu_gui()
     auto mainmenu = m_gui_main_menu->add_element<GUI::GUI_element>(1, "main_menu_place");
 
     m_gui_main_menu->add_element<GUI::TextRenderer>(mainmenu, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        m_lang_pack->get("main") + L" " + m_lang_pack->get("menu"), glm::vec3(1.f), glm::vec2(50.f, 90.f), glm::vec2(1.f));
+        m_lang_pack->get("main") + L" " + m_lang_pack->get("menu"), glm::vec3(1.f), glm::vec2(50.f, 95.f), glm::vec2(1.f));
 
     m_gui_main_menu->add_element<GUI::Button>(mainmenu, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, 6.f), glm::vec2(10.f, 5.f),
@@ -2374,7 +2422,11 @@ void GameApp::init_main_menu_gui()
         glm::vec2(89.f, 17.f), glm::vec2(10.f, 5.f),
         m_lang_pack->get("start"), ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), "RestartInMenu")->set_click_callback([&]()
             {
-                ResourceManager::load_JSON_resources("gameres/resources.json");
+                if (!loaded_res)
+                {
+                    ResourceManager::load_JSON_resources("gameres/resources.json");
+                    loaded_res = true;
+                }
                 started_game = true;
                 start_game();
                 m_gui_main_menu->set_active(false);
@@ -2382,8 +2434,11 @@ void GameApp::init_main_menu_gui()
 
     mainmenu->set_layer(3);
 
-    m_gui_main_menu->add_element<GUI::Sprite>(mainmenu, 1, ResourceManager::getMaterial("coin"), "default",
+    m_gui_main_menu->add_element<GUI::Sprite>(mainmenu, 0, ResourceManager::getMaterial("defaultSprite"), "default",
         glm::vec2(100.f), glm::vec2(100.f), "BG_main_menu");
+
+    m_gui_main_menu->add_element<GUI::Sprite>(mainmenu, 1, ResourceManager::getMaterial("main_menu_bg"), "default",
+        glm::vec2(50.f), glm::vec2(50.f), "BG_main_menu_1");
 
     m_gui_main_menu->set_active(true);
 }
@@ -2397,6 +2452,7 @@ void GameApp::start_game_single()
     countEnemies = 0; 
     countEnemiesPerm = 0;
     selected_enemy = -1;
+    m_select_tower = nullptr;
     g_coins = count_start_coins;
     m_gui->get_element<GUI::TextRenderer>("Coins_count")->set_text(std::to_string(g_coins));
     cur = 0;

@@ -7,9 +7,11 @@
 #include "EngineCore/System/SysFunc.h"
 #include "EngineCore/Components/SpriteRenderer.h"
 
+#define PARTICLE_SYSTEM_ADD_PERCENT 10
+
 ParticleSystem::ParticleSystem(glm::vec3 pos, glm::vec3 particle_scale,
 	glm::vec3 vel_move, glm::vec3 acc_move, glm::vec3 vel_rot, glm::vec3 acc_rot,
-	int max_count_particles, double particle_live_time, float range_randomize, std::shared_ptr<RenderEngine::Material> pMaterial)
+	int max_count_particles, double particle_live_time, float range_randomize, std::shared_ptr<RenderEngine::Material> pMaterial, bool isCyclic)
 	: m_acc_move(acc_move)
 	, m_vel_move(vel_move)
 	, m_acc_rot(acc_rot)
@@ -23,6 +25,7 @@ ParticleSystem::ParticleSystem(glm::vec3 pos, glm::vec3 particle_scale,
 	, m_range(range_randomize)
 	, m_pMaterial(std::move(pMaterial))
 	, m_isDestroyed(false)
+	, m_isCyclic(isCyclic)
 {
 }
 
@@ -32,6 +35,7 @@ ParticleSystem::~ParticleSystem()
 	{
 		delete m_particles[i];
 	}
+	m_particles.clear();
 }
 
 void ParticleSystem::update(const double delta)
@@ -40,7 +44,16 @@ void ParticleSystem::update(const double delta)
 	for (size_t i = 0; i < m_particles.size(); i++)
 	{
 		m_particles[i]->update(delta);
-		m_isDestroyed &= m_particles[i]->isDestroyed();
+		if (m_isCyclic)
+		{
+			if (m_particles[i]->isDestroyed())
+			{
+				m_count_particles--;
+				delete m_particles[i];
+				m_particles.remove(i);
+			}
+		}
+		else m_isDestroyed &= m_particles[i]->isDestroyed();
 	}
 
 	if (m_count_particles > m_max_count_particles) return;
@@ -48,7 +61,8 @@ void ParticleSystem::update(const double delta)
 	if (sysfunc::get_random(0, 100) < m_percent_spawn)
 	{
 		m_percent_spawn = 10; m_count_particles++;
-		m_particles.push_back(new Particle(m_particle_live_time, m_pos, m_particle_scale,
+		m_particles.push_back(new Particle(m_particle_live_time, m_pos, m_particle_scale, 
+			glm::vec3(sysfunc::get_random(-m_range * 180, m_range * 180), sysfunc::get_random(-m_range * 180, m_range * 180), sysfunc::get_random(-m_range * 180, m_range * 180)),
 			m_vel_move + glm::vec3(sysfunc::get_random(-m_range, m_range), sysfunc::get_random(0.f, m_range), sysfunc::get_random(-m_range, m_range)),
 			m_acc_move,
 			m_vel_rot + glm::vec3(sysfunc::get_random(-m_range, m_range), sysfunc::get_random(-m_range, m_range), sysfunc::get_random(-m_range, m_range)),
@@ -56,7 +70,7 @@ void ParticleSystem::update(const double delta)
 	}
 	else
 	{
-		m_percent_spawn += 5;
+		m_percent_spawn += PARTICLE_SYSTEM_ADD_PERCENT;
 	}	
 }
 

@@ -6,6 +6,7 @@ settings=настройки
 restart=перезапуск
 start=запуск
 quit=выход
+to=в
 enternick=введте ник
 enterip=введите IP
 disconnect=отключение

@@ -186,7 +186,9 @@ private:
 	float m_cam_velocity = 0.01f;
 	float m_cam_sensetivity = 0.5f;
 
+	bool restarting_game = false;
 	bool started_game = false;
+	bool loaded_res = false;
 
 	bool m_isInversiveMouseY = false;
 	bool m_isLose = false;

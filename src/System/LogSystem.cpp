@@ -114,3 +114,13 @@ std::string std::to_string(wstring str)
 {
 	return sysfunc::ctostr(str);
 }
+
+std::wstring std::to_wstring(string str)
+{
+	return sysfunc::ctowstr(str);
+}
+
+std::wstring std::to_wstring(wstring str)
+{
+	return str;
+}

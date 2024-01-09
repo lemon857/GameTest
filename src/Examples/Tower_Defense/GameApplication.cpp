@@ -46,6 +46,7 @@
 #include "EngineCore/GUI/ScrollBox.h"
 #include "EngineCore/GUI/Font.h"
 #include "EngineCore/GUI/Table.h"
+#include "EngineCore/GUI/AlertSystem.h"
 
 #include "EngineCore/Network/WinSock.h"
 
@@ -81,6 +82,8 @@ GameApp::~GameApp()
 
 bool GameApp::init()
 {
+    GUI::AlertSystem::setResources("calibri", "textShader", "defaultSprite", "button", glm::vec3(1.f), &is_game_paused);
+
     RegistryManager::set_reg_path("Tower_defense\\");
     std::string val;
     if (!RegistryManager::get_value("lang", val))
@@ -1057,6 +1060,7 @@ void GameApp::on_render(const double delta)
     RenderEngine::Renderer::setClearColor(m_colors[0], m_colors[1], m_colors[2], m_colors[3]);
 
     RenderEngine::Renderer::clearColor();
+    GUI::AlertSystem::render();
     if (!started_game || restarting_game) return;
     // set matrix
     ResourceManager::getShaderProgram("colorShader")->use();
@@ -1167,6 +1171,7 @@ bool GameApp::init_events()
                 m_cam->set_viewport_size(e.width, e.height);
                 m_gui_main_menu->on_resize();
                 if (m_gui) m_gui->on_resize();
+                GUI::AlertSystem::on_resize();
             }
         });
     m_event_dispather.add_event_listener<EventKeyPressed>([&](EventKeyPressed& e)
@@ -1241,6 +1246,7 @@ bool GameApp::init_events()
         {
             if (m_gui) m_gui->on_mouse_press(e.x_pos, e.y_pos);
             m_gui_main_menu->on_mouse_press(e.x_pos, e.y_pos);
+            GUI::AlertSystem::on_mouse_press(e.x_pos, e.y_pos);
             if (is_event_logging_active) LOG_INFO("[EVENT] Mouse button pressed at ({0}x{1})", e.x_pos, e.y_pos);
 
             Input::pressMouseButton(e.mouse_button);
@@ -1253,6 +1259,7 @@ bool GameApp::init_events()
             isKeyPressedmouse = false;
             if (m_gui) m_gui->on_mouse_release(e.x_pos, e.y_pos);
             m_gui_main_menu->on_mouse_release(e.x_pos, e.y_pos);
+            GUI::AlertSystem::on_mouse_release(e.x_pos, e.y_pos);
             if (is_event_logging_active) LOG_INFO("[EVENT] Mouse button released at ({0}x{1})", e.x_pos, e.y_pos);
 
             Input::releaseMouseButton(e.mouse_button);
@@ -1936,10 +1943,6 @@ void GameApp::init_gui()
 
     m_gui->get_element<GUI::Slider>("slider_volume")->set_value(1);
 
-    volume = 1.f / 10.f;
-
-    SoundEngine::set_volume(volume);
-
     m_gui->add_element<GUI::TextRenderer>(settings, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
         m_lang_pack->get("settings"), glm::vec3(1.f), glm::vec2(50.f, 90.f), glm::vec2(1.f));
 
@@ -2053,7 +2056,8 @@ void GameApp::init_gui()
                         RegistryManager::set_value("lang", val);
                     }
                 }
-                m_chat_mes.push(L"Need restart game");
+                GUI::AlertSystem::addAlert(L"Need restart game");
+                //m_chat_mes.push(L"Need restart game");
                 //m_chat_mes.push(L"Coming soon...");
             });
 
@@ -2321,7 +2325,7 @@ void GameApp::init_main_menu_gui()
     auto mainmenu = m_gui_main_menu->add_element<GUI::GUI_element>(1, "main_menu_place");
 
     m_gui_main_menu->add_element<GUI::TextRenderer>(mainmenu, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
-        m_lang_pack->get("main") + L" " + m_lang_pack->get("menu"), glm::vec3(1.f), glm::vec2(50.f, 95.f), glm::vec2(1.f));
+        m_lang_pack->get("main") + L" " + m_lang_pack->get("menu"), glm::vec3(1.f), glm::vec2(50.f, 95.f), glm::vec2(1.f));        
 
     m_gui_main_menu->add_element<GUI::TextRenderer>(mainmenu, ResourceManager::get_font("calibriChat"), ResourceManager::getShaderProgram("textShader"),
         BUILD_NAME, glm::vec3(1.f), glm::vec2(0.1f, 1.f), glm::vec2(0.5f), "version_build", false);
@@ -2335,7 +2339,7 @@ void GameApp::init_main_menu_gui()
 
     m_gui_main_menu->add_element<GUI::Button>(mainmenu, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
         glm::vec2(89.f, 17.f), glm::vec2(10.f, 5.f),
-        m_lang_pack->get("start"), ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), "RestartInMenu")->set_click_callback([&]()
+        m_lang_pack->get("play"), ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), "StartInMenu")->set_click_callback([&]()
             {
                 if (!loaded_res)
                 {
@@ -2347,13 +2351,73 @@ void GameApp::init_main_menu_gui()
                 m_gui_main_menu->set_active(false);
             });
 
-    mainmenu->set_layer(3);
+    m_gui_main_menu->add_element<GUI::Button>(mainmenu, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(89.f, 28.f), glm::vec2(10.f, 5.f),
+        m_lang_pack->get("settings"), ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), "SettingsInMenu")->set_click_callback([&]()
+            {
+                m_gui_main_menu->get_element<GUI::GUI_element>("main_menu_settings")->set_active(true);
+                m_gui_main_menu->get_element<GUI::GUI_element>("main_menu_place")->set_active(false);
+            });
 
-    m_gui_main_menu->add_element<GUI::Sprite>(mainmenu, 0, ResourceManager::getMaterial("defaultSprite"), "default",
+    auto mainmenu_settings = m_gui_main_menu->add_element<GUI::GUI_element>(1, "main_menu_settings");
+
+    m_gui_main_menu->add_element<GUI::TextRenderer>(mainmenu_settings, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
+        m_lang_pack->get("settings"), glm::vec3(1.f), glm::vec2(50.f, 95.f), glm::vec2(1.f));
+
+    m_gui_main_menu->add_element<GUI::Button>(mainmenu_settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(89.f, 72.f), glm::vec2(10.f, 5.f),
+        m_lang_pack->get("swchlng"), ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), "langToggle")->set_click_callback([&]()
+            {
+                std::string val;
+                if (RegistryManager::get_value("lang", val))
+                {
+                    if (val == "ru")
+                    {
+                        val = "en";
+                        m_gui_main_menu->get_element<GUI::Button>("langToggle")->set_text("en");
+                        RegistryManager::set_value("lang", val);
+                    }
+                    else
+                    {
+                        val = "ru";
+                        m_gui_main_menu->get_element<GUI::Button>("langToggle")->set_text("ru");
+                        RegistryManager::set_value("lang", val);
+                    }
+                }
+                GUI::AlertSystem::addAlert(L"Need restart game");
+            });
+
+    m_gui_main_menu->add_element<GUI::TextRenderer>(mainmenu_settings, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),
+        m_lang_pack->get("volume"), glm::vec3(1.f), glm::vec2(89.f, 92.f), glm::vec2(1.f));
+
+    m_gui_main_menu->add_element<GUI::Slider>(mainmenu_settings, new GUI::Sprite(ResourceManager::getMaterial("slider_bg"), "static"),
+        new GUI::Sprite(ResourceManager::getMaterial("slider_face"), "static"), glm::vec2(89.f, 83.f), glm::vec2(10.f, 5.f), 0, 10, "slider_volume")->
+        set_slide_callback([&](float val)
+            {
+                volume = val / 10.f;
+                SoundEngine::set_volume(volume);
+            });
+
+    m_gui_main_menu->get_element<GUI::Slider>("slider_volume")->set_value(1);
+
+    volume = 1.f / 10.f;
+    SoundEngine::set_volume(volume);
+
+    m_gui_main_menu->add_element<GUI::Button>(mainmenu_settings, new GUI::Sprite(ResourceManager::getMaterial("button"), "static"),
+        glm::vec2(89.f, 6.f), glm::vec2(10.f, 5.f),
+        m_lang_pack->get("back"), ResourceManager::getShaderProgram("textShader"), ResourceManager::get_font("calibri"), glm::vec3(1.f), "BFromMaMenu")->set_click_callback([&]()
+            {
+                m_gui_main_menu->get_element<GUI::GUI_element>("main_menu_settings")->set_active(false);
+                m_gui_main_menu->get_element<GUI::GUI_element>("main_menu_place")->set_active(true);
+            });
+
+    m_gui_main_menu->add_element<GUI::Sprite>(0, ResourceManager::getMaterial("defaultSprite"), "default",
         glm::vec2(100.f), glm::vec2(100.f), "BG_main_menu");
 
-    m_gui_main_menu->add_element<GUI::Sprite>(mainmenu, 1, ResourceManager::getMaterial("main_menu_bg"), "default",
+    m_gui_main_menu->add_element<GUI::Sprite>(1, ResourceManager::getMaterial("main_menu_bg"), "default",
         glm::vec2(50.f), glm::vec2(50.f), "BG_main_menu_1");
+    
+    mainmenu_settings->set_active(false);
 
     m_gui_main_menu->set_active(true);
 }

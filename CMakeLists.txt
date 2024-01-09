@@ -55,6 +55,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/GUI/Slider.h
 	includes/EngineCore/GUI/BindButton.h
 	includes/EngineCore/GUI/Table.h
+	includes/EngineCore/GUI/AlertSystem.h
 
 	includes/Games/Tower_Defense/GameApplication.h  
 	includes/Games/Tower_Defense/Castle.h
@@ -247,6 +248,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/GUI/Slider.cpp
 	src/GUI/BindButton.cpp
 	src/GUI/Table.cpp
+	src/GUI/AlertSystem.cpp
 
 	src/Network/WinSock.cpp
 )

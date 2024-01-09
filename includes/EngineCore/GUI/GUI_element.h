@@ -13,6 +13,8 @@
 #define SHIFT_TEXT_SYMBOL_X 10.0f
 #define SHIFT_TEXT_SYMBOL_Y 1.2f
 
+#define TEXT_SYMBOL_X 1.f
+
 #define SHIFT_TEXT_SYMBOL_X_P 1.0f
 #define SHIFT_TEXT_SYMBOL_Y_P 1.0f
 

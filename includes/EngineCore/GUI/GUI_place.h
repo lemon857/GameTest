@@ -6,6 +6,7 @@
 #include <map>
 
 #include <glm/vec2.hpp>
+#include <glm/mat4x4.hpp>
 
 class Camera;
 
@@ -46,6 +47,22 @@ namespace GUI
 		}
 
 		template <class _Ty, class... _Types>
+		_Ty* add_element(float layer, _Types&&... _Args)
+		{
+			GUI_element* element = (GUI_element*)(new _Ty(std::forward<_Types>(_Args)...));
+			glm::vec2 posp = element->get_position_p();
+			glm::vec2 scalep = element->get_scale_p();
+			glm::vec2 wsize = m_render_cam->get_viewport_size();
+			element->set_position(glm::vec2(posp.x / 100 * wsize.x, posp.y / 100 * wsize.y));
+			element->set_scale(glm::vec2(scalep.x / 100 * wsize.x, scalep.y / 100 * wsize.y));
+			m_els.push_back(element);
+			add_elements(element->get_elements());
+			m_elements.emplace(element->get_name(), element);
+			element->set_layer(layer);
+			return (_Ty*)element;
+		}
+
+		template <class _Ty, class... _Types>
 		_Ty* add_element(int layer, _Types&&... _Args)
 		{
 			GUI_element* element = (GUI_element*)(new _Ty(std::forward<_Types>(_Args)...));
@@ -77,6 +94,23 @@ namespace GUI
 			return (_Ty*)element;
 		}	
 		
+		template <class _Ty, class... _Types>
+		_Ty* add_element(GUI_element* tree_parent, float layer, _Types&&... _Args)
+		{
+			GUI_element* element = (GUI_element*)(new _Ty(std::forward<_Types>(_Args)...));
+			glm::vec2 posp = element->get_position_p();
+			glm::vec2 scalep = element->get_scale_p();
+			glm::vec2 wsize = m_render_cam->get_viewport_size();
+			element->set_position(glm::vec2(posp.x / 100 * wsize.x, posp.y / 100 * wsize.y));
+			element->set_scale(glm::vec2(scalep.x / 100 * wsize.x, scalep.y / 100 * wsize.y));
+			m_els.push_back(element);
+			add_elements(element->get_elements(), element);
+			tree_parent->add_tree_element(element);
+			m_elements.emplace(element->get_name(), element);
+			element->set_layer(layer);
+			return (_Ty*)element;
+		}
+
 		template <class _Ty, class... _Types>
 		_Ty* add_element(GUI_element* tree_parent, int layer, _Types&&... _Args)
 		{
@@ -116,12 +150,16 @@ namespace GUI
 		void set_active(bool active);
 
 		static glm::vec2 get_pix_percent(glm::vec2 percent);
+		static glm::vec2 get_vp_size();
+		static glm::mat4 get_prj_matrix();
 
 	private:
 		void add_elements(std::vector<GUI_element*> elements);
 		void add_elements(std::vector<GUI_element*> elements, GUI_element* tree_parent);
 
 		static glm::vec2 m_vp_size;
+
+		static glm::mat4 m_prj_mat;
 
 		Camera* m_render_cam;
 		std::shared_ptr<RenderEngine::Material> m_pMaterial;

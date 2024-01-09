@@ -65,7 +65,7 @@ namespace GUI
 		delete m_indexBuffer;
 		delete m_textureCoordsBuffer;
 		delete m_vertexCoordsBuffer;
-		delete m_vertexArray.get();
+		m_vertexArray = nullptr;
 	}
 
 	void Sprite::setSubTexture(std::string subTexture)

@@ -16,12 +16,14 @@
 namespace GUI
 {
 	glm::vec2 GUI_place::m_vp_size;
+	glm::mat4 GUI_place::m_prj_mat;
 
 	GUI_place::GUI_place(Camera* render_cam, std::shared_ptr<RenderEngine::Material> pMaterial)
 		: m_pMaterial(std::move(pMaterial))
 		, m_render_cam(std::move(render_cam))
 	{
 		m_vp_size = m_render_cam->get_viewport_size();
+		m_prj_mat = m_render_cam->get_ui_matrix();
 	}
 
 	void GUI_place::on_update(const double delta)
@@ -39,7 +41,7 @@ namespace GUI
 		//glm::vec2 size = m_render_cam->get_viewport_size();
 		for (auto cur : m_els)
 		{
-			cur->on_render_prj(m_render_cam->get_ui_matrix());
+			cur->on_render_prj(m_prj_mat);
 		}
 	}
 	void GUI_place::add_element(GUI_element* element)
@@ -56,6 +58,7 @@ namespace GUI
 		
 	void GUI_place::on_mouse_release(int x, int y)
 	{
+		if (!m_isActive) return;
 		m_isFocus = false;
 		for (auto cur : m_els)
 		{
@@ -64,6 +67,7 @@ namespace GUI
 	}
 	void GUI_place::on_resize()
 	{
+		m_prj_mat = m_render_cam->get_ui_matrix();
 		m_vp_size = m_render_cam->get_viewport_size();
 		for (auto cur : m_els)
 		{
@@ -88,6 +92,14 @@ namespace GUI
 	glm::vec2 GUI_place::get_pix_percent(glm::vec2 percent)
 	{
 		return glm::vec2(percent.x / 100 * m_vp_size.x, percent.y / 100 * m_vp_size.y);
+	}
+	glm::vec2 GUI_place::get_vp_size()
+	{
+		return m_vp_size;
+	}
+	glm::mat4 GUI_place::get_prj_matrix()
+	{
+		return m_prj_mat;
 	}
 	void GUI_place::add_elements(std::vector<GUI_element*> elements)
 	{

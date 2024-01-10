@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 
-set(PROJECT_NAME EngineCore VERSION 0.0.7 DESCRIPTION "Game Engine for your comfort")
+set(PROJECT_NAME EngineCore)
 
 #set(EDITOR_BUILD)
 
@@ -243,13 +243,14 @@ target_link_libraries(${PROJECT_NAME} glfw)
 target_link_libraries(${PROJECT_NAME} glad)
 target_link_libraries(${PROJECT_NAME} freetype)
 
-target_include_directories(${PROJECT_NAME} PRIVATE includes)
+target_include_directories(${PROJECT_NAME} PUBLIC includes)
 include_directories(external/glm)
 include_directories(external/rapidjson/include)
 include_directories(external/freetype/include)
 
-set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
 #For copy resources in your build folder copy this in your project
+#set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
+
 #add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 #					COMMAND ${CMAKE_COMMAND} -E copy_directory
 #					${CMAKE_SOURCE_DIR}/gameres $<TARGET_FILE_DIR:${PROJECT_NAME}>/gameres)

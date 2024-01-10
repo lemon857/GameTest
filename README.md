@@ -1,8 +1,7 @@
-# Tower_defense
-This is my engine and game on it.  
+# Game Engine
+This is my engine.  
 I'm not pro developer, this is a not optimized and have many bugs engine.  
 idk how it working  
-
 
 Be seriously my engine have:   
 - API for rendering
@@ -12,4 +11,3 @@ Be seriously my engine have:
 - includes miniaudio lib for sound playing
 
 And I know it have just terrible realization   
-Additional releases, such as 0.0.7.1, may have critical bugs

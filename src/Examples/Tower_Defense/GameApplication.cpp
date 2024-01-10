@@ -82,13 +82,13 @@ GameApp::~GameApp()
 
 bool GameApp::init()
 {
-    GUI::AlertSystem::setResources("calibri", "textShader", "defaultSprite", "button", glm::vec3(1.f), &is_game_paused);
+    GUI::AlertSystem::setResources("calibriChat", "calibri", "textShader", "alertSprite", "button", glm::vec3(1.f), glm::vec3(0.22f), &is_game_paused);
 
     RegistryManager::set_reg_path("Tower_defense\\");
     std::string val;
     if (!RegistryManager::get_value("lang", val))
     {
-        val = "en"; 
+        val = "ru"; 
         RegistryManager::set_value("lang", val);
     }
     m_lang_pack = ResourceManager::get_lang_pack(val);
@@ -2056,7 +2056,7 @@ void GameApp::init_gui()
                         RegistryManager::set_value("lang", val);
                     }
                 }
-                GUI::AlertSystem::addAlert(L"Need restart game");
+                GUI::AlertSystem::addAlert(m_lang_pack->get("needrstgame"));
                 //m_chat_mes.push(L"Need restart game");
                 //m_chat_mes.push(L"Coming soon...");
             });
@@ -2384,7 +2384,7 @@ void GameApp::init_main_menu_gui()
                         RegistryManager::set_value("lang", val);
                     }
                 }
-                GUI::AlertSystem::addAlert(L"Need restart game");
+                GUI::AlertSystem::addAlert(m_lang_pack->get("needrstgame"));
             });
 
     m_gui_main_menu->add_element<GUI::TextRenderer>(mainmenu_settings, ResourceManager::get_font("calibri"), ResourceManager::getShaderProgram("textShader"),

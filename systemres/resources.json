@@ -141,6 +141,17 @@
         "static",
         "clicked"
       ]
+    },
+    {
+      "name": "Alert_bg",
+      "filePath": "systemres/textures/alert_bg.png",
+      "width": 600,
+      "height": 300,
+      "subTexture_w": 600,
+      "subTexture_h": 300,
+      "subTextures": [
+        "default"
+      ]
     }
   ],
   "materials": [
@@ -153,6 +164,11 @@
       "name": "defaultSprite",
       "nameShader": "spriteShader",
       "nameTexture": "bg_1"
+    },
+    {
+      "name": "alertSprite",
+      "nameShader": "spriteShader",
+      "nameTexture": "Alert_bg"
     },
     {
       "name": "coin",

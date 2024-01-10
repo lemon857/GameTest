@@ -6,23 +6,28 @@
 #include "EngineCore/GUI/TextRenderer.h"
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Resources/LanguagePack.h"
+#include "EngineCore/Sound/Sound.h"
 #include "EngineCore/Renderer/VertexArray.h"
 #include "EngineCore/System/Log.h"
 
 linked_list<GUI::Alert*> GUI::AlertSystem::m_alerts;
 std::string GUI::AlertSystem::m_font_name;
+std::string GUI::AlertSystem::m_font_name_button;
 std::string GUI::AlertSystem::m_text_shader;
 std::string GUI::AlertSystem::m_sprite_material;
 std::string GUI::AlertSystem::m_button_material;
 glm::vec3 GUI::AlertSystem::m_text_color;
+glm::vec3 GUI::AlertSystem::m_text_color_button;
 bool GUI::AlertSystem::m_close_last;
 bool* GUI::AlertSystem::m_pause_game;
 
-void GUI::AlertSystem::setResources(std::string font_name, std::string text_shader, std::string sprite_material, 
-	std::string button_material, glm::vec3 text_color, bool* pPausegame)
+void GUI::AlertSystem::setResources(std::string font_name, std::string font_name_button, std::string text_shader, std::string sprite_material,
+	std::string button_material, glm::vec3 text_color_button, glm::vec3 text_color, bool* pPausegame)
 {
 	m_font_name = font_name;
+	m_font_name_button = font_name_button;
 	m_text_color = text_color;
+	m_text_color_button = text_color_button;
 	m_sprite_material = sprite_material;
 	m_button_material = button_material;
 	m_text_shader = text_shader;
@@ -30,20 +35,20 @@ void GUI::AlertSystem::setResources(std::string font_name, std::string text_shad
 	m_pause_game = std::move(pPausegame);
 }
 
-void GUI::AlertSystem::addAlert(std::wstring message)
+void GUI::AlertSystem::addAlert(std::wstring message, std::string soundName)
 {
 	if (m_pause_game != nullptr) *m_pause_game = true;
 	std::shared_ptr<LanguagePack> pack = ResourceManager::get_current_lang_pack();
 	Alert* a = new Alert;
 	a->button = new Button(new Sprite(ResourceManager::getMaterial(m_button_material)),
 		glm::vec2(0.f), glm::vec2(0.f), pack->get("submit"),
-		ResourceManager::getShaderProgram(m_text_shader), ResourceManager::get_font(m_font_name), m_text_color);
+		ResourceManager::getShaderProgram(m_text_shader), ResourceManager::get_font(m_font_name_button), m_text_color_button);
 	a->message = new TextRenderer(ResourceManager::get_font(m_font_name), ResourceManager::getShaderProgram(m_text_shader), 
 		message, m_text_color, glm::vec2(0.f), glm::vec2(0.f));
 	a->sprite = new Sprite(ResourceManager::getMaterial(m_sprite_material));
 	a->button->set_position(GUI_place::get_pix_percent(glm::vec2(50.f, 44.f)));
 	a->button->set_scale(GUI_place::get_pix_percent(glm::vec2(8.f, 5.f)));
-	a->message->set_position(GUI_place::get_pix_percent(glm::vec2(50.f, 54.f)));
+	a->message->set_position(GUI_place::get_pix_percent(glm::vec2(50.f, 55.5f)));
 	a->message->set_scale(GUI_place::get_pix_percent(glm::vec2(8.f, 5.f)));
 	a->sprite->set_position(GUI_place::get_pix_percent(glm::vec2(50.f)));
 	a->sprite->set_scale(GUI_place::get_pix_percent(glm::vec2(10.f, 13.f)));
@@ -65,6 +70,8 @@ void GUI::AlertSystem::addAlert(std::wstring message)
 	a->button->set_click_callback([&]() {
 		m_close_last = true;
 		});
+
+	if (soundName != "") ResourceManager::get_sound(soundName)->play();
 
 	m_alerts.push_back(a);
 }

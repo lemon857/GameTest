@@ -24,6 +24,7 @@ line=линия
 highlight=подсветка
 addenemy=добавить врага
 addenemypck=добавить пачку врагов
+needrstgame=требуется перезапуск игры
 on=вкл.
 off=выкл.
 cursor=курсор

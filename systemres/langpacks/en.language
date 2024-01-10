@@ -24,6 +24,7 @@ line=line
 highlight=highlight
 addenemy=spawn enemy
 addenemypck=spawn enemy pack
+needrstgame=need restart game
 on=on
 off=off
 cursor=cursor

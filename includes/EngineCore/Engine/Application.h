@@ -37,7 +37,7 @@ public:
 	Application& operator=(const Application&) = delete;
 	Application& operator=(Application&&) = delete;
 
-	int start(glm::ivec2& window_size, const char* title, const char* json_rel_path, const char* ini_rel_path, double tps_max = 20);
+	int start(glm::ivec2& window_size, const char* title, const char* json_rel_path, const char* ini_rel_path, const char* icon_rel_path, double tps_max = 20);
 
 	void stop();
 	

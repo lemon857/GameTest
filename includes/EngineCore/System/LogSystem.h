@@ -3,9 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "EngineCore/System/AppInfo.h"
-
-#define BUILD_NAME APPINFO_NAME_STR
+#define DEBUG
 
 #ifdef DEBUG
 #define DEBUG_CONSOLE 

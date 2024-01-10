@@ -5,7 +5,6 @@
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Renderer/Renderer.h"
 #include "EngineCore/Sound/SoundEngine.h"
-#include "EngineCore/System/AppInfo.h"
 
 Application::Application()
 {}
@@ -13,10 +12,10 @@ Application::Application()
 Application::~Application()
 {}
 
-int Application::start(glm::ivec2& window_size, const char* title, const char* json_rel_path, const char* ini_rel_path, double tps_max)
+int Application::start(glm::ivec2& window_size, const char* title, const char* json_rel_path, const char* ini_rel_path, const char* icon_rel_path, double tps_max)
 {
     LogSystem::init_log_system("logs");
-    LOG_INFO("Build name: {0}", BUILD_NAME);
+    //LOG_INFO("Build name: {0}", BUILD_NAME);
     LOG_INFO("Starting Application");
 
     m_watch = new Stopwatch();
@@ -30,7 +29,7 @@ int Application::start(glm::ivec2& window_size, const char* title, const char* j
     ResourceManager::load_INI_settings(ini_rel_path, m_ini_data, false);
 
     m_pCloseWindow = false;
-    m_pWindow = std::make_unique<Window>(title, ResourceManager::getExeFilePath() + APPINFO_PATH_TO_ICON_PNG, m_window_position, m_window_size, m_maximized_window, m_fullscreen_window);
+    m_pWindow = std::make_unique<Window>(title, ResourceManager::getExeFilePath() + icon_rel_path, m_window_position, m_window_size, m_maximized_window, m_fullscreen_window);
 
     if (SoundEngine::init_audio() != 0) LOG_ERROR("Fail init sound engine");
 

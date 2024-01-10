@@ -38,7 +38,6 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/System/SysFunc.h	
 	includes/EngineCore/System/CommandManager.h	
 	includes/EngineCore/System/INI_loader.h	
-	includes/EngineCore/System/AppInfo.h
 	includes/EngineCore/System/ImageLoader.h			
 	  
 	includes/EngineCore/GUI/GUI_place.h

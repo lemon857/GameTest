@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 
-set(PROJECT_NAME EngineCore)
+set(PROJECT_NAME EngineCore VERSION 0.0.7 DESCRIPTION "Game Engine for your comfort")
 
 #set(EDITOR_BUILD)
 
@@ -217,8 +217,7 @@ set(ENGINE_PRIVATE_SOURCES
 project(${PROJECT_NAME})
 
 
-	add_executable(${PROJECT_NAME}
-		src/main.cpp
+	add_library(${PROJECT_NAME}
 		src/appinfo.rc
 		${ENGINE_PRIVATE_SOURCES}
 		${ENGINE_PUBLIC_INCLUDES}

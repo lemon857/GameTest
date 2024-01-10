@@ -345,7 +345,7 @@ void GameApp::on_key_update(const double delta)
                     if (cur != x * size_y + y)
                     {
                         cur = x * size_y + y;
-                        //LOG_INFO("CUR: {0}", cur);
+                        LOG_INFO("CUR: {0}", cur);
                         m_scene.at(curObj)->getComponent<Transform>()->set_position(parts[cur]);
                         m_select_tower = nullptr;
                         isKeyPressedmouse = true;
@@ -559,6 +559,47 @@ void GameApp::on_key_update(const double delta)
                     }
                 }
             }
+        }
+    }
+    if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_RIGHT) && m_gui)
+    {
+        unsigned int coast = 0;
+        unsigned int coastUpgrade = 0;
+        switch (place_querry)
+        {
+        case TypeTower::Ice:
+            coast = IceTower::p_coast;
+            coastUpgrade = IceTower::p_coast_upgrade;
+            break;
+        case TypeTower::Archer:
+            coast = ArcherTower::p_coast;
+            coastUpgrade = ArcherTower::p_coast_upgrade;
+            break;
+        case TypeTower::Mortar:
+            coast = MortarTower::p_coast;
+            coastUpgrade = MortarTower::p_coast_upgrade;
+            break;
+        case TypeTower::Executioner:
+            coast = ExecutionerTower::p_coast;
+            coastUpgrade = ExecutionerTower::p_coast_upgrade;
+            break;
+        case TypeTower::Inferno:
+            coast = InfernoTower::p_coast;
+            coastUpgrade = InfernoTower::p_coast_upgrade;
+            break;
+        }
+        if (place_querry != TypeTower::null && !map[cur] && g_coins >= coast)
+        {
+            m_spawn_towers.push({ cur, place_querry });
+            map[cur] = true;
+            place_querry = TypeTower::null;
+            is_active_cursor = false;
+            m_scene.at(curObj)->getComponent<Highlight>()->set_color(glm::vec3(1.f));
+            g_coins -= coast;
+            m_gui->get_element<GUI::TextRenderer>("Coins_count")->set_text(std::to_string(g_coins));
+            m_gui->get_element<GUI::Button>("Upgrade_place")->set_text(m_lang_pack->get("upgrade"));
+            m_gui->get_element<GUI::TextRenderer>("Description_prop")->set_text("");
+            m_gui->get_element<GUI::TextRenderer>("Coast_prop")->set_text("Coast: " + std::to_string(coastUpgrade));
         }
     }
     /*else if (Input::isMouseButtonPressed(MouseButton::MOUSE_BUTTON_RIGHT))
@@ -1315,7 +1356,7 @@ void GameApp::start_game()
 
     for (auto& mt : mats_tows)
     {
-        GET_DATA_MATERIAL(mt, float, "ambient_factor", 0) = 0.3f;
+        GET_DATA_MATERIAL(mt, float, "ambient_factor", 0) = 0.4f;
         GET_DATA_MATERIAL(mt, float, "diffuse_factor", 0) = 0.4f;
         GET_DATA_MATERIAL(mt, float, "specular_factor", 0) = 0.0f;
         GET_DATA_MATERIAL(mt, float, "metalic_factor", 0) = 0.0f;
@@ -1332,13 +1373,13 @@ void GameApp::start_game()
     for (auto& me : mats_ens)
     {
         GET_DATA_MATERIAL(me, float, "ambient_factor", 0) = 0.5f;
-        GET_DATA_MATERIAL(me, float, "diffuse_factor", 0) = 0.4f;
+        GET_DATA_MATERIAL(me, float, "diffuse_factor", 0) = 0.45f;
         GET_DATA_MATERIAL(me, float, "specular_factor", 0) = 0.0f;
         GET_DATA_MATERIAL(me, float, "metalic_factor", 0) = 0.0f;
         GET_DATA_MATERIAL(me, float, "shininess", 0) = 0.1f;
     }
 
-    GET_DATA_MATERIAL("castle", float, "ambient_factor", 0) = 0.3f;
+    GET_DATA_MATERIAL("castle", float, "ambient_factor", 0) = 0.4f;
     GET_DATA_MATERIAL("castle", float, "diffuse_factor", 0) = 0.4f;
     GET_DATA_MATERIAL("castle", float, "specular_factor", 0) = 0.0f;
     GET_DATA_MATERIAL("castle", float, "metalic_factor", 0) = 0.0f;
@@ -1385,7 +1426,7 @@ void GameApp::start_game()
     // --------------------------- fills dead zones -------------------------------
     for (size_t i = 0; i < 4; i++)
     {
-        for (size_t j = 0; j < 13; j++)
+        for (size_t j = 0; j < 12; j++)
         {
             map[780 + 30 * i + j] = true;
         }
@@ -2472,6 +2513,7 @@ void GameApp::start_game_single()
     add_green_place(parts[24] - glm::vec3(1.f, 0.f, 1.f), parts[28] + glm::vec3(1.f, 0.f, 1.f));
     add_green_place(parts[29] - glm::vec3(1.f, 0.f, 1.f), parts[899] + glm::vec3(1.f, 0.f, 1.f));
     add_green_place(parts[853] - glm::vec3(1.f, 0.f, 1.f), parts[898] + glm::vec3(1.f, 0.f, 1.f));
+    add_green_place(parts[822] - glm::vec3(1.f, 0.f, 1.f), parts[851] + glm::vec3(1.f, 0.f, 1.f));
 
     m_towers.clear();
     m_enemies.clear();

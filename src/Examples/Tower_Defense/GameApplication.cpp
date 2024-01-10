@@ -691,6 +691,7 @@ void GameApp::on_update(const double delta)
     if (restart_querry)
     {
         restarting_game = true;
+        terminate_game();
         start_game();
     }
 
@@ -1257,6 +1258,7 @@ bool GameApp::init_events()
     m_event_dispather.add_event_listener<EventMouseMoved>([&](EventMouseMoved& e)
         {
             if (m_gui != nullptr) m_gui->get_element<GUI::Slider>("slider_volume")->move_mouse(e.x);
+            m_gui_main_menu->get_element<GUI::Slider>("slider_volume")->move_mouse(e.x);
             glm::vec3 objcoord = m_cam->get_world_mouse_position(glm::vec2(e.x, e.y), m_pWindow->get_size());
 
             m_world_mouse_pos_x = objcoord.x;
@@ -2261,7 +2263,6 @@ void GameApp::init_gui()
                     restart_querry = true;
                     is_gui_active = false;
                     m_gui->get_element<GUI::GUI_element>("menu_place")->set_active(false);
-                    terminate_game();
                 });     
 
     menu->set_layer(3);

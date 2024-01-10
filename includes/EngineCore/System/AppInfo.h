@@ -1,6 +1,8 @@
 #define APPINFO_PATH_TO_ICON "../systemres/icon.ico"
 #define APPINFO_PATH_TO_ICON_PNG "/systemres/icon.png"
 
+#define DEBUG
+
 #define APPINFO_FILE_VERSION 0,0,7,3
 #define APPINFO_PRODUCT_VERSION 0,0,7,3
 

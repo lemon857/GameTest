@@ -7,8 +7,6 @@
 
 #define BUILD_NAME APPINFO_NAME_STR
 
-#define DEBUG
-
 #ifdef DEBUG
 #define DEBUG_CONSOLE 
 #define DEBUG_CONSOLE_LOG

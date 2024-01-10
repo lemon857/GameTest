@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 
-set(PROJECT_NAME Tower_defense)
+set(PROJECT_NAME EngineCore)
 
 #set(EDITOR_BUILD)
 
@@ -55,28 +55,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/GUI/Slider.h
 	includes/EngineCore/GUI/BindButton.h
 	includes/EngineCore/GUI/Table.h
-	includes/EngineCore/GUI/AlertSystem.h
-
-	includes/Games/Tower_Defense/GameApplication.h  
-	includes/Games/Tower_Defense/Castle.h
-	includes/Games/Tower_Defense/HealthBar.h
-	includes/Games/Tower_Defense/BaseEnemy.h
-	includes/Games/Tower_Defense/BaseTower.h
-	includes/Games/Tower_Defense/BaseEffect.h
-	includes/Games/Tower_Defense/TowerMortar.h
-	includes/Games/Tower_Defense/TowerArcher.h
-	includes/Games/Tower_Defense/TowerIce.h
-	includes/Games/Tower_Defense/TowerExecutioner.h
-	includes/Games/Tower_Defense/TowerInferno.h
-	includes/Games/Tower_Defense/EnemyMonkey.h
-	includes/Games/Tower_Defense/EnemyMagician.h
-	includes/Games/Tower_Defense/EnemyBug.h
-	includes/Games/Tower_Defense/EnemyRobot.h
-	includes/Games/Tower_Defense/EnemyProfessor.h
-	includes/Games/Tower_Defense/Target.h
-	includes/Games/Tower_Defense/DamageTable.h
-	includes/Games/Tower_Defense/FreezeEffect.h
-	includes/Games/Tower_Defense/HealthEffect.h
+	includes/EngineCore/GUI/AlertSystem.h	
 )
 
 set(ENGINE_PRIVATE_INCLUDES
@@ -160,26 +139,7 @@ set(ENGINE_PRIVATE_SOURCES
 	#src/Examples/PongDemo/PongObject.cpp
 	#src/Examples/PongDemo/Ball.h
 	#src/Examples/PongDemo/Ball.cpp
-	
-	src/Examples/Tower_Defense/GameApplication.cpp
-	src/Examples/Tower_Defense/Castle.cpp
-	src/Examples/Tower_Defense/HealthBar.cpp
-	src/Examples/Tower_Defense/BaseEnemy.cpp
-	src/Examples/Tower_Defense/BaseTower.cpp
-	src/Examples/Tower_Defense/BaseEffect.cpp
-	src/Examples/Tower_Defense/TowerMortar.cpp
-	src/Examples/Tower_Defense/TowerArcher.cpp
-	src/Examples/Tower_Defense/TowerExecutioner.cpp
-	src/Examples/Tower_Defense/TowerInferno.cpp
-	src/Examples/Tower_Defense/TowerIce.cpp
-	src/Examples/Tower_Defense/EnemyRobot.cpp
-	src/Examples/Tower_Defense/EnemyMonkey.cpp
-	src/Examples/Tower_Defense/EnemyBug.cpp
-	src/Examples/Tower_Defense/EnemyMagician.cpp
-	src/Examples/Tower_Defense/EnemyProfessor.cpp
-	src/Examples/Tower_Defense/FreezeEffect.cpp
-	src/Examples/Tower_Defense/HealthEffect.cpp
-	
+		
 	src/Resources/ResourceManager.cpp
 	src/Resources/Scene.cpp
 	src/Resources/RegistryManager.cpp	
@@ -290,14 +250,14 @@ include_directories(external/rapidjson/include)
 include_directories(external/freetype/include)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
-#Для игры копирование ресурсов из источника в билд
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-					COMMAND ${CMAKE_COMMAND} -E copy_directory
-					${CMAKE_SOURCE_DIR}/gameres $<TARGET_FILE_DIR:${PROJECT_NAME}>/gameres)
-					
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-					COMMAND ${CMAKE_COMMAND} -E copy_directory
-					${CMAKE_SOURCE_DIR}/systemres $<TARGET_FILE_DIR:${PROJECT_NAME}>/systemres)
+#For copy resources in your build folder copy this in your project
+#add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+#					COMMAND ${CMAKE_COMMAND} -E copy_directory
+#					${CMAKE_SOURCE_DIR}/gameres $<TARGET_FILE_DIR:${PROJECT_NAME}>/gameres)
+#					
+#add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+#					COMMAND ${CMAKE_COMMAND} -E copy_directory
+#					${CMAKE_SOURCE_DIR}/systemres $<TARGET_FILE_DIR:${PROJECT_NAME}>/systemres)
 if (DEFINED EDITOR_BUILD)
 	set(IMGUI_INCLUDES
 	external/imgui/imgui.h

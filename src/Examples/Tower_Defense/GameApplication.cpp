@@ -1979,7 +1979,6 @@ void GameApp::init_gui()
                 restart_querry = true;
                 is_gui_active = false;
                 m_gui->get_element<GUI::GUI_element>("menu_place")->set_active(false);
-                terminate_game();
         });
 
     // ------------------------------------------------------------ settings ------------------------------------------------

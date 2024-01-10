@@ -1490,6 +1490,18 @@ void GameApp::terminate_game()
         delete m_psystems[i];
     }
     m_psystems.clear();
+    for (size_t i = 0; i < m_towers.size(); i++)
+    {
+        delete m_towers[i].tow;
+    }
+    for (size_t i = 0; i < m_enemies.size(); i++)
+    {
+        delete m_enemies[i];
+    }
+    for (size_t i = 0; i < m_enemies_broken.size(); i++)
+    {
+        delete m_enemies[i];
+    }
 }
 
 void GameApp::press_button(KeyCode key)
@@ -2479,16 +2491,7 @@ void GameApp::start_game_single()
     //int((size_x * size_y) / 2) + int(size_x / 2)
     m_main_castle = new Castle(parts[86], _set_max_hp_castle,
         ResourceManager::get_OBJ_model("castle"), ResourceManager::getMaterial("castle"), ResourceManager::getMaterial("default"));
-    map[86] = true;
-
-    for (size_t i = 0; i < m_towers.size(); i++)
-    {
-        delete m_towers[i].tow;
-    }
-    for (size_t i = 0; i < m_enemies.size(); i++)
-    {
-        delete m_enemies[i];
-    }
+    map[86] = true;    
 
     switch (g_cam_view)
     {

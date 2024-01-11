@@ -48,7 +48,7 @@ protected:
 
 	virtual bool init_events() { return true; };
 
-	virtual void on_render(const double delta) {};
+	virtual void on_render() {};
 
 	virtual void on_update(const double delta) {};
 
@@ -64,6 +64,18 @@ protected:
 	glm::ivec2& m_window_position = glm::ivec2(100);
 	glm::ivec2& m_window_size = glm::ivec2(800, 600);
 	INIdata m_ini_data;
+
+	int m_current_fps;
+	int m_current_tps;
+
+	void set_max_tps(double max);
 private:
+	int m_frames;
+	double m_time_frame;
+
+	int m_ticks;
+	double m_time_tick;
+
+	double m_max_time_tps;
 	Stopwatch* m_watch;
 };

@@ -41,7 +41,7 @@ std::wstring LanguagePack::operator[](std::string name)
 	{
 		return it->second;
 	}
-	return L"";
+	return L"ntfnd";
 }
 
 void LanguagePack::add_field(std::string name, std::wstring value)
@@ -57,5 +57,5 @@ std::wstring LanguagePack::get(std::string name)
 		return it->second;
 	}
 	LOG_WARN("Can't find: {0}", name);
-	return L"";
+	return L"ntfnd";
 }

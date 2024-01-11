@@ -52,11 +52,18 @@ int Application::start(glm::ivec2& window_size, const char* title, const char* j
     
     delete m_watch;
 
+    m_current_tps = 0;
+    m_current_fps = 0;
+    m_time_tick = 0;
+    m_ticks = 0;
+    m_time_frame = 0;
+    m_frames = 0;
+
     auto lastTime = std::chrono::high_resolution_clock::now();      
 
     double sum_time = 0;
 
-    double max = 1000.0 / (tps_max + 1);
+    m_max_time_tps = 1000.0 / (tps_max + 1);
 
     while (!m_pCloseWindow)
     {
@@ -66,18 +73,47 @@ int Application::start(glm::ivec2& window_size, const char* title, const char* j
 
         sum_time += duration;
 
-        if (sum_time >= max)
+        if (sum_time >= m_max_time_tps)
         {
+#ifdef DEBUG
+            on_update(duration);
+#else
             on_update(sum_time);
+#endif
+            // tps counter
+            if (m_ticks < 5)
+            {
+                m_ticks++;
+                m_time_tick += sum_time;
+            }
+            else
+            {
+                m_current_tps = int((m_ticks / m_time_tick) * 1000.f);
+                m_ticks = 0;
+                m_time_tick = 0;
+            }
             sum_time = 0;
         }
 
-        on_render(duration);
+        on_render();
 
         on_ui_render();
         on_key_update(duration);
 
-        m_pWindow->on_update();
+        m_pWindow->on_update();    
+
+        // fps counter
+        if (m_frames < 5)
+        {
+            m_frames++;
+            m_time_frame += duration;
+        }
+        else
+        {
+            m_current_fps = int((m_frames / m_time_frame) * 1000.f);
+            m_frames = 0;
+            m_time_frame = 0;
+        }
     }
 
     m_fullscreen_window = m_pWindow->is_fullscreen();
@@ -97,6 +133,11 @@ void Application::stop()
     ResourceManager::unloadAllResources();
     SoundEngine::uninit_audio();
     LogSystem::uninit_log_system();
+}
+
+void Application::set_max_tps(double max)
+{
+    m_max_time_tps = 1000.0 / (max + 1);
 }
 
 void INIregionSTARTUP::parse(std::string name, std::string value)

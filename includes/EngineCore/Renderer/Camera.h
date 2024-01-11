@@ -29,6 +29,8 @@ public:
 	void set_field_of_view(const float fov);
 	void set_size_of_view(const float sov);
 
+	float get_field_of_view() { return m_field_of_view; }
+
 	glm::mat4 get_view_matrix();
 	glm::mat4 get_projection_matrix();
 	glm::mat4 get_ui_matrix();
@@ -60,7 +62,7 @@ private:
 	glm::vec3 m_right;
 	glm::vec3 m_up;
 
-	float m_far_clip_plane{ 100.f };
+	float m_far_clip_plane{ 250.f };
 	float m_near_clip_plane{ 0.1f };
 	float m_viewport_width{ 800.f };
 	float m_viewport_height{ 600.f };

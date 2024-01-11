@@ -170,7 +170,8 @@ bool ResourceManager::load_JSON_resources(const std::string & JSONpath)
 			const std::string path = currentModel["path"].GetString();
 			while (load_OBJ_model(name, path) == nullptr)
 			{
-
+				LOG_WARN("Failed load OBJ model");
+				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 			}
 		}
 	}
@@ -600,11 +601,9 @@ std::shared_ptr<GraphicsObject> ResourceManager::load_OBJ_model(const std::strin
 		textureCoordsLayout.addElementLayoutFloat(2, false);
 		vao->addBuffer(vbo_texture, textureCoordsLayout);
 
-		while (!ebo->init(index_array.data(), index_array.size() * sizeof(GLuint)))
+		if (!ebo->init(index_array.data(), index_array.size() * sizeof(GLuint)))
 		{
-			LOG_WARN("Caused bug init index buffer");
 			file.close();
-			std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 			return nullptr;
 		}
 

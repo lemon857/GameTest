@@ -55,6 +55,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/GUI/BindButton.h
 	includes/EngineCore/GUI/Table.h
 	includes/EngineCore/GUI/AlertSystem.h	
+	includes/EngineCore/GUI/Bar.h	
 )
 
 set(ENGINE_PRIVATE_INCLUDES
@@ -210,6 +211,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/GUI/BindButton.cpp
 	src/GUI/Table.cpp
 	src/GUI/AlertSystem.cpp
+	src/GUI/Bar.cpp
 
 	src/Network/WinSock.cpp
 )

@@ -40,7 +40,7 @@ void GUI::AlertSystem::addAlert(std::wstring message, std::string soundName)
 	if (m_pause_game != nullptr) *m_pause_game = true;
 	std::shared_ptr<LanguagePack> pack = ResourceManager::get_current_lang_pack();
 	Alert* a = new Alert;
-	a->button = new Button(new Sprite(ResourceManager::getMaterial(m_button_material)),
+	a->button = new Button(new Sprite(ResourceManager::getMaterial(m_button_material), "static"),
 		glm::vec2(0.f), glm::vec2(0.f), pack->get("submit"),
 		ResourceManager::getShaderProgram(m_text_shader), ResourceManager::get_font(m_font_name_button), m_text_color_button);
 	a->message = new TextRenderer(ResourceManager::get_font(m_font_name), ResourceManager::getShaderProgram(m_text_shader), 
@@ -53,6 +53,8 @@ void GUI::AlertSystem::addAlert(std::wstring message, std::string soundName)
 	a->sprite->set_position(GUI_place::get_pix_percent(glm::vec2(50.f)));
 	a->sprite->set_scale(GUI_place::get_pix_percent(glm::vec2(10.f, 13.f)));
 	
+	a->message->set_text(message);
+
 	a->button_bg = a->button->get_elements()[0];
 	a->button_text = a->button->get_elements()[1];
 
@@ -78,6 +80,11 @@ void GUI::AlertSystem::addAlert(std::wstring message, std::string soundName)
 
 void GUI::AlertSystem::unloadAllalerts()
 {
+	if (m_alerts.is_empty()) return;
+	for (int i = 0; i < m_alerts.size(); i++)
+	{
+		delete m_alerts[i];
+	}
 }
 
 void GUI::AlertSystem::render()

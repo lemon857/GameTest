@@ -41,6 +41,8 @@ namespace GUI
 			, m_scale_p(glm::vec2(0))
 			, m_position(glm::vec2(0))
 			, m_scale(glm::vec2(0))
+			, m_position_mouse_click(glm::vec2(0))
+			, m_isHovered(false)
 			, m_isActive(true)
 			, m_isFocused(false)
 			, m_layer(0)

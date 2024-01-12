@@ -76,7 +76,7 @@ int Application::start(glm::ivec2& window_size, const char* title, const char* j
         if (sum_time >= m_max_time_tps)
         {
 #ifdef DEBUG
-            on_update(duration);
+            on_update(sum_time);
 #else
             on_update(sum_time);
 #endif

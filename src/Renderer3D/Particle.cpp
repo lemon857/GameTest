@@ -18,10 +18,6 @@ Particle::Particle(double live_time, glm::vec3 startPos, glm::vec3 startScale, g
 	addComponent<SpriteRenderer>(std::move(pMaterial));
 }
 
-Particle::~Particle()
-{
-}
-
 void Particle::update(const double delta)
 {
 	if (m_isDestroyed) return;

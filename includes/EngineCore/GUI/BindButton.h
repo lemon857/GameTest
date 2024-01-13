@@ -29,14 +29,12 @@ namespace GUI
 			 std::shared_ptr<RenderEngine::ShaderProgram> textShader, std::shared_ptr<Font> font, glm::vec3 textColor, KeyCode* targetBind, std::string name = "default");
 		~BindButton();
 
-		void on_render_prj(glm::mat4& prj) override;
-
 		void on_press() override;
 		void on_release() override;
 
 		std::vector<GUI_element*> get_elements() override;
 
-		void press_button(KeyCode key);
+		void on_key_press(KeyCode key) override;
 	private:
 		Sprite* m_face;
 		KeyCode* m_targetBind;

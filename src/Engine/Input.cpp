@@ -248,6 +248,22 @@ std::string Input::getKeyString(KeyCode key)
 		return "tight super";
 	case KeyCode::KEY_MENU:
 		return "menu";
+	case KeyCode::MOUSE_BUTTON_1:
+		return "m-1";
+	case KeyCode::MOUSE_BUTTON_2:
+		return "m-2";
+	case KeyCode::MOUSE_BUTTON_3:
+		return "m-3";
+	case KeyCode::MOUSE_BUTTON_4:
+		return "m-4";
+	case KeyCode::MOUSE_BUTTON_5:
+		return "m-5";
+	case KeyCode::MOUSE_BUTTON_6:
+		return "m-6";
+	case KeyCode::MOUSE_BUTTON_7:
+		return "m-7";
+	case KeyCode::MOUSE_BUTTON_8:
+		return "m-8";
 	}
 	return "-1";
 }
@@ -276,6 +292,7 @@ bool Input::isMouseButtonPressed(MouseButton key)
 void Input::pressMouseButton(MouseButton key)
 {
 	buttonsPressed[static_cast<size_t>(key)] = true;
+	lastKeyPressed = (KeyCode)key;
 }
 
 void Input::releaseMouseButton(MouseButton key)

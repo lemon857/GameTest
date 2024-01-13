@@ -55,6 +55,10 @@ namespace GUI
 				m_els_needs_on_btn_press.push_back(element);
 				m_els_needs_on_char_set.push_back(element);
 			}
+			else if (a == "class GUI::BindButton")
+			{
+				m_els_needs_on_btn_press.push_back(element);
+			}
 			else if (a == "class GUI::ChatBox" || a == "class GUI::ScrollBox")
 			{
 				m_els_needs_on_scroll.push_back(element);
@@ -84,6 +88,10 @@ namespace GUI
 			{
 				m_els_needs_on_btn_press.push_back(element);
 				m_els_needs_on_char_set.push_back(element);
+			}
+			else if (a == "class GUI::BindButton")
+			{
+				m_els_needs_on_btn_press.push_back(element);
 			}
 			else if (a == "class GUI::ChatBox" || a == "class GUI::ScrollBox")
 			{
@@ -115,6 +123,10 @@ namespace GUI
 				m_els_needs_on_btn_press.push_back(element);
 				m_els_needs_on_char_set.push_back(element);
 			}
+			else if (a == "class GUI::BindButton")
+			{
+				m_els_needs_on_btn_press.push_back(element);
+			}
 			else if (a == "class GUI::ChatBox" || a == "class GUI::ScrollBox")
 			{
 				m_els_needs_on_scroll.push_back(element);
@@ -144,6 +156,10 @@ namespace GUI
 			{
 				m_els_needs_on_btn_press.push_back(element);
 				m_els_needs_on_char_set.push_back(element);
+			}
+			else if (a == "class GUI::BindButton")
+			{
+				m_els_needs_on_btn_press.push_back(element);
 			}
 			else if (a == "class GUI::ChatBox" || a == "class GUI::ScrollBox")
 			{
@@ -176,6 +192,10 @@ namespace GUI
 				m_els_needs_on_btn_press.push_back(element);
 				m_els_needs_on_char_set.push_back(element);
 			}
+			else if (a == "class GUI::BindButton")
+			{
+				m_els_needs_on_btn_press.push_back(element);
+			}
 			else if (a == "class GUI::ChatBox" || a == "class GUI::ScrollBox")
 			{
 				m_els_needs_on_scroll.push_back(element);
@@ -206,6 +226,10 @@ namespace GUI
 			{
 				m_els_needs_on_btn_press.push_back(element);
 				m_els_needs_on_char_set.push_back(element);
+			}
+			else if (a == "class GUI::BindButton")
+			{
+				m_els_needs_on_btn_press.push_back(element);
 			}
 			else if (a == "class GUI::ChatBox" || a == "class GUI::ScrollBox")
 			{

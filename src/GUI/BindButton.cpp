@@ -24,20 +24,12 @@ namespace GUI
 	BindButton::~BindButton()
 	{
 	}
-	void BindButton::on_render_prj(glm::mat4& prj)
-	{
-		if (!m_isClicked) return;
-		if (m_last != Input::getLastKeyPressed() && (char)Input::getLastKeyPressed() != 0)
-		{
-			*m_targetBind = Input::getLastKeyPressed();
-			m_last = *m_targetBind;
-			m_textRenderer->set_text(Input::getKeyString(*m_targetBind));
-			m_isClicked = false;
-			m_face->setSubTexture(NAME_TEXTURE_STATIC);
-		}
-	}
 	void BindButton::on_press()
 	{
+		if (Input::getLastKeyPressed() != KeyCode::MOUSE_BUTTON_1)
+		{
+			return;
+		}
 		if (m_isClicked)
 		{
 			m_face->setSubTexture(NAME_TEXTURE_STATIC);
@@ -46,7 +38,6 @@ namespace GUI
 		else
 		{
 			m_face->setSubTexture(NAME_TEXTURE_CLICKED);
-			m_last = Input::getLastKeyPressed();
 			m_isClicked = true;
 		}
 	}
@@ -64,14 +55,22 @@ namespace GUI
 		vec.push_back(m_face);
 		return vec;
 	}
-	void BindButton::press_button(KeyCode key)
+	void BindButton::on_key_press(KeyCode key)
 	{
+		if (key == KeyCode::KEY_ESCAPE || key == KeyCode::MOUSE_BUTTON_1)
+		{
+			return;
+		}
 		if (m_isClicked)
 		{
 			*m_targetBind = key;
 			m_textRenderer->set_text(Input::getKeyString(*m_targetBind));
 			m_textRenderer->set_position(glm::vec2(m_position.x, m_position.y - GUI_place::get_pix_percent(glm::vec2(0.f, SHIFT_TEXT_SYMBOL_Y)).y));
-			m_isClicked = false;
+			if ((int)key > 7)
+			{
+				m_face->setSubTexture(NAME_TEXTURE_STATIC);
+				m_isClicked = false;
+			}
 		}
 	}
 }

@@ -8,7 +8,6 @@ GUI::Bar::Bar(std::shared_ptr<RenderEngine::Material> pMaterial,
 	float size_line, double max_value,
 	glm::vec3 background_color, glm::vec3 foreground_color, std::string name)
 	: GUI_element(name, std::move(pMaterial))
-	, m_size(size_line)
 	, m_max_value(max_value)
 	, m_value(0)
 	, m_background_color(background_color)
@@ -17,8 +16,8 @@ GUI::Bar::Bar(std::shared_ptr<RenderEngine::Material> pMaterial,
 	m_position_p = pos_p;
 	m_scale_p = scale_p;
 
-	m_background_line = new RenderEngine::Line(m_pMaterial, m_size);
-	m_foreground_line = new RenderEngine::Line(m_pMaterial, m_size);
+	m_background_line = new RenderEngine::Line(m_pMaterial, 1);
+	m_foreground_line = new RenderEngine::Line(m_pMaterial, 1);
 }
 
 GUI::Bar::~Bar()
@@ -40,6 +39,16 @@ void GUI::Bar::on_render_prj(glm::mat4& prj)
 		glm::vec3(m_position.x + 2 * m_scale.x * m_value / m_max_value - m_scale.x, m_position.y, m_layer), m_foreground_color);
 }
 
+void GUI::Bar::add_value(const double value)
+{
+	m_value += value;
+}
+
+void GUI::Bar::add_max_value(const double value)
+{
+	m_max_value += value;
+}
+
 void GUI::Bar::set_value(const double value)
 {
 	m_value = value;
@@ -48,4 +57,16 @@ void GUI::Bar::set_value(const double value)
 void GUI::Bar::set_max_value(const double max_val)
 {
 	m_max_value = max_val;
+}
+
+bool GUI::Bar::is_full()
+{
+	return m_value >= m_max_value;
+}
+
+void GUI::Bar::set_scale(glm::vec2 scale)
+{
+	m_scale = scale;
+	m_foreground_line->set_size(m_scale.y);
+	m_background_line->set_size(m_scale.y);		
 }

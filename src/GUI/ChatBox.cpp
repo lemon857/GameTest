@@ -33,6 +33,10 @@ namespace GUI
 		vec.push_back(m_scrollbox);
 		return vec;
 	}
+	void ChatBox::on_mouse_scroll(int offset)
+	{
+		m_scrollbox->on_mouse_scroll(offset);
+	}
 	void ChatBox::add_message(std::wstring message)
 	{
 		TextRenderer* text = new TextRenderer(m_font, m_shader, message, m_color, m_position, glm::vec2(0.3f), "default", false);
@@ -46,9 +50,5 @@ namespace GUI
 	void ChatBox::clear()
 	{
 		m_scrollbox->clear();
-	}
-	void ChatBox::on_scroll(int offset)
-	{
-		m_scrollbox->on_scroll(offset);
 	}
 }

@@ -24,8 +24,9 @@
 namespace RenderEngine
 {
 	class Material;
-
 }
+
+enum class KeyCode;
 
 namespace GUI
 {
@@ -56,6 +57,10 @@ namespace GUI
 
 		virtual void on_press() {};
 		virtual void on_release() {};
+		virtual void on_mouse_move(int x, int y){}
+		virtual void on_mouse_scroll(int offset){}
+		virtual void on_key_press(KeyCode key){}
+		virtual void on_char_set(wchar_t key_char) {}
 
 		virtual void set_active(const bool state) { m_isActive = state; set_tree_active(state); }
 

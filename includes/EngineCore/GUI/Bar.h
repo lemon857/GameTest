@@ -18,10 +18,15 @@ namespace GUI
 
 		void on_render_prj(glm::mat4& prj) override;
 
+		void add_value(const double value);
+		void add_max_value(const double value);
 		void set_value(const double value);
 		void set_max_value(const double max_val);
+
+		bool is_full();
+
+		void set_scale(glm::vec2 scale) override;
 	private:
-		float m_size;
 		double m_max_value;
 		double m_value;
 

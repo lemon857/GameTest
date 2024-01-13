@@ -49,7 +49,7 @@ namespace GUI
 		m_slider->setSubTexture(NAME_TEXTURE_STATIC);
 		is_pressed = false;
 	}
-	void Slider::move_mouse(int x)
+	void Slider::on_mouse_move(int x, int y)
 	{
 		if (is_pressed)
 		{

@@ -46,8 +46,8 @@ namespace GUI
 		bool get_focus();
 		void set_focus(bool focus);
 
-		void press_button(KeyCode key);
-		void press_char(wchar_t key_char);
+		void on_key_press(KeyCode key) override;
+		void on_char_set(wchar_t key_char) override;
 
 		void set_enter_callback(std::function<void(std::wstring text)> on_enter) { m_on_enter = on_enter; }
 	private:

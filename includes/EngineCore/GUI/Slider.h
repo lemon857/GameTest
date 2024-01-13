@@ -17,7 +17,7 @@ namespace GUI
 		void on_press() override;
 		void on_release() override;
 
-		void move_mouse(int x);
+		void on_mouse_move(int x, int y) override;
 
 		float value();
 

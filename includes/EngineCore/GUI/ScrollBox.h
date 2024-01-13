@@ -21,7 +21,7 @@ namespace GUI
 
 		std::vector<GUI_element*> get_elements() override;
 
-		void on_scroll(int offset);
+		void on_mouse_scroll(int offset) override;
 
 		void add_element(GUI_element* element);
 

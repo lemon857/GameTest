@@ -112,7 +112,7 @@ void GUI::InputField::set_focus(bool focus)
 	}
 }
 
-void GUI::InputField::press_button(KeyCode key)
+void GUI::InputField::on_key_press(KeyCode key)
 {
 	if (!m_isFocused) return;
 	if (key == KeyCode::KEY_V && Input::isKeyPressed(KeyCode::KEY_LEFT_CONTROL))
@@ -139,7 +139,7 @@ void GUI::InputField::press_button(KeyCode key)
 	m_textRenderer->set_text(m_text);
 }
 
-void GUI::InputField::press_char(wchar_t key_char)
+void GUI::InputField::on_char_set(wchar_t key_char)
 {
 	if (!m_isFocused) return;
 	m_text += key_char;

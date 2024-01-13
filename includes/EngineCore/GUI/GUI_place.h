@@ -10,6 +10,8 @@
 
 class Camera;
 
+enum class KeyCode;
+
 namespace RenderEngine
 {
 	class Material;
@@ -43,6 +45,20 @@ namespace GUI
 			m_els.push_back(element);
 			add_elements(element->get_elements());
 			m_elements.emplace(element->get_name(), element);
+			std::string a = typeid(_Ty).name();
+			if (a == "class GUI::Slider")
+			{
+				m_els_needs_on_mouse_move.push_back(element);
+			}
+			else if (a == "class GUI::InputField")
+			{
+				m_els_needs_on_btn_press.push_back(element);
+				m_els_needs_on_char_set.push_back(element);
+			}
+			else if (a == "class GUI::ChatBox" || a == "class GUI::ScrollBox")
+			{
+				m_els_needs_on_scroll.push_back(element);
+			}
 			return (_Ty*)element;
 		}
 
@@ -59,6 +75,20 @@ namespace GUI
 			add_elements(element->get_elements());
 			m_elements.emplace(element->get_name(), element);
 			element->set_layer(layer);
+			std::string a = typeid(_Ty).name();
+			if (a == "class GUI::Slider")
+			{
+				m_els_needs_on_mouse_move.push_back(element);
+			}
+			else if (a == "class GUI::InputField")
+			{
+				m_els_needs_on_btn_press.push_back(element);
+				m_els_needs_on_char_set.push_back(element);
+			}
+			else if (a == "class GUI::ChatBox" || a == "class GUI::ScrollBox")
+			{
+				m_els_needs_on_scroll.push_back(element);
+			}
 			return (_Ty*)element;
 		}
 
@@ -75,6 +105,20 @@ namespace GUI
 			add_elements(element->get_elements());
 			m_elements.emplace(element->get_name(), element);
 			element->set_layer(layer);
+			std::string a = typeid(_Ty).name();
+			if (a == "class GUI::Slider")
+			{
+				m_els_needs_on_mouse_move.push_back(element);
+			}
+			else if (a == "class GUI::InputField")
+			{
+				m_els_needs_on_btn_press.push_back(element);
+				m_els_needs_on_char_set.push_back(element);
+			}
+			else if (a == "class GUI::ChatBox" || a == "class GUI::ScrollBox")
+			{
+				m_els_needs_on_scroll.push_back(element);
+			}
 			return (_Ty*)element;
 		}
 
@@ -91,6 +135,20 @@ namespace GUI
 			add_elements(element->get_elements(), element);
 			tree_parent->add_tree_element(element);
 			m_elements.emplace(element->get_name(), element);
+			std::string a = typeid(_Ty).name();
+			if (a == "class GUI::Slider")
+			{
+				m_els_needs_on_mouse_move.push_back(element);
+			}
+			else if (a == "class GUI::InputField")
+			{
+				m_els_needs_on_btn_press.push_back(element);
+				m_els_needs_on_char_set.push_back(element);
+			}
+			else if (a == "class GUI::ChatBox" || a == "class GUI::ScrollBox")
+			{
+				m_els_needs_on_scroll.push_back(element);
+			}
 			return (_Ty*)element;
 		}	
 		
@@ -108,6 +166,20 @@ namespace GUI
 			tree_parent->add_tree_element(element);
 			m_elements.emplace(element->get_name(), element);
 			element->set_layer(layer);
+			std::string a = typeid(_Ty).name();
+			if (a == "class GUI::Slider")
+			{
+				m_els_needs_on_mouse_move.push_back(element);
+			}
+			else if (a == "class GUI::InputField")
+			{
+				m_els_needs_on_btn_press.push_back(element);
+				m_els_needs_on_char_set.push_back(element);
+			}
+			else if (a == "class GUI::ChatBox" || a == "class GUI::ScrollBox")
+			{
+				m_els_needs_on_scroll.push_back(element);
+			}
 			return (_Ty*)element;
 		}
 
@@ -125,6 +197,20 @@ namespace GUI
 			tree_parent->add_tree_element(element);
 			m_elements.emplace(element->get_name(), element);
 			element->set_layer(layer);
+			std::string a = typeid(_Ty).name();
+			if (a == "class GUI::Slider")
+			{
+				m_els_needs_on_mouse_move.push_back(element);
+			}
+			else if (a == "class GUI::InputField")
+			{
+				m_els_needs_on_btn_press.push_back(element);
+				m_els_needs_on_char_set.push_back(element);
+			}
+			else if (a == "class GUI::ChatBox" || a == "class GUI::ScrollBox")
+			{
+				m_els_needs_on_scroll.push_back(element);
+			}
 			return (_Ty*)element;
 		}
 
@@ -142,8 +228,12 @@ namespace GUI
 
 		void on_mouse_press(int x, int y);
 		void on_mouse_release(int x, int y);
-
 		void on_resize();
+		void on_mouse_move(int x, int y);
+		void on_mouse_scroll(int offset);
+		void on_key_press(KeyCode key);
+		void on_char_set(wchar_t key_char);
+
 
 		bool get_focus();
 		void set_logging_active(bool active);
@@ -167,6 +257,11 @@ namespace GUI
 		std::multimap<std::string, GUI_element*> m_elements;
 
 		std::vector<GUI_element*> m_els;
+
+		std::vector<GUI_element*> m_els_needs_on_mouse_move;
+		std::vector<GUI_element*> m_els_needs_on_scroll;
+		std::vector<GUI_element*> m_els_needs_on_char_set;
+		std::vector<GUI_element*> m_els_needs_on_btn_press;
 
 		bool m_isFocus = false;
 		bool m_isActive = false;

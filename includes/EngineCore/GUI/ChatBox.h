@@ -32,13 +32,13 @@ namespace GUI
 
 		std::vector<GUI_element*> get_elements() override;
 
+		void on_mouse_scroll(int offset) override;
+
 		void add_message(std::wstring message);
 
 		void set_open(bool isOpen);
 
 		void clear();
-
-		void on_scroll(int offset);
 	private:
 		ScrollBox* m_scrollbox;
 

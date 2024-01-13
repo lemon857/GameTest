@@ -45,7 +45,7 @@ namespace GUI
 		}
 	}
 	void GUI_place::add_element(GUI_element* element)
-	{
+	{		
 		glm::vec2 posp = element->get_position_p();
 		glm::vec2 scalep = element->get_scale_p();
 		m_vp_size = m_render_cam->get_viewport_size();
@@ -75,6 +75,34 @@ namespace GUI
 			glm::vec2 scalep = cur->get_scale_p();
 			cur->set_position(glm::vec2(posp.x / 100 * m_vp_size.x, posp.y / 100 * m_vp_size.y));
 			cur->set_scale(glm::vec2(scalep.x / 100 * m_vp_size.x, scalep.y / 100 * m_vp_size.y));
+		}
+	}
+	void GUI_place::on_mouse_move(int x, int y)
+	{
+		for (auto& i : m_els_needs_on_mouse_move)
+		{
+			i->on_mouse_move(x, y);
+		}
+	}
+	void GUI_place::on_mouse_scroll(int offset)
+	{
+		for (auto& i : m_els_needs_on_scroll)
+		{
+			i->on_mouse_scroll(offset);
+		}
+	}
+	void GUI_place::on_key_press(KeyCode key)
+	{
+		for (auto& i : m_els_needs_on_btn_press)
+		{
+			i->on_key_press(key);
+		}
+	}
+	void GUI_place::on_char_set(wchar_t key_char)
+	{
+		for (auto& i : m_els_needs_on_char_set)
+		{
+			i->on_char_set(key_char);
 		}
 	}
 	bool GUI_place::get_focus()

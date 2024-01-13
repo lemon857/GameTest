@@ -75,11 +75,11 @@ int Application::start(glm::ivec2& window_size, const char* title, const char* j
 
         if (sum_time >= m_max_time_tps)
         {
-#ifdef DEBUG
+//#ifdef DEBUG
             on_update(sum_time);
-#else
-            on_update(sum_time);
-#endif
+//#else
+//            on_update(sum_time);
+//#endif
             // tps counter
             if (m_ticks < 5)
             {

@@ -5,6 +5,7 @@
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Renderer/Renderer.h"
 #include "EngineCore/Sound/SoundEngine.h"
+#include "EngineCore/System/Input.h"
 
 Application::Application()
 {}
@@ -29,16 +30,17 @@ int Application::start(glm::ivec2& window_size, const char* title, const char* j
     ResourceManager::load_INI_settings(ini_rel_path, m_ini_data, false);
 
     m_pCloseWindow = false;
-    m_pWindow = std::make_unique<Window>(title, ResourceManager::getExeFilePath() + icon_rel_path, m_window_position, m_window_size, m_maximized_window, m_fullscreen_window);
+    m_pWindow = 
+        std::make_unique<Window>(title, m_window_position, m_window_size, 
+            m_maximized_window, m_fullscreen_window, icon_rel_path == 0 ? "" : ResourceManager::getExeFilePath() + icon_rel_path);
 
     if (SoundEngine::init_audio() != 0) LOG_ERROR("Fail init sound engine");
 
     ResourceManager::load_JSON_resources(json_rel_path);
 
-    if (!init_events())
-    {        
-        return -1;
-    }
+    init_system_events();
+
+    init_events();
     if (!init())
     {
         return -1;
@@ -138,6 +140,70 @@ void Application::stop()
 void Application::set_max_tps(double max)
 {
     m_max_time_tps = 1000.0 / (max + 1);
+}
+
+void Application::init_system_events()
+{
+    m_system_event_dispather.add_event_listener<EventWindowResize>([&](EventWindowResize& e)
+        {
+            if (e.width != 0 && e.height != 0)
+            {
+                RenderEngine::Renderer::setViewport(e.width, e.height);
+                m_event_dispather.dispatch(e);
+            }
+        });
+    m_system_event_dispather.add_event_listener<EventKeyPressed>([&](EventKeyPressed& e)
+        {
+            Input::pressKey(e.key_code);
+            m_event_dispather.dispatch(e);
+        });
+    m_system_event_dispather.add_event_listener<EventCharSet>([&](EventCharSet& e)
+        {
+            m_event_dispather.dispatch(e);
+        });
+    m_system_event_dispather.add_event_listener<EventKeyReleased>([&](EventKeyReleased& e)
+        {
+            Input::releaseKey(e.key_code);
+            m_event_dispather.dispatch(e);
+        });
+    m_system_event_dispather.add_event_listener<EventMouseMoved>([&](EventMouseMoved& e)
+        {
+            m_event_dispather.dispatch(e);
+        });
+    m_system_event_dispather.add_event_listener<EventMouseScrolled>([&](EventMouseScrolled& e)
+        {
+            m_event_dispather.dispatch(e);
+        });
+    m_system_event_dispather.add_event_listener<EventWindowClose>([&](EventWindowClose& e)
+        {
+            m_event_dispather.dispatch(e);
+            m_pCloseWindow = true;
+        });
+    m_system_event_dispather.add_event_listener<EventMouseButtonPressed>([&](EventMouseButtonPressed& e)
+        {
+            Input::pressMouseButton(e.mouse_button);
+            m_event_dispather.dispatch(e);
+        });
+    m_system_event_dispather.add_event_listener<EventMouseButtonReleased>([&](EventMouseButtonReleased& e)
+        {
+            Input::releaseMouseButton(e.mouse_button);
+            m_event_dispather.dispatch(e);
+        });
+    m_system_event_dispather.add_event_listener<EventMaximizeWindow>([&](EventMaximizeWindow& e)
+        {
+            m_maximized_window = e.isMaximized;
+            m_event_dispather.dispatch(e);
+        });
+    m_system_event_dispather.add_event_listener<EventMoveWindow>([&](EventMoveWindow& e)
+        {
+            m_window_position = glm::ivec2(e.x_pos, e.y_pos);
+            m_event_dispather.dispatch(e);
+        });
+    m_pWindow->set_event_callback(
+        [&](BaseEvent& e)
+        {
+            m_system_event_dispather.dispatch(e);
+        });
 }
 
 void INIregionSTARTUP::parse(std::string name, std::string value)

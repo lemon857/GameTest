@@ -37,7 +37,7 @@ public:
 	Application& operator=(const Application&) = delete;
 	Application& operator=(Application&&) = delete;
 
-	int start(glm::ivec2& window_size, const char* title, const char* json_rel_path, const char* ini_rel_path, const char* icon_rel_path, double tps_max = 20);
+	int start(glm::ivec2& window_size, const char* title, const char* json_rel_path, const char* ini_rel_path, const char* icon_rel_path = 0, double tps_max = 20);
 
 	void stop();
 	
@@ -46,7 +46,7 @@ protected:
 
 	virtual void terminate() {};
 
-	virtual bool init_events() { return true; };
+	virtual void init_events() {};
 
 	virtual void on_render() {};
 
@@ -70,6 +70,8 @@ protected:
 
 	void set_max_tps(double max);
 private:
+	void init_system_events();
+
 	int m_frames;
 	double m_time_frame;
 
@@ -78,4 +80,5 @@ private:
 
 	double m_max_time_tps;
 	Stopwatch* m_watch;
+	EventDispatcher m_system_event_dispather;
 };

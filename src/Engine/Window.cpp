@@ -37,7 +37,7 @@ const char* gl_type_to_str(const GLenum type)
     }
     return "DEBUG TYPE UNKNOWN";
 }
-Window::Window(std::string title, std::string path_icon_png, glm::ivec2& window_position, glm::ivec2& window_size, bool maximized, bool fullscreen)
+Window::Window(std::string title, glm::ivec2& window_position, glm::ivec2& window_size, bool maximized, bool fullscreen, std::string path_icon_png)
     : m_data({ std::move(title), window_size, window_position, maximized, fullscreen, nullptr })
     , m_path_icon_png(path_icon_png)
 {
@@ -162,16 +162,19 @@ int Window::init()
             }
         }, nullptr);
 
-    GLFWimage icon;
-    int channels = 0;
-    icon.pixels = load_image_png(m_path_icon_png.c_str(), &icon.width, &icon.height, &channels, false);
+    if (m_path_icon_png != "")
+    {
+        GLFWimage icon;
+        int channels = 0;
+        icon.pixels = load_image_png(m_path_icon_png.c_str(), &icon.width, &icon.height, &channels, false);
 
-    if (!icon.pixels) {
-        LOG_WARN("Error loading icon window");
-    }
-    else {
-        glfwSetWindowIcon(m_pWindow, 1, &icon);
-        clear_image(icon.pixels);
+        if (!icon.pixels) {
+            LOG_WARN("Error loading icon window");
+        }
+        else {
+            glfwSetWindowIcon(m_pWindow, 1, &icon);
+            clear_image(icon.pixels);
+        }
     }
 
 

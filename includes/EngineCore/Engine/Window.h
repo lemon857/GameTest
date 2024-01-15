@@ -19,7 +19,7 @@ using EventCallback = std::function<void(BaseEvent&)>;
 class Window
 {
 public:
-	Window(std::string title, std::string path_icon_png, glm::ivec2& window_position, glm::ivec2& window_size, bool maximized, bool fullscreen);
+	Window(std::string title, glm::ivec2& window_position, glm::ivec2& window_size, bool maximized, bool fullscreen, std::string path_icon_png = "");
 	~Window();
 
 	Window(const Window&) = delete;

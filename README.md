@@ -13,4 +13,7 @@ Be seriously my engine have:
 And I know it have just terrible realization   
 
 How to build this engine check there
-https://github.com/lemon857/Demo-Engine
+https://github.com/lemon857/Demo-Engine 
+
+Now engine support only wnidows  
+May be later add support other platform

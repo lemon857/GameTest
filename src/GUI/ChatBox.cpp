@@ -40,7 +40,7 @@ namespace GUI
 	void ChatBox::add_message(std::wstring message)
 	{
 		TextRenderer* text = new TextRenderer(m_font, m_shader, message, m_color, m_position, glm::vec2(0.3f), "default", false);
-		text->set_layer(m_layer + 1);
+		//text->set_layer(m_layer + 1);
 		m_scrollbox->add_element(std::move(text)); // font scale here
 	}
 	void ChatBox::set_open(bool isOpen)

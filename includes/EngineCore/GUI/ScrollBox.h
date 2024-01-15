@@ -14,14 +14,16 @@ namespace GUI
 	{
 	public:
 		ScrollBox(Sprite* backgrond, glm::vec2 pos, glm::vec2 scale,
-			std::string name, int max_count_elements, bool has_displacement = false, GUI_place* place = nullptr);
+			std::string name, int max_count_elements, bool has_displacement = false, GUI_place* place = nullptr, bool isHorisontal = false);
 		~ScrollBox();
 
-		void on_render_prj(glm::mat4& prj) override;
+		void on_render_prj(glm::mat4 prj);
 
 		std::vector<GUI_element*> get_elements() override;
 
 		void on_mouse_scroll(int offset) override;
+
+		void set_active(const bool state) override;
 
 		void add_element(GUI_element* element);
 
@@ -30,6 +32,7 @@ namespace GUI
 		void set_open(bool isOpen);
 	private:
 		bool m_has_shift;
+		bool m_isHorisontal;
 		unsigned int m_max_count_elements;
 		GUI_place* m_place;
 		linked_list<GUI_element*> m_elements;

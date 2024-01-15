@@ -13,9 +13,7 @@
 #include "EngineCore/Resources/LanguagePack.h"
 #include "EngineCore/GUI/Font.h"
 #include "EngineCore/System/ImageLoader.h"
-
 #include "EngineCore/System/INI_loader.h" 
-
 #include "EngineCore/Sound/Sound.h"
 
 #include <sstream>
@@ -188,7 +186,7 @@ bool ResourceManager::load_JSON_resources(const std::string & JSONpath)
 	LOG_INFO("Loadind data from JSON file complete");
 	return true;
 }
-bool ResourceManager::load_JSON_shaders(const std::string& JSONpath)
+bool ResourceManager::load_JSON_models(const std::string& JSONpath)
 {
 	const std::string JSONstr = getFileString(JSONpath);
 	if (JSONstr.empty())
@@ -203,124 +201,26 @@ bool ResourceManager::load_JSON_shaders(const std::string& JSONpath)
 		LOG_CRIT("JSON parse error: {0} ({1})", rapidjson::GetParseError_En(result.Code()), result.Offset());
 		LOG_CRIT("In JSON file: ", JSONpath);
 		return false;
+	}
+
+	if (m_obj_models.empty()) m_obj_models.clear();
+
+	auto modelsIt = doc.FindMember("models");
+	if (modelsIt != doc.MemberEnd())
+	{
+		for (const auto& currentModel : modelsIt->value.GetArray())
+		{
+			const std::string name = currentModel["name"].GetString();
+			const std::string path = currentModel["path"].GetString();
+			while (load_OBJ_model(name, path) == nullptr)
+			{
+				LOG_WARN("Failed load OBJ model");
+				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+			}
+		}
 	}
 	
-	//m_ShaderPrograms.clear();
-	//m_materials.clear();
-
-	auto shadersIt = doc.FindMember("shaders");
-	if (shadersIt != doc.MemberEnd())
-	{
-		for (const auto& currentShader : shadersIt->value.GetArray())
-		{
-			const std::string name = currentShader["name"].GetString();
-			const std::string vertShader = currentShader["filePath_v"].GetString();
-			const std::string fragShader = currentShader["filePath_f"].GetString();
-			const std::string geomShader = (currentShader.HasMember("filePath_g") ? currentShader["filePath_g"].GetString() : "");
-			const auto layoutArray = currentShader["layout"].GetArray();
-
-			std::shared_ptr<RenderEngine::ShaderProgramLayout> layout = std::make_shared<RenderEngine::ShaderProgramLayout>();
-
-			for (const auto& currentLayoutElement : layoutArray)
-			{
-				const std::string name = currentLayoutElement["name"].GetString();
-				const int type = currentLayoutElement["typeInt"].GetInt();
-				const double min = currentLayoutElement["minVal"].GetDouble();
-				const double max = currentLayoutElement["maxVal"].GetDouble();
-				layout->addElementLayout(name, (ETypeData)type, min, max);
-			}
-
-			loadShaders(name, vertShader, fragShader, geomShader, layout);
-		}
-	}
-	auto materialsIt = doc.FindMember("materials");
-	if (materialsIt != doc.MemberEnd())
-	{
-		for (const auto& currentMaterial : materialsIt->value.GetArray())
-		{
-			const std::string name = currentMaterial["name"].GetString();
-			const std::string shaderName = currentMaterial["nameShader"].GetString();
-			const std::string textureName = currentMaterial["nameTexture"].GetString();
-
-			loadMaterial(name, textureName, shaderName);
-		}
-	}
-	LOG_INFO("Reloadind shaders from JSON file complete");
-	return true;
-}
-bool ResourceManager::load_JSON_textures(const std::string& JSONpath)
-{
-	const std::string JSONstr = getFileString(JSONpath);
-	if (JSONstr.empty())
-	{
-		LOG_CRIT("No JSON file: {0}", JSONpath);
-		return false;
-	}
-	rapidjson::Document doc;
-	rapidjson::ParseResult result = doc.Parse(JSONstr.c_str());
-	if (!result)
-	{
-		LOG_CRIT("JSON parse error: {0} ({1})", rapidjson::GetParseError_En(result.Code()), result.Offset());
-		LOG_CRIT("In JSON file: ", JSONpath);
-		return false;
-	}
-
-	auto atlasesIt = doc.FindMember("textureAtlases");
-	if (atlasesIt != doc.MemberEnd())
-	{
-		for (const auto& currentAtlas : atlasesIt->value.GetArray())
-		{
-			const std::string name = currentAtlas["name"].GetString();
-			const std::string path = currentAtlas["filePath"].GetString();
-			const unsigned int width = currentAtlas["width"].GetUint();
-			const unsigned int height = currentAtlas["height"].GetUint();
-			const unsigned int subTextureWidth = currentAtlas["subTexture_w"].GetUint();
-			const unsigned int subTextureHeight = currentAtlas["subTexture_h"].GetUint();
-
-			const auto subTexturesArray = currentAtlas["subTextures"].GetArray();
-			std::vector<std::string> subTextures;
-			subTextures.reserve(subTexturesArray.Size());
-
-			for (const auto& currentSubTexture : subTexturesArray)
-			{
-				subTextures.emplace_back(currentSubTexture.GetString());
-			}
-
-			loadTextureAtlas(name, subTextures, path, width, height, subTextureWidth, subTextureHeight);
-		}
-	}	
-	LOG_INFO("Reloadind textures from JSON file complete");
-	return true;
-}
-bool ResourceManager::load_JSON_fonts(const std::string& JSONpath)
-{
-	const std::string JSONstr = getFileString(JSONpath);
-	if (JSONstr.empty())
-	{
-		LOG_CRIT("No JSON file: {0}", JSONpath);
-		return false;
-	}
-	rapidjson::Document doc;
-	rapidjson::ParseResult result = doc.Parse(JSONstr.c_str());
-	if (!result)
-	{
-		LOG_CRIT("JSON parse error: {0} ({1})", rapidjson::GetParseError_En(result.Code()), result.Offset());
-		LOG_CRIT("In JSON file: ", JSONpath);
-		return false;
-	}
-
-	auto fontsIt = doc.FindMember("fonts");
-	if (fontsIt != doc.MemberEnd())
-	{
-		for (const auto& currentFont : fontsIt->value.GetArray())
-		{
-			const std::string name = currentFont["name"].GetString();
-			const std::string path = currentFont["path"].GetString();
-			const unsigned int size = currentFont["size"].GetUint();
-			load_font(path, name, size);
-		}
-	}
-	LOG_INFO("Reloadind fonts from JSON file complete");
+	LOG_INFO("Reloadind models from JSON file complete");
 	return true;
 }
 

@@ -11,3 +11,9 @@ Be seriously my engine have:
 - includes miniaudio lib for sound playing
 
 And I know it have just terrible realization   
+
+How to build this engine check there
+https://github.com/lemon857/Demo-Engine 
+
+Now engine support only wnidows  
+May be later add support other platform

@@ -26,6 +26,11 @@ bool LanguagePack::load_pack(std::string path)
 		std::wstring line;
 		while (std::getline(f, line))
 		{
+			if (line.find('#') != -1)
+			{
+				if (line.find('#') == 0) continue;
+				line = line.substr(0, line.find('#'));
+			}
 			std::string name = sysfunc::ctostr(line.substr(0, line.find('=')));
 			std::wstring value = line.substr(line.find('=') + 1);
 			add_field(name, value);

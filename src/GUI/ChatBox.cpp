@@ -13,7 +13,7 @@ namespace GUI
 		, m_color(textColor)
 		, m_font(std::move(font))
 		, m_shader(std::move(shader))
-		, m_scrollbox(new ScrollBox(std::move(backgrond), pos, scale, "scrollbox", max_count_message, true, place))
+		, m_scrollbox(new ScrollBox(std::move(backgrond), pos, scale, "scrollbox", max_count_message, nullptr, true, place))
 	{
 		m_position_p = pos;
 		m_scale_p = scale;

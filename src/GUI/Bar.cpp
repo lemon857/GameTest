@@ -29,9 +29,8 @@ GUI::Bar::~Bar()
 void GUI::Bar::on_render_prj(glm::mat4& prj)
 {
 	if (!m_isActive) return;
-
-	m_pMaterial->use();
-	m_pMaterial->set_view_projection_matrix(prj);
+	
+	m_background_line->set_prj_mat(prj);
 
 	m_background_line->render_from_to(glm::vec3(m_position.x + 2 * m_scale.x * m_value / m_max_value - m_scale.x, m_position.y, m_layer),
 		glm::vec3(m_position.x + m_scale.x, m_position.y, m_layer), m_background_color);

@@ -24,6 +24,8 @@ namespace sysfunc
 	// if str full contains symbol return true
 	bool is_full(const char* str, int strLen, char symbol);
 		
+	double conv_range(double value, double val_min, double val_max, double new_min, double new_max);
+
 	int get_random(int min, int max);
 	float get_random(float min, float max);
 	double get_random(double min, double max);

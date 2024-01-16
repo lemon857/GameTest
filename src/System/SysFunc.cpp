@@ -15,6 +15,11 @@ namespace sysfunc
 		return true;
 	}
 
+	double conv_range(double value, double val_min, double val_max, double new_min, double new_max)
+	{
+		return ((value - val_min) * (new_max - new_min) / (val_max - val_min)) + new_min;
+	}
+
 	int get_random(int min, int max)
 	{		
 		std::random_device rd;

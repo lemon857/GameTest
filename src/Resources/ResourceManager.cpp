@@ -27,7 +27,7 @@
 ResourceManager::ShaderProgramsMap ResourceManager::m_ShaderPrograms;
 ResourceManager::TexturesMap ResourceManager::m_textures;
 ResourceManager::MaterialsMap ResourceManager::m_materials;
-ResourceManager::OBJMap ResourceManager::m_obj_models;
+ResourceManager::GrapicsModelsMap ResourceManager::m_graphics_models;
 ResourceManager::FontsMap ResourceManager::m_fonts_map;
 ResourceManager::SoundsMap ResourceManager::m_sounds_map;
 ResourceManager::UniqueSoundsMap ResourceManager::m_uSounds_map;
@@ -43,7 +43,7 @@ void ResourceManager::unloadAllResources()
 	m_ShaderPrograms.clear();
 	m_textures.clear();
 	m_materials.clear();
-	m_obj_models.clear();
+	m_graphics_models.clear();
 	m_fonts_map.clear();
 	m_sounds_map.clear();
 	m_uSounds_map.clear();
@@ -199,7 +199,7 @@ bool ResourceManager::load_JSON_models(const std::string& JSONpath)
 		return false;
 	}
 
-	if (m_obj_models.empty()) m_obj_models.clear();
+	if (m_graphics_models.empty()) m_graphics_models.clear();
 
 	auto modelsIt = doc.FindMember("models");
 	if (modelsIt != doc.MemberEnd())
@@ -220,7 +220,6 @@ bool ResourceManager::load_JSON_models(const std::string& JSONpath)
 	LOG_INFO("Reloadind models from JSON file complete");
 	return true;
 }
-
 bool ResourceManager::load_INI_settings(const std::string& INIpath, INIdata& data, const bool isWrite)
 {
 	loaders::ErrorCode a = loaders::load_ini(m_path + "/" + INIpath, data, isWrite);
@@ -361,7 +360,7 @@ std::shared_ptr<GraphicsObject> ResourceManager::loadGraphicsModel(const std::st
 		else
 		{
 			std::shared_ptr<GraphicsObject> newOBJ =
-				m_obj_models.emplace(name, std::make_shared<GraphicsObject>(std::move(model))).first->second;
+				m_graphics_models.emplace(name, std::make_shared<GraphicsObject>(std::move(model))).first->second;
 			LOG_INFO("Success load OBJ file: {0}", relativePath);
 			return newOBJ;
 		}
@@ -371,8 +370,8 @@ std::shared_ptr<GraphicsObject> ResourceManager::loadGraphicsModel(const std::st
 }
 std::shared_ptr<GraphicsObject> ResourceManager::getGraphicsModel(const std::string& name)
 {
-	OBJMap::const_iterator it = m_obj_models.find(name);
-	if (it != m_obj_models.end())
+	GrapicsModelsMap::const_iterator it = m_graphics_models.find(name);
+	if (it != m_graphics_models.end())
 	{
 		return it->second;
 	}
@@ -573,7 +572,7 @@ std::vector<std::string> ResourceManager::getNamesObjs()
 {
 	std::vector<std::string> data;
 
-	for (const auto& curObj : m_obj_models)
+	for (const auto& curObj : m_graphics_models)
 	{
 		data.push_back(curObj.first);
 	}

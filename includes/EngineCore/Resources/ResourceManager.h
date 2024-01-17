@@ -141,8 +141,8 @@ namespace RenderEngine
 		typedef std::map<const std::string, std::shared_ptr<RenderEngine::Material>> MaterialsMap;
 		static MaterialsMap m_materials;
 
-		typedef std::map<const std::string, std::shared_ptr<GraphicsObject>> OBJMap;
-		static OBJMap m_obj_models;
+		typedef std::map<const std::string, std::shared_ptr<GraphicsObject>> GrapicsModelsMap;
+		static GrapicsModelsMap m_graphics_models;
 
 		typedef std::map<const std::string, std::shared_ptr<GUI::Font>> FontsMap;
 		static FontsMap m_fonts_map;

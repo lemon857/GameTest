@@ -146,16 +146,16 @@ namespace GUI
 					(m_position.y + m_scale.y - element->get_scale().y - element->get_scale().y * m_perc_disp) -
 					(i * (2.f * element->get_scale().y + element->get_scale().y * m_perc_disp))));
 		}
-		m_disp_scroll = ((m_position.y - m_scale.y + m_elements[0]->get_scale().y + (m_has_shift ? SHIFT_ELEMENT_Y : 0)) - element->get_position().y)/ SCROLL_MYLTIPLIER;
+		m_disp_scroll = ((m_position.y - m_scale.y + element->get_scale().y + (m_has_shift ? SHIFT_ELEMENT_Y : 0)) - element->get_position().y)/ SCROLL_MYLTIPLIER;
 		if (m_isHorisontal)
 		{
-			m_pos_line = glm::vec3(m_position.x + m_scale.x - 20.f, m_position.y + m_scale.y - (element->get_scale().y * m_perc_disp) / 2.f, m_layer + 1.f);
+			m_pos_line = glm::vec3(m_position.x + m_scale.x - 20.f, m_position.y + m_scale.y - (element->get_scale().y * m_perc_disp) / 2.f, m_layer + 2.f);
 		}
 		else 
 		{
 			m_pos_line = glm::vec3(m_right_line ? (m_position.x + m_scale.x - 20.f) : (m_position.x - m_scale.x + 20.f),
 				sysfunc::conv_range(m_disp_scroll, 0, m_disp_scroll, 0, (2.f * m_scale.y) - (m_scale.y / (float)m_count_elements)) + m_position.y - m_scale.y,
-				m_layer + 1.f);
+				m_layer + 2.f);
 		}
 		m_count_elements++;
 		add_tree_element(element);

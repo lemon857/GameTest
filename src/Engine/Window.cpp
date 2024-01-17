@@ -79,7 +79,11 @@ void Window::set_fullscreen(bool isFullscreen)
     if (!isFullscreen)
     {
         glfwSetWindowPos(m_pWindow, m_data.window_position.x, m_data.window_position.y);
+        glfwSetWindowSize(m_pWindow, m_data.window_size.x, m_data.window_size.y);
+        glfwRestoreWindow(m_pWindow);
+        if (m_data.maximized) maximize();
     }
+    m_data.fullscreen = isFullscreen;
 }
 
 bool Window::is_fullscreen()
@@ -245,7 +249,6 @@ int Window::init()
         EventCharSet e(static_cast<wchar_t>(codepoint));
         data.event_callback(e);
         });
-
     glfwSetWindowSizeCallback(m_pWindow, 
         [](GLFWwindow* pWindow, int width, int height)
         {
@@ -254,7 +257,6 @@ int Window::init()
             EventWindowResize e(width, height);
             data.event_callback(e);
         });
-
     glfwSetCursorPosCallback(m_pWindow,
         [](GLFWwindow* pWindow, double x, double y)
         {
@@ -270,8 +272,7 @@ int Window::init()
 
             EventMouseScrolled e(x, y);
             data.event_callback(e);
-        });
-
+        });    
     glfwSetWindowCloseCallback(m_pWindow,
         [](GLFWwindow* pWindow)
         {
@@ -280,7 +281,6 @@ int Window::init()
             EventWindowClose e = EventWindowClose();
             data.event_callback(e);
         });
-
     glfwSetWindowMaximizeCallback(m_pWindow, 
         [](GLFWwindow* pWindow, int maximized)
         {

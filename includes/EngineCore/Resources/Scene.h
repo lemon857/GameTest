@@ -3,6 +3,8 @@
 #include <vector>
 #include <string>
 
+#include <glm/mat4x4.hpp>
+
 #include "EngineCore/IGameObject.h"
 #include "EngineCore/System/List.h"
 
@@ -30,6 +32,10 @@ public:
 	IGameObject* at(const size_t index) { return m_objs[index]->object; }
 
 	std::vector<std::string> get_items_str() { return m_items_str; };
+
+	void update(const double delta);
+
+	void render(glm::mat4& prj);
 
 	void clear();
 

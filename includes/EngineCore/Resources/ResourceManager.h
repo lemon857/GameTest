@@ -42,8 +42,6 @@ namespace RenderEngine
 		ResourceManager& operator=(const ResourceManager&) = delete;
 		ResourceManager& operator=(const ResourceManager&&) = delete;
 
-		static bool start_with(std::string& line, const char* text);
-
 		static std::string getFileString(const std::string& relativeFilePath);
 
 		static std::string getExeFilePath() { return m_path; };
@@ -58,8 +56,8 @@ namespace RenderEngine
 
 		static bool save_scene(std::string relativePath, const Scene& scene);
 
-		static std::shared_ptr<GraphicsObject> load_OBJ_model(const std::string& name, const std::string& OBJrelativePath);
-		static std::shared_ptr<GraphicsObject> get_OBJ_model(const std::string& name);
+		static std::shared_ptr<GraphicsObject> loadGraphicsModel(const std::string& name, const std::string& relativePath, const std::string& type);
+		static std::shared_ptr<GraphicsObject> getGraphicsModel(const std::string& name);
 
 		static std::shared_ptr<LanguagePack> load_lang_pack(std::string relativePath, std::string pack_name);
 		static std::shared_ptr<LanguagePack> get_lang_pack(std::string pack_name);

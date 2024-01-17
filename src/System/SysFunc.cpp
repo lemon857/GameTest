@@ -6,6 +6,17 @@
 
 namespace sysfunc
 {
+	bool start_with(std::string& line, const char* text)
+	{
+		size_t texLen = strlen(text);
+		if (line.size() < texLen) return false;
+		for (size_t i = 0; i < texLen; i++)
+		{
+			if (line[i] == text[i]) continue;
+			else return false;
+		}
+		return true;
+	}
 	bool is_full(const char* str, int strLen, char symbol)
 	{
 		for (int i = 0; i < strLen; i++)

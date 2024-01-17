@@ -20,6 +20,8 @@ namespace sysfunc
 	{
 		*val = *(_Ty*)(&buff[offset]);
 	}
+	
+	bool start_with(std::string& line, const char* text);
 
 	// if str full contains symbol return true
 	bool is_full(const char* str, int strLen, char symbol);

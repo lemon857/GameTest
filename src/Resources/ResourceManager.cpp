@@ -3,17 +3,12 @@
 #include "EngineCore/Renderer/Texture2D.h"
 #include "EngineCore/Renderer/Material.h"
 #include "EngineCore/Renderer3D/GraphicsObject.h"
-#include "EngineCore/Renderer/VertexArray.h"
-#include "EngineCore/Renderer/VertexBuffer.h"
-#include "EngineCore/Renderer/VertexBufferLayout.h"
-#include "EngineCore/Renderer/IndexBuffer.h"
 #include "EngineCore/Renderer/ShaderProgramLayout.h"
 #include "EngineCore/System/Log.h"
 #include "EngineCore/Resources/Scene.h"
 #include "EngineCore/Resources/LanguagePack.h"
 #include "EngineCore/GUI/Font.h"
-#include "EngineCore/System/ImageLoader.h"
-#include "EngineCore/System/INI_loader.h" 
+#include "EngineCore/System/Loaders.h"
 #include "EngineCore/Sound/Sound.h"
 
 #include <sstream>
@@ -166,7 +161,8 @@ bool ResourceManager::load_JSON_resources(const std::string & JSONpath)
 		{
 			const std::string name = currentModel["name"].GetString();
 			const std::string path = currentModel["path"].GetString();
-			while (load_OBJ_model(name, path) == nullptr)
+			const std::string type = currentModel["type"].GetString();
+			while (loadGraphicsModel(name, path, type) == nullptr)
 			{
 				LOG_WARN("Failed load OBJ model");
 				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -212,7 +208,8 @@ bool ResourceManager::load_JSON_models(const std::string& JSONpath)
 		{
 			const std::string name = currentModel["name"].GetString();
 			const std::string path = currentModel["path"].GetString();
-			while (load_OBJ_model(name, path) == nullptr)
+			const std::string type = currentModel["type"].GetString();
+			while (loadGraphicsModel(name, path, type) == nullptr)
 			{
 				LOG_WARN("Failed load OBJ model");
 				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -226,47 +223,13 @@ bool ResourceManager::load_JSON_models(const std::string& JSONpath)
 
 bool ResourceManager::load_INI_settings(const std::string& INIpath, INIdata& data, const bool isWrite)
 {
-	std::ifstream f;
-	f.open(m_path + "/" + INIpath, std::ios::in);
-
-	if (f.is_open() && !isWrite)
-	{
-		std::string line;
-		std::string region = "";
-		while (std::getline(f, line))
-		{
-			if (line[0] == '[')
-			{
-				region = line.substr(1, line.length() - 2);
-			}
-			else if (data.get_region(region) != nullptr)
-			{
-				std::string name = line.substr(0, line.find('='));
-				std::string value = line.substr(line.find('=') + 1);
-				data.get_region(region)->parse(name, value);
-			}
-		}
-		return true;
-	}
-	std::ofstream writeStream;
-	writeStream.open(m_path + "/" + INIpath);
-
-	if (writeStream.is_open())
-	{
-		LOG_INFO("Succsess open file {0} for write data", INIpath);
-		for (auto& i : data.regions)
-		{
-			writeStream << '[' << i.first << ']' << '\n';
-			writeStream << i.second->get_str_data();
-		}		
-		return true;
-	}
-	else
+	loaders::ErrorCode a = loaders::load_ini(m_path + "/" + INIpath, data, isWrite);
+	if (a != loaders::ErrorCode::null)
 	{
 		LOG_ERROR("Error open file: {0}", INIpath);
-		writeStream.close();
 		return false;
 	}
+	return true;
 }
 std::shared_ptr<GUI::Font> ResourceManager::load_font(std::string relativePath, std::string font_name, unsigned int font_size)
 {
@@ -383,144 +346,30 @@ bool ResourceManager::save_scene(std::string relativePath, const Scene& scene)
 	fout.close();
 	return true;
 }
-std::shared_ptr<GraphicsObject> ResourceManager::load_OBJ_model(const std::string& name, const std::string& OBJrelativePath)
+std::shared_ptr<GraphicsObject> ResourceManager::loadGraphicsModel(const std::string& name, const std::string& relativePath, const std::string& type)
 {
-	std::ifstream file;
-	file.open(m_path + "/" + OBJrelativePath);
-	if (file.is_open())
+	GraphicsObject* model;
+	if (type == "obj")
 	{
-		std::vector<GLfloat> vertex_coords;
-		std::vector<GLfloat> normal_coords;
-		std::vector<GLfloat> texture_coord;
-		std::vector<GLuint> index_array;
+		model = loaders::load_obj_file(m_path + "/" + relativePath);
 
-		std::vector<glm::vec3> temp_pos;
-		std::vector<glm::vec3> temp_norms;
-		std::vector<glm::vec2> temp_texs;
-
-		std::vector<GLuint> indices_coords;
-		std::vector<GLuint> indices_norms;
-		std::vector<GLuint> indices_texs;
-
-		bool need_normalize_vertex_pos = false;
-
-		std::string line;
-		while (std::getline(file, line))
+		if (model == nullptr)
 		{
-			if (start_with(line, "v "))
-			{
-				GLfloat x, y, z;
-				sscanf_s(line.c_str(), "v %f %f %f", &x, &y, &z);
-				temp_pos.push_back(glm::vec3(x, y, z));
-				if (!need_normalize_vertex_pos && (x > 1.f || x < -1.f)) need_normalize_vertex_pos = true;
-#ifdef DEBUG_CONSOLE_OBJ_LOAD
-				LOG_INFO("Vert: {0}x{1}x{2}", x, y, z);
-#endif // DEBUG_CONSOLE_OBJ_LOAD
-
-			}
-			else if (start_with(line, "vn "))
-			{
-				GLfloat x, y, z;
-				sscanf_s(line.c_str(), "vn %f %f %f", &x, &y, &z);
-				temp_norms.push_back(glm::vec3(x, y, z));
-#ifdef DEBUG_CONSOLE_OBJ_LOAD
-				LOG_INFO("Norms: {0}x{1}x{2}", x, y, z);
-#endif // DEBUG_CONSOLE_OBJ_LOAD
-			}
-			else if (start_with(line, "vt "))
-			{
-				GLfloat x, y;
-				sscanf_s(line.c_str(), "vt %f %f", &x, &y);
-				temp_texs.push_back(glm::vec2(x, y));
-#ifdef DEBUG_CONSOLE_OBJ_LOAD
-				LOG_INFO("Texs: {0}x{1}", x, y);
-#endif // DEBUG_CONSOLE_OBJ_LOAD
-			}
-			// WARNING region (# faces) in .obj file must be lastest
-			else if (start_with(line, "f "))
-			{
-				int indexX, textureX, normalX;
-				int indexY, textureY, normalY;
-				int indexZ, textureZ, normalZ;
-				sscanf_s(line.c_str(), "f %d/%d/%d %d/%d/%d %d/%d/%d",
-					&indexX, &textureX, &normalX, &indexY, &textureY, &normalY, &indexZ, &textureZ, &normalZ);
-
-				indices_coords.push_back(indexX - 1);
-				indices_coords.push_back(indexY - 1);
-				indices_coords.push_back(indexZ - 1);
-
-				indices_norms.push_back(normalX - 1);
-				indices_norms.push_back(normalY - 1);
-				indices_norms.push_back(normalZ - 1);
-
-				indices_texs.push_back(textureX - 1);
-				indices_texs.push_back(textureY - 1);
-				indices_texs.push_back(textureZ - 1);
-
-#ifdef DEBUG_CONSOLE_OBJ_LOAD
-				LOG_INFO("Faces: {0}x{1}x{2} {3}x{4}x{5} {6}x{7}x{8}", indexX, textureX, normalX, indexY, textureY, normalY, indexZ, textureZ, normalZ);
-#endif // DEBUG_CONSOLE_OBJ_LOAD
-			}
-		}
-
-		for (size_t i = 0; i < indices_coords.size(); i++)
-		{
-			index_array.push_back(i);
-
-			vertex_coords.push_back(temp_pos[indices_coords[i]].x);
-			vertex_coords.push_back(temp_pos[indices_coords[i]].y);
-			vertex_coords.push_back(temp_pos[indices_coords[i]].z);
-
-			normal_coords.push_back(temp_norms[indices_norms[i]].x);
-			normal_coords.push_back(temp_norms[indices_norms[i]].y);
-			normal_coords.push_back(temp_norms[indices_norms[i]].z);
-
-			texture_coord.push_back(temp_texs[indices_texs[i]].x);
-			texture_coord.push_back(temp_texs[indices_texs[i]].y);
-		}
-
-		std::shared_ptr<RenderEngine::VertexArray> vao = std::make_shared<RenderEngine::VertexArray>();
-		std::shared_ptr<RenderEngine::IndexBuffer> ebo = std::make_shared<RenderEngine::IndexBuffer>();
-
-		RenderEngine::VertexBuffer vbo_vert;
-		RenderEngine::VertexBuffer vbo_normal;
-		RenderEngine::VertexBuffer vbo_texture;
-
-		vbo_vert.init(vertex_coords.data(), vertex_coords.size() * sizeof(GLfloat), true);
-		RenderEngine::VertexBufferLayout vertexCoordsLayout;
-		vertexCoordsLayout.addElementLayoutFloat(3, false);
-		vao->addBuffer(vbo_vert, vertexCoordsLayout);
-
-		vbo_normal.init(normal_coords.data(), normal_coords.size() * sizeof(GLfloat), true);
-		RenderEngine::VertexBufferLayout normalCoordsLayout;
-		normalCoordsLayout.addElementLayoutFloat(3, false);
-		vao->addBuffer(vbo_normal, normalCoordsLayout);
-
-		vbo_texture.init(texture_coord.data(), texture_coord.size() * sizeof(GLfloat), true);
-		RenderEngine::VertexBufferLayout textureCoordsLayout;
-		textureCoordsLayout.addElementLayoutFloat(2, false);
-		vao->addBuffer(vbo_texture, textureCoordsLayout);
-
-		if (!ebo->init(index_array.data(), index_array.size() * sizeof(GLuint)))
-		{
-			file.close();
+			LOG_ERROR("Failed load OBJ file: {0}", relativePath);
 			return nullptr;
 		}
-
-		vao->unbind();
-		ebo->unbind();
-
-		file.close();
-		std::shared_ptr<GraphicsObject> newOBJ =
-			m_obj_models.emplace(name, std::make_shared<GraphicsObject>(std::move(vao), std::move(ebo))).first->second;
-
-		LOG_INFO("Success load obj file: {0}", OBJrelativePath);
-		return newOBJ;
+		else
+		{
+			std::shared_ptr<GraphicsObject> newOBJ =
+				m_obj_models.emplace(name, std::make_shared<GraphicsObject>(std::move(model))).first->second;
+			LOG_INFO("Success load OBJ file: {0}", relativePath);
+			return newOBJ;
+		}
 	}
-	file.close();
+	LOG_ERROR("Error type model: {0}", type);
 	return nullptr;
 }
-std::shared_ptr<GraphicsObject> ResourceManager::get_OBJ_model(const std::string& name)
+std::shared_ptr<GraphicsObject> ResourceManager::getGraphicsModel(const std::string& name)
 {
 	OBJMap::const_iterator it = m_obj_models.find(name);
 	if (it != m_obj_models.end())
@@ -546,17 +395,6 @@ std::shared_ptr<LanguagePack> ResourceManager::get_lang_pack(std::string pack_na
 	}
 	LOG_ERROR("Can't find lang pack: {0}", pack_name);
 	return nullptr;
-}
-bool ResourceManager::start_with(std::string& line, const char* text)
-{
-	size_t texLen = strlen(text);
-	if (line.size() < texLen) return false;
-	for (size_t i = 0; i < texLen; i++)
-	{
-		if (line[i] == text[i]) continue;
-		else return false;
-	}
-	return true;
 }
 std::string ResourceManager::getFileString(const std::string& relativeFilePath)
 {
@@ -647,7 +485,7 @@ std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTexture(const std:
 	int channels = 0;
 	int width = 0;
 	int height = 0;
-	unsigned char* pixels = load_image_png(std::string(m_path + "/" + texturePath).c_str(), &width, &height, &channels);
+	unsigned char* pixels = loaders::load_image_png(std::string(m_path + "/" + texturePath).c_str(), &width, &height, &channels);
 
 	if (!pixels)
 	{
@@ -658,7 +496,7 @@ std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTexture(const std:
 	std::shared_ptr<RenderEngine::Texture2D> newTexture = m_textures.emplace(textureName,
 		std::make_shared<RenderEngine::Texture2D>(width, height, pixels, channels, GL_NEAREST, GL_CLAMP_TO_EDGE)).first->second;
 
-	clear_image(pixels);
+	loaders::clear_image(pixels);
 
 	return newTexture;
 }

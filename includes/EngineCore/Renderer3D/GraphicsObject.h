@@ -15,6 +15,12 @@ struct GraphicsObject
 		, index_buffer(nullptr)
 	{
 	}
+	GraphicsObject(GraphicsObject* oldObj)
+		: vertex_array(std::move(oldObj->vertex_array))
+		, index_buffer(std::move(oldObj->index_buffer))
+	{
+		delete oldObj;
+	}
 	GraphicsObject(std::shared_ptr<RenderEngine::VertexArray>& vao,
 	std::shared_ptr<RenderEngine::IndexBuffer>& ebo)
 		: vertex_array(std::move(vao))

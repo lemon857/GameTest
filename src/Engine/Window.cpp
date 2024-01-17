@@ -4,7 +4,7 @@
 #include "EngineCore/System/Log.h"
 #include "EngineCore/Renderer/Renderer.h"
 #include "EngineCore/Resources/ResourceManager.h"
-#include "EngineCore/System/ImageLoader.h"
+#include "EngineCore/System/Loaders.h"
 
 #include <GLFW/glfw3.h>
 
@@ -170,14 +170,14 @@ int Window::init()
     {
         GLFWimage icon;
         int channels = 0;
-        icon.pixels = load_image_png(m_path_icon_png.c_str(), &icon.width, &icon.height, &channels, false);
+        icon.pixels = loaders::load_image_png(m_path_icon_png.c_str(), &icon.width, &icon.height, &channels, false);
 
         if (!icon.pixels) {
             LOG_WARN("Error loading icon window");
         }
         else {
             glfwSetWindowIcon(m_pWindow, 1, &icon);
-            clear_image(icon.pixels);
+            loaders::clear_image(icon.pixels);
         }
     }
 

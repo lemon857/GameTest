@@ -28,6 +28,7 @@ namespace GUI
 
 	void GUI_place::on_update(const double delta)
 	{
+		if (!m_isActive) return;
 		for (auto cur : m_els)
 		{
 			cur->on_update(delta);
@@ -35,6 +36,7 @@ namespace GUI
 	}
 	void GUI_place::on_render()
 	{
+		if (!m_isActive) return;
 		//if (!m_isActive) return;
 		//m_pMaterial->use();
 		//m_pMaterial->get_shader_ptr()->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, m_render_cam->get_ui_matrix());
@@ -79,6 +81,7 @@ namespace GUI
 	}
 	void GUI_place::on_mouse_move(int x, int y)
 	{
+		if (!m_isActive) return;
 		for (auto& i : m_els_needs_on_mouse_move)
 		{
 			i->on_mouse_move(x, y);
@@ -86,6 +89,7 @@ namespace GUI
 	}
 	void GUI_place::on_mouse_scroll(int offset)
 	{
+		if (!m_isActive) return;
 		for (auto& i : m_els_needs_on_scroll)
 		{
 			i->on_mouse_scroll(offset);
@@ -93,6 +97,7 @@ namespace GUI
 	}
 	void GUI_place::on_key_press(KeyCode key)
 	{
+		if (!m_isActive) return;
 		for (auto& i : m_els_needs_on_btn_press)
 		{
 			i->on_key_press(key);
@@ -100,6 +105,7 @@ namespace GUI
 	}
 	void GUI_place::on_char_set(wchar_t key_char)
 	{
+		if (!m_isActive) return;
 		for (auto& i : m_els_needs_on_char_set)
 		{
 			i->on_char_set(key_char);

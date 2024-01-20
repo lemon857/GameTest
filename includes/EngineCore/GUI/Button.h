@@ -36,6 +36,7 @@ namespace GUI
 
 		void on_press() override;
 		void on_release() override;
+		void on_release_hover() override;
 
 		std::vector<GUI_element*> get_elements() override;
 

@@ -7,6 +7,8 @@
 namespace RenderEngine
 {
 	class Material;
+	class Texture2D;
+	class ShaderProgram;
 	class VertexBuffer;
 	class VertexArray;
 	class IndexBuffer;
@@ -17,7 +19,11 @@ namespace GUI
 	class Sprite : public GUI_element
 	{
 	public:
-		Sprite(std::shared_ptr<RenderEngine::Material> pMaterial, std::string initSubTexture = "default", glm::vec2 pos = glm::vec2(0), glm::vec2 scale = glm::vec2(0), std::string name = "default");
+		Sprite(std::shared_ptr<RenderEngine::Material> pMaterial, std::string initSubTexture = "default",
+			glm::vec2 pos = glm::vec2(0), glm::vec2 scale = glm::vec2(0), std::string name = "default");
+
+		Sprite(std::shared_ptr<RenderEngine::ShaderProgram> pShader, std::shared_ptr<RenderEngine::Texture2D> pTexture, std::string initSubTexture = "default",
+			glm::vec2 pos = glm::vec2(0), glm::vec2 scale = glm::vec2(0), std::string name = "default");
 
 		~Sprite();
 		

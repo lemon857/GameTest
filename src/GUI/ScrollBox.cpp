@@ -29,8 +29,11 @@ namespace GUI
 	{
 		m_position_p = pos;
 		m_scale_p = scale;
-		m_background->set_position_p(pos);
-		m_background->set_scale_p(scale);
+		if (m_background != nullptr)
+		{
+			m_background->set_position_p(pos);
+			m_background->set_scale_p(scale);
+		}
 
 		if (m_onLine)
 		{
@@ -64,10 +67,13 @@ namespace GUI
 	// need fix for add elements in render list in gui place
 	std::vector<GUI_element*> ScrollBox::get_elements()
 	{
-		add_tree_element(m_background);
-		m_background->set_layer(m_layer);
 		std::vector<GUI_element*> vec;
-		vec.push_back(m_background);
+		if (m_background != nullptr)
+		{
+			add_tree_element(m_background);
+			m_background->set_layer(m_layer);
+			vec.push_back(m_background);
+		}
 		return vec;
 	}
 	// need fix overscrolling

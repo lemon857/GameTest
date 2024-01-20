@@ -39,6 +39,7 @@ namespace GUI
 
 	void CheckBox::on_press()
 	{
+		on_mouse_down();
 		m_isClicked = true;
 	}
 
@@ -49,7 +50,7 @@ namespace GUI
 			m_value = !m_value;
 			m_isClicked = false;
 			//LOG_INFO("Value: {0}", m_value);
-			on_click();
+			on_mouse_up();
 		}
 	}
 

@@ -164,7 +164,7 @@ bool ResourceManager::load_JSON_resources(const std::string & JSONpath)
 			const std::string type = currentModel["type"].GetString();
 			while (loadGraphicsModel(name, path, type) == nullptr)
 			{
-				LOG_WARN("Failed load OBJ model");
+				//LOG_WARN("Failed load OBJ model");
 				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 			}
 		}

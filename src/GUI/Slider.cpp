@@ -12,6 +12,7 @@ namespace GUI
 		, m_min(min)
 		, m_max(max)
 	{
+		m_isClickable = true;
 		m_position_p = pos;
 		m_scale_p = scale;
 		m_background->set_position_p(pos);

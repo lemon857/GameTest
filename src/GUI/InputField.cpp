@@ -26,6 +26,7 @@ GUI::InputField::InputField(Sprite* face, glm::vec2 pos, glm::vec2 scale,
 	, m_clear_after_send(clear_after_send)
 	, m_focus_trigger(std::move(focus_trigger))
 {
+	m_isClickable = true;
 	m_position_p = pos;
 	m_scale_p = scale;
 	m_face->set_position_p(pos);

@@ -9,10 +9,6 @@
 
 #include "EngineCore/System/Log.h"
 
-#include "EngineCore/Resources/ResourceManager.h"
-
-#include "EngineCore/Sound/Sound.h"
-
 namespace GUI
 {
 	glm::vec2 GUI_place::m_vp_size;
@@ -25,6 +21,7 @@ namespace GUI
 		m_vp_size = m_render_cam->get_viewport_size();
 		m_prj_mat = m_render_cam->get_ui_matrix();
 
+		m_is_event_logging_active = true;
 #ifndef DEBUG
 		m_is_event_logging_active = true;
 #endif
@@ -60,16 +57,6 @@ namespace GUI
 		m_els.push_back(element);
 		add_elements(element->get_elements());
 		m_elements.emplace(element->get_name(), element);
-	}
-		
-	void GUI_place::on_mouse_release(int x, int y)
-	{
-		if (!m_isActive) return;
-		m_isFocus = false;
-		for (auto cur : m_els)
-		{
-			cur->on_release();
-		}
 	}
 	void GUI_place::on_resize()
 	{
@@ -174,6 +161,7 @@ namespace GUI
 		if (!m_isActive) return;
 		m_vp_size = m_render_cam->get_viewport_size();
 		y = m_vp_size.y - y; // set null pos in left down
+		GUI_element* select = nullptr;
 		for (auto cur : m_els)
 		{
 			if (!cur->get_active()) continue;
@@ -182,12 +170,49 @@ namespace GUI
 			scale *= 2;
 			if ((x >= pos.x && y >= pos.y && x <= pos.x + scale.x && y <= pos.y + scale.y))
 			{
-				cur->set_pos_mouse_click(glm::vec2(x, y));
-				cur->on_press();
+				if (select != nullptr)
+				{
+					if (cur->get_layer() > select->get_layer() && cur->is_clickable()) select = cur;
+				}
+				else if (cur->is_clickable()) select = cur;
 				m_isFocus = true;
-				ResourceManager::get_sound("click")->play();
-				if (m_is_event_logging_active) LOG_INFO("[GUI] Click on object: {0}", cur->get_name());
 			}
+		}
+		if (select != nullptr)
+		{
+			select->set_pos_mouse_click(glm::vec2(x, y));
+			select->on_press();
+			if (m_is_event_logging_active) LOG_INFO("[GUI] Press mouse on object: {0}", select->get_name());
+		}
+	}
+
+	void GUI_place::on_mouse_release(int x, int y)
+	{
+		if (!m_isActive) return;
+		m_isFocus = false;
+		m_vp_size = m_render_cam->get_viewport_size();
+		y = m_vp_size.y - y; // set null pos in left down
+		GUI_element* select = nullptr;
+		for (auto cur : m_els)
+		{
+			cur->on_release();
+			if (!cur->get_active()) continue;
+			glm::vec2 scale = cur->get_scale();
+			glm::vec2 pos = cur->get_position() - scale;
+			scale *= 2;
+			if ((x >= pos.x && y >= pos.y && x <= pos.x + scale.x && y <= pos.y + scale.y))
+			{
+				if (select != nullptr)
+				{
+					if (cur->get_layer() > select->get_layer() && cur->is_clickable()) select = cur;
+				}
+				else if (cur->is_clickable()) select = cur;
+			}
+		}
+		if (select != nullptr)
+		{
+			select->on_release_hover();
+			if (m_is_event_logging_active) LOG_INFO("[GUI] Release mouse on object: {0}", select->get_name());
 		}
 	}
 }

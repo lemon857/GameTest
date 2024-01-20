@@ -45,7 +45,7 @@ namespace GUI
 
 		static void addAlert(std::wstring message, std::string soundName = "");
 		static void unloadAllalerts();
-		
+
 		static void render();
 
 		static void on_resize();
@@ -55,6 +55,7 @@ namespace GUI
 		static bool m_close_last;
 		static bool* m_pause_game;
 		static linked_list<Alert*> m_alerts;
+		static std::wstring m_last;
 		static std::string m_font_name;
 		static std::string m_font_name_button;
 		static std::string m_text_shader;

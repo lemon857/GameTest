@@ -180,6 +180,11 @@ namespace loaders
 			std::string region = "";
 			while (std::getline(f, line))
 			{
+				if (line.find('#') != -1)
+				{
+					if (line.find('#') == 0) continue;
+					line = line.substr(0, line.find('#'));
+				}
 				if (line[0] == '[')
 				{
 					region = line.substr(1, line.length() - 2);

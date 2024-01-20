@@ -5,6 +5,9 @@
 #include "EngineCore/GUI/Font.h"
 #include "EngineCore/GUI/Sprite.h"
 
+#include "EngineCore/Resources/ResourceManager.h"
+#include "EngineCore/Sound/Sound.h"
+
 namespace GUI
 {
 	static unsigned int g_current_button_ID = 0;
@@ -14,6 +17,7 @@ namespace GUI
 		, m_textRenderer(new TextRenderer(font, std::move(textShader), text, textColor, glm::vec2(pos.x, pos.y - SHIFT_TEXT_SYMBOL_Y), glm::vec2(0.5f), m_name + "-text"))  // font sclae here
 		, m_face(std::move(face))
 	{
+		m_isClickable = true;
 		m_position_p = pos;
 		m_scale_p = scale;
 		m_face->set_position_p(pos);
@@ -26,6 +30,7 @@ namespace GUI
 		, m_textRenderer(new TextRenderer(font, std::move(textShader), text, textColor, glm::vec2(pos.x, pos.y - SHIFT_TEXT_SYMBOL_Y), glm::vec2(0.5f), m_name + "-text"))  // font sclae here
 		, m_face(std::move(face))
 	{
+		m_isClickable = true;
 		m_position_p = pos;
 		m_scale_p = scale;
 		m_face->set_position_p(pos);
@@ -42,14 +47,19 @@ namespace GUI
 	void Button::on_press()
 	{
 		m_face->setSubTexture(NAME_TEXTURE_CLICKED);
+		ResourceManager::get_sound("click")->play();
 		m_isClicked = true;
+		on_mouse_down();
 	}
 	void Button::on_release()
 	{
 		m_face->setSubTexture(NAME_TEXTURE_STATIC);
+	}
+	void Button::on_release_hover()
+	{
 		if (m_isClicked)
 		{
-			on_click();
+			on_mouse_up();
 			m_isClicked = false;
 		}
 	}

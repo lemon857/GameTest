@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-//#define DEBUG
+#define DEBUG
 
 #ifdef DEBUG
 #define DEBUG_CONSOLE 

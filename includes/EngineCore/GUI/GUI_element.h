@@ -46,6 +46,7 @@ namespace GUI
 			, m_isHovered(false)
 			, m_isActive(true)
 			, m_isFocused(false)
+			, m_isClickable(false)
 			, m_layer(0)
 		{
 		}
@@ -57,6 +58,7 @@ namespace GUI
 
 		virtual void on_press() {};
 		virtual void on_release() {};
+		virtual void on_release_hover() {};
 		virtual void on_mouse_move(int x, int y){}
 		virtual void on_mouse_scroll(int offset){}
 		virtual void on_key_press(KeyCode key){}
@@ -117,22 +119,29 @@ namespace GUI
 
 		bool get_active() { return m_isActive; }
 		bool get_focus() { return m_isFocused; }
+		bool is_clickable () { return m_isClickable; }
 
-		void on_click() { if (m_on_click != nullptr) m_on_click(); }
-		void set_click_callback(std::function<void()> on_click) { m_on_click = on_click; }
+		void set_mouse_down_callback(std::function<void()> on_mouse_down) { m_on_mouse_down = on_mouse_down; }
+		void set_mouse_up_callback(std::function<void()> on_mouse_up) { m_on_mouse_up = on_mouse_up; }
 
 		std::shared_ptr<RenderEngine::Material> get_material() { return m_pMaterial; }
 
 		virtual std::vector<GUI_element*> get_elements() { return std::vector<GUI_element*>(); }
 	protected:
 
+		void on_mouse_up() { if (m_on_mouse_up != nullptr) m_on_mouse_up(); }
+		void on_mouse_down() { if (m_on_mouse_down != nullptr) m_on_mouse_down(); }
+
 		bool m_isHovered;
 		bool m_isFocused;
 		bool m_isActive;
 
+		bool m_isClickable;
+
 		float m_layer;
 
-		std::function<void()> m_on_click;
+		std::function<void()> m_on_mouse_down;
+		std::function<void()> m_on_mouse_up;
 		// Real coords
 		glm::vec2 m_position;
 		glm::vec2 m_scale;

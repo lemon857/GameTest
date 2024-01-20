@@ -24,6 +24,10 @@ namespace GUI
 	{
 		m_vp_size = m_render_cam->get_viewport_size();
 		m_prj_mat = m_render_cam->get_ui_matrix();
+
+#ifndef DEBUG
+		m_is_event_logging_active = true;
+#endif
 	}
 
 	void GUI_place::on_update(const double delta)

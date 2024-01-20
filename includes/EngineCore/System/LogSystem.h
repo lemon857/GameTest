@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#define DEBUG
+//#define DEBUG
 
 #ifdef DEBUG
 #define DEBUG_CONSOLE 
@@ -109,5 +109,5 @@ public:
 		log_crit(text);
 	}
 private:
-	static std::ofstream* m_stream;
+	static std::string m_path;
 };

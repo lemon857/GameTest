@@ -10,7 +10,7 @@
 #include <fstream>
 #include <filesystem>
 
-std::ofstream* LogSystem::m_stream;
+std::string LogSystem::m_path;
 
 std::string currentDateTime() {
 	std::time_t t = std::time(nullptr);
@@ -40,13 +40,12 @@ void LogSystem::init_log_system(std::string relPathFolder)
 		std::filesystem::copy_file(ResourceManager::getExeFilePath() + "\\" + relPathFolder + "\\lastest.log", 
 			ResourceManager::getExeFilePath() + "\\" + relPathFolder + "\\" + buffer + ".log");
 	}
-	m_stream = new std::ofstream();
-	m_stream->open(ResourceManager::getExeFilePath() + "\\" + relPathFolder + "\\lastest.log");
+	m_path = ResourceManager::getExeFilePath() + "\\" + relPathFolder + "\\lastest.log";
 } 
 
 void LogSystem::uninit_log_system()
 {
-	m_stream->close();
+
 }
 
 void LogSystem::log_info(std::string msg)
@@ -60,7 +59,12 @@ void LogSystem::log_info(std::string msg)
 	SetConsoleTextAttribute(h, (((0 << 4) | 7)));
 	std::cout << "] " << msg << std::endl;
 #endif
-	if (m_stream->is_open()) *m_stream << "[" + currentDateTime() + "] [info] " + msg + "\n";
+	std::ofstream stream(m_path, std::ios::app);
+	if (stream.is_open())
+	{
+		stream << "[" + currentDateTime() + "] [info] " + msg + "\n";
+		stream.close();
+	}
 }
 
 void LogSystem::log_warn(std::string msg)
@@ -74,7 +78,12 @@ void LogSystem::log_warn(std::string msg)
 	SetConsoleTextAttribute(h, (((0 << 4) | 7)));
 	std::cout << "] " << msg << std::endl;
 #endif
-	if (m_stream->is_open()) *m_stream << "[" + currentDateTime() + "] [warn] " + msg + "\n";
+	std::ofstream stream(m_path, std::ios::app);
+	if (stream.is_open())
+	{
+		stream << "[" + currentDateTime() + "] [warn] " + msg + "\n";
+		stream.close();
+	}
 }
 
 void LogSystem::log_error(std::string msg)
@@ -88,7 +97,12 @@ void LogSystem::log_error(std::string msg)
 	SetConsoleTextAttribute(h, (((0 << 4) | 7)));
 	std::cout << "] " << msg << std::endl;
 #endif
-	if (m_stream->is_open()) *m_stream << "[" + currentDateTime() + "] [error] " + msg + "\n";
+	std::ofstream stream(m_path, std::ios::app);
+	if (stream.is_open())
+	{
+		stream << "[" + currentDateTime() + "] [error] " + msg + "\n";
+		stream.close();
+	}
 }
 
 void LogSystem::log_crit(std::string msg)
@@ -102,7 +116,12 @@ void LogSystem::log_crit(std::string msg)
 	SetConsoleTextAttribute(h, (((0 << 4) | 7)));
 	std::cout << "] " << msg << std::endl;
 #endif
-	if (m_stream->is_open()) *m_stream << "[" + currentDateTime() + "] [critical] " + msg + "\n";
+	std::ofstream stream(m_path, std::ios::app);
+	if (stream.is_open())
+	{
+		stream << "[" + currentDateTime() + "] [critical] " + msg + "\n";
+		stream.close();
+	}
 }
 
 std::string std::to_string(string str)

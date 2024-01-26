@@ -1,5 +1,6 @@
 #include "EngineCore/Renderer/VertexBufferLayout.h"
 
+#include <glad/glad.h>
 
 namespace RenderEngine
 {

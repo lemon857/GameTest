@@ -57786,6 +57786,7 @@ static void ma_node_output_bus_unlock(ma_node_output_bus* pOutputBus)
 
 static ma_uint32 ma_node_output_bus_get_channels(const ma_node_output_bus* pOutputBus)
 {
+    if (!pOutputBus) return 0;
     return pOutputBus->channels;
 }
 

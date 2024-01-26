@@ -1,5 +1,7 @@
 #include "EngineCore/Renderer/IndexBuffer.h"
 
+#include <glad/glad.h>
+
 namespace RenderEngine
 {
 	IndexBuffer::IndexBuffer()

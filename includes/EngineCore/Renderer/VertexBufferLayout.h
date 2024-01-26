@@ -1,7 +1,10 @@
 #pragma once
 
-#include <glad/glad.h>
 #include <vector>
+
+typedef unsigned int GLuint;
+typedef unsigned int GLenum;
+typedef unsigned char GLboolean;
 
 namespace RenderEngine
 {

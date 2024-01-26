@@ -12,6 +12,7 @@
 #include <fstream>
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
+#include <glad/glad.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #define STBI_ONLY_PNG

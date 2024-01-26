@@ -154,6 +154,18 @@ namespace RenderEngine
 		addLocation(name, location);
 		glUniform3f(location, vec.x, vec.y, vec.z);
 	}
+	void ShaderProgram::setVec2(const std::string& name, const glm::vec2& vec)
+	{
+		GLuint location;
+		if (getLocation(name, location))
+		{
+			glUniform2f(location, vec.x, vec.y);
+			return;
+		}
+		location = glGetUniformLocation(m_ID, name.c_str());
+		addLocation(name, location);
+		glUniform2f(location, vec.x, vec.y);
+	}
 	std::shared_ptr<RenderEngine::ShaderProgramLayout> ShaderProgram::get_layout()
 	{
 		return m_layout;

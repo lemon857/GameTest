@@ -70,6 +70,7 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Renderer/Texture2D.h
 	includes/EngineCore/Renderer/VertexBuffer.h
 	includes/EngineCore/Renderer/IndexBuffer.h
+	includes/EngineCore/Renderer/FrameBuffer.h
 	includes/EngineCore/Renderer/Renderer.h
 	includes/EngineCore/Renderer/VertexArray.h
 	includes/EngineCore/Renderer/VertexBufferLayout.h
@@ -149,6 +150,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Renderer/Texture2D.cpp
 	src/Renderer/VertexBuffer.cpp
 	src/Renderer/IndexBuffer.cpp
+	src/Renderer/FrameBuffer.cpp
 	src/Renderer/Renderer.cpp
 	src/Renderer/VertexArray.cpp
 	src/Renderer/VertexBufferLayout.cpp

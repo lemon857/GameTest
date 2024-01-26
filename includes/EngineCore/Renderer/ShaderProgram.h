@@ -8,6 +8,7 @@
 #include <glm/mat4x4.hpp>
 #include <glm/vec4.hpp>
 #include <glm/vec3.hpp>
+#include <glm/vec2.hpp>
 
 namespace RenderEngine
 {
@@ -28,6 +29,7 @@ namespace RenderEngine
 		void setMatrix4(const std::string& name, const glm::mat4& matrix);
 		void setVec4(const std::string& name, const glm::vec4& vec);
 		void setVec3(const std::string& name, const glm::vec3& vec);
+		void setVec2(const std::string& name, const glm::vec2& vec);
 
 		std::shared_ptr<RenderEngine::ShaderProgramLayout> get_layout();
 

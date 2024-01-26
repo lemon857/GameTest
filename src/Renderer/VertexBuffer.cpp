@@ -1,5 +1,6 @@
 #include "EngineCore/Renderer/VertexBuffer.h"
 
+#include <glad/glad.h>
 
 namespace RenderEngine
 {
@@ -19,7 +20,7 @@ namespace RenderEngine
 		return *this;
 	}
 	VertexBuffer::VertexBuffer(VertexBuffer&& vertexBuffer) noexcept
-	{
+	{		
 		m_ID = vertexBuffer.m_ID;
 		vertexBuffer.m_ID = 0;
 	}

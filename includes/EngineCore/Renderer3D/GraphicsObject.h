@@ -7,7 +7,7 @@ namespace RenderEngine
 	class VertexArray;
 	class IndexBuffer;
 }
-
+// OpenGL buffers
 struct GraphicsObject
 {
 	GraphicsObject()

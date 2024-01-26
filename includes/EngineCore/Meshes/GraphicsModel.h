@@ -11,11 +11,11 @@ namespace RenderEngine
 }
 
 struct GraphicsObject;
-
-class ObjModel : public IGameObject
+// simple renderer meshes
+class GraphicsModel : public IGameObject
 {
 public:
-	ObjModel(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<RenderEngine::Material> pMaterial);
+	GraphicsModel(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<RenderEngine::Material> pMaterial);
 
 	// need additions
 	void reload();

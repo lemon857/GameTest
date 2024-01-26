@@ -41,6 +41,12 @@ void LogSystem::init_log_system(std::string relPathFolder)
 			ResourceManager::getExeFilePath() + "\\" + relPathFolder + "\\" + buffer + ".log");
 	}
 	m_path = ResourceManager::getExeFilePath() + "\\" + relPathFolder + "\\lastest.log";
+	std::ofstream stream(m_path, std::ios::out);
+	if (stream.is_open())
+	{
+		stream << "";
+		stream.close();
+	}
 } 
 
 void LogSystem::uninit_log_system()

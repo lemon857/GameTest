@@ -23,8 +23,8 @@ namespace GUI
 
 		Font_Glyph get_glyph(const wchar_t sym);
 
-		void set_scale(float scale) { m_scale = scale; }
-		float get_scale() { return m_scale; }
+		inline void set_scale(float scale) { m_scale = scale; }
+		inline float get_scale() { return m_scale; }
 
 	private:
 		std::map<const wchar_t, Font_Glyph> m_glyphs;

@@ -102,7 +102,7 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Components/Highlight.h
 	
 	includes/EngineCore/Meshes/Cube.h
-	includes/EngineCore/Meshes/ObjModel.h
+	includes/EngineCore/Meshes/GraphicsModel.h
 	includes/EngineCore/Meshes/EmptyObject.h
 	includes/EngineCore/Meshes/Plane.h	
 	includes/EngineCore/Meshes/Grid.h	
@@ -186,7 +186,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Components/Highlight.cpp
 	
 	src/Meshes/Cube.cpp
-	src/Meshes/ObjModel.cpp
+	src/Meshes/GraphicsModel.cpp
 	src/Meshes/Plane.cpp
 	src/Meshes/Grid.cpp
 	src/Meshes/Skybox.cpp

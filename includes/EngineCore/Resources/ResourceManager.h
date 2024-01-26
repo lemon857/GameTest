@@ -56,8 +56,8 @@ namespace RenderEngine
 
 		static bool save_scene(std::string relativePath, const Scene& scene);
 
-		static std::shared_ptr<GraphicsObject> loadGraphicsModel(const std::string& name, const std::string& relativePath, const std::string& type);
-		static std::shared_ptr<GraphicsObject> getGraphicsModel(const std::string& name);
+		static std::shared_ptr<GraphicsObject> loadGraphicsObject(const std::string& name, const std::string& relativePath, const std::string& type);
+		static std::shared_ptr<GraphicsObject> getGraphicsObject(const std::string& name);
 
 		static std::shared_ptr<LanguagePack> load_lang_pack(std::string relativePath, std::string pack_name);
 		static std::shared_ptr<LanguagePack> get_lang_pack(std::string pack_name);
@@ -141,8 +141,8 @@ namespace RenderEngine
 		typedef std::map<const std::string, std::shared_ptr<RenderEngine::Material>> MaterialsMap;
 		static MaterialsMap m_materials;
 
-		typedef std::map<const std::string, std::shared_ptr<GraphicsObject>> GrapicsModelsMap;
-		static GrapicsModelsMap m_graphics_models;
+		typedef std::map<const std::string, std::shared_ptr<GraphicsObject>> GrapicsObjectsMap;
+		static GrapicsObjectsMap m_graphics_objects;
 
 		typedef std::map<const std::string, std::shared_ptr<GUI::Font>> FontsMap;
 		static FontsMap m_fonts_map;

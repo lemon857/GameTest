@@ -27,7 +27,7 @@
 ResourceManager::ShaderProgramsMap ResourceManager::m_ShaderPrograms;
 ResourceManager::TexturesMap ResourceManager::m_textures;
 ResourceManager::MaterialsMap ResourceManager::m_materials;
-ResourceManager::GrapicsModelsMap ResourceManager::m_graphics_models;
+ResourceManager::GrapicsObjectsMap ResourceManager::m_graphics_objects;
 ResourceManager::FontsMap ResourceManager::m_fonts_map;
 ResourceManager::SoundsMap ResourceManager::m_sounds_map;
 ResourceManager::UniqueSoundsMap ResourceManager::m_uSounds_map;
@@ -43,7 +43,7 @@ void ResourceManager::unloadAllResources()
 	m_ShaderPrograms.clear();
 	m_textures.clear();
 	m_materials.clear();
-	m_graphics_models.clear();
+	m_graphics_objects.clear();
 	m_fonts_map.clear();
 	m_sounds_map.clear();
 	m_uSounds_map.clear();
@@ -162,7 +162,7 @@ bool ResourceManager::load_JSON_resources(const std::string & JSONpath)
 			const std::string name = currentModel["name"].GetString();
 			const std::string path = currentModel["path"].GetString();
 			const std::string type = currentModel["type"].GetString();
-			while (loadGraphicsModel(name, path, type) == nullptr)
+			while (loadGraphicsObject(name, path, type) == nullptr)
 			{
 				//LOG_WARN("Failed load OBJ model");
 				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -199,7 +199,7 @@ bool ResourceManager::load_JSON_models(const std::string& JSONpath)
 		return false;
 	}
 
-	if (m_graphics_models.empty()) m_graphics_models.clear();
+	if (m_graphics_objects.empty()) m_graphics_objects.clear();
 
 	auto modelsIt = doc.FindMember("models");
 	if (modelsIt != doc.MemberEnd())
@@ -209,7 +209,7 @@ bool ResourceManager::load_JSON_models(const std::string& JSONpath)
 			const std::string name = currentModel["name"].GetString();
 			const std::string path = currentModel["path"].GetString();
 			const std::string type = currentModel["type"].GetString();
-			while (loadGraphicsModel(name, path, type) == nullptr)
+			while (loadGraphicsObject(name, path, type) == nullptr)
 			{
 				LOG_WARN("Failed load OBJ model");
 				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -345,7 +345,7 @@ bool ResourceManager::save_scene(std::string relativePath, const Scene& scene)
 	fout.close();
 	return true;
 }
-std::shared_ptr<GraphicsObject> ResourceManager::loadGraphicsModel(const std::string& name, const std::string& relativePath, const std::string& type)
+std::shared_ptr<GraphicsObject> ResourceManager::loadGraphicsObject(const std::string& name, const std::string& relativePath, const std::string& type)
 {
 	GraphicsObject* model;
 	if (type == "obj")
@@ -360,7 +360,7 @@ std::shared_ptr<GraphicsObject> ResourceManager::loadGraphicsModel(const std::st
 		else
 		{
 			std::shared_ptr<GraphicsObject> newOBJ =
-				m_graphics_models.emplace(name, std::make_shared<GraphicsObject>(std::move(model))).first->second;
+				m_graphics_objects.emplace(name, std::make_shared<GraphicsObject>(std::move(model))).first->second;
 			LOG_INFO("Success load OBJ file: {0}", relativePath);
 			return newOBJ;
 		}
@@ -368,10 +368,10 @@ std::shared_ptr<GraphicsObject> ResourceManager::loadGraphicsModel(const std::st
 	LOG_ERROR("Error type model: {0}", type);
 	return nullptr;
 }
-std::shared_ptr<GraphicsObject> ResourceManager::getGraphicsModel(const std::string& name)
+std::shared_ptr<GraphicsObject> ResourceManager::getGraphicsObject(const std::string& name)
 {
-	GrapicsModelsMap::const_iterator it = m_graphics_models.find(name);
-	if (it != m_graphics_models.end())
+	GrapicsObjectsMap::const_iterator it = m_graphics_objects.find(name);
+	if (it != m_graphics_objects.end())
 	{
 		return it->second;
 	}
@@ -572,7 +572,7 @@ std::vector<std::string> ResourceManager::getNamesObjs()
 {
 	std::vector<std::string> data;
 
-	for (const auto& curObj : m_graphics_models)
+	for (const auto& curObj : m_graphics_objects)
 	{
 		data.push_back(curObj.first);
 	}

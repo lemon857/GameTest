@@ -34,6 +34,8 @@ namespace GUI
 
 		void set_active(const bool state) override;
 
+		void set_position(glm::vec2 pos) override;
+
 		void add_element(GUI_element* element);
 
 		void clear();

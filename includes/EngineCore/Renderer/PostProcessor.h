@@ -19,14 +19,19 @@ namespace RenderEngine
 		void start_render();
 		// called after rendering main scene
 		void end_render();
-		// called before rendering gui
-		void start_gui_rendering();
 
 		void set_active(bool state);
 		void change_active();
 
 		void on_resize(int window_width, int window_height);
+
+		void set_effect(int num);
+
+		bool get_active() { return m_isActive; }
+		FrameBuffer* get_fbo() { return m_fbo; }
 	private:
+		int m_cur_effect;
+
 		bool m_isActive;
 
 		GLuint m_quadVAO;

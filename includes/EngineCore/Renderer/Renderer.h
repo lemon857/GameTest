@@ -44,5 +44,13 @@ namespace RenderEngine
 
 		static float get_depth_pixel(float pix_x, float pix_y, float window_height);
 		static int get_info_pixel(float pix_x, float pix_y, float window_height);
+	private:
+		static bool s_enable_depth;
+		static bool s_enable_blend;
+
+		static float s_color_r;
+		static float s_color_g;
+		static float s_color_b;
+		static float s_color_a;
 	};
 }

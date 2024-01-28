@@ -5,8 +5,24 @@
 
 namespace RenderEngine
 {
+	bool Renderer::s_enable_depth;
+	bool Renderer::s_enable_blend;
+
+	float Renderer::s_color_r;
+	float Renderer::s_color_g;
+	float Renderer::s_color_b;
+	float Renderer::s_color_a;
+
 	bool Renderer::init(GLFWwindow* pWindow)
 	{
+		s_enable_depth = false;
+		s_enable_blend = false;
+
+		s_color_r = 0.f;
+		s_color_g = 0.f;
+		s_color_b = 0.f;
+		s_color_a = 0.f;
+
 		if (!glfwInit())
 		{
 			LOG_CRIT("GLFW init failed");
@@ -45,10 +61,20 @@ namespace RenderEngine
 	}
 	void Renderer::setClearColor(const float r, const float g, const float b, const float a)
 	{
+		//if (
+		//	s_color_r == r &&
+		//	s_color_g == g &&
+		//	s_color_b == b &&
+		//	s_color_a == a) return;
 		glClearColor(r, g, b, a);
+		//s_color_r = r;
+		//s_color_g = g;
+		//s_color_b = b;
+		//s_color_a = a;
 	}
 	void Renderer::setDepthTest(const bool enable)
 	{
+		//if (s_enable_depth == enable) return;
 		if (enable) 
 		{
 			glEnable(GL_DEPTH_TEST);
@@ -57,9 +83,11 @@ namespace RenderEngine
 		{
 			glDisable(GL_DEPTH_TEST);
 		}
+		//s_enable_depth = enable;
 	}
 	void Renderer::setBlend(const bool enable)
 	{
+		//if (s_enable_blend == enable) return;
 		if (enable)
 		{
 			glEnable(GL_BLEND);
@@ -68,6 +96,7 @@ namespace RenderEngine
 		{
 			glDisable(GL_BLEND);
 		}
+		//s_enable_blend = enable;
 	}
 	void Renderer::clear()
 	{

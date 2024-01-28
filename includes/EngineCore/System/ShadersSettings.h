@@ -14,3 +14,6 @@
 #define SS_POINTER_LIGHT_COLOR_NAME "light_color"
 #define SS_POINTER_LIGHT_POS_NAME "light_position"
 #define SS_POINTER_LIGHT_STRENGTH_NAME "strength_light"
+
+#define SS_RENDER_TEXTURE_NAME "renderTexture"
+#define SS_DEPTH_TEXTURE_NAME "depthTexture"

@@ -69,9 +69,13 @@ namespace RenderEngine
 			glDisable(GL_BLEND);
 		}
 	}
-	void Renderer::clearColor() 
+	void Renderer::clear()
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+	void Renderer::clear(const bool iscolor)
+	{
+		glClear(iscolor ? GL_COLOR_BUFFER_BIT : GL_DEPTH_BUFFER_BIT);
 	}
 	void Renderer::setViewport(unsigned int width, unsigned int height, unsigned int offsetLeft, unsigned int offsetBottom)
 	{

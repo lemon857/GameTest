@@ -74,6 +74,7 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Renderer/Renderer.h
 	includes/EngineCore/Renderer/VertexArray.h
 	includes/EngineCore/Renderer/VertexBufferLayout.h
+	includes/EngineCore/Renderer/PostProcessor.h
 	includes/EngineCore/Renderer/Point.h
 	includes/EngineCore/Renderer/Line.h
 	includes/EngineCore/Renderer/Camera.h
@@ -154,6 +155,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Renderer/Renderer.cpp
 	src/Renderer/VertexArray.cpp
 	src/Renderer/VertexBufferLayout.cpp
+	src/Renderer/PostProcessor.cpp
 	src/Renderer/Point.cpp
 	src/Renderer/Line.cpp
 	src/Renderer/Camera.cpp	

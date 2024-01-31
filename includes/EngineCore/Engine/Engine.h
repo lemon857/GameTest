@@ -30,7 +30,7 @@ public:
 	// Выбор текущего окна
 	static void makeContextCurrent(GLFWwindow* window);
 	// Проверка каллбэков
-	static void poolEvents();
+	static void pollEvents();
 	// Запуск движка
 	static void startEngine(int argc, char** argv);
 	// Отчистка всех ресурсов движка 

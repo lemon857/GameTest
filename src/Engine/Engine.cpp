@@ -50,7 +50,7 @@ void Engine::terminate()
     ResourceManager::unloadAllResources();
     glfwTerminate();
 }
-void Engine::poolEvents()
+void Engine::pollEvents()
 {
     glfwPollEvents();
 }
@@ -74,7 +74,7 @@ void Engine::startEngine(int argc, char** argv)
 
     while (!glfwWindowShouldClose(m_window))
     {
-        poolEvents();
+        pollEvents();
 
         auto currentTime = std::chrono::high_resolution_clock::now();
         double duration = std::chrono::duration<double, std::milli>(currentTime - lastTime).count();

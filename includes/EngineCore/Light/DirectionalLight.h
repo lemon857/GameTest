@@ -11,7 +11,7 @@ class DirectionalLight : IGameObject
 public:
 	DirectionalLight(std::vector<std::string> shaders_names);
 
-	void update(const double delta);
+	void on_update();
 
 private:
 	glm::vec3 m_light_color;

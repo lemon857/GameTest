@@ -19,6 +19,7 @@ class Grid : public IGameObject
 public:
 	// center pos, size part, count cols to left and right from center, count rows to up and down from center 
 	Grid(glm::vec3 pos, glm::vec2 size, unsigned int count_cols, unsigned int count_rows, glm::vec4 color, std::shared_ptr<RenderEngine::Material> pMaterial);
+	Grid(glm::vec3 start_pos, glm::vec3 end_pos, glm::vec2 size, glm::vec4 color, std::shared_ptr<RenderEngine::Material> pMaterial);
 	~Grid();
 
 	void render() override;

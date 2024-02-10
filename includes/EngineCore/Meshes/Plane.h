@@ -11,7 +11,7 @@ namespace RenderEngine
 	class Material;
 }
 
-class Plane : IGameObject
+class Plane : public IGameObject
 {
 public:
 	Plane(std::shared_ptr<RenderEngine::Material> pMaterial);

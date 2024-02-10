@@ -8,7 +8,7 @@ std::string RegistryManager::m_path;
 
 void RegistryManager::set_reg_path(std::string path)
 {
-	m_path = "Software\\" + path;
+	m_path = "SOFTWARE\\" + path;
 }
 
 int RegistryManager::set_value(char* name_value, char* value, int valueLen)

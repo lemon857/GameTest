@@ -5,15 +5,13 @@
 #include "EngineCore/Renderer/Line.h"
 #include "EngineCore/System/SysFunc.h"
 
-#define SCROLL_MYLTIPLIER 10.f
-
 #define DISPLACEMENT_ELEMENT_Y 25.f
 #define SHIFT_ELEMENT_Y 30.f
 
 namespace GUI
 {
 	ScrollBox::ScrollBox(Sprite* backgrond, glm::vec2 pos, glm::vec2 scale, std::string name, int max_count_elements,
-		std::shared_ptr<RenderEngine::Material> pMaterialLine, bool has_shift, GUI_place* place, bool isHorisontal, bool right_line, float percentDisplaysment)
+		std::shared_ptr<RenderEngine::Material> pMaterialLine, bool has_shift, GUI_place* place, bool isHorisontal, bool right_line, float scrollMultiplier, float percentDisplaysment)
 		: GUI_element(name)
 		, m_max_count_elements(max_count_elements)
 		, m_background(std::move(backgrond))
@@ -26,6 +24,7 @@ namespace GUI
 		, m_cur_scroll(0)
 		, m_disp_scroll(0)
 		, m_right_line(right_line)
+		, m_scroll_mult(scrollMultiplier)
 	{
 		m_position_p = pos;
 		m_scale_p = scale;
@@ -54,9 +53,18 @@ namespace GUI
 		for (size_t i = 0; i < m_elements.size(); i++)
 		{
 			GUI_element* cur = m_elements[i];
-			if (cur->get_position().y < m_scale.y + m_position.y - (m_has_shift ? DISPLACEMENT_ELEMENT_Y : cur->get_scale().y)
-				&& cur->get_position().y > m_position.y - m_scale.y + (m_has_shift ? DISPLACEMENT_ELEMENT_Y : cur->get_scale().y)) cur->set_active(true);
-			else cur->set_active(false);
+			if (m_isHorisontal)
+			{
+				if (cur->get_position().x < m_scale.x + m_position.x - (m_has_shift ? DISPLACEMENT_ELEMENT_Y : cur->get_scale().x)
+					&& cur->get_position().x > m_position.x - m_scale.x + (m_has_shift ? DISPLACEMENT_ELEMENT_Y : cur->get_scale().x)) cur->set_active(true);
+				else cur->set_active(false);
+			}
+			else
+			{
+				if (cur->get_position().y < m_scale.y + m_position.y - (m_has_shift ? DISPLACEMENT_ELEMENT_Y : cur->get_scale().y)
+					&& cur->get_position().y > m_position.y - m_scale.y + (m_has_shift ? DISPLACEMENT_ELEMENT_Y : cur->get_scale().y)) cur->set_active(true);
+				else cur->set_active(false);
+			}
 		}
 		if (m_onLine)
 		{
@@ -83,10 +91,14 @@ namespace GUI
 		if (m_elements.size() < 2) return;
 		if (m_isHorisontal)
 		{
+			if (((m_elements[0]->get_position().x < m_position.x + m_scale.x - m_elements[0]->get_scale().x - (m_has_shift ? SHIFT_ELEMENT_Y : 0)) && offset < 0) ||
+				((m_elements.last()->get_position().x > m_position.x - m_scale.x + m_elements[0]->get_scale().x + (m_has_shift ? SHIFT_ELEMENT_Y : 0)) && offset > 0))
+				return;
 			for (size_t i = 0; i < m_elements.size(); i++)
 			{
 				GUI_element* cur = m_elements[i];
-				/*cur->add_position(glm::vec2(offset * SCROLL_MYLTIPLIER, 0.f));
+				cur->add_position(glm::vec2(offset * m_scroll_mult, 0.f));
+				/*cur->add_position(glm::vec2(offset * m_scroll_mult, 0.f));
 				if (cur->get_position().x < m_scale.x + m_position.x - (m_has_shift ? DISPLACEMENT_ELEMENT_Y : cur->get_scale().x)
 					&& cur->get_position().x > m_position.x - m_scale.x + (m_has_shift ? DISPLACEMENT_ELEMENT_Y : cur->get_scale().x)) cur->set_active(true);
 				else cur->set_active(false);*/
@@ -111,7 +123,7 @@ namespace GUI
 			for (size_t i = 0; i < m_elements.size(); i++)
 			{
 				GUI_element* cur = m_elements[i];
-				cur->add_position(glm::vec2(0.f, offset * SCROLL_MYLTIPLIER));
+				cur->add_position(glm::vec2(0.f, offset * m_scroll_mult));
 				/*if (cur->get_position().y < m_scale.y + m_position.y - (m_has_shift ? DISPLACEMENT_ELEMENT_Y : cur->get_scale().y)
 					&& cur->get_position().y > m_position.y - m_scale.y + (m_has_shift ? DISPLACEMENT_ELEMENT_Y : cur->get_scale().y)) cur->set_active(true);
 				else cur->set_active(false);*/
@@ -131,7 +143,7 @@ namespace GUI
 		m_position = pos; 
 		set_tree_pos(pos); 
 		if (m_elements[0] == nullptr) return;
-		m_disp_scroll = (((m_position.y - m_scale.y) + m_elements[0]->get_scale().y + (m_has_shift ? SHIFT_ELEMENT_Y : 0)) - m_elements[0]->get_position().y) / SCROLL_MYLTIPLIER;
+		m_disp_scroll = (((m_position.y - m_scale.y) + m_elements[0]->get_scale().y + (m_has_shift ? SHIFT_ELEMENT_Y : 0)) - m_elements[0]->get_position().y) / m_scroll_mult;
 		if (m_isHorisontal)
 		{
 			m_pos_line = glm::vec3(m_position.x + m_scale.x - GUI_place::get_pix_percent(glm::vec2(1.f, 0.f)).x,
@@ -162,14 +174,23 @@ namespace GUI
 		}
 		for (size_t i = 0; i < m_elements.size(); i++)
 		{
-			if (m_has_shift)
-				m_elements[(i - m_elements.size() + 1) * -1]->set_position(
-				glm::vec2(m_position.x - m_scale.x, (m_position.y - m_scale.y + SHIFT_ELEMENT_Y) + ((i + 1) * SHIFT_ELEMENT_Y)));
-			else
+			if (m_isHorisontal)
+			{
 				m_elements[i]->set_position(
-				glm::vec2(m_position.x, 
-					(m_position.y + m_scale.y - element->get_scale().y - element->get_scale().y * m_perc_disp) -
-					(i * (2.f * element->get_scale().y + element->get_scale().y * m_perc_disp))));
+					glm::vec2((m_position.x + m_scale.x - element->get_scale().x) - element->get_scale().y * m_perc_disp -
+						(i * (2.f * element->get_scale().x + element->get_scale().y * m_perc_disp)), m_position.y));
+			}
+			else
+			{
+				if (m_has_shift)
+					m_elements[(i - m_elements.size() + 1) * -1]->set_position(
+						glm::vec2(m_position.x - m_scale.x, (m_position.y - m_scale.y + SHIFT_ELEMENT_Y) + ((i + 1) * SHIFT_ELEMENT_Y)));
+				else
+					m_elements[i]->set_position(
+						glm::vec2(m_position.x,
+							(m_position.y + m_scale.y - element->get_scale().y - element->get_scale().y * m_perc_disp) -
+							(i * (2.f * element->get_scale().y + element->get_scale().y * m_perc_disp))));
+			}
 		}
 		m_count_elements++;
 		add_tree_element(element);

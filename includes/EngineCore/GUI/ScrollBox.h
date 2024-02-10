@@ -23,7 +23,8 @@ namespace GUI
 		// if material equals nullptr line doesn't use
 		ScrollBox(Sprite* backgrond, glm::vec2 pos, glm::vec2 scale,
 			std::string name, int max_count_elements, std::shared_ptr<RenderEngine::Material> pMaterialLine = nullptr,
-			bool has_displacement = false, GUI_place* place = nullptr, bool isHorisontal = false, bool right_line = true, float percentDisplaysment = 0.15f);
+			bool has_displacement = false, GUI_place* place = nullptr, bool isHorisontal = false, bool right_line = true, 
+			float scrollMultiplier = 10.f, float percentDisplaysment = 0.15f);
 		~ScrollBox();
 
 		void on_render_prj(glm::mat4& prj) override;
@@ -49,6 +50,7 @@ namespace GUI
 		float m_perc_disp;
 		float m_cur_scroll;
 		float m_disp_scroll;
+		float m_scroll_mult;
 		unsigned int m_max_count_elements;
 		int m_count_elements;
 		GUI_place* m_place;

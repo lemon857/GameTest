@@ -20,7 +20,7 @@ namespace RenderEngine
 	class Renderer
 	{
 	public:
-		static bool init(GLFWwindow* pWindow);
+		static bool init();
 
 		static void drawTriangles(const VertexArray& vertexArray, const IndexBuffer& indexBuffer);
 

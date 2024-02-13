@@ -1,8 +1,6 @@
 #include "EngineCore/Renderer/Renderer.h"
 #include "EngineCore/System/Log.h"
 
-#include <glad/glad.h>
-
 namespace RenderEngine
 {
 	bool Renderer::s_enable_depth;
@@ -13,7 +11,7 @@ namespace RenderEngine
 	float Renderer::s_color_b;
 	float Renderer::s_color_a;
 
-	bool Renderer::init(GLFWwindow* pWindow)
+	bool Renderer::init()
 	{
 		s_enable_depth = false;
 		s_enable_blend = false;
@@ -23,11 +21,6 @@ namespace RenderEngine
 		s_color_b = 0.f;
 		s_color_a = 0.f;
 
-		if (!glfwInit())
-		{
-			LOG_CRIT("GLFW init failed");
-			return false;
-		}
 		return true;
 	}
 	void Renderer::drawTriangles(const VertexArray& vertexArray, const IndexBuffer& indexBuffer)

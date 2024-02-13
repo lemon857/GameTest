@@ -33,6 +33,20 @@ void Transform::add_rotation(glm::vec3 rot)
 	m_rotation += rot;
 }
 
+
+void Transform::set_position_x(float pos)
+{
+	m_position.x = pos;
+}
+void Transform::set_position_y(float pos)
+{
+	m_position.y = pos;
+}
+void Transform::set_position_z(float pos)
+{
+	m_position.z = pos;
+}
+
 glm::vec3 Transform::get_position()
 {
 	return m_position;

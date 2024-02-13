@@ -54,13 +54,13 @@ Grid::Grid(glm::vec3 start_pos, glm::vec3 end_pos, glm::vec2 size, glm::vec4 col
 
 	glm::vec3 cur_pos = start_pos;
 
-	for (unsigned int i = 0; i < count_cols; i++)
+	for (int i = 0; i < count_cols; i++)
 	{
 		m_starts_pos.push_back(cur_pos);
 		cur_pos += glm::vec3(size.x, 0.f, 0.f);
 	}
 	m_starts_pos.push_back(cur_pos);
-	for (unsigned int j = 0; j < count_rows + 1; j++)
+	for (int j = 0; j < count_rows + 1; j++)
 	{
 		m_starts_pos.push_back(cur_pos);
 		cur_pos += glm::vec3(0.f, 0.f, size.y);

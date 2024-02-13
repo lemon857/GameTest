@@ -107,9 +107,11 @@ int Window::init()
 {
     LOG_INFO("Creating window \"{0}\" size {1}x{2}", m_data.title, m_data.window_size.x, m_data.window_size.y);
 
-    if (!RenderEngine::Renderer::init(m_pWindow))
+    RenderEngine::Renderer::init();
+
+    if (!glfwInit())
     {
-        LOG_CRIT("Fail init OpenGL renderer");
+        LOG_CRIT("Fail init GLFW");
         return -1;
     }
 
@@ -139,10 +141,10 @@ int Window::init()
         LOG_CRIT("Glad load failed");
         return -1;
     }
-
+    // Debug OpenGL
     //glEnable(GL_DEBUG_OUTPUT);
-    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);    
+    //glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+   /* glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);    
 
     glDebugMessageCallback([](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
         {
@@ -164,7 +166,7 @@ int Window::init()
                 LOG_ERROR("OpenGL Error: [{0}:{1}]({2}): {3}", gl_source_to_str(source), gl_type_to_str(type), id, message);
                 break;
             }
-        }, nullptr);
+        }, nullptr);*/
 
     if (m_path_icon_png != "")
     {

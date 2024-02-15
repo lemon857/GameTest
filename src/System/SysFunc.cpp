@@ -33,6 +33,7 @@ namespace sysfunc
 
 	int get_random(int min, int max)
 	{		
+		if (min > max) return -1;
 		std::random_device rd;
 		std::default_random_engine generator(rd());
 		std::uniform_int_distribution<int> distribution(min, max);
@@ -40,6 +41,7 @@ namespace sysfunc
 	}
 	float get_random(float min, float max)
 	{
+		if (min > max) return -1;
 		std::random_device rd;
 		std::default_random_engine generator(rd());
 		std::uniform_real_distribution<float> distribution(min, max);
@@ -47,6 +49,7 @@ namespace sysfunc
 	}
 	double get_random(double min, double max)
 	{
+		if (min > max) return -1;
 		std::random_device rd;
 		std::default_random_engine generator(rd());
 		std::uniform_real_distribution<double> distribution(min, max);

@@ -23,6 +23,10 @@ public:
 	void set_position_rotation(const glm::vec3& position, const glm::vec3& rotation);
 	void set_projection_mode(const ProjectionMode mode);
 
+	void set_rotation_x(const float& rotation);
+	void set_rotation_y(const float& rotation);
+	void set_rotation_z(const float& rotation);
+
 	void set_far_clip_plane(const float far);
 	void set_near_clip_plane(const float near);
 	void set_viewport_size(const float width, const float height);

@@ -15,6 +15,18 @@ Camera::Camera(const glm::vec3& position, const glm::vec3& rotation, const Proje
 	update_veiw_matrix();
 	update_projection_matrix();
 }
+void Camera::set_rotation_x(const float& rotation) 
+{
+	m_rotation.x = rotation;
+}
+void Camera::set_rotation_y(const float& rotation)
+{
+	m_rotation.y = rotation;
+}
+void Camera::set_rotation_z(const float& rotation)
+{
+	m_rotation.z = rotation;
+}
 glm::mat4 Camera::get_view_matrix()
 {
 	if (m_update_view_matrix)
@@ -164,7 +176,7 @@ void Camera::update_veiw_matrix()
 void Camera::update_projection_matrix()
 {
 	if (m_projection_mode == ProjectionMode::Perspective)
-	{
+	{		
 		m_projection_matrix = glm::perspective(glm::radians(m_field_of_view), m_viewport_width / m_viewport_height, m_near_clip_plane, m_far_clip_plane);
 	}
 	else

@@ -34,6 +34,9 @@ int Application::start(glm::ivec2& window_size, const char* title, const char* j
         std::make_unique<Window>(title, m_window_position, m_window_size, 
             m_maximized_window, m_fullscreen_window, icon_rel_path == 0 ? "" : ResourceManager::getExeFilePath() + icon_rel_path);
 
+    LOG_INFO("Renderer: {0}", RenderEngine::Renderer::getRendererStr());
+    LOG_INFO("OpenGL version: {0}", RenderEngine::Renderer::getVersionStr());
+
     if (SoundEngine::init_audio() != 0) LOG_ERROR("Fail init sound engine");
 
     ResourceManager::load_JSON_resources(json_rel_path);
@@ -45,9 +48,6 @@ int Application::start(glm::ivec2& window_size, const char* title, const char* j
     {
         return -1;
     }
-   
-    LOG_INFO("Renderer: {0}", RenderEngine::Renderer::getRendererStr());
-    LOG_INFO("OpenGL version: {0}", RenderEngine::Renderer::getVersionStr());
     
     LOG_INFO("Time initialization: {0}", m_watch->stop());
     LOG_INFO("==========================================");

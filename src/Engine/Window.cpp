@@ -109,6 +109,12 @@ int Window::init()
 
     RenderEngine::Renderer::init();
 
+    glfwSetErrorCallback(
+        [](int error_code, const char* description)
+        {
+            LOG_CRIT("GLFW Error: {0}: {1}", error_code, description);
+        });
+
     if (!glfwInit())
     {
         LOG_CRIT("Fail init GLFW");
@@ -125,10 +131,8 @@ int Window::init()
     //glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
     
     if (!m_pWindow)
-    {
-        const char* desc;
-        glfwGetError(&desc);        
-        LOG_CRIT("Generate window failed: {0}", desc);
+    {   
+        LOG_CRIT("Generate window failed");
         shuitdown();
         return -1;
     }
@@ -145,9 +149,9 @@ int Window::init()
     }
     // Debug OpenGL
     //glEnable(GL_DEBUG_OUTPUT);
-    //glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-    //glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);
-    /*
+    /*glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);
+    
     glDebugMessageCallback([](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
         {
             switch (severity)
@@ -190,12 +194,6 @@ int Window::init()
 
 #ifndef OFF_CALLBACKS
     glfwSetWindowUserPointer(m_pWindow, &m_data);
-
-    glfwSetErrorCallback( 
-        [](int error_code, const char* description)
-        {
-            LOG_CRIT("GLFW Error: {0}: {1}", error_code, description);
-        });
 
     glfwSetMouseButtonCallback(m_pWindow, 
         [](GLFWwindow* pWindow, int key, int action, int mods)

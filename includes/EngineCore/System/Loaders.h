@@ -44,5 +44,7 @@ namespace loaders
 
 	unsigned char* load_image_png(const char* fullpath, int* width, int* height, int* channels, bool flip = true);
 
+	int save_image_png(unsigned char* pixels, const char* fullpath, int width, int height, int channels);
+
 	void clear_image(unsigned char* image_data);
 }

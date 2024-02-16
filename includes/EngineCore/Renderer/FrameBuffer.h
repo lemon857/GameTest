@@ -25,6 +25,8 @@ namespace RenderEngine
 		void bind_texture_no_effects();
 		void unbind_textures();
 
+		unsigned char* get_screenshot(int window_width, int window_height);
+
 		void on_resize(int window_width, int window_height);
 
 	private:

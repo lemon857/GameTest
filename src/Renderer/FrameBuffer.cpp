@@ -123,6 +123,15 @@ void RenderEngine::FrameBuffer::unbind_textures()
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+unsigned char* RenderEngine::FrameBuffer::get_screenshot(int window_width, int window_height)
+{
+	unsigned char* buffer = new unsigned char[window_width * window_height * 4];
+	glBindTexture(GL_TEXTURE_2D, m_ID_tex);
+	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	return buffer;
+}
+
 void RenderEngine::FrameBuffer::on_resize(int window_width, int window_height)
 {
 	if (!m_is_init) return;

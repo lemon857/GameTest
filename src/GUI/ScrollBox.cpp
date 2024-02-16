@@ -141,7 +141,7 @@ namespace GUI
 	void ScrollBox::set_position(glm::vec2 pos)
 	{ 
 		m_position = pos; 
-		set_tree_pos(pos); 
+		if (m_place) set_tree_pos(pos);
 		if (m_elements[0] == nullptr) return;
 		m_disp_scroll = (((m_position.y - m_scale.y) + m_elements[0]->get_scale().y + (m_has_shift ? SHIFT_ELEMENT_Y : 0)) - m_elements[0]->get_position().y) / m_scroll_mult;
 		if (m_isHorisontal)

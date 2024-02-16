@@ -29,7 +29,7 @@ std::string currentDateTime() {
 
 void LogSystem::init_log_system(std::string relPathFolder)
 { 	
-	bool res = std::filesystem::create_directory(ResourceManager::getExeFilePath() + "\\" + relPathFolder);
+	std::filesystem::create_directory(ResourceManager::getExeFilePath() + "\\" + relPathFolder);
 	if (std::filesystem::exists(ResourceManager::getExeFilePath() + "\\" + relPathFolder + "\\lastest.log"))
 	{
 		std::time_t t = std::time(nullptr);

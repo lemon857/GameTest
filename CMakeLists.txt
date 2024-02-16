@@ -62,6 +62,7 @@ set(ENGINE_PRIVATE_INCLUDES
 	
 	includes/EngineCore/Resources/ResourceManager.h
 	includes/EngineCore/Resources/stb_image.h
+	includes/EngineCore/Resources/stb_image_write.h
 	includes/EngineCore/Resources/Scene.h
 	includes/EngineCore/Resources/RegistryManager.h
 	includes/EngineCore/Resources/LanguagePack.h

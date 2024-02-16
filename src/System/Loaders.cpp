@@ -15,8 +15,10 @@
 #include <glad/glad.h>
 
 #define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION 
 #define STBI_ONLY_PNG
 #include "EngineCore/Resources/stb_image.h"
+#include "EngineCore/Resources/stb_image_write.h"
 
 void INIdata::add_region(std::string name, BaseINIregion* region)
 {
@@ -222,6 +224,12 @@ namespace loaders
 	{
 		stbi_set_flip_vertically_on_load(flip);
 		return stbi_load(fullpath, width, height, channels, 0);
+	}
+
+	int save_image_png(unsigned char* pixels, const char* fullpath, int width, int height, int channels)
+	{
+		stbi_flip_vertically_on_write(true);
+		return stbi_write_png(fullpath, width, height, channels, pixels, width * channels);
 	}
 
 	void clear_image(unsigned char* image_data)

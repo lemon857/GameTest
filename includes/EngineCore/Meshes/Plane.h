@@ -16,7 +16,7 @@ class Plane : public IGameObject
 public:
 	Plane(std::shared_ptr<RenderEngine::Material> pMaterial);
 	Plane(std::shared_ptr<RenderEngine::Material> pMaterial, glm::vec3 init_pos, glm::vec3 init_scale);
-	~Plane() = default;
+	~Plane() {}
 
 private:
 	std::shared_ptr<RenderEngine::Material> m_pMaterial;

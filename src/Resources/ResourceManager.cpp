@@ -354,7 +354,7 @@ std::shared_ptr<GraphicsObject> ResourceManager::loadGraphicsObject(const std::s
 
 		if (model == nullptr)
 		{
-			LOG_ERROR("Failed load OBJ file: {0}", relativePath);
+			LOG_WARN("Failed load OBJ file: {0}", relativePath);
 			return nullptr;
 		}
 		else

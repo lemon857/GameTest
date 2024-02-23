@@ -10,9 +10,8 @@
 #include "EngineCore/System/ShadersSettings.h"
 
 #include <glm/gtc/matrix_transform.hpp>
-#include <iostream>
 
-#define ADDITION_SCALE_HIGHLIGHT 1.1f
+#define ADDITION_SCALE_HIGHLIGHT 1.2f
 
 Highlight::Highlight(std::shared_ptr<RenderEngine::Material> material, bool isActive, bool mode, glm::vec3 color)
 	: IComponent()
@@ -93,11 +92,13 @@ void Highlight::render(RenderEngine::ShaderProgram* shader)
 		m_pMaterial->set_model_matrix(model);
 		m_pMaterial->get_shader_ptr()->setVec4(SS_COLOR_PROP_NAME, glm::vec4(m_color, 1.f));
 
+		RenderEngine::Renderer::setStencilTest(true);
 		RenderEngine::Renderer::setStencilMask(false);
 		RenderEngine::Renderer::setDepthTest(false);
 
 		RenderEngine::Renderer::drawTriangles(*obj->vertex_array, *obj->index_buffer);
 
+		RenderEngine::Renderer::setStencilTest(false);
 		RenderEngine::Renderer::setStencilMask(true);
 		RenderEngine::Renderer::setDepthTest(true);
 	}

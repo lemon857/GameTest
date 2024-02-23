@@ -175,7 +175,7 @@ namespace GUI
 					if (cur->get_layer() > select->get_layer() && cur->is_clickable()) select = cur;
 				}
 				else if (cur->is_clickable()) select = cur;
-				m_isFocus = true;
+				if (cur->get_focusable()) m_isFocus = true;
 			}
 		}
 		if (select != nullptr)

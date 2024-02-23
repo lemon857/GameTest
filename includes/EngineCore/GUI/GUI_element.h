@@ -47,6 +47,7 @@ namespace GUI
 			, m_isActive(true)
 			, m_isFocused(false)
 			, m_isClickable(false)
+			, m_isFocusable(true)
 			, m_layer(0)
 		{
 		}
@@ -68,6 +69,7 @@ namespace GUI
 
 
 		void set_focus(const bool state) { m_isFocused = state; }
+		void set_focusable(const bool state) { m_isFocusable = state; }
 		
 		void switch_active() { m_isActive = !m_isActive; set_tree_active(m_isActive); };
 
@@ -78,7 +80,13 @@ namespace GUI
 		virtual void set_position(glm::vec2 pos) { m_position = pos; set_tree_pos(pos); }
 		virtual void set_scale(glm::vec2 scale) { m_scale = scale; }
 
-		GUI_element* add_tree_element(GUI_element* element) { m_tree.push_back(element); set_tree_active(m_isActive); return std::move(element); }
+		GUI_element* add_tree_element(GUI_element* element) 
+		{
+			m_tree.push_back(element); 
+			set_tree_active(m_isActive); 
+			set_tree_focusable(m_isFocusable); 
+			return std::move(element);
+		}
 
 		void set_tree_layer(float layer)
 		{
@@ -100,6 +108,12 @@ namespace GUI
 			{
 				i->set_position(pos);
 			}
+		}void set_tree_focusable(const bool state)
+		{
+			for (auto& i : m_tree)
+			{
+				i->set_focusable(state);
+			}
 		}
 
 		void set_position_p(glm::vec2 pos) { m_position_p = pos; }
@@ -118,6 +132,7 @@ namespace GUI
 		std::string get_name() { return m_name; }
 
 		bool get_active() { return m_isActive; }
+		bool get_focusable () { return m_isFocusable; }
 		bool get_focus() { return m_isFocused; }
 		bool is_clickable () { return m_isClickable; }
 
@@ -137,6 +152,7 @@ namespace GUI
 		bool m_isActive;
 
 		bool m_isClickable;
+		bool m_isFocusable;
 
 		float m_layer;
 

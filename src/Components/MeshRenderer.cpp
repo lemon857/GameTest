@@ -2,6 +2,7 @@
 
 #include "EngineCore/IGameObject.h"
 #include "EngineCore/Components/Transform.h"
+#include "EngineCore/Components/Highlight.h"
 #include "EngineCore/Renderer/VertexArray.h"
 #include "EngineCore/Renderer/VertexBuffer.h"
 #include "EngineCore/Renderer/VertexBufferLayout.h"
@@ -89,21 +90,19 @@ void MeshRenderer::render(RenderEngine::ShaderProgram* shader)
 
     m_pMaterial->use();
     m_pMaterial->set_model_matrix(model);
-
-    if (shader != nullptr)
+    
+    if (m_targetObj->getComponent<Highlight>() != nullptr)
     {
-        float add = 1.1f;
-        glm::mat4 scaleMat1(
-            scale[0] * add, 0, 0, 0,
-            0, scale[1] * add, 0, 0,
-            0, 0, scale[2] * add, 0,
-            0, 0, 0, 1);
-        glm::mat4 model1 = translateMat * rotateXmat * rotateYmat * rotateZmat * scaleMat1;
-
-        shader->use();
-        shader->setMatrix4(SS_MODEL_MATRIX_NAME, model1);
+        if (m_targetObj->getComponent<Highlight>()->get_active())
+        {
+            RenderEngine::Renderer::setStencilTest(true);
+            RenderEngine::Renderer::setStencilMask(true);
+            RenderEngine::Renderer::drawTriangles(*m_obj->vertex_array, *m_obj->index_buffer);
+            RenderEngine::Renderer::setStencilTest(false);
+            RenderEngine::Renderer::setStencilMask(false);
+            return;
+        }
     }
-
     RenderEngine::Renderer::drawTriangles(*m_obj->vertex_array, *m_obj->index_buffer);
 }
 

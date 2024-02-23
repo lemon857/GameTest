@@ -10,6 +10,8 @@
 #include "EngineCore/Renderer/Renderer.h"
 #include "EngineCore/Renderer3D/GraphicsObject.h"
 
+#include "EngineCore/System/ShadersSettings.h"
+
 #include <glm/vec3.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -29,7 +31,7 @@ MeshRenderer::~MeshRenderer()
     m_obj.reset();
 }
 
-void MeshRenderer::render()
+void MeshRenderer::render(RenderEngine::ShaderProgram* shader)
 {
     if (m_obj == nullptr) return;
 	Transform* transform = m_targetObj->getComponent<Transform>();
@@ -87,6 +89,20 @@ void MeshRenderer::render()
 
     m_pMaterial->use();
     m_pMaterial->set_model_matrix(model);
+
+    if (shader != nullptr)
+    {
+        float add = 1.1f;
+        glm::mat4 scaleMat1(
+            scale[0] * add, 0, 0, 0,
+            0, scale[1] * add, 0, 0,
+            0, 0, scale[2] * add, 0,
+            0, 0, 0, 1);
+        glm::mat4 model1 = translateMat * rotateXmat * rotateYmat * rotateZmat * scaleMat1;
+
+        shader->use();
+        shader->setMatrix4(SS_MODEL_MATRIX_NAME, model1);
+    }
 
     RenderEngine::Renderer::drawTriangles(*m_obj->vertex_array, *m_obj->index_buffer);
 }

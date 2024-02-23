@@ -39,5 +39,5 @@ void Particle::update(const double delta)
 void Particle::render()
 {
 	if (m_isDestroyed) return;
-	renderComponents();
+	renderComponents(nullptr);
 }

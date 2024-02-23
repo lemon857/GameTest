@@ -10,6 +10,7 @@ namespace RenderEngine
 	class VertexArray;
 	class IndexBuffer;
 	class Material;
+	class ShaderProgram;
 }
 
 struct GraphicsObject;
@@ -22,7 +23,7 @@ public:
 		std::shared_ptr<RenderEngine::Material> pMaterial);
 	~MeshRenderer();
 
-	void render() override;
+	void render(RenderEngine::ShaderProgram* shader) override;
 
 	void update_object(std::shared_ptr<GraphicsObject> obj);
 

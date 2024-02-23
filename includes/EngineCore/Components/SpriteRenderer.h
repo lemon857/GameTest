@@ -24,7 +24,7 @@ public:
 
 	void setSubTexture(std::string subTexture);
 
-	void render() override;
+	void render(RenderEngine::ShaderProgram* shader) override;
 
 	std::shared_ptr<RenderEngine::Material> get_material_ptr();
 private:

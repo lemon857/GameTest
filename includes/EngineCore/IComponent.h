@@ -3,13 +3,18 @@
 
 class IGameObject;
 
+namespace RenderEngine
+{
+	class ShaderProgram;
+}
+
 class IComponent
 {
 public:
 	IComponent(const IComponent&) = delete;
 	IComponent& operator=(const IComponent&) = delete;
 
-	virtual void render() {};
+	virtual void render(RenderEngine::ShaderProgram* shader) {};
 
 	//virtual void update(const double delta) {};
 

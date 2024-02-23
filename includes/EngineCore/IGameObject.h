@@ -7,12 +7,19 @@
 #include "EngineCore/IComponent.h"
 #include "EngineCore/System/List.h"
 
+namespace RenderEngine
+{
+	class ShaderProgram;
+}
+
 class IGameObject
 {
 public:
 	virtual void update(const double delta) { updateComponents(delta); }
 
-	virtual void render() { renderComponents(); }
+	virtual void render() { renderComponents(nullptr); }
+
+	virtual void render(RenderEngine::ShaderProgram* shader) { renderComponents(shader); }
 
 	std::string get_name() { return m_name; }
 
@@ -73,14 +80,14 @@ protected:
 	{
 		for (auto curCom : m_components)
 		{
-			curCom.second->render();
+			curCom.second->render(nullptr);
 		}
 	};
-	void renderComponents()
+	void renderComponents(RenderEngine::ShaderProgram* shader)
 	{
 		for (int i = 0; i < m_com_render.size(); i++)
 		{
-			m_com_render.at(i)->render();
+			m_com_render.at(i)->render(shader);
 		}
 	};
 

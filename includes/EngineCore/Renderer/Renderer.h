@@ -35,6 +35,8 @@ namespace RenderEngine
 		static void setClearColor(const float r, const float g, const float b, const float a = 1.0f);
 		static void setDepthTest(const bool enable);
 		static void setBlend (const bool enable);
+		static void setStencilTest(const bool enable);
+		static void setStencilMask(const bool enable);
 		static void clear();
 		static void clear(const bool iscolor);
 		static void setViewport(unsigned int width, unsigned int height, unsigned int offsetLeft = 0, unsigned int offsetBottom = 0);

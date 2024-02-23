@@ -304,6 +304,7 @@ int Window::init()
 
     RenderEngine::Renderer::setClearColor(0, 0, 0, 1);
     RenderEngine::Renderer::setDepthTest(true);
+    RenderEngine::Renderer::setStencilTest(true);
 
 	return 0;
 }

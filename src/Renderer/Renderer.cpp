@@ -91,9 +91,38 @@ namespace RenderEngine
 		}
 		//s_enable_blend = enable;
 	}
+	void Renderer::setStencilTest(const bool enable)
+	{
+		//if (s_enable_blend == enable) return;
+		if (enable)
+		{
+			glDepthFunc(GL_LESS);
+			glEnable(GL_STENCIL_TEST);
+			glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+			glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+		}
+		else
+		{
+			glDisable(GL_STENCIL_TEST);
+		}
+		//s_enable_blend = enable;
+	}
+	void Renderer::setStencilMask(const bool enable)
+	{
+		if (enable)
+		{
+			glStencilFunc(GL_ALWAYS, 1, 0xFF);
+			glStencilMask(0xFF);
+		}
+		else
+		{
+			glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+			glStencilMask(0x00);
+		}
+	}
 	void Renderer::clear()
 	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	}
 	void Renderer::clear(const bool iscolor)
 	{

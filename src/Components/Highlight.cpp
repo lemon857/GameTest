@@ -24,7 +24,7 @@ Highlight::Highlight(std::shared_ptr<RenderEngine::Material> material, bool isAc
 {
 }
 
-void Highlight::render()
+void Highlight::render(RenderEngine::ShaderProgram* shader)
 {
 	if (!m_isActive) return;
 	Transform* transform = m_targetObj->getComponent<Transform>();
@@ -91,9 +91,14 @@ void Highlight::render()
 
 		m_pMaterial->use();
 		m_pMaterial->set_model_matrix(model);
+		m_pMaterial->get_shader_ptr()->setVec4(SS_COLOR_PROP_NAME, glm::vec4(m_color, 1.f));
 
+		RenderEngine::Renderer::setStencilMask(false);
 		RenderEngine::Renderer::setDepthTest(false);
+
 		RenderEngine::Renderer::drawTriangles(*obj->vertex_array, *obj->index_buffer);
+
+		RenderEngine::Renderer::setStencilMask(true);
 		RenderEngine::Renderer::setDepthTest(true);
 	}
 	else

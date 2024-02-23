@@ -13,6 +13,7 @@ namespace RenderEngine
 	{
 	public:
 		Skybox(std::vector<std::string> faces, ShaderProgram* shader);
+		Skybox(Texture3D* texture, ShaderProgram* shader);
 		~Skybox();
 
 		void render(glm::mat4& prj);

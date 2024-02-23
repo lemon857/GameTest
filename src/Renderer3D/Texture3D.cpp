@@ -23,6 +23,7 @@ RenderEngine::Texture3D::Texture3D(std::vector<std::string> faces_rel_path)
 		{
 			LOG_ERROR("Loading textuer failed: {0}", faces_rel_path[i]);
 		}
+		loaders::clear_image(data);
 	}
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

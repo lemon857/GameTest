@@ -3,6 +3,7 @@
 #include "EngineCore/Renderer/Texture2D.h"
 #include "EngineCore/Renderer/Material.h"
 #include "EngineCore/Renderer3D/GraphicsObject.h"
+#include "EngineCore/Renderer3D/Texture3D.h"
 #include "EngineCore/Renderer/ShaderProgramLayout.h"
 #include "EngineCore/System/Log.h"
 #include "EngineCore/Resources/Scene.h"
@@ -26,6 +27,7 @@
 
 ResourceManager::ShaderProgramsMap ResourceManager::m_ShaderPrograms;
 ResourceManager::TexturesMap ResourceManager::m_textures;
+ResourceManager::CubeTexturesMap ResourceManager::m_cube_textures;
 ResourceManager::MaterialsMap ResourceManager::m_materials;
 ResourceManager::GrapicsObjectsMap ResourceManager::m_graphics_objects;
 ResourceManager::FontsMap ResourceManager::m_fonts_map;
@@ -118,6 +120,23 @@ bool ResourceManager::load_JSON_resources(const std::string & JSONpath)
 			}
 
 			loadTextureAtlas(name, subTextures, path, width, height, subTextureWidth, subTextureHeight);
+		}
+	}
+	auto atlases3DIt = doc.FindMember("texture3DAtlases");
+	if (atlases3DIt != doc.MemberEnd())
+	{
+		for (const auto& currentAtlas3D : atlases3DIt->value.GetArray())
+		{
+			const std::string name = currentAtlas3D["name"].GetString();
+			std::vector<std::string> faces;
+			faces.push_back(currentAtlas3D["right_filePath"].GetString());
+			faces.push_back(currentAtlas3D["left_filePath"].GetString());
+			faces.push_back(currentAtlas3D["top_filePath"].GetString());
+			faces.push_back(currentAtlas3D["bottom_filePath"].GetString());
+			faces.push_back(currentAtlas3D["front_filePath"].GetString());
+			faces.push_back(currentAtlas3D["back_filePath"].GetString());
+
+			loadTexture3D(name, faces);
 		}
 	}
 	auto materialsIt = doc.FindMember("materials");
@@ -507,6 +526,22 @@ std::shared_ptr<RenderEngine::Texture2D> ResourceManager::getTexture(const std::
 		return it->second;
 	}
 	LOG_ERROR("Can't find texture: {0}", textureName);
+	return nullptr;
+}
+std::shared_ptr<RenderEngine::Texture3D> ResourceManager::loadTexture3D(const std::string& textureName, const std::vector<std::string>& texturePath)
+{
+	std::shared_ptr<RenderEngine::Texture3D> newTexture = m_cube_textures.emplace(textureName, std::make_shared<RenderEngine::Texture3D>(texturePath)).first->second;
+
+	return newTexture;
+}
+std::shared_ptr<RenderEngine::Texture3D> ResourceManager::getTexture3D(const std::string& textureName)
+{
+	CubeTexturesMap::const_iterator it = m_cube_textures.find(textureName);
+	if (it != m_cube_textures.end())
+	{
+		return it->second;
+	}
+	LOG_ERROR("Can't find texture3D: {0}", textureName);
 	return nullptr;
 }
 std::shared_ptr<RenderEngine::Material> ResourceManager::loadMaterial(const std::string& materialName, const std::string& textureName, const std::string& shaderName)

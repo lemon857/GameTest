@@ -24,7 +24,7 @@ namespace RenderEngine
 	class ShaderProgram;
 	class ShaderProgramLayout;
 	class Texture2D;
-	class Animator;
+	class Texture3D;
 	class GraphicsObject;
 	class Material;
 }
@@ -85,6 +85,11 @@ namespace RenderEngine
 			const std::string& texturePath);
 		static std::shared_ptr<RenderEngine::Texture2D> getTexture(const std::string& textureName);
 
+		static std::shared_ptr<RenderEngine::Texture3D>  loadTexture3D(
+			const std::string& textureName,
+			const std::vector<std::string>& texturePath);
+		static std::shared_ptr<RenderEngine::Texture3D> getTexture3D(const std::string& textureName);
+
 		static std::shared_ptr<RenderEngine::Material>  loadMaterial(
 			const std::string& materialName,
 			const std::string& textureName,
@@ -137,6 +142,9 @@ namespace RenderEngine
 
 		typedef std::map<const std::string, std::shared_ptr<RenderEngine::Texture2D>> TexturesMap;
 		static TexturesMap m_textures;
+
+		typedef std::map<const std::string, std::shared_ptr<RenderEngine::Texture3D>> CubeTexturesMap;
+		static CubeTexturesMap m_cube_textures;
 
 		typedef std::map<const std::string, std::shared_ptr<RenderEngine::Material>> MaterialsMap;
 		static MaterialsMap m_materials;

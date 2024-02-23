@@ -1,9 +1,11 @@
  #pragma once
 
-#include <glad/glad.h>
 #include <string>
 #include <map>
 #include <glm/vec2.hpp>
+
+typedef unsigned int GLuint;
+typedef unsigned int GLenum;
 
 namespace RenderEngine 
 {
@@ -25,8 +27,7 @@ namespace RenderEngine
 			{	}
 		};
 
-		Texture2D(const GLuint width, const GLuint height, unsigned char* data, const unsigned int channels = 4, 
-			const GLenum filter = GL_LINEAR, const GLenum wrapMode = GL_CLAMP_TO_EDGE);
+		Texture2D(const GLuint width, const GLuint height, unsigned char* data, const unsigned int channels = 4);
 		~Texture2D();
 
 		Texture2D() = delete;

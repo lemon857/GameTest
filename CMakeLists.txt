@@ -25,6 +25,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/EngineCore/IComponent.h
 	includes/EngineCore/IGameObject.h
 	includes/EngineCore/IGame.h
+
 	includes/EngineCore/System/Event.h
 	includes/EngineCore/System/Keys.h
 	includes/EngineCore/System/Input.h
@@ -83,10 +84,10 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Renderer/ShaderProgramLayout.h
 	includes/EngineCore/Renderer/Circle.h
 	
-	includes/EngineCore/Physics/PhysicsEngine.h
-	includes/EngineCore/Physics/Collider.h
-	includes/EngineCore/Physics/MoveController.h		
-	includes/EngineCore/Physics/Ray.h	
+	#includes/EngineCore/Physics/PhysicsEngine.h
+	#includes/EngineCore/Physics/Collider.h
+	#includes/EngineCore/Physics/MoveController.h		
+	#includes/EngineCore/Physics/Ray.h	
 		
 	includes/EngineCore/Sound/SoundEngine.h	
 	includes/EngineCore/Sound/Sound.h	
@@ -96,6 +97,8 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Renderer3D/GraphicsObject.h
 	includes/EngineCore/Renderer3D/ParticleSystem.h
 	includes/EngineCore/Renderer3D/Particle.h
+	includes/EngineCore/Renderer3D/Texture3D.h
+	includes/EngineCore/Renderer3D/Skybox.h
 	
 	includes/EngineCore/System/ShadersSettings.h
 	
@@ -109,7 +112,6 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Meshes/EmptyObject.h
 	includes/EngineCore/Meshes/Plane.h	
 	includes/EngineCore/Meshes/Grid.h	
-	includes/EngineCore/Meshes/Skybox.h	
   
 	includes/EngineCore/Light/DirectionalLight.h
 	includes/EngineCore/Light/PointerLight.h
@@ -166,11 +168,13 @@ set(ENGINE_PRIVATE_SOURCES
 	
 	src/Renderer3D/ParticleSystem.cpp
 	src/Renderer3D/Particle.cpp
+	src/Renderer3D/Texture3D.cpp
+	src/Renderer3D/Skybox.cpp
 
-	src/Physics/PhysicsEngine.cpp
-	src/Physics/Collider.cpp
-	src/Physics/MoveController.cpp
-	src/Physics/Ray.cpp
+	#src/Physics/PhysicsEngine.cpp
+	#src/Physics/Collider.cpp
+	#src/Physics/MoveController.cpp
+	#src/Physics/Ray.cpp
 
 	src/Sound/SoundEngine.cpp
 	src/Sound/Sound.cpp	
@@ -194,7 +198,6 @@ set(ENGINE_PRIVATE_SOURCES
 	src/Meshes/GraphicsModel.cpp
 	src/Meshes/Plane.cpp
 	src/Meshes/Grid.cpp
-	src/Meshes/Skybox.cpp
 		
 	src/Light/DirectionalLight.cpp
 	src/Light/PointerLight.cpp

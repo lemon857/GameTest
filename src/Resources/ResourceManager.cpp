@@ -484,7 +484,7 @@ std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTexture(const std:
 	int channels = 0;
 	int width = 0;
 	int height = 0;
-	unsigned char* pixels = loaders::load_image_png(std::string(m_path + "/" + texturePath).c_str(), &width, &height, &channels);
+	unsigned char* pixels = loaders::load_image(std::string(m_path + "/" + texturePath).c_str(), &width, &height, &channels);
 
 	if (!pixels)
 	{
@@ -493,7 +493,7 @@ std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTexture(const std:
 	}
 
 	std::shared_ptr<RenderEngine::Texture2D> newTexture = m_textures.emplace(textureName,
-		std::make_shared<RenderEngine::Texture2D>(width, height, pixels, channels, GL_NEAREST, GL_CLAMP_TO_EDGE)).first->second;
+		std::make_shared<RenderEngine::Texture2D>(width, height, pixels, channels)).first->second;
 
 	loaders::clear_image(pixels);
 

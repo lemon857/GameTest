@@ -184,7 +184,7 @@ int Window::init()
     {
         GLFWimage icon;
         int channels = 0;
-        icon.pixels = loaders::load_image_png(m_path_icon_png.c_str(), &icon.width, &icon.height, &channels, false);
+        icon.pixels = loaders::load_image(m_path_icon_png.c_str(), &icon.width, &icon.height, &channels, false);
 
         if (!icon.pixels) {
             LOG_WARN("Error loading icon window");

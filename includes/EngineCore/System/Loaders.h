@@ -42,7 +42,8 @@ namespace loaders
 
 	ErrorCode load_ini(const std::string& INIpath, INIdata& data, const bool isWrite);
 
-	unsigned char* load_image_png(const char* fullpath, int* width, int* height, int* channels, bool flip = true);
+	// support .jpg .png
+	unsigned char* load_image(const char* fullpath, int* width, int* height, int* channels, bool flip = true);
 
 	int save_image_png(unsigned char* pixels, const char* fullpath, int width, int height, int channels);
 

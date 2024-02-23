@@ -17,6 +17,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION 
 #define STBI_ONLY_PNG
+#define STBI_ONLY_JPEG
 #include "EngineCore/Resources/stb_image.h"
 #include "EngineCore/Resources/stb_image_write.h"
 
@@ -220,7 +221,7 @@ namespace loaders
 		}
 	}
 
-	unsigned char* load_image_png(const char* fullpath, int* width, int* height, int* channels, bool flip)
+	unsigned char* load_image(const char* fullpath, int* width, int* height, int* channels, bool flip)
 	{
 		stbi_set_flip_vertically_on_load(flip);
 		return stbi_load(fullpath, width, height, channels, 0);

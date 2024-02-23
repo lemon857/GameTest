@@ -1,9 +1,10 @@
 #include "EngineCore/Renderer/Texture2D.h"
 
+#include <glad/glad.h>
+
 namespace RenderEngine 
 {
-	Texture2D::Texture2D(const GLuint width, const GLuint height, unsigned char* data, const unsigned int channels,
-		const GLenum filter, const GLenum wrapMode)
+	Texture2D::Texture2D(const GLuint width, const GLuint height, unsigned char* data, const unsigned int channels)
 		: m_width(width)
 		, m_height(height)
 	{
@@ -28,10 +29,10 @@ namespace RenderEngine
 		//glTextureStorage2D(GL_TEXTURE_2D, mip_levels, m_mode, width, height);	for OpenGL 4.6
 		glTexImage2D(GL_TEXTURE_2D, 0, m_mode, width, height, 0, m_mode, GL_UNSIGNED_BYTE, data);
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		//glGenerateTextureMipmap(GL_TEXTURE_2D); for OpenGL 4.6
 

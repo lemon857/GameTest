@@ -94,13 +94,13 @@ void Highlight::render(RenderEngine::ShaderProgram* shader)
 
 		RenderEngine::Renderer::setStencilTest(true);
 		RenderEngine::Renderer::setStencilMask(false);
-		RenderEngine::Renderer::setDepthTest(false);
+		glDepthFunc(GL_ALWAYS);
 
 		RenderEngine::Renderer::drawTriangles(*obj->vertex_array, *obj->index_buffer);
 
 		RenderEngine::Renderer::setStencilTest(false);
 		RenderEngine::Renderer::setStencilMask(true);
-		RenderEngine::Renderer::setDepthTest(true);
+		glDepthFunc(GL_LESS);
 	}
 	else
 	{

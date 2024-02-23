@@ -120,6 +120,18 @@ namespace RenderEngine
 			glStencilMask(0x00);
 		}
 	}
+	void Renderer::setCullFaces(const bool enable)
+	{
+		if (enable)
+		{
+			glEnable(GL_CULL_FACE);
+			glCullFace(GL_BACK);
+		}
+		else
+		{
+			glDisable(GL_CULL_FACE);
+		}
+	}
 	void Renderer::clear()
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);

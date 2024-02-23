@@ -91,6 +91,11 @@ bool Window::is_fullscreen()
     return glfwGetWindowMonitor(m_pWindow) != nullptr;
 }
 
+void Window::set_vsync(bool enable)
+{
+    glfwSwapInterval(enable ? 1 : 0);
+}
+
 glm::vec2 Window::get_current_cursor_position() const
 {
     double x_pos, y_pos;
@@ -147,6 +152,7 @@ int Window::init()
         LOG_CRIT("Glad load failed");
         return -1;
     }
+
     // Debug OpenGL
     //glEnable(GL_DEBUG_OUTPUT);
     /*glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);

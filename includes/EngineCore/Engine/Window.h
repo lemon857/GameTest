@@ -35,6 +35,8 @@ public:
 	void set_fullscreen(bool isFullscreen);
 	bool is_fullscreen();
 
+	void set_vsync(bool enable);
+
 	glm::ivec2& get_size() { return m_data.window_size; }
 	glm::ivec2& get_pos() { return m_data.window_position; }
 	bool is_maximized() { return m_data.maximized; }

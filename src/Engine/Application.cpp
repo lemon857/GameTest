@@ -83,7 +83,7 @@ int Application::start(glm::ivec2& window_size, const char* title, const char* j
 //            on_update(sum_time);
 //#endif
             // tps counter
-            if (m_ticks < 5)
+            if (m_ticks < 10)
             {
                 m_ticks++;
                 m_time_tick += sum_time;
@@ -105,7 +105,7 @@ int Application::start(glm::ivec2& window_size, const char* title, const char* j
         m_pWindow->on_update();    
 
         // fps counter
-        if (m_frames < 5)
+        if (m_frames < 100)
         {
             m_frames++;
             m_time_frame += duration;

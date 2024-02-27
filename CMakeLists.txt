@@ -116,7 +116,7 @@ set(ENGINE_PRIVATE_INCLUDES
 	includes/EngineCore/Light/DirectionalLight.h
 	includes/EngineCore/Light/PointerLight.h
 
-	includes/EngineCore/Network/WinSock.h
+	#includes/EngineCore/Network/WinSock.h
 )
 
 set(ENGINE_PRIVATE_SOURCES
@@ -219,7 +219,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/GUI/AlertSystem.cpp
 	src/GUI/Bar.cpp
 
-	src/Network/WinSock.cpp
+	#src/Network/WinSock.cpp
 )
 
 

@@ -33,7 +33,12 @@ namespace RenderEngine
 		void set_samples_count(unsigned int samples);
 
 		bool get_active() { return m_isActive; }
-		FrameBuffer* get_fbo() { return m_fbo; }
+
+		unsigned char* get_screenshot(int window_width, int window_height);
+
+		// for reading pixels in fbo
+		void bind();
+		void unbind();
 	private:
 		int m_cur_effect;
 

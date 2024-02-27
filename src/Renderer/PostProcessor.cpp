@@ -63,6 +63,8 @@ void RenderEngine::PostProcessor::end_render()
 
 	if (m_activeMSAA)
 	{
+		m_fbo->bind();
+		RenderEngine::Renderer::clear(false);
 		m_fbo_ms->use(m_fbo->getID());
 	}
 
@@ -126,4 +128,16 @@ void RenderEngine::PostProcessor::set_effect(int num)
 void RenderEngine::PostProcessor::set_samples_count(unsigned int samples)
 {
 	m_fbo_ms->set_samples_count(samples);
+}
+void RenderEngine::PostProcessor::bind()
+{
+	m_fbo->bind();
+}
+void RenderEngine::PostProcessor::unbind()
+{
+	m_fbo->unbind();
+}
+unsigned char* RenderEngine::PostProcessor::get_screenshot(int window_width, int window_height)
+{
+	return m_fbo->get_screenshot(window_width, window_height);
 }

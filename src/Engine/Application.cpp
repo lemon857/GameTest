@@ -54,6 +54,8 @@ int Application::start(glm::ivec2& window_size, const char* title, const char* j
     
     delete m_watch;
 
+    m_count_fps_check = 50;
+    m_count_tps_check = 10;
     m_current_tps = 0;
     m_current_fps = 0;
     m_time_tick = 0;
@@ -83,7 +85,7 @@ int Application::start(glm::ivec2& window_size, const char* title, const char* j
 //            on_update(sum_time);
 //#endif
             // tps counter
-            if (m_ticks < 10)
+            if (m_ticks < m_count_tps_check)
             {
                 m_ticks++;
                 m_time_tick += sum_time;
@@ -105,7 +107,7 @@ int Application::start(glm::ivec2& window_size, const char* title, const char* j
         m_pWindow->on_update();    
 
         // fps counter
-        if (m_frames < 100)
+        if (m_frames < m_count_fps_check)
         {
             m_frames++;
             m_time_frame += duration;

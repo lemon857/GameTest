@@ -68,6 +68,9 @@ protected:
 	int m_current_fps;
 	int m_current_tps;
 
+	int m_count_fps_check;
+	int m_count_tps_check;
+
 	void set_max_tps(double max);
 private:
 	void init_system_events();

@@ -29,6 +29,7 @@ namespace RenderEngine
 
 		void on_resize(int window_width, int window_height);
 
+		GLuint getID() { return m_ID; }
 	private:
 		bool m_is_init;
 
@@ -36,6 +37,43 @@ namespace RenderEngine
 		GLuint m_ID_tex;
 		GLuint m_ID_tex_depth;
 		GLuint m_ID_tex_neff;
+		GLuint m_ID_rbo;
+	};
+	class FrameBufferMultuSampled
+	{
+	public:
+		FrameBufferMultuSampled();
+		~FrameBufferMultuSampled();
+
+		FrameBufferMultuSampled(const FrameBufferMultuSampled&) = delete;
+		FrameBufferMultuSampled(FrameBufferMultuSampled&& FrameBuffer) noexcept;
+		FrameBufferMultuSampled& operator=(const FrameBufferMultuSampled&) = delete;
+		FrameBufferMultuSampled& operator=(FrameBufferMultuSampled&& FrameBuffer) noexcept;
+
+		bool init(int window_width, int window_height, int samples);
+
+		void use(GLuint id);
+		void bind();
+		void unbind();
+
+		void bind_texture();
+		void bind_texture_depth();
+		void unbind_textures();
+
+		void on_resize(int window_width, int window_height);
+
+		void set_samples_count(unsigned int samples);
+	private:
+		unsigned int m_samples;
+
+		unsigned int m_width;
+		unsigned int m_height;
+
+		bool m_is_init;
+
+		GLuint m_ID;
+		GLuint m_ID_tex;
+		GLuint m_ID_tex_depth;
 		GLuint m_ID_rbo;
 	};
 }

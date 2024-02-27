@@ -132,6 +132,17 @@ namespace RenderEngine
 			glDisable(GL_CULL_FACE);
 		}
 	}
+	void Renderer::setActiveMultisampling(const bool enable)
+	{
+		if (enable)
+		{
+			glEnable(GL_MULTISAMPLE);
+		}
+		else
+		{
+			glDisable(GL_MULTISAMPLE);
+		}
+	}
 	void Renderer::clear()
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);

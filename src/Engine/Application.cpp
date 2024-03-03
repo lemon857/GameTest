@@ -7,6 +7,8 @@
 #include "EngineCore/Sound/SoundEngine.h"
 #include "EngineCore/System/Input.h"
 
+#include <thread>
+
 Application::Application()
 {}
 

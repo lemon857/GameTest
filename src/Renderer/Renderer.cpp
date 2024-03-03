@@ -125,7 +125,7 @@ namespace RenderEngine
 		if (enable)
 		{
 			glEnable(GL_CULL_FACE);
-			glCullFace(GL_BACK);
+			//glCullFace(GL_BACK);
 		}
 		else
 		{

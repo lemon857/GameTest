@@ -11,6 +11,9 @@ namespace GUI
 		, m_slider(std::move(slider))
 		, m_min(min)
 		, m_max(max)
+		, is_pressed(false)
+		, m_load_callback(nullptr)
+		, m_slide_callback(nullptr)
 	{
 		m_isClickable = true;
 		m_position_p = pos;
@@ -71,6 +74,12 @@ namespace GUI
 			//LOG_INFO("[SLIDER] Val: {0}", m_value);
 		}
 	}
+	void Slider::set_active(const bool state)
+	{
+		m_isActive = state;
+		set_tree_active(state);
+		if (state && m_load_callback != nullptr) m_load_callback(m_value);
+	}
 	float Slider::value()
 	{
 		return m_value;
@@ -93,5 +102,9 @@ namespace GUI
 	void Slider::set_slide_callback(std::function<void(float)> callback)
 	{
 		m_slide_callback = callback;
+	}
+	void Slider::set_load_callback(std::function<void(float&)> callback)
+	{
+		m_load_callback = callback;
 	}
 }

@@ -3,7 +3,7 @@
 #include "EngineCore/Renderer/Line.h"
 #include "EngineCore/Renderer/Material.h"
 
-GUI::Bar::Bar(std::shared_ptr<RenderEngine::Material> pMaterial, 
+GUI::Bar::Bar(RenderEngine::Material* pMaterial, 
 	glm::vec2 pos_p, glm::vec2 scale_p, 
 	float size_line, double max_value,
 	glm::vec3 background_color, glm::vec3 foreground_color, std::string name)

@@ -41,7 +41,7 @@ void GUI::AlertSystem::addAlert(std::wstring message, std::string soundName)
 {
 	if (m_last == message) return;
 	if (m_pause_game != nullptr) *m_pause_game = true;
-	std::shared_ptr<LanguagePack> pack = ResourceManager::get_current_lang_pack();
+	LanguagePack* pack = ResourceManager::get_current_lang_pack();
 	Alert* a = new Alert;
 	a->button = new Button(new Sprite(ResourceManager::getMaterial(m_button_material), "static"),
 		glm::vec2(0.f), glm::vec2(0.f), pack->get("submit"),

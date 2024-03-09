@@ -10,9 +10,9 @@
 namespace GUI
 {
 	static unsigned int g_current_sprite_ID = 0;
-	Sprite::Sprite(std::shared_ptr<RenderEngine::Material> pMaterial, std::string initSubTexture, glm::vec2 pos, glm::vec2 scale, std::string name)
+	Sprite::Sprite(RenderEngine::Material* pMaterial, std::string initSubTexture, glm::vec2 pos, glm::vec2 scale, std::string name)
 		: GUI_element(name == "default" ? "Sprite" + std::to_string(g_current_sprite_ID++) : name, pMaterial)
-		, m_vertexArray(std::make_shared<RenderEngine::VertexArray>())
+		, m_vertexArray(new RenderEngine::VertexArray())
 		, m_vertexCoordsBuffer(new RenderEngine::VertexBuffer())
 		, m_textureCoordsBuffer(new RenderEngine::VertexBuffer())
 		, m_indexBuffer(new RenderEngine::IndexBuffer())
@@ -60,10 +60,10 @@ namespace GUI
 
 	}
 
-	Sprite::Sprite(std::shared_ptr<RenderEngine::ShaderProgram> pShader, std::shared_ptr<RenderEngine::Texture2D> pTexture,
+	Sprite::Sprite(RenderEngine::ShaderProgram* pShader, RenderEngine::Texture2D* pTexture,
 		std::string initSubTexture, glm::vec2 pos, glm::vec2 scale, std::string name)
-		: GUI_element(name == "default" ? "Sprite" + std::to_string(g_current_sprite_ID++) : name, std::make_shared<RenderEngine::Material>(pShader, pTexture))
-		, m_vertexArray(std::make_shared<RenderEngine::VertexArray>())
+		: GUI_element(name == "default" ? "Sprite" + std::to_string(g_current_sprite_ID++) : name, new RenderEngine::Material(pShader, pTexture))
+		, m_vertexArray(new RenderEngine::VertexArray())
 		, m_vertexCoordsBuffer(new RenderEngine::VertexBuffer())
 		, m_textureCoordsBuffer(new RenderEngine::VertexBuffer())
 		, m_indexBuffer(new RenderEngine::IndexBuffer())
@@ -115,7 +115,7 @@ namespace GUI
 		delete m_indexBuffer;
 		delete m_textureCoordsBuffer;
 		delete m_vertexCoordsBuffer;
-		m_vertexArray = nullptr;
+		delete m_vertexArray;
 	}
 
 	void Sprite::setSubTexture(std::string subTexture)

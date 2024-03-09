@@ -13,7 +13,7 @@
 
 #define ADDITION_SCALE_HIGHLIGHT 1.2f
 
-Highlight::Highlight(std::shared_ptr<RenderEngine::Material> material, bool isActive, bool mode, glm::vec3 color)
+Highlight::Highlight(RenderEngine::Material* material, bool isActive, bool mode, glm::vec3 color)
 	: IComponent()
 	, m_line(std::make_unique<RenderEngine::Line>(material))
 	, m_color(color)
@@ -48,7 +48,7 @@ void Highlight::render(RenderEngine::ShaderProgram* shader)
 
 		if (renderer == nullptr) return;
 
-		std::shared_ptr<GraphicsObject> obj = renderer->get_object();
+		const GraphicsObject* obj = renderer->get_object();
 
 		if (obj == nullptr) return;
 

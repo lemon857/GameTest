@@ -26,7 +26,7 @@ namespace GUI
 	{
 	public:
 		BindButton(Sprite* face, glm::vec2 pos, glm::vec2 scale,
-			 std::shared_ptr<RenderEngine::ShaderProgram> textShader, std::shared_ptr<Font> font, glm::vec3 textColor, KeyCode* targetBind, std::string name = "default");
+			 RenderEngine::ShaderProgram* textShader, Font* font, glm::vec3 textColor, KeyCode* targetBind, std::string name = "default");
 		~BindButton();
 
 		void on_press() override;

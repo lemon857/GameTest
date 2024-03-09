@@ -8,7 +8,7 @@
 
 namespace RenderEngine
 {
-	Material::Material(std::shared_ptr<ShaderProgram> pShaderProgram, std::shared_ptr<Texture2D> pTexture)
+	Material::Material(ShaderProgram* pShaderProgram, Texture2D* pTexture)
 		: m_pShaderProgram(std::move(pShaderProgram))
 		, m_pTexture(std::move(pTexture))
 	{
@@ -108,19 +108,19 @@ namespace RenderEngine
 	{
 		m_pShaderProgram->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, vp);
 	}
-	std::shared_ptr<Texture2D> Material::get_texture_ptr()
+	Texture2D* Material::get_texture_ptr()
 	{
 		return m_pTexture;
 	}
-	std::shared_ptr<ShaderProgram> Material::get_shader_ptr()
+	ShaderProgram* Material::get_shader_ptr()
 	{
 		return m_pShaderProgram;
 	}
-	void Material::set_texture(std::shared_ptr<Texture2D> pTexture)
+	void Material::set_texture(Texture2D* pTexture)
 	{
 		m_pTexture = std::move(pTexture);
 	}
-	void Material::set_shader(std::shared_ptr<ShaderProgram> pShaderProgram)
+	void Material::set_shader(ShaderProgram* pShaderProgram)
 	{
 		m_pShaderProgram = std::move(pShaderProgram);
 

@@ -3,7 +3,6 @@
 #include "EngineCore/IGameObject.h"
 
 #include <string>
-#include <memory>
 
 namespace RenderEngine
 {
@@ -15,7 +14,7 @@ struct GraphicsObject;
 class GraphicsModel : public IGameObject
 {
 public:
-	GraphicsModel(std::shared_ptr<GraphicsObject> obj, std::shared_ptr<RenderEngine::Material> pMaterial);
+	GraphicsModel(GraphicsObject* obj, RenderEngine::Material* pMaterial);
 
 	// need additions
 	void reload();

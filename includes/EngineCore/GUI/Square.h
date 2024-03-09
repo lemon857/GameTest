@@ -17,7 +17,7 @@ namespace GUI
 	class Square : public GUI_element
 	{
 	public:
-		Square(std::shared_ptr<RenderEngine::Material> pMaterial, glm::vec2 pos, glm::vec2 scale);
+		Square(RenderEngine::Material* pMaterial, glm::vec2 pos, glm::vec2 scale);
 		~Square();
 
 		void on_render_prj(glm::mat4& prj) override;
@@ -26,7 +26,7 @@ namespace GUI
 	private:
 		glm::vec3 m_color;
 
-		std::shared_ptr<RenderEngine::VertexArray> m_vertexArray;
+		RenderEngine::VertexArray* m_vertexArray;
 		RenderEngine::VertexBuffer* m_vertexCoordsBuffer;
 		RenderEngine::IndexBuffer* m_indexBuffer;
 	};

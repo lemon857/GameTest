@@ -2,7 +2,6 @@
 
 #include "EngineCore/IGameObject.h"
 
-#include <memory>
 #include <string>
 #include "glm/vec3.hpp"
 
@@ -14,10 +13,10 @@ namespace RenderEngine
 class Plane : public IGameObject
 {
 public:
-	Plane(std::shared_ptr<RenderEngine::Material> pMaterial);
-	Plane(std::shared_ptr<RenderEngine::Material> pMaterial, glm::vec3 init_pos, glm::vec3 init_scale);
+	Plane(RenderEngine::Material* pMaterial);
+	Plane(RenderEngine::Material* pMaterial, glm::vec3 init_pos, glm::vec3 init_scale);
 	~Plane() {}
 
 private:
-	std::shared_ptr<RenderEngine::Material> m_pMaterial;
+	RenderEngine::Material* m_pMaterial;
 };

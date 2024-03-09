@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <memory>
 #include <map>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -16,12 +15,12 @@ namespace RenderEngine
 
 	class ShaderProgram {
 	public:
-		// Создание шейдерной программы из двух, вертексной и фрагментной
-		ShaderProgram(const std::string& vertexShader, const std::string& fragmentShader, const std::string& geometryShader, std::shared_ptr<RenderEngine::ShaderProgramLayout> layout);
+		// Create shader program
+		ShaderProgram(const std::string& vertexShader, const std::string& fragmentShader, const std::string& geometryShader, RenderEngine::ShaderProgramLayout* layout);
 		~ShaderProgram();
-		// Проверка на скомпилированность шейдера 
+		// Check compile shader program
 		bool isCompiled() const;
-		// Использование шейдера
+		// Using shader program
 		void use() const;
 
 		void setInt(const std::string& name, const GLint& value);
@@ -31,7 +30,7 @@ namespace RenderEngine
 		void setVec3(const std::string& name, const glm::vec3& vec);
 		void setVec2(const std::string& name, const glm::vec2& vec);
 
-		std::shared_ptr<RenderEngine::ShaderProgramLayout> get_layout();
+		RenderEngine::ShaderProgramLayout* get_layout();
 
 		ShaderProgram() = delete;
 		ShaderProgram(ShaderProgram&) = delete;
@@ -45,7 +44,7 @@ namespace RenderEngine
 		void addLocation(const std::string& name, GLuint& location);
 		bool m_isCompiled = false;
 		GLuint m_ID = 0;
-		std::shared_ptr<RenderEngine::ShaderProgramLayout> m_layout;
+		RenderEngine::ShaderProgramLayout* m_layout;
 		typedef std::map<std::string, GLuint> cacheMap;
 		cacheMap m_cacheUniformMap;
 	};

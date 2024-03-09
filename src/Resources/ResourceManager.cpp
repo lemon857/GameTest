@@ -34,7 +34,7 @@ ResourceManager::FontsMap ResourceManager::m_fonts_map;
 ResourceManager::SoundsMap ResourceManager::m_sounds_map;
 ResourceManager::UniqueSoundsMap ResourceManager::m_uSounds_map;
 ResourceManager::LangPacksMap ResourceManager::m_lang_packs_map;
-std::shared_ptr<LanguagePack> ResourceManager::m_current_lang_pack;
+LanguagePack* ResourceManager::m_current_lang_pack;
 //ResourceManager::SpriteRenderersMap ResourceManager::m_SpriteRenderers;
 //ResourceManager::GraphObjMap ResourceManager::m_graph_objs;
 //ResourceManager::AnimatorsMap ResourceManager::m_animators;
@@ -42,11 +42,40 @@ std::string ResourceManager::m_path;
 
 void ResourceManager::unloadAllResources()
 {
+	for (auto& i : m_ShaderPrograms)
+	{
+		delete i.second;
+	}
 	m_ShaderPrograms.clear();
+
+	for (auto& i : m_textures)
+	{
+		delete i.second;
+	}
 	m_textures.clear();
+
+	for (auto& i : m_materials)
+	{
+		delete i.second;
+	}
 	m_materials.clear();
+
+	for (auto& i : m_graphics_objects)
+	{
+		delete i.second;
+	}
 	m_graphics_objects.clear();
+
+	for (auto& i : m_fonts_map)
+	{
+		delete i.second;
+	}
 	m_fonts_map.clear();
+
+	for (auto& i : m_sounds_map)
+	{
+		delete i.second;
+	}
 	m_sounds_map.clear();
 	m_uSounds_map.clear();
 	//m_SpriteRenderers.clear();
@@ -84,7 +113,7 @@ bool ResourceManager::load_JSON_resources(const std::string & JSONpath)
 			const std::string geomShader = (currentShader.HasMember("filePath_g") ? currentShader["filePath_g"].GetString() : "");
 			const auto layoutArray = currentShader["layout"].GetArray();
 
-			std::shared_ptr<RenderEngine::ShaderProgramLayout> layout = std::make_shared<RenderEngine::ShaderProgramLayout>();
+			RenderEngine::ShaderProgramLayout* layout = new RenderEngine::ShaderProgramLayout();
 						
 			for (const auto& currentLayoutElement : layoutArray)
 			{
@@ -249,9 +278,9 @@ bool ResourceManager::load_INI_settings(const std::string& INIpath, INIdata& dat
 	}
 	return true;
 }
-std::shared_ptr<GUI::Font> ResourceManager::load_font(std::string relativePath, std::string font_name, unsigned int font_size)
+GUI::Font* ResourceManager::load_font(std::string relativePath, std::string font_name, unsigned int font_size)
 {
-	std::shared_ptr<GUI::Font> font = std::make_shared<GUI::Font>();
+	GUI::Font* font = new GUI::Font();
 
 	if (font->load(m_path + "/" + relativePath, font_size))
 	{
@@ -266,7 +295,7 @@ std::shared_ptr<GUI::Font> ResourceManager::load_font(std::string relativePath, 
 
 	return nullptr;
 }
-std::shared_ptr<GUI::Font> ResourceManager::get_font(std::string font_name)
+GUI::Font* ResourceManager::get_font(std::string font_name)
 {
 	FontsMap::const_iterator it = m_fonts_map.find(font_name);
 	if (it != m_fonts_map.end())
@@ -276,9 +305,9 @@ std::shared_ptr<GUI::Font> ResourceManager::get_font(std::string font_name)
 	LOG_ERROR("Can't find font: {0}", font_name);
 	return nullptr;
 }
-std::shared_ptr<Sound> ResourceManager::load_sound(std::string relativePath, std::string name)
+Sound* ResourceManager::load_sound(std::string relativePath, std::string name)
 {
-	std::shared_ptr<Sound> sound = std::make_shared<Sound>();
+	Sound* sound = new Sound();
 	if (sound->init((m_path + "/" + relativePath).c_str()) != 0)
 	{
 		LOG_ERROR("Error load sound: {0}", name);
@@ -287,7 +316,7 @@ std::shared_ptr<Sound> ResourceManager::load_sound(std::string relativePath, std
 	m_sounds_map.emplace(name, sound);
 	return sound;
 }
-std::shared_ptr<Sound> ResourceManager::get_sound(std::string name)
+Sound* ResourceManager::get_sound(std::string name)
 {
 	SoundsMap::const_iterator it = m_sounds_map.find(name);
 	if (it != m_sounds_map.end())
@@ -364,7 +393,7 @@ bool ResourceManager::save_scene(std::string relativePath, const Scene& scene)
 	fout.close();
 	return true;
 }
-std::shared_ptr<GraphicsObject> ResourceManager::loadGraphicsObject(const std::string& name, const std::string& relativePath, const std::string& type)
+GraphicsObject* ResourceManager::loadGraphicsObject(const std::string& name, const std::string& relativePath, const std::string& type)
 {
 	GraphicsObject* model;
 	if (type == "obj")
@@ -378,8 +407,8 @@ std::shared_ptr<GraphicsObject> ResourceManager::loadGraphicsObject(const std::s
 		}
 		else
 		{
-			std::shared_ptr<GraphicsObject> newOBJ =
-				m_graphics_objects.emplace(name, std::make_shared<GraphicsObject>(std::move(model))).first->second;
+			GraphicsObject* newOBJ =
+				m_graphics_objects.emplace(name, new GraphicsObject(std::move(model))).first->second;
 			LOG_INFO("Success load OBJ file: {0}", relativePath);
 			return newOBJ;
 		}
@@ -387,7 +416,7 @@ std::shared_ptr<GraphicsObject> ResourceManager::loadGraphicsObject(const std::s
 	LOG_ERROR("Error type model: {0}", type);
 	return nullptr;
 }
-std::shared_ptr<GraphicsObject> ResourceManager::getGraphicsObject(const std::string& name)
+GraphicsObject* ResourceManager::getGraphicsObject(const std::string& name)
 {
 	GrapicsObjectsMap::const_iterator it = m_graphics_objects.find(name);
 	if (it != m_graphics_objects.end())
@@ -397,14 +426,14 @@ std::shared_ptr<GraphicsObject> ResourceManager::getGraphicsObject(const std::st
 	LOG_ERROR("Can't find OBJ model: {0}", name);
 	return nullptr;
 }
-std::shared_ptr<LanguagePack> ResourceManager::load_lang_pack(std::string relativePath, std::string pack_name)
+LanguagePack* ResourceManager::load_lang_pack(std::string relativePath, std::string pack_name)
 {
-	std::shared_ptr<LanguagePack> pack = std::make_shared<LanguagePack>();
+	LanguagePack* pack = new LanguagePack();
 	pack->load_pack(m_path + "/" + relativePath);
 	m_lang_packs_map.emplace(pack_name, pack);
 	return pack;
 }
-std::shared_ptr<LanguagePack> ResourceManager::get_lang_pack(std::string pack_name)
+LanguagePack* ResourceManager::get_lang_pack(std::string pack_name)
 {
 	LangPacksMap::const_iterator it = m_lang_packs_map.find(pack_name);
 	if (it != m_lang_packs_map.end())
@@ -430,9 +459,9 @@ std::string ResourceManager::getFileString(const std::string& relativeFilePath)
 	return buffer.str();
 }
 
-std::shared_ptr<RenderEngine::ShaderProgram> ResourceManager::loadShaders(const std::string& shaderName, const std::string& vertexPath, const std::string& fragmentPath,
+RenderEngine::ShaderProgram* ResourceManager::loadShaders(const std::string& shaderName, const std::string& vertexPath, const std::string& fragmentPath,
 	const std::string& geometryPath,
-	std::shared_ptr<RenderEngine::ShaderProgramLayout> layout)
+	RenderEngine::ShaderProgramLayout* layout)
 {
 	std::string vertexString = getFileString(vertexPath);
 	if (vertexString.empty()) 
@@ -456,14 +485,14 @@ std::shared_ptr<RenderEngine::ShaderProgram> ResourceManager::loadShaders(const 
 			return nullptr;
 		}
 	}
-	std::shared_ptr<RenderEngine::ShaderProgram> shader;
+	RenderEngine::ShaderProgram* shader;
 	ShaderProgramsMap::const_iterator it = m_ShaderPrograms.find(shaderName);
 	if (it != m_ShaderPrograms.end()) shader = it->second;
 	else shader = nullptr;
 	if (shader == nullptr)
 	{
-		std::shared_ptr<RenderEngine::ShaderProgram>& newShader =
-			m_ShaderPrograms.emplace(shaderName, std::make_shared<RenderEngine::ShaderProgram>(vertexString, fragmentString, geometryString, std::move(layout))).first->second;
+		RenderEngine::ShaderProgram* newShader =
+			m_ShaderPrograms.emplace(shaderName, new RenderEngine::ShaderProgram(vertexString, fragmentString, geometryString, std::move(layout))).first->second;
 
 		if (newShader->isCompiled())
 		{
@@ -488,7 +517,7 @@ std::shared_ptr<RenderEngine::ShaderProgram> ResourceManager::loadShaders(const 
 
 	return nullptr;
 }
-std::shared_ptr<RenderEngine::ShaderProgram> ResourceManager::getShaderProgram(const std::string& shaderName)
+RenderEngine::ShaderProgram* ResourceManager::getShaderProgram(const std::string& shaderName)
 {
 	ShaderProgramsMap::const_iterator it = m_ShaderPrograms.find(shaderName);
 	if (it != m_ShaderPrograms.end())
@@ -498,7 +527,7 @@ std::shared_ptr<RenderEngine::ShaderProgram> ResourceManager::getShaderProgram(c
 	LOG_ERROR("Can't find shader program: {0}", shaderName);
 	return nullptr;
 }
-std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTexture(const std::string& textureName, const std::string& texturePath)
+RenderEngine::Texture2D* ResourceManager::loadTexture(const std::string& textureName, const std::string& texturePath)
 {
 	int channels = 0;
 	int width = 0;
@@ -511,14 +540,14 @@ std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTexture(const std:
 		return nullptr;
 	}
 
-	std::shared_ptr<RenderEngine::Texture2D> newTexture = m_textures.emplace(textureName,
-		std::make_shared<RenderEngine::Texture2D>(width, height, pixels, channels)).first->second;
+	RenderEngine::Texture2D* newTexture = m_textures.emplace(textureName,
+		new RenderEngine::Texture2D(width, height, pixels, channels)).first->second;
 
 	loaders::clear_image(pixels);
 
 	return newTexture;
 }
-std::shared_ptr<RenderEngine::Texture2D> ResourceManager::getTexture(const std::string& textureName)
+RenderEngine::Texture2D* ResourceManager::getTexture(const std::string& textureName)
 {
 	TexturesMap::const_iterator it = m_textures.find(textureName);
 	if (it != m_textures.end())
@@ -528,13 +557,13 @@ std::shared_ptr<RenderEngine::Texture2D> ResourceManager::getTexture(const std::
 	LOG_ERROR("Can't find texture: {0}", textureName);
 	return nullptr;
 }
-std::shared_ptr<RenderEngine::Texture3D> ResourceManager::loadTexture3D(const std::string& textureName, const std::vector<std::string>& texturePath)
+RenderEngine::Texture3D* ResourceManager::loadTexture3D(const std::string& textureName, const std::vector<std::string>& texturePath)
 {
-	std::shared_ptr<RenderEngine::Texture3D> newTexture = m_cube_textures.emplace(textureName, std::make_shared<RenderEngine::Texture3D>(texturePath)).first->second;
+	RenderEngine::Texture3D* newTexture = m_cube_textures.emplace(textureName, new RenderEngine::Texture3D(texturePath)).first->second;
 
 	return newTexture;
 }
-std::shared_ptr<RenderEngine::Texture3D> ResourceManager::getTexture3D(const std::string& textureName)
+RenderEngine::Texture3D* ResourceManager::getTexture3D(const std::string& textureName)
 {
 	CubeTexturesMap::const_iterator it = m_cube_textures.find(textureName);
 	if (it != m_cube_textures.end())
@@ -544,7 +573,7 @@ std::shared_ptr<RenderEngine::Texture3D> ResourceManager::getTexture3D(const std
 	LOG_ERROR("Can't find texture3D: {0}", textureName);
 	return nullptr;
 }
-std::shared_ptr<RenderEngine::Material> ResourceManager::loadMaterial(const std::string& materialName, const std::string& textureName, const std::string& shaderName)
+RenderEngine::Material* ResourceManager::loadMaterial(const std::string& materialName, const std::string& textureName, const std::string& shaderName)
 {
 	auto shader = getShaderProgram(shaderName);
 	auto texture = getTexture(textureName);
@@ -555,12 +584,12 @@ std::shared_ptr<RenderEngine::Material> ResourceManager::loadMaterial(const std:
 		return nullptr;
 	}
 
-	std::shared_ptr<RenderEngine::Material> newMaterial =
-	m_materials.emplace(materialName, std::make_shared<RenderEngine::Material>(shader, texture)).first->second;
+	RenderEngine::Material* newMaterial =
+	m_materials.emplace(materialName, new RenderEngine::Material(shader, texture)).first->second;
 
 	return newMaterial;
 }
-std::shared_ptr<RenderEngine::Material> ResourceManager::getMaterial(const std::string& materialName)
+RenderEngine::Material* ResourceManager::getMaterial(const std::string& materialName)
 {
 	MaterialsMap::const_iterator it = m_materials.find(materialName);
 	if (it != m_materials.end())
@@ -634,7 +663,7 @@ std::vector<std::string> ResourceManager::getNamesFilesInDirectory(std::string r
 	}
 	return data;
 }
-std::string ResourceManager::getNameShaderProgram(std::shared_ptr<RenderEngine::ShaderProgram> pShader)
+std::string ResourceManager::getNameShaderProgram(RenderEngine::ShaderProgram* pShader)
 {
 	std::string outStr = "";
 	for (const auto& curShader : m_ShaderPrograms)
@@ -647,7 +676,7 @@ std::string ResourceManager::getNameShaderProgram(std::shared_ptr<RenderEngine::
 	}
 	return outStr;
 }
-std::string ResourceManager::getNameTexture2D(std::shared_ptr<RenderEngine::Texture2D> pTexture)
+std::string ResourceManager::getNameTexture2D(RenderEngine::Texture2D* pTexture)
 {
 	std::string outStr = "";
 	for (const auto& curTexture : m_textures)
@@ -660,15 +689,15 @@ std::string ResourceManager::getNameTexture2D(std::shared_ptr<RenderEngine::Text
 	}
 	return outStr;
 }
-std::shared_ptr<LanguagePack> ResourceManager::get_current_lang_pack()
+LanguagePack* ResourceManager::get_current_lang_pack()
 {
 	return m_current_lang_pack;
 }
-void ResourceManager::set_current_lang_pack(std::shared_ptr<LanguagePack> lang_pack)
+void ResourceManager::set_current_lang_pack(LanguagePack* lang_pack)
 {
 	m_current_lang_pack = std::move(lang_pack);
 }
-//std::shared_ptr<RenderEngine::SpriteRenderer>  ResourceManager::loadSpriteRenderer(const std::string& SpriteRendererName, const std::string& textureName,
+//RenderEngine::SpriteRenderer>  ResourceManager::loadSpriteRenderer(const std::string& SpriteRendererName, const std::string& textureName,
 //	const std::string& shaderName, const std::string& subTextureName)
 //{
 //	auto pTexture = getTexture(textureName);
@@ -684,11 +713,11 @@ void ResourceManager::set_current_lang_pack(std::shared_ptr<LanguagePack> lang_p
 //		LOG_ERROR("Can't find shader program: {0} for the SpriteRenderer: {1}", shaderName, SpriteRendererName);
 //		return nullptr;
 //	}
-//	std::shared_ptr<RenderEngine::SpriteRenderer>& newSpriteRenderer = m_SpriteRenderers.emplace(SpriteRendererName, std::make_shared<RenderEngine::SpriteRenderer>(pTexture, subTextureName, 
+//	RenderEngine::SpriteRenderer>& newSpriteRenderer = m_SpriteRenderers.emplace(SpriteRendererName, std::make_shared<RenderEngine::SpriteRenderer>(pTexture, subTextureName, 
 //		pShaderProgram)).first->second;
 //	return newSpriteRenderer;
 //}
-//std::shared_ptr<RenderEngine::SpriteRenderer> ResourceManager::getSpriteRenderer(const std::string& SpriteRendererName)
+//RenderEngine::SpriteRenderer> ResourceManager::getSpriteRenderer(const std::string& SpriteRendererName)
 //{
 //	SpriteRenderersMap::const_iterator it = m_SpriteRenderers.find(SpriteRendererName);
 //	if (it != m_SpriteRenderers.end())
@@ -698,7 +727,7 @@ void ResourceManager::set_current_lang_pack(std::shared_ptr<LanguagePack> lang_p
 //	LOG_ERROR("Can't find SpriteRenderer: {0}", SpriteRendererName);
 //	return nullptr;
 //}
-//std::shared_ptr<RenderEngine::GraphicsObject> ResourceManager::loadGraphicsObject(const std::string& objName, const std::string& shaderName, const std::string& source)
+//RenderEngine::GraphicsObject> ResourceManager::loadGraphicsObject(const std::string& objName, const std::string& shaderName, const std::string& source)
 //{
 //	auto pShaderProgram = getShaderProgram(shaderName);
 //	if (!pShaderProgram)
@@ -707,12 +736,12 @@ void ResourceManager::set_current_lang_pack(std::shared_ptr<LanguagePack> lang_p
 //		return nullptr;
 //	}
 //
-//	std::shared_ptr<RenderEngine::GraphicsObject>& graphObj = m_graph_objs.emplace(objName, std::make_shared<RenderEngine::GraphicsObject>
+//	RenderEngine::GraphicsObject>& graphObj = m_graph_objs.emplace(objName, std::make_shared<RenderEngine::GraphicsObject>
 //		(pShaderProgram, m_path + "/" + source)).first->second;
 //
 //	return graphObj;
 //}
-//std::shared_ptr<RenderEngine::GraphicsObject> ResourceManager::getGraphicsObject(const std::string& objName)
+//RenderEngine::GraphicsObject> ResourceManager::getGraphicsObject(const std::string& objName)
 //{
 //	GraphObjMap::const_iterator it = m_graph_objs.find(objName);
 //	if (it != m_graph_objs.end())
@@ -722,7 +751,7 @@ void ResourceManager::set_current_lang_pack(std::shared_ptr<LanguagePack> lang_p
 //	LOG_ERROR("Can't find graphics object: {0}", objName);
 //	return nullptr;
 //}
-std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTextureAtlas(
+RenderEngine::Texture2D* ResourceManager::loadTextureAtlas(
 	std::string textureName,
 	std::vector<std::string> subTextures,
 	std::string texturePath,
@@ -752,14 +781,14 @@ std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTextureAtlas(
 	return pTexture;
 }
 
-//std::shared_ptr<RenderEngine::Animator>  ResourceManager::loadAnimator(
+//RenderEngine::Animator>  ResourceManager::loadAnimator(
 //	const std::string& animatorName,
 //	const std::string& SpriteRendererName)
 //{
-//	std::shared_ptr<RenderEngine::Animator>& newAnimator = m_animators.emplace(animatorName, std::make_shared<RenderEngine::Animator>(SpriteRendererName)).first->second;
+//	RenderEngine::Animator>& newAnimator = m_animators.emplace(animatorName, std::make_shared<RenderEngine::Animator>(SpriteRendererName)).first->second;
 //	return newAnimator;
 //}
-//std::shared_ptr<RenderEngine::Animator> ResourceManager::getAnimator(const std::string& animatorName)
+//RenderEngine::Animator> ResourceManager::getAnimator(const std::string& animatorName)
 //{
 //	AnimatorsMap::const_iterator it = m_animators.find(animatorName);
 //	if (it != m_animators.end())

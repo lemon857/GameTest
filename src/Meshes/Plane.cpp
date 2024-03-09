@@ -40,7 +40,7 @@ static constexpr GLuint m_indexes[]{
 
 static int g_current_plane_ID = 0;
 
-Plane::Plane(std::shared_ptr<RenderEngine::Material> pMaterial)
+Plane::Plane(RenderEngine::Material* pMaterial)
     : IGameObject("Plane" + std::to_string(g_current_plane_ID++))
     , m_pMaterial(std::move(pMaterial))
 {
@@ -70,10 +70,10 @@ Plane::Plane(std::shared_ptr<RenderEngine::Material> pMaterial)
     vertexArray->unbind();
     indexBuffer->unbind();
 
-    addComponent<MeshRenderer>(std::make_shared<GraphicsObject>(vertexArray, indexBuffer), m_pMaterial);
+    addComponent<MeshRenderer>(new GraphicsObject(vertexArray, indexBuffer), m_pMaterial);
 }
 
-Plane::Plane(std::shared_ptr<RenderEngine::Material> pMaterial, glm::vec3 init_pos, glm::vec3 init_scale)
+Plane::Plane(RenderEngine::Material* pMaterial, glm::vec3 init_pos, glm::vec3 init_scale)
     : IGameObject("Plane" + std::to_string(g_current_plane_ID++))
     , m_pMaterial(std::move(pMaterial))
 {
@@ -103,6 +103,6 @@ Plane::Plane(std::shared_ptr<RenderEngine::Material> pMaterial, glm::vec3 init_p
     vertexArray->unbind();
     indexBuffer->unbind();
 
-    addComponent<MeshRenderer>(std::make_shared<GraphicsObject>(vertexArray, indexBuffer), m_pMaterial);
+    addComponent<MeshRenderer>(new GraphicsObject(vertexArray, indexBuffer), m_pMaterial);
     addComponent<Transform>(init_pos, init_scale);
 }

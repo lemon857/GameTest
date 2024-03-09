@@ -25,7 +25,7 @@ namespace GUI
 	public:
 		ChatBox(Sprite* backgrond, glm::vec2 pos, glm::vec2 scale,
 			std::string name, int max_count_message, 
-			std::shared_ptr<Font> font, std::shared_ptr<RenderEngine::ShaderProgram> shader, glm::vec3 textColor, GUI_place* place = nullptr);
+			Font* font, RenderEngine::ShaderProgram* shader, glm::vec3 textColor, GUI_place* place = nullptr);
 		~ChatBox();
 
 		void on_render_prj(glm::mat4& prj) override;
@@ -42,8 +42,8 @@ namespace GUI
 	private:
 		ScrollBox* m_scrollbox;
 
-		std::shared_ptr<Font> m_font;
-		std::shared_ptr<RenderEngine::ShaderProgram> m_shader;
+		Font* m_font;
+		RenderEngine::ShaderProgram* m_shader;
 		glm::vec3 m_color;
 	};
 }

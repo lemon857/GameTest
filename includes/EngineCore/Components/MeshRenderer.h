@@ -2,7 +2,6 @@
 
 #include "EngineCore/IComponent.h"
 
-#include <memory>
 #include <string>
 
 namespace RenderEngine
@@ -18,19 +17,17 @@ struct GraphicsObject;
 class MeshRenderer : public IComponent
 {
 public:
-	MeshRenderer(
-		std::shared_ptr<GraphicsObject> obj,
-		std::shared_ptr<RenderEngine::Material> pMaterial);
+	MeshRenderer(GraphicsObject* obj, RenderEngine::Material* pMaterial);
 	~MeshRenderer();
 
 	void render(RenderEngine::ShaderProgram* shader) override;
 
-	void update_object(std::shared_ptr<GraphicsObject> obj);
+	void update_object(GraphicsObject* obj);
 
-	std::shared_ptr<RenderEngine::Material> get_material_ptr();
+	RenderEngine::Material* get_material_ptr();
 
-	const std::shared_ptr<GraphicsObject> get_object();
+	const GraphicsObject* get_object();
 private:
-	std::shared_ptr<RenderEngine::Material> m_pMaterial;
-	std::shared_ptr<GraphicsObject> m_obj;
+	RenderEngine::Material* m_pMaterial;
+	GraphicsObject* m_obj;
 };

@@ -126,7 +126,7 @@ static constexpr GLuint m_indexes[]{
 };
 static int g_current_cube_ID = 0;
 
-Cube::Cube(std::shared_ptr<RenderEngine::Material> pMaterial)
+Cube::Cube(RenderEngine::Material* pMaterial)
     : IGameObject("Cube" + std::to_string(g_current_cube_ID++))
     , m_pMaterial(std::move(pMaterial))
 {
@@ -156,5 +156,5 @@ Cube::Cube(std::shared_ptr<RenderEngine::Material> pMaterial)
     vertexArray->unbind();
 	indexBuffer->unbind();
 
-    addComponent<MeshRenderer>(std::make_shared<GraphicsObject>(vertexArray, indexBuffer), m_pMaterial);
+    addComponent<MeshRenderer>(new GraphicsObject(vertexArray, indexBuffer), m_pMaterial);
 }

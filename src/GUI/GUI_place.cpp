@@ -14,7 +14,7 @@ namespace GUI
 	glm::vec2 GUI_place::m_vp_size;
 	glm::mat4 GUI_place::m_prj_mat;
 
-	GUI_place::GUI_place(Camera* render_cam, std::shared_ptr<RenderEngine::Material> pMaterial)
+	GUI_place::GUI_place(Camera* render_cam, RenderEngine::Material* pMaterial)
 		: m_pMaterial(std::move(pMaterial))
 		, m_render_cam(std::move(render_cam))
 	{

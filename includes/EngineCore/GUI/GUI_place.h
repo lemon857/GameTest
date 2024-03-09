@@ -24,7 +24,7 @@ namespace GUI
 	class GUI_place
 	{
 	public:
-		GUI_place(Camera* render_cam, std::shared_ptr<RenderEngine::Material> pMaterial);
+		GUI_place(Camera* render_cam, RenderEngine::Material* pMaterial);
 		~GUI_place() = default; // need add trash clear
 
 		void on_update(const double delta);

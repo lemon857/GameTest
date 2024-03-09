@@ -19,10 +19,10 @@ namespace GUI
 	class Sprite : public GUI_element
 	{
 	public:
-		Sprite(std::shared_ptr<RenderEngine::Material> pMaterial, std::string initSubTexture = "default",
+		Sprite(RenderEngine::Material* pMaterial, std::string initSubTexture = "default",
 			glm::vec2 pos = glm::vec2(0), glm::vec2 scale = glm::vec2(0), std::string name = "default");
 
-		Sprite(std::shared_ptr<RenderEngine::ShaderProgram> pShader, std::shared_ptr<RenderEngine::Texture2D> pTexture, std::string initSubTexture = "default",
+		Sprite(RenderEngine::ShaderProgram* pShader, RenderEngine::Texture2D* pTexture, std::string initSubTexture = "default",
 			glm::vec2 pos = glm::vec2(0), glm::vec2 scale = glm::vec2(0), std::string name = "default");
 
 		~Sprite();
@@ -31,7 +31,7 @@ namespace GUI
 
 		void on_render_prj(glm::mat4& prj) override;
 	private:
-		std::shared_ptr<RenderEngine::VertexArray> m_vertexArray;
+		RenderEngine::VertexArray* m_vertexArray;
 		RenderEngine::VertexBuffer* m_vertexCoordsBuffer;
 		RenderEngine::VertexBuffer* m_textureCoordsBuffer;
 		RenderEngine::IndexBuffer* m_indexBuffer;

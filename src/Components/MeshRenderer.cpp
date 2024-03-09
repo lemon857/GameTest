@@ -17,8 +17,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 MeshRenderer::MeshRenderer(
-    std::shared_ptr<GraphicsObject> obj,
-    std::shared_ptr<RenderEngine::Material> pMaterial)
+    GraphicsObject* obj,
+    RenderEngine::Material* pMaterial)
     : IComponent()
     , m_obj(std::move(obj))
     , m_pMaterial(std::move(pMaterial))
@@ -28,8 +28,7 @@ MeshRenderer::MeshRenderer(
 MeshRenderer::~MeshRenderer()
 {
     if (m_obj == nullptr) return;
-	delete m_obj.get();
-    m_obj.reset();
+	delete m_obj;
 }
 
 void MeshRenderer::render(RenderEngine::ShaderProgram* shader)
@@ -106,17 +105,17 @@ void MeshRenderer::render(RenderEngine::ShaderProgram* shader)
     RenderEngine::Renderer::drawTriangles(*m_obj->vertex_array, *m_obj->index_buffer);
 }
 
-void MeshRenderer::update_object(std::shared_ptr<GraphicsObject> obj)
+void MeshRenderer::update_object(GraphicsObject* obj)
 {
     m_obj = std::move(obj);
 }
 
-std::shared_ptr<RenderEngine::Material> MeshRenderer::get_material_ptr()
+RenderEngine::Material* MeshRenderer::get_material_ptr()
 {
     return m_pMaterial;
 }
 
-const std::shared_ptr<GraphicsObject> MeshRenderer::get_object()
+const GraphicsObject* MeshRenderer::get_object()
 {
     return m_obj;
 }

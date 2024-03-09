@@ -9,7 +9,7 @@
 namespace GUI
 {
 	BindButton::BindButton(Sprite* face, glm::vec2 pos, glm::vec2 scale, 
-		std::shared_ptr<RenderEngine::ShaderProgram> textShader, std::shared_ptr<Font> font, glm::vec3 textColor,
+		RenderEngine::ShaderProgram* textShader, Font* font, glm::vec3 textColor,
 		KeyCode* targetBind, std::string name)
 		: GUI_element(name)
 		, m_face(std::move(face))

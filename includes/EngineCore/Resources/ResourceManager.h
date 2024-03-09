@@ -56,45 +56,45 @@ namespace RenderEngine
 
 		static bool save_scene(std::string relativePath, const Scene& scene);
 
-		static std::shared_ptr<GraphicsObject> loadGraphicsObject(const std::string& name, const std::string& relativePath, const std::string& type);
-		static std::shared_ptr<GraphicsObject> getGraphicsObject(const std::string& name);
+		static GraphicsObject* loadGraphicsObject(const std::string& name, const std::string& relativePath, const std::string& type);
+		static GraphicsObject* getGraphicsObject(const std::string& name);
 
-		static std::shared_ptr<LanguagePack> load_lang_pack(std::string relativePath, std::string pack_name);
-		static std::shared_ptr<LanguagePack> get_lang_pack(std::string pack_name);
+		static LanguagePack* load_lang_pack(std::string relativePath, std::string pack_name);
+		static LanguagePack* get_lang_pack(std::string pack_name);
 
-		static std::shared_ptr<GUI::Font> load_font(std::string relativePath, std::string font_name, unsigned int font_size);
-		static std::shared_ptr<GUI::Font> get_font(std::string font_name);
+		static GUI::Font* load_font(std::string relativePath, std::string font_name, unsigned int font_size);
+		static GUI::Font* get_font(std::string font_name);
 
-		static std::shared_ptr<Sound> load_sound(std::string relativePath, std::string name);
-		static std::shared_ptr<Sound> get_sound(std::string name);
+		static Sound* load_sound(std::string relativePath, std::string name);
+		static Sound* get_sound(std::string name);
 
 		static void load_unique_sound(std::string relativePath, std::string name);
 		static std::unique_ptr<Sound> get_unique_sound(std::string name);
 
-		static std::shared_ptr<RenderEngine::ShaderProgram> loadShaders(
+		static RenderEngine::ShaderProgram* loadShaders(
 			const std::string& shaderName, 
 			const std::string& vertexPath, 
 			const std::string& fragmentPath,
 			const std::string& geometryPath,
-			std::shared_ptr<RenderEngine::ShaderProgramLayout> layout);
-		static std::shared_ptr<RenderEngine::ShaderProgram> getShaderProgram(
+			RenderEngine::ShaderProgramLayout* layout);
+		static RenderEngine::ShaderProgram* getShaderProgram(
 			const std::string& shaderName);
 
-		static std::shared_ptr<RenderEngine::Texture2D>  loadTexture(
+		static RenderEngine::Texture2D*  loadTexture(
 			const std::string& textureName, 
 			const std::string& texturePath);
-		static std::shared_ptr<RenderEngine::Texture2D> getTexture(const std::string& textureName);
+		static RenderEngine::Texture2D* getTexture(const std::string& textureName);
 
-		static std::shared_ptr<RenderEngine::Texture3D>  loadTexture3D(
+		static RenderEngine::Texture3D*  loadTexture3D(
 			const std::string& textureName,
 			const std::vector<std::string>& texturePath);
-		static std::shared_ptr<RenderEngine::Texture3D> getTexture3D(const std::string& textureName);
+		static RenderEngine::Texture3D* getTexture3D(const std::string& textureName);
 
-		static std::shared_ptr<RenderEngine::Material>  loadMaterial(
+		static RenderEngine::Material* loadMaterial(
 			const std::string& materialName,
 			const std::string& textureName,
 			const std::string& shaderName);
-		static std::shared_ptr<RenderEngine::Material> getMaterial(const std::string& materialName);
+		static RenderEngine::Material* getMaterial(const std::string& materialName);
 
 		static std::vector<std::string> getNamesShadersProgram();
 		static std::vector<std::string> getNamesTextures2D();
@@ -102,32 +102,32 @@ namespace RenderEngine
 		static std::vector<std::string> getNamesObjs();
 		static std::vector<std::string> getNamesFilesInDirectory(std::string relativeFilePath);
 
-		static std::string getNameShaderProgram(std::shared_ptr<RenderEngine::ShaderProgram> pShader);
-		static std::string getNameTexture2D(std::shared_ptr<RenderEngine::Texture2D> pTexture);
+		static std::string getNameShaderProgram(RenderEngine::ShaderProgram* pShader);
+		static std::string getNameTexture2D(RenderEngine::Texture2D* pTexture);
 
-		static std::shared_ptr<LanguagePack> get_current_lang_pack();
-		static void set_current_lang_pack(std::shared_ptr<LanguagePack> lang_pack);
+		static LanguagePack* get_current_lang_pack();
+		static void set_current_lang_pack(LanguagePack* lang_pack);
 
-		/*static std::shared_ptr<RenderEngine::SpriteRenderer>  loadSpriteRenderer(
+		/*static RenderEngine::SpriteRenderer>  loadSpriteRenderer(
 			const std::string& SpriteRendererName, 
 			const std::string& textureName,
 			const std::string& shaderName,
 			const std::string& subTextureName = "default");
-		static std::shared_ptr<RenderEngine::SpriteRenderer> getSpriteRenderer(const std::string& SpriteRendererName);
+		static RenderEngine::SpriteRenderer> getSpriteRenderer(const std::string& SpriteRendererName);
 
-		static std::shared_ptr<RenderEngine::GraphicsObject>  loadGraphicsObject(
+		static RenderEngine::GraphicsObject>  loadGraphicsObject(
 			const std::string& objName,
 			const std::string& shaderName,
 			const std::string& source);
-		static std::shared_ptr<RenderEngine::GraphicsObject> getGraphicsObject(const std::string& objName);*/
+		static RenderEngine::GraphicsObject> getGraphicsObject(const std::string& objName);*/
 
-		/*static std::shared_ptr<RenderEngine::Animator>  loadAnimator(
+		/*static RenderEngine::Animator>  loadAnimator(
 			const std::string& animatorName,
 			const std::string& SpriteRendererName);*/
-		//static std::shared_ptr<RenderEngine::Animator> getAnimator(const std::string& animatorName);
+		//static RenderEngine::Animator> getAnimator(const std::string& animatorName);
 		
 
-		static std::shared_ptr<RenderEngine::Texture2D> loadTextureAtlas(
+		static RenderEngine::Texture2D* loadTextureAtlas(
 			std::string textureName,
 			std::vector<std::string> subTextures,
 			std::string texturePath,
@@ -137,42 +137,42 @@ namespace RenderEngine
 			const unsigned int subTextureHeight);
 	private:
 
-		typedef std::map<const std::string, std::shared_ptr<RenderEngine::ShaderProgram>> ShaderProgramsMap;
+		typedef std::map<const std::string, RenderEngine::ShaderProgram*> ShaderProgramsMap;
 		static ShaderProgramsMap m_ShaderPrograms;
 
-		typedef std::map<const std::string, std::shared_ptr<RenderEngine::Texture2D>> TexturesMap;
+		typedef std::map<const std::string, RenderEngine::Texture2D*> TexturesMap;
 		static TexturesMap m_textures;
 
-		typedef std::map<const std::string, std::shared_ptr<RenderEngine::Texture3D>> CubeTexturesMap;
+		typedef std::map<const std::string, RenderEngine::Texture3D*> CubeTexturesMap;
 		static CubeTexturesMap m_cube_textures;
 
-		typedef std::map<const std::string, std::shared_ptr<RenderEngine::Material>> MaterialsMap;
+		typedef std::map<const std::string, RenderEngine::Material*> MaterialsMap;
 		static MaterialsMap m_materials;
 
-		typedef std::map<const std::string, std::shared_ptr<GraphicsObject>> GrapicsObjectsMap;
+		typedef std::map<const std::string, GraphicsObject*> GrapicsObjectsMap;
 		static GrapicsObjectsMap m_graphics_objects;
 
-		typedef std::map<const std::string, std::shared_ptr<GUI::Font>> FontsMap;
+		typedef std::map<const std::string, GUI::Font*> FontsMap;
 		static FontsMap m_fonts_map;
 
-		typedef std::map<const std::string, std::shared_ptr<Sound>> SoundsMap;
+		typedef std::map<const std::string, Sound*> SoundsMap;
 		static SoundsMap m_sounds_map;
 
 		typedef std::map<const std::string, std::string> UniqueSoundsMap;
 		static UniqueSoundsMap m_uSounds_map;
 
-		typedef std::map<const std::string, std::shared_ptr<LanguagePack>> LangPacksMap;
+		typedef std::map<const std::string, LanguagePack*> LangPacksMap;
 		static LangPacksMap m_lang_packs_map;
-		//typedef std::map<const std::string, std::shared_ptr<RenderEngine::SpriteRenderer>> SpriteRenderersMap;
+		//typedef std::map<const std::string, RenderEngine::SpriteRenderer>> SpriteRenderersMap;
 		//static SpriteRenderersMap m_SpriteRenderers;
 
-		//typedef std::map<const std::string, std::shared_ptr<RenderEngine::Animator>> AnimatorsMap;
+		//typedef std::map<const std::string, RenderEngine::Animator>> AnimatorsMap;
 		//static AnimatorsMap m_animators;
 
-		//typedef std::map<const std::string, std::shared_ptr<RenderEngine::GraphicsObject>> GraphObjMap;
+		//typedef std::map<const std::string, RenderEngine::GraphicsObject>> GraphObjMap;
 		//static GraphObjMap m_graph_objs;
 
 		static std::string m_path;
 
-		static std::shared_ptr<LanguagePack> m_current_lang_pack;
+		static LanguagePack* m_current_lang_pack;
 	};

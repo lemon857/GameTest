@@ -17,7 +17,7 @@
 namespace GUI
 {
     static unsigned int g_current_text_ID = 0;
-	TextRenderer::TextRenderer(std::shared_ptr<Font> font, std::shared_ptr<RenderEngine::ShaderProgram> shader,
+	TextRenderer::TextRenderer(Font* font, RenderEngine::ShaderProgram* shader,
         std::string text, glm::vec3 color, glm::vec2 pos, glm::vec2 scale, std::string name, bool isCenterCoord)
 		: m_font(std::move(font))
 		, m_shader(std::move(shader))
@@ -41,7 +41,7 @@ namespace GUI
 		vertexCoordsLayout.addElementLayoutFloat(4, false);
 		m_vertexArray->addBuffer(*m_vertexCoordsBuffer, vertexCoordsLayout);
 	}
-    TextRenderer::TextRenderer(std::shared_ptr<Font> font, std::shared_ptr<RenderEngine::ShaderProgram> shader, 
+    TextRenderer::TextRenderer(Font* font, RenderEngine::ShaderProgram* shader, 
         std::wstring text, glm::vec3 color, glm::vec2 pos, glm::vec2 scale, std::string name, bool isCenterCoord)
         : m_font(std::move(font))
         , m_shader(std::move(shader))

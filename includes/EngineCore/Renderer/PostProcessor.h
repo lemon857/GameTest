@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-
 typedef unsigned int GLuint;
 
 namespace RenderEngine
@@ -13,7 +11,7 @@ namespace RenderEngine
 	class PostProcessor
 	{
 	public:
-		PostProcessor(std::shared_ptr<ShaderProgram> screen_shader, int window_width, int window_height, bool active_msaa = false, unsigned int samples = 4);
+		PostProcessor(ShaderProgram* screen_shader, int window_width, int window_height, bool active_msaa = false, unsigned int samples = 4);
 		~PostProcessor();
 
 		// called before rendering main scene
@@ -51,6 +49,6 @@ namespace RenderEngine
 		FrameBuffer* m_fbo;
 		FrameBufferMultuSampled* m_fbo_ms;
 
-		std::shared_ptr<ShaderProgram> m_screen_shader;
+		ShaderProgram* m_screen_shader;
 	};
 }

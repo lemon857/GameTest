@@ -15,8 +15,8 @@
 #include <Windows.h>
 
 GUI::InputField::InputField(Sprite* face, glm::vec2 pos, glm::vec2 scale,
-	std::string name, std::shared_ptr<RenderEngine::ShaderProgram> shader,
-	std::shared_ptr<Font> font, glm::vec3 textColor, bool clear_after_send, bool* focus_trigger)
+	std::string name, RenderEngine::ShaderProgram* shader,
+	Font* font, glm::vec3 textColor, bool clear_after_send, bool* focus_trigger)
 	: GUI_element(name)
 	, m_face(std::move(face))
 	, m_textRenderer(new TextRenderer(std::move(font), std::move(shader), "",

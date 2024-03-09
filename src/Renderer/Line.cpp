@@ -9,7 +9,7 @@
 
 namespace RenderEngine
 {
-	Line::Line(std::shared_ptr<Material> pMaterial, float size)
+	Line::Line(Material* pMaterial, float size)
 		: m_pMaterial(std::move(pMaterial))
 		, m_size(size)
 	{

@@ -15,7 +15,7 @@ namespace RenderEngine
 	class Line 
 	{
 	public:
-		Line(std::shared_ptr<Material> pMaterial, float size = 1.f);
+		Line(Material* pMaterial, float size = 1.f);
 		~Line();
 
 		inline Line(const Line&) = delete;
@@ -31,9 +31,9 @@ namespace RenderEngine
 
 		void set_size(float size);
 
-		inline std::shared_ptr<Material> get_material() { return m_pMaterial; }
+		inline Material* get_material() { return m_pMaterial; }
 	private:
-		std::shared_ptr<Material> m_pMaterial;
+		Material* m_pMaterial;
 		float m_size;
 
 		VertexArray* m_vertexArray;

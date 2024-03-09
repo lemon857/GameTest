@@ -11,7 +11,7 @@
 namespace GUI
 {
 	ScrollBox::ScrollBox(Sprite* backgrond, glm::vec2 pos, glm::vec2 scale, std::string name, int max_count_elements,
-		std::shared_ptr<RenderEngine::Material> pMaterialLine, bool has_shift, GUI_place* place, bool isHorisontal, bool right_line, float scrollMultiplier, float percentDisplaysment)
+		RenderEngine::Material* pMaterialLine, bool has_shift, GUI_place* place, bool isHorisontal, bool right_line, float scrollMultiplier, float percentDisplaysment)
 		: GUI_element(name)
 		, m_max_count_elements(max_count_elements)
 		, m_background(std::move(backgrond))

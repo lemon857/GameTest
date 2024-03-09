@@ -5,7 +5,7 @@
 
 namespace RenderEngine 
 {
-	ShaderProgram::ShaderProgram(const std::string& vertexShader, const std::string& fragmentShader, const std::string& geometryShader, std::shared_ptr<RenderEngine::ShaderProgramLayout> layout)
+	ShaderProgram::ShaderProgram(const std::string& vertexShader, const std::string& fragmentShader, const std::string& geometryShader, RenderEngine::ShaderProgramLayout* layout)
 		: m_layout(std::move(layout))
 	{
 		GLuint vertexShaderID;
@@ -166,7 +166,7 @@ namespace RenderEngine
 		addLocation(name, location);
 		glUniform2f(location, vec.x, vec.y);
 	}
-	std::shared_ptr<RenderEngine::ShaderProgramLayout> ShaderProgram::get_layout()
+	RenderEngine::ShaderProgramLayout* ShaderProgram::get_layout()
 	{
 		return m_layout;
 	}

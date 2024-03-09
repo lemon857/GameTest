@@ -7,8 +7,8 @@
 namespace GUI
 {
 	ChatBox::ChatBox(Sprite* backgrond, glm::vec2 pos, glm::vec2 scale,
-		std::string name, int max_count_message, std::shared_ptr<Font> font,
-		std::shared_ptr<RenderEngine::ShaderProgram> shader, glm::vec3 textColor, GUI_place* place)
+		std::string name, int max_count_message, Font* font,
+		RenderEngine::ShaderProgram* shader, glm::vec3 textColor, GUI_place* place)
 		: GUI_element(name)
 		, m_color(textColor)
 		, m_font(std::move(font))

@@ -4,7 +4,7 @@
 #include "EngineCore/Renderer/ShaderProgram.h"
 #include "EngineCore/System/ShadersSettings.h"
 
-RenderEngine::PostProcessor::PostProcessor(std::shared_ptr<ShaderProgram> screen_shader, int window_width, int window_height, bool active_msaa, unsigned int samples)
+RenderEngine::PostProcessor::PostProcessor(ShaderProgram* screen_shader, int window_width, int window_height, bool active_msaa, unsigned int samples)
 	: m_screen_shader(std::move(screen_shader))
 	, m_isActive(false)
 	, m_activeMSAA(active_msaa)

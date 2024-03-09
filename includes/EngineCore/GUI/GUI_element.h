@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <memory>
 #include <vector>
 #include <functional>
 
@@ -35,7 +34,7 @@ namespace GUI
 	public:
 
 		// require stay material prop first in all childrens
-		GUI_element(std::string name, std::shared_ptr<RenderEngine::Material> pMaterial = nullptr)
+		GUI_element(std::string name, RenderEngine::Material* pMaterial = nullptr)
 			: m_name(name)
 			, m_pMaterial(std::move(pMaterial))
 			, m_position_p(glm::vec2(0))
@@ -139,7 +138,7 @@ namespace GUI
 		void set_mouse_down_callback(std::function<void()> on_mouse_down) { m_on_mouse_down = on_mouse_down; }
 		void set_mouse_up_callback(std::function<void()> on_mouse_up) { m_on_mouse_up = on_mouse_up; }
 
-		std::shared_ptr<RenderEngine::Material> get_material() { return m_pMaterial; }
+		RenderEngine::Material* get_material() { return m_pMaterial; }
 
 		virtual std::vector<GUI_element*> get_elements() { return std::vector<GUI_element*>(); }
 	protected:
@@ -168,7 +167,7 @@ namespace GUI
 		glm::vec2 m_position_mouse_click;
 
 		std::string m_name;
-		std::shared_ptr<RenderEngine::Material> m_pMaterial;
+		RenderEngine::Material* m_pMaterial;
 
 		std::vector<GUI_element*> m_tree;
 	};

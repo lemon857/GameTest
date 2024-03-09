@@ -2,7 +2,6 @@
 
 #include "EngineCore/IGameObject.h"
 
-#include <memory>
 #include <string>
 
 namespace RenderEngine
@@ -13,7 +12,7 @@ namespace RenderEngine
 class Cube : public IGameObject
 {
 public:
-	Cube(std::shared_ptr<RenderEngine::Material> pMaterial);
+	Cube(RenderEngine::Material* pMaterial);
 
     ~Cube() = default;
 
@@ -23,5 +22,5 @@ public:
     Cube& operator=(Cube&) = delete;
     Cube& operator=(Cube&&) = delete;
 private:
-    std::shared_ptr<RenderEngine::Material> m_pMaterial;
+    RenderEngine::Material* m_pMaterial;
 };

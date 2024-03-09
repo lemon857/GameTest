@@ -14,7 +14,7 @@ namespace RenderEngine
 class Highlight : public IComponent
 {
 public:
-	Highlight(std::shared_ptr<RenderEngine::Material> material, bool isActive = false, 
+	Highlight(RenderEngine::Material* material, bool isActive = false, 
 		bool mode = false, glm::vec3 color = glm::vec3(1.f));
 
 	void render(RenderEngine::ShaderProgram* shader) override;
@@ -33,6 +33,6 @@ private:
 	bool m_isActive;
 	bool m_mode;
 	std::unique_ptr<RenderEngine::Line> m_line;
-	std::shared_ptr<RenderEngine::Material> m_pMaterial;
+	RenderEngine::Material* m_pMaterial;
 	glm::vec3 m_color;
 };

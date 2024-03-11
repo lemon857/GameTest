@@ -14,7 +14,7 @@ namespace RenderEngine
 	class Circle
 	{
 	public:
-		Circle(std::shared_ptr<Material> pMaterial, glm::vec3 pos, glm::vec3 scale, glm::vec3 rot, glm::vec4 color, float radius, int numSegments, float size = 1.f);
+		Circle(Material* pMaterial, glm::vec3 pos, glm::vec3 scale, glm::vec3 rot, glm::vec4 color, float radius, int numSegments, float size = 1.f);
 		~Circle();
 
 		void render();
@@ -28,7 +28,7 @@ namespace RenderEngine
 		void add_rot(glm::vec3 rot);
 
 	private:
-		std::shared_ptr<Material> m_pMaterial;
+		Material* m_pMaterial;
 		float m_size;
 		float m_radius;
 		int m_numSegments;

@@ -11,7 +11,7 @@
 
 ParticleSystem::ParticleSystem(glm::vec3 pos, glm::vec3 particle_scale,
 	glm::vec3 vel_move, glm::vec3 acc_move, glm::vec3 vel_rot, glm::vec3 acc_rot,
-	int max_count_particles, double particle_live_time, float range_randomize, std::shared_ptr<RenderEngine::Material> pMaterial, bool isCyclic)
+	int max_count_particles, double particle_live_time, float range_randomize, RenderEngine::Material* pMaterial, bool isCyclic)
 	: m_acc_move(acc_move)
 	, m_vel_move(vel_move)
 	, m_acc_rot(acc_rot)

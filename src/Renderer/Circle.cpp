@@ -12,7 +12,7 @@
 
 namespace RenderEngine
 {
-	Circle::Circle(std::shared_ptr<Material> pMaterial, glm::vec3 pos, glm::vec3 scale, glm::vec3 rot, glm::vec4 color, float radius, int numSegments, float size)
+	Circle::Circle(Material* pMaterial, glm::vec3 pos, glm::vec3 scale, glm::vec3 rot, glm::vec4 color, float radius, int numSegments, float size)
 		: m_pos(pos)
 		, m_rot(rot)
 		, m_scale(scale)

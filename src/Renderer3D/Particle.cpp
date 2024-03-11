@@ -5,7 +5,8 @@
 
 #define PARTICLE_MULTIPLY_VELOCITY 0.001f
 
-Particle::Particle(double live_time, glm::vec3 startPos, glm::vec3 startScale, glm::vec3 startRot, glm::vec3 vel_m, glm::vec3 acc_m, glm::vec3 vel_r, glm::vec3 acc_r, std::shared_ptr<RenderEngine::Material> pMaterial)
+Particle::Particle(double live_time, glm::vec3 startPos, glm::vec3 startScale, glm::vec3 startRot, glm::vec3 vel_m, glm::vec3 acc_m, glm::vec3 vel_r,
+	glm::vec3 acc_r, RenderEngine::Material* pMaterial)
 	: m_isDestroyed(false)
 	, m_cur_time(0)
 	, m_live_time(live_time)

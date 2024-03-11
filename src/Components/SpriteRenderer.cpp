@@ -12,10 +12,10 @@
 #include <glm/vec3.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-SpriteRenderer::SpriteRenderer(std::shared_ptr<RenderEngine::Material> pMaterial,
+SpriteRenderer::SpriteRenderer(RenderEngine::Material* pMaterial,
 	std::string initialSubTexture)
 	: IComponent()
-	, m_vertexArray(std::make_shared<RenderEngine::VertexArray>())
+	, m_vertexArray(new RenderEngine::VertexArray())
 	, m_pMaterial(std::move(pMaterial))
 	, m_vertexCoordsBuffer(new RenderEngine::VertexBuffer())
 	, m_textureCoordsBuffer(new RenderEngine::VertexBuffer())
@@ -66,7 +66,7 @@ SpriteRenderer::~SpriteRenderer()
 	delete m_indexBuffer;
 	delete m_textureCoordsBuffer;
 	delete m_vertexCoordsBuffer;
-	delete m_vertexArray.get();
+	delete m_vertexArray;
 }
 
 void SpriteRenderer::setSubTexture(std::string subTexture)
@@ -143,7 +143,7 @@ void SpriteRenderer::render(RenderEngine::ShaderProgram* shader)
 	RenderEngine::Renderer::drawTriangles(*m_vertexArray, *m_indexBuffer);
 }
 
-std::shared_ptr<RenderEngine::Material> SpriteRenderer::get_material_ptr()
+RenderEngine::Material* SpriteRenderer::get_material_ptr()
 {
 	return m_pMaterial;
 }

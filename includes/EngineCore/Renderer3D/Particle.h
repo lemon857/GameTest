@@ -15,7 +15,7 @@ class Particle : public IGameObject
 public:
 	Particle(double live_time, glm::vec3 startPos, glm::vec3 startScale, glm::vec3 startRot,
 		glm::vec3 vel_m, glm::vec3 acc_m, glm::vec3 vel_r, glm::vec3 m_acc_r,
-		std::shared_ptr<RenderEngine::Material> pMaterial);
+		RenderEngine::Material* pMaterial);
 
 	void update(const double delta) override;
 

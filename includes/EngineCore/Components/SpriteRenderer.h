@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include <string>
 
 #include "EngineCore/IComponent.h"
@@ -17,7 +16,7 @@ namespace RenderEngine
 class SpriteRenderer : public IComponent
 {
 public:
-	SpriteRenderer(std::shared_ptr<RenderEngine::Material> pMaterial,
+	SpriteRenderer(RenderEngine::Material* pMaterial,
 		std::string initialSubTexture = "default");
 
 	~SpriteRenderer();
@@ -26,11 +25,11 @@ public:
 
 	void render(RenderEngine::ShaderProgram* shader) override;
 
-	std::shared_ptr<RenderEngine::Material> get_material_ptr();
+	RenderEngine::Material* get_material_ptr();
 private:
-	std::shared_ptr<RenderEngine::Material> m_pMaterial;
+	RenderEngine::Material* m_pMaterial;
 
-	std::shared_ptr<RenderEngine::VertexArray> m_vertexArray;
+	RenderEngine::VertexArray* m_vertexArray;
 	RenderEngine::VertexBuffer* m_vertexCoordsBuffer;
 	RenderEngine::VertexBuffer* m_textureCoordsBuffer;
 	RenderEngine::IndexBuffer* m_indexBuffer;

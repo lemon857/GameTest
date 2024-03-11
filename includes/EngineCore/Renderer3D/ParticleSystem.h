@@ -11,7 +11,6 @@ namespace RenderEngine
 	class Material;
 }
 
-
 class Particle;
 
 class ParticleSystem
@@ -19,7 +18,7 @@ class ParticleSystem
 public:
 	ParticleSystem(glm::vec3 pos, glm::vec3 particle_scale,
 		glm::vec3 vel_move, glm::vec3 acc_move, glm::vec3 vel_rot, glm::vec3 acc_rot,
-		int max_count_particles, double particle_live_time, float range_randomize, std::shared_ptr<RenderEngine::Material> pMaterial, bool isCyclic = false);
+		int max_count_particles, double particle_live_time, float range_randomize, RenderEngine::Material* pMaterial, bool isCyclic = false);
 	~ParticleSystem();
 
 	void update(const double delta);
@@ -51,5 +50,5 @@ private:
 	bool m_isCyclic;
 
 	linked_list<Particle*> m_particles;
-	std::shared_ptr<RenderEngine::Material> m_pMaterial;
+	RenderEngine::Material* m_pMaterial;
 };

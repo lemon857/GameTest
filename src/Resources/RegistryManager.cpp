@@ -2,7 +2,9 @@
 
 #include "EngineCore/System/Log.h"
 
+#ifdef WIN32
 #include <Windows.h>
+#endif
 
 std::string RegistryManager::m_path;
 
@@ -13,6 +15,7 @@ void RegistryManager::set_reg_path(std::string path)
 
 int RegistryManager::set_value(char* name_value, char* value, int valueLen)
 {
+#ifdef WIN32
     HKEY hKey;
 
     // Создаем ключ в ветке HKEY_CURRENT_USER
@@ -32,11 +35,14 @@ int RegistryManager::set_value(char* name_value, char* value, int valueLen)
         LOG_ERROR("[REG] Error close key");
         return 3;
     };
-	return 0;
+    return 0;
+#endif
+    return -1;
 }
 
 bool RegistryManager::get_value(char* name_value, char* valueBuf, int bufLen)
 {
+#ifdef WIN32
     DWORD dwBufLen = bufLen;
 
     if (RegGetValueA(HKEY_CURRENT_USER, m_path.c_str(), name_value, RRF_RT_REG_BINARY, NULL, (BYTE*)valueBuf, &dwBufLen) != ERROR_SUCCESS) {
@@ -44,10 +50,13 @@ bool RegistryManager::get_value(char* name_value, char* valueBuf, int bufLen)
         return false;
     }    
     return true;
+#endif
+    return false;
 }
 
 int RegistryManager::set_value(std::string name_value, std::string value)
 {
+#ifdef WIN32
     HKEY hKey;
 
     // Создаем ключ в ветке HKEY_CURRENT_USER
@@ -68,17 +77,22 @@ int RegistryManager::set_value(std::string name_value, std::string value)
         return 3;
     };
     return 0;
+#endif
+    return -1;
 }
 
 bool RegistryManager::get_value(std::string name_value, std::string& valueBuf)
 {
+#ifdef WIN32
     char szBuf[MAX_PATH];
     DWORD dwBufLen = MAX_PATH;
 
     if (RegGetValueA(HKEY_CURRENT_USER, m_path.c_str(), name_value.c_str(), RRF_RT_REG_SZ, NULL, (BYTE*)szBuf, &dwBufLen) != ERROR_SUCCESS) {
-        LOG_ERROR("[REG] Error read string from registry");
+        LOG_WARN("[REG] Error read string from registry");
         return false;
     }
     valueBuf = std::string(szBuf);
     return true;
+#endif
+    return false;
 }

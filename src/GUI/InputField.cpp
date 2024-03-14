@@ -11,8 +11,11 @@
 #include "EngineCore/System/Input.h"
 
 #include "EngineCore/System/Keys.h"
+#include "EngineCore/System/SysFunc.h"
 
+#ifdef WIN32
 #include <Windows.h>
+#endif
 
 GUI::InputField::InputField(Sprite* face, glm::vec2 pos, glm::vec2 scale,
 	std::string name, RenderEngine::ShaderProgram* shader,
@@ -118,15 +121,35 @@ void GUI::InputField::on_key_press(KeyCode key)
 	if (!m_isFocused) return;
 	if (key == KeyCode::KEY_V && Input::isKeyPressed(KeyCode::KEY_LEFT_CONTROL))
 	{
-		if (IsClipboardFormatAvailable(CF_TEXT))
+#ifdef WIN32
+		if (IsClipboardFormatAvailable(CF_UNICODETEXT))
 		{
 			if (OpenClipboard(0))
 			{
-				m_text += (wchar_t*)GetClipboardData(CF_TEXT);
+				m_text += (wchar_t*)GetClipboardData(CF_UNICODETEXT);
 				CloseClipboard();
 			}
 		}
+#endif
 	}	
+	else if (key == KeyCode::KEY_C && Input::isKeyPressed(KeyCode::KEY_LEFT_CONTROL))
+	{
+#ifdef WIN32
+		if (IsClipboardFormatAvailable(CF_UNICODETEXT))
+		{			
+			if (OpenClipboard(0))
+			{
+				auto glob = GlobalAlloc(GMEM_FIXED, sizeof(wchar_t) * m_text.size());
+				if (glob != 0)
+				{
+					memcpy(glob, m_text.c_str(), m_text.size());
+					SetClipboardData(CF_UNICODETEXT, glob);
+				}
+				CloseClipboard();
+			}
+		}
+#endif
+	}
 	else if (key == KeyCode::KEY_BACKSPACE && !m_text.empty())
 	{
 		m_text = m_text.substr(0, m_text.length() - 1);

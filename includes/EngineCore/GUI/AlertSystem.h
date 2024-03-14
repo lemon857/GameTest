@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <functional>
 
 #include <EngineCore/System/List.h>
 
@@ -27,6 +28,7 @@ namespace GUI
 		Sprite* sprite;
 		GUI_element* button_text;
 		GUI_element* button_bg;
+		std::function<void(void)> callback;
 	};
 
 	class AlertSystem
@@ -44,6 +46,7 @@ namespace GUI
 			std::string button_material, glm::vec3 text_color, glm::vec3 text_color_button, bool* pPausegame = nullptr);
 
 		static void addAlert(std::wstring message, std::string soundName = "");
+		static void addAlert(std::wstring message, std::function<void(void)> callback, std::string soundName = "");
 		static void unloadAllalerts();
 
 		static void render();
@@ -52,7 +55,7 @@ namespace GUI
 		static void on_mouse_press(int x, int y);
 		static void on_mouse_release(int x, int y);
 	private:
-		static bool m_close_last;
+		static bool m_close_first;
 		static bool* m_pause_game;
 		static linked_list<Alert*> m_alerts;
 		static std::wstring m_last;

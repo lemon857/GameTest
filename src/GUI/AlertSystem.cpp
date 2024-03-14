@@ -19,7 +19,7 @@ std::string GUI::AlertSystem::m_sprite_material;
 std::string GUI::AlertSystem::m_button_material;
 glm::vec3 GUI::AlertSystem::m_text_color;
 glm::vec3 GUI::AlertSystem::m_text_color_button;
-bool GUI::AlertSystem::m_close_last;
+bool GUI::AlertSystem::m_close_first;
 bool* GUI::AlertSystem::m_pause_game;
 
 void GUI::AlertSystem::setResources(std::string font_name, std::string font_name_button, std::string text_shader, std::string sprite_material,
@@ -33,7 +33,7 @@ void GUI::AlertSystem::setResources(std::string font_name, std::string font_name
 	m_sprite_material = sprite_material;
 	m_button_material = button_material;
 	m_text_shader = text_shader;
-	m_close_last = false;
+	m_close_first = false;
 	m_pause_game = std::move(pPausegame);
 }
 
@@ -73,13 +73,64 @@ void GUI::AlertSystem::addAlert(std::wstring message, std::string soundName)
 	a->sprite->set_layer(5.f);
 
 	a->button->set_mouse_up_callback([&]() {
-		m_close_last = true;
+		m_close_first = true;
 		});
 
 	if (soundName != "") ResourceManager::get_sound(soundName)->play();
 
+	a->callback = nullptr;
+
 	m_last = message;
 	m_alerts.push_back(a);
+	LOG_INFO("[AS] Add alert: {0}", message);
+}
+
+void GUI::AlertSystem::addAlert(std::wstring message, std::function<void(void)> callback, std::string soundName)
+{
+	if (m_last == message) return;
+	if (m_pause_game != nullptr) *m_pause_game = true;
+	LanguagePack* pack = ResourceManager::get_current_lang_pack();
+	Alert* a = new Alert;
+	a->button = new Button(new Sprite(ResourceManager::getMaterial(m_button_material), "static"),
+		glm::vec2(0.f), glm::vec2(0.f), pack->get("submit"),
+		ResourceManager::getShaderProgram(m_text_shader), ResourceManager::get_font(m_font_name_button), m_text_color_button);
+	a->message = new TextRenderer(ResourceManager::get_font(m_font_name), ResourceManager::getShaderProgram(m_text_shader),
+		message, m_text_color, glm::vec2(0.f), glm::vec2(0.f));
+	a->sprite = new Sprite(ResourceManager::getMaterial(m_sprite_material));
+	a->button->set_position(GUI_place::get_pix_percent(glm::vec2(50.f, 44.f)));
+	a->button->set_scale(GUI_place::get_pix_percent(glm::vec2(8.f, 5.f)));
+	a->message->set_position(GUI_place::get_pix_percent(glm::vec2(50.f, 55.5f)));
+	a->message->set_scale(GUI_place::get_pix_percent(glm::vec2(8.f, 5.f)));
+	a->sprite->set_position(GUI_place::get_pix_percent(glm::vec2(50.f)));
+	a->sprite->set_scale(GUI_place::get_pix_percent(glm::vec2(10.f, 13.f)));
+
+	a->message->set_text(message);
+
+	a->button_bg = a->button->get_elements()[0];
+	a->button_text = a->button->get_elements()[1];
+
+	a->button_bg->set_position(GUI_place::get_pix_percent(glm::vec2(50.f, 44.f)));
+	a->button_bg->set_scale(GUI_place::get_pix_percent(glm::vec2(8.f, 5.f)));
+	a->button_text->set_position(GUI_place::get_pix_percent(glm::vec2(50.f, 44.f)));
+	a->button_text->set_scale(GUI_place::get_pix_percent(glm::vec2(8.f, 5.f)));
+
+	a->button->set_layer(7.f);
+	a->button_bg->set_layer(7.f);
+	a->button_text->set_layer(7.f);
+	a->message->set_layer(7.f);
+	a->sprite->set_layer(5.f);
+
+	a->button->set_mouse_up_callback([&]() {
+		m_close_first = true;
+		});
+
+	if (soundName != "") ResourceManager::get_sound(soundName)->play();
+
+	a->callback = std::move(callback);
+
+	m_last = message;
+	m_alerts.push_back(a);
+	LOG_INFO("[AS] Add alert: {0}", message);
 }
 
 void GUI::AlertSystem::unloadAllalerts()
@@ -94,15 +145,15 @@ void GUI::AlertSystem::unloadAllalerts()
 void GUI::AlertSystem::render()
 {
 	if (m_alerts.is_empty()) return;
-	if (m_close_last)
+	if (m_close_first)
 	{ 
-		delete m_alerts.last()->button;
-		delete m_alerts.last()->button_bg;
-		delete m_alerts.last()->button_text;
-		delete m_alerts.last()->message;
-		delete m_alerts.last()->sprite;
-		m_alerts.remove_last();
-		m_close_last = false;
+		delete m_alerts[0]->button;
+		delete m_alerts[0]->button_bg;
+		delete m_alerts[0]->button_text;
+		delete m_alerts[0]->message;
+		delete m_alerts[0]->sprite;
+		m_alerts.remove_first();
+		m_close_first = false;
 		m_last = L"";
 		if (m_pause_game != nullptr) *m_pause_game = false;
 		return;
@@ -146,6 +197,7 @@ void GUI::AlertSystem::on_mouse_press(int x, int y)
 		{
 			m_alerts[i]->button->set_pos_mouse_click(glm::vec2(x, y));
 			m_alerts[i]->button->on_press();
+			if (m_alerts[i]->callback != nullptr) m_alerts[i]->callback();
 		}
 	}
 }

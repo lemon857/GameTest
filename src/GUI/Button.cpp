@@ -14,7 +14,7 @@ namespace GUI
 	Button::Button(Sprite* face, glm::vec2 pos, glm::vec2 scale,
 		std::string text, RenderEngine::ShaderProgram* textShader, Font* font, glm::vec3 textColor, std::string name)
 		: GUI_element(name == "default" ? text : name)
-		, m_textRenderer(new TextRenderer(font, std::move(textShader), text, textColor, glm::vec2(pos.x, pos.y - SHIFT_TEXT_SYMBOL_Y), glm::vec2(0.5f), m_name + "-text"))  // font sclae here
+		, m_textRenderer(new TextRenderer(font, std::move(textShader), text, textColor, glm::vec2(pos.x, pos.y - SHIFT_TEXT_SYMBOL_Y), glm::vec2(scale.x, 0.5f), m_name + "-text"))  // font sclae here
 		, m_face(std::move(face))
 	{
 		m_isClickable = true;
@@ -27,7 +27,7 @@ namespace GUI
 		RenderEngine::ShaderProgram* textShader, Font* font,
 		glm::vec3 textColor, std::string name)
 		: GUI_element(name == "default" ? "Button" + std::to_string(g_current_button_ID++) : name)
-		, m_textRenderer(new TextRenderer(font, std::move(textShader), text, textColor, glm::vec2(pos.x, pos.y - SHIFT_TEXT_SYMBOL_Y), glm::vec2(0.5f), m_name + "-text"))  // font sclae here
+		, m_textRenderer(new TextRenderer(font, std::move(textShader), text, textColor, glm::vec2(pos.x, pos.y - SHIFT_TEXT_SYMBOL_Y), glm::vec2(scale.x, 0.5f), m_name + "-text"))  // font sclae here
 		, m_face(std::move(face))
 	{
 		m_isClickable = true;

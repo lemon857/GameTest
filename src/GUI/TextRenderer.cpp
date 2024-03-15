@@ -128,6 +128,7 @@ namespace GUI
     }
     void TextRenderer::set_text(std::string text)
     {
+        m_lines.clear();
         m_text = sysfunc::ctowstr(text);
         float ch_size = m_font->get_scale() * m_font->get_glyph(L'H').Size.x;
         std::vector<std::wstring> strs;
@@ -163,6 +164,7 @@ namespace GUI
     }
     void TextRenderer::set_text(std::wstring text)
     {
+        m_lines.clear();
         m_text = text;
         float ch_size = m_font->get_scale() * m_font->get_glyph(L'H').Size.x;
         std::vector<std::wstring> strs;
@@ -201,7 +203,8 @@ namespace GUI
         m_y_shift = GUI_place::get_pix_percent(glm::vec2(0.f, SHIFT_Y_LINES_PERCENT * m_font->get_scale())).y;
         m_p_pos = pos;
         //m_position = glm::vec2(m_isCenterCoords ? (m_p_pos.x - (((float)m_text.length() / 2.f) * SHIFT_TEXT_SYMBOL_X)) : m_p_pos.x, m_p_pos.y);
-        
+        if (!m_lines.empty()) m_position = glm::vec2(m_isCenterCoords ? (m_p_pos.x -
+            (((float)m_lines[0].length() / 2.f) * (m_font->get_scale() * m_font->get_glyph(L'H').Size.x))) : m_p_pos.x, m_p_pos.y);
     }
     void TextRenderer::set_scale(glm::vec2 scale)
     {

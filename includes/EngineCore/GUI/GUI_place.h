@@ -264,6 +264,7 @@ namespace GUI
 		void set_active(bool active);
 
 		static glm::vec2 get_pix_percent(glm::vec2 percent);
+
 		static glm::vec2 get_vp_size();
 		static glm::mat4 get_prj_matrix();
 

@@ -26,6 +26,10 @@ namespace GUI
 		inline void set_scale(float scale) { m_scale = scale; }
 		inline float get_scale() { return m_scale; }
 
+		void bind_font_texture();
+		void bind_glyph_texture(const Font_Glyph sym);
+		void unbind_font();
+
 	private:
 		std::map<const wchar_t, Font_Glyph> m_glyphs;
 

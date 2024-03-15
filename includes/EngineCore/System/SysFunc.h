@@ -33,9 +33,7 @@ namespace sysfunc
 	double get_random(double min, double max);
 
 	void swap(void** a, void** b);
-
 	int partition(void** arr, int low, int high);
-
 	void quickSort(void** arr, int low, int high);
 
 	std::string ctostr(std::wstring str);

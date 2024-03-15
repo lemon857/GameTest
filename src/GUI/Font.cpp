@@ -96,4 +96,16 @@ namespace GUI
 	{
 		return m_glyphs[sym];
 	}
+	void Font::bind_font_texture()
+	{
+		glActiveTexture(GL_TEXTURE0);
+	}
+	void Font::bind_glyph_texture(const Font_Glyph sym)
+	{
+		glBindTexture(GL_TEXTURE_2D, sym.TextureID);
+	}
+	void Font::unbind_font()
+	{
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
 }

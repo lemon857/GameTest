@@ -157,7 +157,7 @@ namespace GUI
 				m_layer + 2.f);
 		}
 	}
-	void ScrollBox::add_element(GUI_element* element)
+	void ScrollBox::add_element(GUI_element* element, float y_shift)
 	{
 		if (m_place != nullptr)
 		{
@@ -165,7 +165,7 @@ namespace GUI
 		}
 		if (m_has_shift)
 		{
-			element->set_position(glm::vec2(m_position.x - m_scale.x, m_position.y - m_scale.y + SHIFT_ELEMENT_Y)); // displacement X here
+			element->set_position(glm::vec2(m_position.x - m_scale.x, m_position.y - m_scale.y + SHIFT_ELEMENT_Y + y_shift)); // displacement X here
 			element->set_scale(m_scale);
 		}
 		else
@@ -184,7 +184,7 @@ namespace GUI
 			{
 				if (m_has_shift)
 					m_elements[(i - m_elements.size() + 1) * -1]->set_position(
-						glm::vec2(m_position.x - m_scale.x, (m_position.y - m_scale.y + SHIFT_ELEMENT_Y) + ((i + 1) * SHIFT_ELEMENT_Y)));
+						glm::vec2(m_position.x - m_scale.x, (m_position.y - m_scale.y + SHIFT_ELEMENT_Y + y_shift) + ((i + 1) * (SHIFT_ELEMENT_Y + y_shift))));
 				else
 					m_elements[i]->set_position(
 						glm::vec2(m_position.x,
@@ -197,10 +197,6 @@ namespace GUI
 		if (m_has_shift)
 		{
 			m_elements.push_back(element);
-		}
-		else
-		{
-
 		}
 		if (m_elements[1] == nullptr) set_position(m_position);
 		if (m_elements.size() > m_max_count_elements) m_elements.remove((size_t)0);

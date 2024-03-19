@@ -37,7 +37,7 @@ namespace GUI
 
 		void set_position(glm::vec2 pos) override;
 
-		void add_element(GUI_element* element);
+		void add_element(GUI_element* element, float y_shift = 0.f);
 
 		void clear();
 

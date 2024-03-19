@@ -3,13 +3,6 @@
 #include <string>
 #include <vector>
 
-#define DEBUG
-
-#ifdef DEBUG
-#define DEBUG_CONSOLE 
-#define DEBUG_CONSOLE_LOG
-#endif // DEBUG_CONSOLE
-
 namespace std
 {
 	string to_string(string str);

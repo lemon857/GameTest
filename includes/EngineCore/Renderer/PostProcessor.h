@@ -24,13 +24,14 @@ namespace RenderEngine
 
 		void set_acive_msaa(bool state);
 		void change_acive_msaa();
+		inline bool get_active_msaa() { return m_activeMSAA; }
 
 		void on_resize(int window_width, int window_height);
 
 		void set_effect(int num);
 		void set_samples_count(unsigned int samples);
 
-		bool get_active() { return m_isActive; }
+		inline bool get_active() { return m_isActive; }
 
 		unsigned char* get_screenshot(int window_width, int window_height);
 

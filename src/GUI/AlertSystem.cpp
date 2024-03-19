@@ -49,10 +49,10 @@ void GUI::AlertSystem::addAlert(std::wstring message, std::string soundName)
 	a->message = new TextRenderer(ResourceManager::get_font(m_font_name), ResourceManager::getShaderProgram(m_text_shader), 
 		message, m_text_color, glm::vec2(0.f), glm::vec2(0.f));
 	a->sprite = new Sprite(ResourceManager::getMaterial(m_sprite_material));
-	a->button->set_position(GUI_place::get_pix_percent(glm::vec2(50.f, 44.f)));
-	a->button->set_scale(GUI_place::get_pix_percent(glm::vec2(8.f, 5.f)));
-	a->message->set_position(GUI_place::get_pix_percent(glm::vec2(50.f, 55.5f)));
-	a->message->set_scale(GUI_place::get_pix_percent(glm::vec2(8.f, 5.f)));
+	a->button->set_position(GUI_place::get_pix_percent(glm::vec2(50.f, 42.5f)));
+	a->button->set_scale(GUI_place::get_pix_percent(glm::vec2(8.f, 3.5f)));
+	a->message->set_position(GUI_place::get_pix_percent(glm::vec2(50.f, 59.4f)));
+	a->message->set_scale(GUI_place::get_pix_percent(glm::vec2(10.f, 1.f)));
 	a->sprite->set_position(GUI_place::get_pix_percent(glm::vec2(50.f)));
 	a->sprite->set_scale(GUI_place::get_pix_percent(glm::vec2(10.f, 13.f)));
 	
@@ -61,10 +61,10 @@ void GUI::AlertSystem::addAlert(std::wstring message, std::string soundName)
 	a->button_bg = a->button->get_elements()[0];
 	a->button_text = a->button->get_elements()[1];
 
-	a->button_bg->set_position(GUI_place::get_pix_percent(glm::vec2(50.f, 44.f)));
-	a->button_bg->set_scale(GUI_place::get_pix_percent(glm::vec2(8.f, 5.f)));
-	a->button_text->set_position(GUI_place::get_pix_percent(glm::vec2(50.f, 44.f)));
-	a->button_text->set_scale(GUI_place::get_pix_percent(glm::vec2(8.f, 5.f)));
+	a->button_bg->set_position(GUI_place::get_pix_percent(glm::vec2(50.f, 42.5f)));
+	a->button_bg->set_scale(GUI_place::get_pix_percent(glm::vec2(8.f, 3.5f)));
+	a->button_text->set_position(GUI_place::get_pix_percent(glm::vec2(50.f, 42.5f)));
+	a->button_text->set_scale(GUI_place::get_pix_percent(glm::vec2(8.f, 3.35f)));
 
 	a->button->set_layer(7.f);
 	a->button_bg->set_layer(7.f);

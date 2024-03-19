@@ -1,4 +1,4 @@
-#include "EngineCore/System/LogSystem.h"
+#include "EngineCore/System/Log.h"
 
 #include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/System/SysFunc.h"

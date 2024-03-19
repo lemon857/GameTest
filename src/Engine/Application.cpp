@@ -158,8 +158,8 @@ void Application::init_system_events()
         });
     m_system_event_dispather.add_event_listener<EventKeyPressed>([&](EventKeyPressed& e)
         {
-            Input::pressKey(e.key_code);
             m_event_dispather.dispatch(e);
+            Input::pressKey(e.key_code);
         });
     m_system_event_dispather.add_event_listener<EventCharSet>([&](EventCharSet& e)
         {
@@ -167,8 +167,8 @@ void Application::init_system_events()
         });
     m_system_event_dispather.add_event_listener<EventKeyReleased>([&](EventKeyReleased& e)
         {
-            Input::releaseKey(e.key_code);
             m_event_dispather.dispatch(e);
+            Input::releaseKey(e.key_code);
         });
     m_system_event_dispather.add_event_listener<EventMouseMoved>([&](EventMouseMoved& e)
         {
@@ -185,13 +185,13 @@ void Application::init_system_events()
         });
     m_system_event_dispather.add_event_listener<EventMouseButtonPressed>([&](EventMouseButtonPressed& e)
         {
-            Input::pressMouseButton(e.mouse_button);
             m_event_dispather.dispatch(e);
+            Input::pressMouseButton(e.mouse_button);
         });
     m_system_event_dispather.add_event_listener<EventMouseButtonReleased>([&](EventMouseButtonReleased& e)
         {
-            Input::releaseMouseButton(e.mouse_button);
             m_event_dispather.dispatch(e);
+            Input::releaseMouseButton(e.mouse_button);
         });
     m_system_event_dispather.add_event_listener<EventMaximizeWindow>([&](EventMaximizeWindow& e)
         {

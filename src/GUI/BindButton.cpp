@@ -14,7 +14,8 @@ namespace GUI
 		: GUI_element(name)
 		, m_face(std::move(face))
 		, m_targetBind(std::move(targetBind))
-		, m_textRenderer(new TextRenderer(font, std::move(textShader), Input::getKeyString(*m_targetBind), textColor, glm::vec2(pos.x, pos.y - SHIFT_TEXT_SYMBOL_Y), glm::vec2(0.5f), name + "text"))
+		, m_textRenderer(new TextRenderer(font, std::move(textShader), Input::getKeyString(*m_targetBind), textColor,
+			glm::vec2(pos.x, pos.y - SHIFT_TEXT_SYMBOL_Y), glm::vec2(scale.x, 0.5f), name + "text"))
 	{
 		m_isClickable = true;
 		m_position_p = pos;

@@ -40,6 +40,8 @@ namespace GUI
 
 		void set_position(glm::vec2 pos) override;
 		void set_scale(glm::vec2 scale) override;
+
+		inline float get_count_lines() { return m_lines.size(); }
 	private:
 		Font* m_font;
 		RenderEngine::ShaderProgram* m_shader;

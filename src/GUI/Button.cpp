@@ -78,11 +78,11 @@ namespace GUI
 	void Button::set_text(std::string text)
 	{
 		m_textRenderer->set_text(text);
-		m_textRenderer->set_position(glm::vec2(m_position.x, m_position.y - GUI_place::get_pix_percent(glm::vec2(0.f, SHIFT_TEXT_SYMBOL_Y)).y));
+		//m_textRenderer->set_position(glm::vec2(m_position.x, m_position.y - GUI_place::get_pix_percent(glm::vec2(0.f, SHIFT_TEXT_SYMBOL_Y)).y));
 	}
 	void Button::set_text(std::wstring text)
 	{
 		m_textRenderer->set_text(text);
-		m_textRenderer->set_position(glm::vec2(m_position.x, m_position.y - GUI_place::get_pix_percent(glm::vec2(0.f, SHIFT_TEXT_SYMBOL_Y)).y));
+		//m_textRenderer->set_position(glm::vec2(m_position.x, m_position.y - GUI_place::get_pix_percent(glm::vec2(0.f, SHIFT_TEXT_SYMBOL_Y)).y));
 	}
 }

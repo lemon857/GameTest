@@ -148,10 +148,10 @@ namespace GUI
         } while (tmp.find(L' ') != -1 || tmp.find(L'\n') != -1 || !tmp.empty());
         for (auto& i : strs)
         {
-            if ((tmp + L" " + i).size() * ch_size <= m_scale.x) tmp += L" " + i;
+            if ((tmp + L" " + i).size() * ch_size <= m_scale.x * 2.f) tmp += L" " + i;
             else
             {
-                m_lines.push_back(tmp);
+                if (tmp != L" " && !tmp.empty()) m_lines.push_back(tmp);
                 tmp = i;
             }
         }
@@ -184,10 +184,10 @@ namespace GUI
         } while (tmp.find(L' ') != -1 || tmp.find(L'\n') != -1 || !tmp.empty());
         for (auto& i : strs)
         {
-            if ((tmp + L" " + i).size() * ch_size <= m_scale.x) tmp += L" " + i;
+            if ((tmp + L" " + i).size() * ch_size <= m_scale.x * 2.f) tmp += L" " + i;
             else
             {
-                m_lines.push_back(tmp);
+                if (tmp != L" " && !tmp.empty()) m_lines.push_back(tmp);
                 tmp = i;
             }
         }
@@ -208,6 +208,7 @@ namespace GUI
     }
     void TextRenderer::set_scale(glm::vec2 scale)
     {
+        m_lines.clear();
         m_scale = scale;
         float ch_size = m_font->get_scale() * m_font->get_glyph(L'H').Size.x;
         std::vector<std::wstring> strs;
@@ -228,10 +229,10 @@ namespace GUI
         while (tmp.find(L' ') != -1 || tmp.find(L'\n') != -1 || !tmp.empty());
         for (auto& i : strs)
         {
-            if ((tmp + L" " + i).size() * ch_size <= m_scale.x) tmp += L" " + i;
+            if ((tmp + L" " + i).size() * ch_size <= m_scale.x * 2.f) tmp += L" " + i;
             else
             {
-                m_lines.push_back(tmp);
+                if (tmp != L" " && !tmp.empty()) m_lines.push_back(tmp);
                 tmp = i;
             }
         }

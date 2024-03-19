@@ -148,7 +148,7 @@ bool ResourceManager::load_JSON_resources(const std::string & JSONpath)
 				subTextures.emplace_back(currentSubTexture.GetString());
 			}
 
-			loadTextureAtlas(name, subTextures, path, width, height, subTextureWidth, subTextureHeight);
+			loadTextureAtlas(name, subTextures, path, width, height, subTextureWidth == 0 ? width : subTextureWidth, subTextureHeight == 0 ? height : subTextureHeight);
 		}
 	}
 	auto atlases3DIt = doc.FindMember("texture3DAtlases");

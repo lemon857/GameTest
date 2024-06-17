@@ -1,3 +1,5 @@
+!WARNING! This engine not supported now, may be later I write new engine anew
+
 # Game Engine
 This is my engine.  
 I'm not pro developer, this is a not optimized and have many bugs engine.  

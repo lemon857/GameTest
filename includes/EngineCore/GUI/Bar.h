@@ -16,7 +16,7 @@ namespace GUI
 			float size_line, double max_value, glm::vec3 background_color, glm::vec3 foreground_color, std::string name);
 		~Bar();
 
-		void on_render_prj(glm::mat4& prj) override;
+		void on_render_prj(glm::mat4 prj) override;
 
 		void add_value(const double value);
 		void add_max_value(const double value);

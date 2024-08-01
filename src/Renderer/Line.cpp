@@ -1,4 +1,4 @@
-#include "EngineCore/Renderer/Line.h";
+#include "EngineCore/Renderer/Line.h"
 
 #include "EngineCore/System/ShadersSettings.h"
 #include "EngineCore/Renderer/Material.h"
@@ -36,7 +36,7 @@ namespace RenderEngine
 		delete m_vertexCoordsBuffer;
 		delete m_vertexArray;
 	}
-	void Line::render(const glm::vec3& position, const glm::vec3& dir, glm::vec3& color) const
+	void Line::render(const glm::vec3 position, const glm::vec3 dir, glm::vec3 color) const
 	{
 		m_pMaterial->use();
 
@@ -59,7 +59,7 @@ namespace RenderEngine
 
 		Renderer::drawLine(*m_vertexArray, m_size);
 	}
-	void Line::render_from_to(const glm::vec3& position, const glm::vec3& to, glm::vec3& color) const
+	void Line::render_from_to(const glm::vec3 position, const glm::vec3 to, glm::vec3 color) const
 	{
 		glm::vec3 dir = to - position;
 
@@ -83,7 +83,7 @@ namespace RenderEngine
 
 		Renderer::drawLine(*m_vertexArray, m_size);
 	}
-	void Line::render(const glm::vec3& position, const glm::vec3& dir, glm::vec4& color) const
+	void Line::render(const glm::vec3 position, const glm::vec3 dir, glm::vec4 color) const
 	{
 		glm::mat4 scaleMat(
 			dir.x, 0, 0, 0,
@@ -105,7 +105,7 @@ namespace RenderEngine
 
 		Renderer::drawLine(*m_vertexArray, m_size);
 	}
-	void Line::render_from_to(const glm::vec3& position, const glm::vec3& to, glm::vec4& color) const
+	void Line::render_from_to(const glm::vec3 position, const glm::vec3 to, glm::vec4 color) const
 	{
 		glm::vec3 dir = to - position;
 
@@ -129,7 +129,7 @@ namespace RenderEngine
 
 		Renderer::drawLine(*m_vertexArray, m_size);
 	}
-	void Line::set_prj_mat(glm::mat4& prj)
+	void Line::set_prj_mat(glm::mat4 prj)
 	{
 		m_pMaterial->use();
 		m_pMaterial->set_view_projection_matrix(prj);

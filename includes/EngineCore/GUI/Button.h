@@ -32,7 +32,7 @@ namespace GUI
 			Font* font, glm::vec3 textColor, std::string name = "default");
 		~Button();
 
-		void on_render_prj(glm::mat4& prj) override;
+		void on_render_prj(glm::mat4 prj) override;
 
 		void on_press() override;
 		void on_release() override;

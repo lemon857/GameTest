@@ -12,7 +12,7 @@ namespace GUI
 		Slider(Sprite* background, Sprite* slider, glm::vec2 pos, glm::vec2 scale, float min, float max, std::string name = "default");
 		~Slider();
 
-		void on_render_prj(glm::mat4& prj) override;
+		void on_render_prj(glm::mat4 prj) override;
 
 		void on_press() override;
 		void on_release() override;

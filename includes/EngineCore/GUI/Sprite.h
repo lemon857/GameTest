@@ -29,7 +29,7 @@ namespace GUI
 		
 		void setSubTexture(std::string subTexture);
 
-		void on_render_prj(glm::mat4& prj) override;
+		void on_render_prj(glm::mat4 prj) override;
 	private:
 		RenderEngine::VertexArray* m_vertexArray;
 		RenderEngine::VertexBuffer* m_vertexCoordsBuffer;

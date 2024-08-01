@@ -27,7 +27,7 @@ namespace GUI
 			float scrollMultiplier = 10.f, float percentDisplaysment = 0.15f);
 		~ScrollBox();
 
-		void on_render_prj(glm::mat4& prj) override;
+		void on_render_prj(glm::mat4 prj) override;
 
 		std::vector<GUI_element*> get_elements() override;
 

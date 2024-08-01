@@ -40,7 +40,7 @@ GUI::InputField::~InputField()
 {
 }
 
-void GUI::InputField::on_render_prj(glm::mat4& prj)
+void GUI::InputField::on_render_prj(glm::mat4 prj)
 {
 
 }

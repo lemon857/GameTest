@@ -8,9 +8,9 @@ public:
 	Stopwatch();
 
 	void start();
-	// Вернёт разницу во времени между вызовом функций старт и стоп
+	// Г‚ГҐГ°Г­ЕѕГІ Г°Г Г§Г­ГЁГ¶Гі ГўГ® ГўГ°ГҐГ¬ГҐГ­ГЁ Г¬ГҐГ¦Г¤Гі ГўГ»Г§Г®ГўГ®Г¬ ГґГіГ­ГЄГ¶ГЁГ© Г±ГІГ Г°ГІ ГЁ Г±ГІГ®ГЇ
 	double stop();
 
 private:
-	std::chrono::steady_clock::time_point m_timeStart;
+	std::chrono::time_point<std::chrono::high_resolution_clock> m_timeStart;
 };

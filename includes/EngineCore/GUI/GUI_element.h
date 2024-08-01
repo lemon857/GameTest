@@ -54,7 +54,7 @@ namespace GUI
 		~GUI_element() = default;
 
 		virtual void on_update(const double delta) {}
-		virtual void on_render_prj(glm::mat4& prj) {}
+		virtual void on_render_prj(glm::mat4 prj) {}
 
 		virtual void on_press() {};
 		virtual void on_release() {};

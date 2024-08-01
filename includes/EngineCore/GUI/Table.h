@@ -30,7 +30,7 @@ namespace GUI
 			glm::vec3 textColor, int colls, int rows, std::vector<std::wstring> data);
 		~Table();
 
-		void on_render_prj(glm::mat4& prj) override;
+		void on_render_prj(glm::mat4 prj) override;
 
 		std::vector<GUI_element*> get_elements() override;
 	private:

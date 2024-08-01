@@ -26,7 +26,7 @@ GUI::Bar::~Bar()
 	delete m_background_line;
 }
 
-void GUI::Bar::on_render_prj(glm::mat4& prj)
+void GUI::Bar::on_render_prj(glm::mat4 prj)
 {
 	if (!m_isActive) return;
 	

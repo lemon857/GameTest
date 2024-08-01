@@ -2,7 +2,8 @@
 
 #include <random>
 #include <locale>
-#include <codecvt>
+#include <codecvt>  
+#include <cstring>
 
 namespace sysfunc
 {

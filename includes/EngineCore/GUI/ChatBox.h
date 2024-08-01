@@ -28,7 +28,7 @@ namespace GUI
 			Font* font, RenderEngine::ShaderProgram* shader, glm::vec3 textColor, GUI_place* place = nullptr);
 		~ChatBox();
 
-		void on_render_prj(glm::mat4& prj) override;
+		void on_render_prj(glm::mat4 prj) override;
 
 		std::vector<GUI_element*> get_elements() override;
 

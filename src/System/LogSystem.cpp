@@ -4,11 +4,14 @@
 #include "EngineCore/System/SysFunc.h"
 
 #include <iostream>
-#include <Windows.h>
 #include <chrono>
 #include <ctime>
 #include <fstream>
 #include <filesystem>
+
+#if defined(_WIN32)
+#include <Windows.h>
+#endif
 
 std::string LogSystem::m_path;
 
@@ -56,7 +59,7 @@ void LogSystem::uninit_log_system()
 
 void LogSystem::log_info(std::string msg)
 {
-#ifdef DEBUG_CONSOLE_LOG
+#if defined(DEBUG_CONSOLE_LOG) && defined(_WIN32)
 	HANDLE h;
 	h = GetStdHandle(STD_OUTPUT_HANDLE);
 	std::cout << "[" << currentDateTime() << "] [";
@@ -75,7 +78,7 @@ void LogSystem::log_info(std::string msg)
 
 void LogSystem::log_warn(std::string msg)
 {
-#ifdef DEBUG_CONSOLE_LOG
+#if defined(DEBUG_CONSOLE_LOG) && defined(_WIN32)
 	HANDLE h;
 	h = GetStdHandle(STD_OUTPUT_HANDLE);
 	std::cout << "[" << currentDateTime() << "] [";
@@ -94,7 +97,7 @@ void LogSystem::log_warn(std::string msg)
 
 void LogSystem::log_error(std::string msg)
 {
-#ifdef DEBUG_CONSOLE_LOG
+#if defined(DEBUG_CONSOLE_LOG) && defined(_WIN32)
 	HANDLE h;
 	h = GetStdHandle(STD_OUTPUT_HANDLE);
 	std::cout << "[" << currentDateTime() << "] [";
@@ -113,7 +116,7 @@ void LogSystem::log_error(std::string msg)
 
 void LogSystem::log_crit(std::string msg)
 {
-#ifdef DEBUG_CONSOLE_LOG
+#if defined(DEBUG_CONSOLE_LOG) && defined(_WIN32)
 	HANDLE h;
 	h = GetStdHandle(STD_OUTPUT_HANDLE);
 	std::cout << "[" << currentDateTime() << "] [";

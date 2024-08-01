@@ -22,7 +22,7 @@ namespace GUI
 	{
 
 	}
-	void ChatBox::on_render_prj(glm::mat4& prj)
+	void ChatBox::on_render_prj(glm::mat4 prj)
 	{
 
 	}

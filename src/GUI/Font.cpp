@@ -22,7 +22,7 @@ namespace GUI
 		}
 	}
 
-	bool Font::load(std::string& font_path, unsigned int font_size)
+	bool Font::load(std::string font_path, unsigned int font_size)
 	{
 		FT_Library ft;
 		if (FT_Init_FreeType(&ft))

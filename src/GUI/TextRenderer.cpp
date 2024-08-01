@@ -118,7 +118,7 @@ namespace GUI
         m_vertexArray->unbind();
         m_font->unbind_font();
 	}
-    void TextRenderer::on_render_prj(glm::mat4& prj)
+    void TextRenderer::on_render_prj(glm::mat4 prj)
     {
         if (!m_isActive) return;
         for (int i = 0; i < m_lines.size(); i++)

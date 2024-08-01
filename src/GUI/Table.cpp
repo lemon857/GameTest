@@ -57,7 +57,7 @@ namespace GUI
 	Table::~Table()
 	{
 	}
-	void Table::on_render_prj(glm::mat4& prj)
+	void Table::on_render_prj(glm::mat4 prj)
 	{
 
 	}

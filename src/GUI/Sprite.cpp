@@ -131,7 +131,7 @@ namespace GUI
 		m_textureCoordsBuffer->update(&textureCoords, 2 * 4 * sizeof(GLfloat));
 	}
 
-	void Sprite::on_render_prj(glm::mat4& prj)
+	void Sprite::on_render_prj(glm::mat4 prj)
 	{
 		if (!m_isActive) return;
 		glm::mat4 scaleMat(

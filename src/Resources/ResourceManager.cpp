@@ -1,4 +1,4 @@
-﻿#include "EngineCore/Resources/ResourceManager.h";
+﻿#include "EngineCore/Resources/ResourceManager.h"
 #include "EngineCore/Renderer/ShaderProgram.h"
 #include "EngineCore/Renderer/Texture2D.h"
 #include "EngineCore/Renderer/Material.h"

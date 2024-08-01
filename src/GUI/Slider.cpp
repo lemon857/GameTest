@@ -26,7 +26,7 @@ namespace GUI
 	Slider::~Slider()
 	{
 	}
-	void Slider::on_render_prj(glm::mat4& prj)
+	void Slider::on_render_prj(glm::mat4 prj)
 	{
 	}
 	void Slider::on_press()

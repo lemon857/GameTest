@@ -7,6 +7,8 @@
 #include "EngineCore/System/SysFunc.h"
 #include "EngineCore/Components/SpriteRenderer.h"
 
+#include <cstddef>
+
 #define PARTICLE_SYSTEM_ADD_PERCENT 10
 
 ParticleSystem::ParticleSystem(glm::vec3 pos, glm::vec3 particle_scale,
@@ -41,7 +43,7 @@ ParticleSystem::~ParticleSystem()
 void ParticleSystem::update(const double delta)
 {
 	if (m_isDestroyed) return;
-	for (size_t i = 0; i < m_particles.size(); i++)
+	for (std::size_t i = 0; i < m_particles.size(); i++)
 	{
 		m_particles[i]->update(delta);
 		if (m_isCyclic)
@@ -80,7 +82,7 @@ void ParticleSystem::render(glm::mat4 prj)
 	RenderEngine::ShaderProgram* shader = m_particles[0]->getComponent<SpriteRenderer>()->get_material_ptr()->get_shader_ptr();
 	shader->use();
 	shader->setMatrix4(SS_VIEW_PROJECTION_MATRIX_NAME, prj);
-	for (size_t i = 0; i < m_particles.size(); i++)
+	for (std::size_t i = 0; i < m_particles.size(); i++)
 	{
 		m_particles[i]->render();
 	}

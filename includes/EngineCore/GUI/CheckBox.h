@@ -21,7 +21,7 @@ namespace GUI
 		CheckBox(Sprite* backgroung, Sprite* checkFlag, glm::vec2 pos, glm::vec2 scale, std::string name);
 		~CheckBox();
 
-		void on_render_prj(glm::mat4& prj) override;
+		void on_render_prj(glm::mat4 prj) override;
 
 		void on_press() override;
 		void on_release() override;

@@ -90,7 +90,7 @@ RenderEngine::Skybox::~Skybox()
 	delete m_texture;
 }
 
-void RenderEngine::Skybox::render(glm::mat4& prj)
+void RenderEngine::Skybox::render(glm::mat4 prj)
 {
 	glDepthFunc(GL_LEQUAL);
 	m_shader->use();

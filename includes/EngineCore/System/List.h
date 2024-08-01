@@ -1,5 +1,8 @@
 #pragma once
 
+#include <typeinfo>
+#include <cstddef>
+
 class _list_parent
 {
 public:
@@ -9,7 +12,7 @@ public:
 	~_list_parent(){}
 
 protected:
-	size_t m_size;
+	std::size_t m_size;
 };
 
 template <class _Ty>
@@ -114,7 +117,7 @@ public:
 		m_size--;
 	}
 
-	void remove(const size_t index)
+	void remove(const std::size_t index)
 	{
 		if (is_empty()) return;
 		_Ty _val = at(index);
@@ -140,27 +143,27 @@ public:
 		m_size--;
 	}
 
-	_Ty operator[] (const size_t index) {
+	_Ty operator[] (const std::size_t index) {
 		if (is_empty()) return nullptr;
 		ListNode* p = m_first;
-		for (size_t i = 0; i < index; i++) {
+		for (std::size_t i = 0; i < index; i++) {
 			p = p->m_next;
 			if (!p) return nullptr;
 		}
 		return p->value;
 	}
 
-	_Ty at(const size_t index) {
+	_Ty at(const std::size_t index) {
 		if (is_empty()) return nullptr;
 		ListNode* p = m_first;
-		for (size_t i = 0; i < index; i++) {
+		for (std::size_t i = 0; i < index; i++) {
 			p = p->m_next;
 			if (!p) return nullptr;
 		}
 		return p->value;
 	}
 
-	size_t size()
+	std::size_t size()
 	{
 		return m_size;
 	}
@@ -170,7 +173,7 @@ public:
 		if (is_empty()) return;
 		ListNode* p = m_first->m_next;
 		ListNode* pt = m_first;
-		for (size_t i = 0; i < m_size - 1; i++) {
+		for (std::size_t i = 0; i < m_size - 1; i++) {
 			delete pt;
 			pt = p;
 			if (p != nullptr) p = p->m_next;

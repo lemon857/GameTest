@@ -52,7 +52,7 @@ namespace GUI
 		delete m_vertexCoordsBuffer;
 		delete m_vertexArray;
 	}
-	void Square::on_render_prj(glm::mat4& prj)
+	void Square::on_render_prj(glm::mat4 prj)
 	{
 		glm::mat4 scaleMat(
 			m_scale[0], 0, 0, 0,

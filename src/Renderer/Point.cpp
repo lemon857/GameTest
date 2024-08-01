@@ -1,4 +1,4 @@
-#include "EngineCore/Renderer/Point.h";
+#include "EngineCore/Renderer/Point.h"
 
 #include "EngineCore/Renderer/ShaderProgram.h"
 #include "EngineCore/Renderer/VertexBufferLayout.h"

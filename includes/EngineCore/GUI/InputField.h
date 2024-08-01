@@ -31,7 +31,7 @@ namespace GUI
 			Font* font, glm::vec3 textColor, bool clear_after_send = false, bool* focus_trigger = nullptr);
 		~InputField();
 
-		void on_render_prj(glm::mat4& prj) override;
+		void on_render_prj(glm::mat4 prj) override;
 
 		void on_press() override;
 		void on_release() override;

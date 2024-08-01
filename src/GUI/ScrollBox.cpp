@@ -47,7 +47,7 @@ namespace GUI
 		}
 		m_elements.clear();
 	}
-	void ScrollBox::on_render_prj(glm::mat4& prj)
+	void ScrollBox::on_render_prj(glm::mat4 prj)
 	{
 		if (!m_isActive) return;
 		for (size_t i = 0; i < m_elements.size(); i++)

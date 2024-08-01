@@ -40,7 +40,7 @@ namespace GUI
 	{
 
 	}
-	void Button::on_render_prj(glm::mat4& prj)
+	void Button::on_render_prj(glm::mat4 prj)
 	{
 
 	}

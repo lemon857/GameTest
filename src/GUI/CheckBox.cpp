@@ -27,7 +27,7 @@ namespace GUI
 		delete m_check;
 	}
 
-	void CheckBox::on_render_prj(glm::mat4& prj)
+	void CheckBox::on_render_prj(glm::mat4 prj)
 	{
 		if (!m_isActive) return;
 		if (m_value)

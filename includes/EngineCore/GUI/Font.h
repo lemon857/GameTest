@@ -7,10 +7,10 @@
 namespace GUI
 {
 	struct Font_Glyph {
-		unsigned int TextureID; // ID текстуры глифа
-		glm::ivec2   Size;      // Размеры глифа
-		glm::ivec2   Bearing;   // Смещение верхней левой точки глифа
-		unsigned int Advance;   // Горизонтальное смещение до начала следующего глифа
+		unsigned int TextureID; // ID ГІГҐГЄГ±ГІГіГ°Г» ГЈГ«ГЁГґГ 
+		glm::ivec2   Size;      // ГђГ Г§Г¬ГҐГ°Г» ГЈГ«ГЁГґГ 
+		glm::ivec2   Bearing;   // Г‘Г¬ГҐГ№ГҐГ­ГЁГҐ ГўГҐГ°ГµГ­ГҐГ© Г«ГҐГўГ®Г© ГІГ®Г·ГЄГЁ ГЈГ«ГЁГґГ 
+		unsigned int Advance;   // ГѓГ®Г°ГЁГ§Г®Г­ГІГ Г«ГјГ­Г®ГҐ Г±Г¬ГҐГ№ГҐГ­ГЁГҐ Г¤Г® Г­Г Г·Г Г«Г  Г±Г«ГҐГ¤ГіГѕГ№ГҐГЈГ® ГЈГ«ГЁГґГ 
 	};
 
 	class Font
@@ -19,7 +19,7 @@ namespace GUI
 		Font();
 		~Font();
 
-		bool load(std::string& font_path, unsigned int font_size);
+		bool load(std::string font_path, unsigned int font_size);
 
 		Font_Glyph get_glyph(const wchar_t sym);
 

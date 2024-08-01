@@ -1,6 +1,7 @@
 #include "EngineCore/Renderer/Texture2D.h"
 
 #include <glad/glad.h>
+#include <cmath>
 
 namespace RenderEngine 
 {

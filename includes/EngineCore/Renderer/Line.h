@@ -21,13 +21,13 @@ namespace RenderEngine
 		inline Line(const Line&) = delete;
 		inline Line& operator=(const Line&) = delete;
 
-		void render(const glm::vec3& position, const glm::vec3& dir, glm::vec3& color) const;
-		void render_from_to(const glm::vec3& position, const glm::vec3& to, glm::vec3& color) const;
+		void render(const glm::vec3 position, const glm::vec3 dir, glm::vec3 color) const;
+		void render_from_to(const glm::vec3 position, const glm::vec3 to, glm::vec3 color) const;
 
-		void render(const glm::vec3& position, const glm::vec3& dir, glm::vec4& color) const;
-		void render_from_to(const glm::vec3& position, const glm::vec3& to, glm::vec4& color) const;
+		void render(const glm::vec3 position, const glm::vec3 dir, glm::vec4 color) const;
+		void render_from_to(const glm::vec3 position, const glm::vec3 to, glm::vec4 color) const;
 
-		void set_prj_mat(glm::mat4& prj);
+		void set_prj_mat(glm::mat4 prj);
 
 		void set_size(float size);
 

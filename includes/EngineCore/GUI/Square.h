@@ -20,7 +20,7 @@ namespace GUI
 		Square(RenderEngine::Material* pMaterial, glm::vec2 pos, glm::vec2 scale);
 		~Square();
 
-		void on_render_prj(glm::mat4& prj) override;
+		void on_render_prj(glm::mat4 prj) override;
 
 		void set_color(glm::vec3 color);
 	private:

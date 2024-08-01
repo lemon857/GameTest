@@ -16,7 +16,7 @@ namespace RenderEngine
 		Skybox(Texture3D* texture, ShaderProgram* shader);
 		~Skybox();
 
-		void render(glm::mat4& prj);
+		void render(glm::mat4 prj);
 
 	private:
 		unsigned int m_cube;

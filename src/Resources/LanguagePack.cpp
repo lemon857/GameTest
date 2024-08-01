@@ -18,11 +18,11 @@ LanguagePack::~LanguagePack()
 bool LanguagePack::load_pack(std::string path)
 {
 	std::wifstream f;
-	f.imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
 	f.open(path, std::ios::in);
 
 	if (f.is_open())
 	{
+	  f.imbue(std::locale(f.getloc(), new std::codecvt_utf8<wchar_t>));
 		std::wstring line;
 		while (std::getline(f, line))
 		{

@@ -11,6 +11,9 @@
 
 #if defined(_WIN32)
 #include <Windows.h>
+#define PATH_PIECE PATH_PIECE
+#elif defined(__linux__)
+#define PATH_PIECE "/"
 #endif
 
 std::string LogSystem::m_path;
@@ -32,18 +35,18 @@ std::string currentDateTime() {
 
 void LogSystem::init_log_system(std::string relPathFolder)
 { 	
-	std::filesystem::create_directory(ResourceManager::getExeFilePath() + "\\" + relPathFolder);
-	if (std::filesystem::exists(ResourceManager::getExeFilePath() + "\\" + relPathFolder + "\\lastest.log"))
+	std::filesystem::create_directory(ResourceManager::getExeFilePath() + PATH_PIECE + relPathFolder);
+	if (std::filesystem::exists(ResourceManager::getExeFilePath() + PATH_PIECE + relPathFolder + PATH_PIECE + "lastest.log"))
 	{
 		std::time_t t = std::time(nullptr);
 		std::tm* now = std::localtime(&t);
 		char buffer[128];
 		strftime(buffer, sizeof(buffer), "%Y-%m-%d_%H-%M-%S", now);
 
-		std::filesystem::copy_file(ResourceManager::getExeFilePath() + "\\" + relPathFolder + "\\lastest.log", 
-			ResourceManager::getExeFilePath() + "\\" + relPathFolder + "\\" + buffer + ".log");
+		std::filesystem::copy_file(ResourceManager::getExeFilePath() + PATH_PIECE + relPathFolder + PATH_PIECE + "lastest.log", 
+			ResourceManager::getExeFilePath() + PATH_PIECE + relPathFolder + PATH_PIECE + buffer + ".log");
 	}
-	m_path = ResourceManager::getExeFilePath() + "\\" + relPathFolder + "\\lastest.log";
+	m_path = ResourceManager::getExeFilePath() + PATH_PIECE + relPathFolder + PATH_PIECE + "lastest.log";
 	std::ofstream stream(m_path, std::ios::out);
 	if (stream.is_open())
 	{

@@ -10,19 +10,17 @@
 
 #include "EngineCore/System/Log.h"
 
-class Camera;
+#include "EngineCore/GUI/GUI_element.h"
 
-enum class KeyCode;
+#include "EngineCore/Renderer/Camera.h"
 
-namespace RenderEngine
-{
-	class Material;
-}
+#include "EngineCore/Renderer/Material.h"
+
+#include "EngineCore/System/Keys.h"
+
 
 namespace GUI
 {
-	class GUI_element;
-
 	class GUI_place
 	{
 	public:

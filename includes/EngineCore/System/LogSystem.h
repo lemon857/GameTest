@@ -33,19 +33,32 @@ public:
 	template<typename... _Args>
 	static void info(std::string text, _Args &&...args)
 	{
-		std::vector<std::string> strs;
+    std::vector<std::string> strs;
 
-		(strs.push_back(std::to_string(args)), ...);
+    (strs.push_back(std::to_string(args)), ...);
 
-		while (text.find('{') != -1)
-		{
-			int a = text.find('{');
-			int b = text.find('}', a);
-			std::string s = text.substr(a + 1, 1);
-			int i = std::stoi(s);
-			text = text.substr(0, a) + strs[i] + text.substr(b + 1);
-		}
-		log_info(text);
+    std::string temp;
+    size_t start = -1;
+    size_t size = text.size();
+    for (size_t i = 0; i < size; ++i) {
+      if (text[i] == '\\' && (i + 1) < size && text[i + 1] == '{') {
+        ++i;
+      } else {
+        if (text[i] == '{') {
+          ++i;
+          start = i;
+          while (text[i] != '}' && i < text.size()) {
+            ++i;
+          }
+          int j = std::stoi(text.substr(start, i));
+          temp += strs[j];
+          continue;
+        }
+      }
+      temp += text[i];
+    }
+    
+    log_info(temp);
 	}
 
 	template<typename... _Args>
@@ -55,15 +68,28 @@ public:
 
 		(strs.push_back(std::to_string(args)), ...);
 
-		while (text.find('{') != -1)
-		{
-			int a = text.find('{');
-			int b = text.find('}', a);
-			std::string s = text.substr(a + 1, 1);
-			int i = std::stoi(s);
-			text = text.substr(0, a) + strs[i] + text.substr(b + 1);
-		}
-		log_warn(text);
+		std::string temp;
+    size_t start = -1;
+    size_t size = text.size();
+    for (size_t i = 0; i < size; ++i) {
+      if (text[i] == '\\' && (i + 1) < size && text[i + 1] == '{') {
+        ++i;
+      } else {
+        if (text[i] == '{') {
+          ++i;
+          start = i;
+          while (text[i] != '}' && i < text.size()) {
+            ++i;
+          }
+          int j = std::stoi(text.substr(start, i));
+          temp += strs[j];
+          continue;
+        }
+      }
+      temp += text[i];
+    }
+
+		log_warn(temp);
 	}
 
 	template<typename... _Args>
@@ -73,15 +99,28 @@ public:
 
 		(strs.push_back(std::to_string(args)), ...);
 
-		while (text.find('{') != -1)
-		{
-			int a = text.find('{');
-			int b = text.find('}', a);
-			std::string s = text.substr(a + 1, 1);
-			int i = std::stoi(s);
-			text = text.substr(0, a) + strs[i] + text.substr(b + 1);
-		}
-		log_error(text);
+		std::string temp;
+    size_t start = -1;
+    size_t size = text.size();
+    for (size_t i = 0; i < size; ++i) {
+      if (text[i] == '\\' && (i + 1) < size && text[i + 1] == '{') {
+        ++i;
+      } else {
+        if (text[i] == '{') {
+          ++i;
+          start = i;
+          while (text[i] != '}' && i < text.size()) {
+            ++i;
+          }
+          int j = std::stoi(text.substr(start, i));
+          temp += strs[j];
+          continue;
+        }
+      }
+      temp += text[i];
+    }
+
+		log_error(temp);
 	}
 
 	template<typename... _Args>
@@ -91,15 +130,28 @@ public:
 
 		(strs.push_back(std::to_string(args)), ...);
 
-		while (text.find('{') != -1)
-		{
-			int a = text.find('{');
-			int b = text.find('}', a);
-			std::string s = text.substr(a + 1, 1);
-			int i = std::stoi(s);
-			text = text.substr(0, a) + strs[i] + text.substr(b + 1);
-		}
-		log_crit(text);
+		std::string temp;
+    size_t start = -1;
+    size_t size = text.size();
+    for (size_t i = 0; i < size; ++i) {
+      if (text[i] == '\\' && (i + 1) < size && text[i + 1] == '{') {
+        ++i;
+      } else {
+        if (text[i] == '{') {
+          ++i;
+          start = i;
+          while (text[i] != '}' && i < text.size()) {
+            ++i;
+          }
+          int j = std::stoi(text.substr(start, i));
+          temp += strs[j];
+          continue;
+        }
+      }
+      temp += text[i];
+    }
+
+		log_crit(temp);
 	}
 private:
 	static std::string m_path;

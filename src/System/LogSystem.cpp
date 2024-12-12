@@ -11,7 +11,7 @@
 
 #if defined(_WIN32)
 #include <Windows.h>
-#define PATH_PIECE PATH_PIECE
+#define PATH_PIECE "\\"
 #elif defined(__linux__)
 #define PATH_PIECE "/"
 #endif
@@ -69,9 +69,9 @@ void LogSystem::log_info(std::string msg)
 	SetConsoleTextAttribute(h, (((0 << 4) | 2)));
 	std::cout << "info";
 	SetConsoleTextAttribute(h, (((0 << 4) | 7)));
-	std::cout << "] " << msg << std::endl;
+	std::cout << "] " << msg << "\n";
 #elif defined(DEBUG_CONSOLE_LOG) && defined(__linux__)
-	std::cout << "[\033[36m" << currentDateTime() << "\033[39m] [\033[32minfo\033[39m] " << msg << std::endl;
+	std::cout << "[\033[36m" << currentDateTime() << "\033[39m] [\033[32minfo\033[39m] " << msg << "\n";
 #endif
 	std::ofstream stream(m_path, std::ios::app);
 	if (stream.is_open())
@@ -90,9 +90,9 @@ void LogSystem::log_warn(std::string msg)
 	SetConsoleTextAttribute(h, (((0 << 4) | 14)));
 	std::cout << "warn";
 	SetConsoleTextAttribute(h, (((0 << 4) | 7)));
-	std::cout << "] " << msg << std::endl;
+	std::cout << "] " << msg << "\n";
 #elif defined(DEBUG_CONSOLE_LOG) && defined(__linux__)
-	std::cout << "[\033[36m" << currentDateTime() << "\033[39m] [\033[33mwarn\033[39m] " << msg << std::endl;
+	std::cout << "[\033[36m" << currentDateTime() << "\033[39m] [\033[33mwarn\033[39m] " << msg << "\n";
 #endif
 	std::ofstream stream(m_path, std::ios::app);
 	if (stream.is_open())
@@ -111,9 +111,9 @@ void LogSystem::log_error(std::string msg)
 	SetConsoleTextAttribute(h, (((0 << 4) | 4)));
 	std::cout << "error";
 	SetConsoleTextAttribute(h, (((0 << 4) | 7)));
-	std::cout << "] " << msg << std::endl;
+	std::cout << "] " << msg << "\n";
 #elif defined(DEBUG_CONSOLE_LOG) && defined(__linux__)
-	std::cout << "[\033[36m" << currentDateTime() << "\033[39m] [\033[31merror\033[39m] " << msg << std::endl;
+	std::cout << "[\033[36m" << currentDateTime() << "\033[39m] [\033[31merror\033[39m] " << msg << "\n";
 #endif
 	std::ofstream stream(m_path, std::ios::app);
 	if (stream.is_open())
@@ -132,9 +132,9 @@ void LogSystem::log_crit(std::string msg)
 	SetConsoleTextAttribute(h, (((4 << 4) | 15)));
 	std::cout << "critical";
 	SetConsoleTextAttribute(h, (((0 << 4) | 7)));
-	std::cout << "] " << msg << std::endl;
+	std::cout << "] " << msg << "\n";
 #elif defined(DEBUG_CONSOLE_LOG) && defined(__linux__)
-	std::cout << "[\033[36m" << currentDateTime() << "\033[39m] [\033[37m\033[41mcritial\033[39m\033[49m] " << msg << std::endl;
+	std::cout << "[\033[36m" << currentDateTime() << "\033[39m] [\033[37m\033[41mcritial\033[39m\033[49m] " << msg << "\n";
 #endif
 	std::ofstream stream(m_path, std::ios::app);
 	if (stream.is_open())
